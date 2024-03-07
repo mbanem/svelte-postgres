@@ -1,0 +1,88 @@
+:root {
+	font-size: 16px;
+}
+
+$TEXT-COLOR: white;
+$BACK-COLOR: #3e3e3e;
+$LINK-COLOR: white;
+$LINK-HOVER: yellow;
+$LINK-ACTIVE: lightgreen;
+$BORDER: 1px solid gray;
+$BORDER-RADIUS: 6px;
+
+body {
+	padding: 0;
+	margin: 0;
+	background-color: $BACK-COLOR;
+	color: $TEXT-COLOR;
+	position: relative;
+}
+button {
+	width: 8rem;
+	border: 1px solid gray;
+	border-radius: 5px;
+	padding: 3px 5px;
+	color: white;
+	&:hover {
+		color: yellow;
+		border: 1px solid white;
+	}
+	&:active {
+		border: 1px solid yellow;
+	}
+}
+input {
+	display: block;
+	width: 80%;
+	margin-bottom: 1rem;
+	height: 2rem;
+	color: black;
+	&::placeholder {
+		color: var(--PLACEHOLDER_COLOR);
+		font-weight: bold;
+	}
+}
+h1 {
+	color: $LINK-COLOR;
+}
+a {
+	color: $LINK-COLOR;
+	text-decoration: none;
+	text-align: center;
+	cursor: pointer;
+	&:hover,
+	&:focus-visible {
+		color: $LINK-HOVER;
+	}
+	&:active {
+		color: $LINK-ACTIVE;
+	}
+}
+
+nav a:any-link {
+	@extend a;
+	display: inline-block;
+	width: 4rem;
+	border: $BORDER;
+	border-radius: 2px;
+	color: $LINK-COLOR;
+	margin-left: 0.5rem;
+}
+$font-size: (24px, 22px, 20px, 18px);
+@for $i from 1 through 4 {
+	h#{$i} {
+		font-size: nth($font-size, $i);
+	}
+}
+
+h1 {
+	color: navy;
+}
+
+$font-size: (24px, 22px, 20px, 18px);
+@for $i from 1 through 4 {
+	h#{$i} {
+		font-size: nth($font-size, $i);
+		color: $LINK-COLOR;
+	}
+}

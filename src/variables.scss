@@ -1,0 +1,12 @@
+/* Variables and mixins declared here will be available in all other SCSS files */
+:root {
+	$font-size: 16px;
+}
+$TEXT-COLOR: white;
+$BACK-COLOR: #3e3e3e;
+$LINK-COLOR: white;
+$LINK-HOVER: yellow;
+$LINK-ACTIVE: lightgreen;
+$BORDER: 1px solid gray;
+$BORDER-RADIUS: 6px;
+$BORDER-HOVER: yellow;

@@ -1,0 +1,19 @@
+import { sveltekit } from '@sveltejs/kit/vite';
+import { defineConfig } from 'vite';
+
+/** @type {import('vite').UserConfig} */
+const config = {
+	plugins: [sveltekit()],
+	test: {
+		include: ['src/**/*.{test,spec}.{js,ts}']
+	},
+	css: {
+		preprocessorOptions: {
+			scss: {
+				additionalData: '@use "src/variables.scss" as *;'
+			}
+		}
+	}
+};
+
+export default config;
