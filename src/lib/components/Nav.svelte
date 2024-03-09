@@ -1,7 +1,14 @@
+<script lang="ts">
+</script>
+
 <nav>
 	<a href="/">Home</a>
+	<a href="/login">login</a>
+	<a href="/register">register</a>
+	<a href="/users">user list</a>
+	<a href="/post">new post</a>
+	<a href="/profile">new profile</a>
 </nav>
-
 
 <style lang="scss">
 	nav {
@@ -13,13 +20,15 @@
 		height: 2rem;
 		a:any-link {
 			display: inline-block;
-			padding: 4px 1rem;
+			width: 6rem;
+			padding: 4px 0;
 			border: $BORDER;
 			border-radius: $BORDER-RADIUS;
 			text-decoration: none;
 			color: $LINK-COLOR;
 			opacity: 0.7;
 			background-color: $BACK-COLOR;
+			// text-wrap: nowrap;
 			&:hover {
 				background-color: $BACK-COLOR;
 				color: $LINK-HOVER;
