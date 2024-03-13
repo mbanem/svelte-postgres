@@ -14,21 +14,44 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Post {
-  id        String 	 @id @default(uuid())
-  title     String   @db.VarChar(255)
-  content   String?
-  published Boolean  @default(false)
 
-  author    User     @relation(fields: [authorId], references: [id])
-  authorId  String
+model User {
+  id      			String   @id @default(uuid())
+  firstName    	String   @map("first_name")
+  lastName    	String   @map("last_name")
+  email   			String   @unique
+  passwordHash 	String   @map("passwword_hash")
+  userAuthToken	String   @map("user_auth_token")
+
+  // role   		Role    @relation(fields: [roleId], references: [id])
+  // roleId 		Int     @map("role_id")
+  // using enums instead
+  role          Role    @default(USER)
+  posts   			Post[]
+  profile 			Profile?
+
+  articles      Article[]
+  todos         Todo[]    // arrays are optional as they can be empry
 
   createdAt DateTime @default(now())   @map("created_at")
   updatedAt DateTime @updatedAt        @map("updated_at")
 
-  @@map("post")
+  @@unique([firstName, lastName, email], name:"firstName_lastname_email")
+
+  @@map("users")
 }
 
+// model Role {
+//   id   Int    @id @default(autoincrement())
+//   name String @unique
+//   User User[]
+//   @@map("roles")
+// }
+
+enum Role {
+  USER
+  ADMIN
+}
 model Profile {
   id     		String  @id @default(uuid())
   bio    		String?
@@ -41,39 +64,40 @@ model Profile {
 
   @@map("profile")
 }
+model Article {
+    id      	String @id @default(uuid())
+    title   	String
+    content 	String
+    author 	 	User 	 @relation(fields: [authorId], references: [id])
+    authorId 	String	@map("author_id")
 
-model User {
-  id      			String   @id @default(uuid())
-  firstName    	String   @map("first_name")
-  lastName    	String   @map("last_name")
-  email   			String   @unique
-  passwordHash 	String   @map("passwword_hash")
-  userAuthToken	String   @map("user_auth_token")
+    @@map("article")
+}
 
-  role   				Roles    @relation(fields: [roleId], references: [id])
-  roleId 				Int      @map("role_id")
-  posts   			Post[]
-  profile 			Profile?
+model Post {
+  id        String 	 @id @default(uuid())
+  title     String   @db.VarChar(255)
+  content   String?
+  published Boolean  @default(false)
 
-  todos         Todo[]    // arrays are optional as they can be empry
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  String
+
+  categories Category[]
 
   createdAt DateTime @default(now())   @map("created_at")
   updatedAt DateTime @updatedAt        @map("updated_at")
 
-  @@unique([firstName, lastName, email], name:"firstName_lastname_email")
-
-  @@map("users")
+  @@map("post")
 }
 
-model Roles {
-  id   Int    @id @default(autoincrement())
-  name String @unique
+model Category {
+  id    Int    @id @default(autoincrement())
+  name  String
+  posts Post[]
 
-  User User[]
-
-  @@map("roles")
+  @@map("category")
 }
-
 model Todo {
   id        String @id @default(uuid())
   title     String
@@ -89,3 +113,21 @@ model Todo {
 
   @@map("todo")
 }
+
+
+// Use enums if database supports it
+// https://www.prisma.io/docs/reference/database-reference/database-features#misc
+
+// @@unique([firstName, lastname, email], name: 'fnlnemail') is ignored by Prisma
+// she created  "User__firstName_lastName_email_key"
+
+// db.findUnique({
+//   where: {
+//     User__firstName_lastName_email_key:{firstName, lastName, email}
+//   }
+// })
+
+// FOR prisma operations
+// const matches = await bcrypt.compare(password, user.passwordHash)
+// passwordHash: await bcrypt.hash(password, 10),
+// userAuthToken: crypto.randomUUID(),
