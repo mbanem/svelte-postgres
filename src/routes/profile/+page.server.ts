@@ -4,7 +4,22 @@ import { fail, type RequestEvent } from '@sveltejs/kit';
 import type { Actions } from '@sveltejs/kit';
 
 export const load: PageServerLoad = (async () => {
-	const users = await db.user.findMany();
+	const users = await db.user.findMany({
+		// include: {					// this will include all user fields and only a blob from profile
+		// 	profile: true
+		// }
+		select: {
+			id: true,
+			firstName: true,
+			lastName: true,
+			//profile: true					// this will include all fields from profile
+			profile: {
+				select: {
+					bio: true
+				}
+			}
+		}
+	});
 	if (!users) {
 		return fail(400, { message: 'No users in db' });
 	}

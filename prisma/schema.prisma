@@ -16,14 +16,17 @@ datasource db {
 
 model Post {
   id        String 	 @id @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
   title     String   @db.VarChar(255)
   content   String?
   published Boolean  @default(false)
 
   author    User     @relation(fields: [authorId], references: [id])
   authorId  String
+
+  createdAt DateTime @default(now())   @map("created_at")
+  updatedAt DateTime @updatedAt        @map("updated_at")
+
+  @@map("post")
 }
 
 model Profile {
@@ -31,23 +34,35 @@ model Profile {
   bio    		String?
 
   user   		User    @relation(fields: [userId], references: [id])
-  userId 		String     @unique
+  userId 		String  @unique    @map("user_id")
+
+  createdAt DateTime @default(now())   @map("created_at")
+  updatedAt DateTime @updatedAt        @map("updated_at")
+
+  @@map("profile")
 }
 
 model User {
   id      			String   @id @default(uuid())
-  firstName    	String
-  lastName    	String
+  firstName    	String   @map("first_name")
+  lastName    	String   @map("last_name")
   email   			String   @unique
-  passwordHash 	String
-  userAuthToken	String
+  passwordHash 	String   @map("passwword_hash")
+  userAuthToken	String   @map("user_auth_token")
 
-  role   				Roles @relation(fields: [roleId], references: [id])
-  roleId 				Int
+  role   				Roles    @relation(fields: [roleId], references: [id])
+  roleId 				Int      @map("role_id")
   posts   			Post[]
   profile 			Profile?
 
+  todos         Todo[]    // arrays are optional as they can be empry
+
+  createdAt DateTime @default(now())   @map("created_at")
+  updatedAt DateTime @updatedAt        @map("updated_at")
+
   @@unique([firstName, lastName, email], name:"firstName_lastname_email")
+
+  @@map("users")
 }
 
 model Roles {
@@ -55,4 +70,21 @@ model Roles {
   name String @unique
 
   User User[]
+
+  @@map("roles")
+}
+
+model Todo {
+  id        String @id @default(uuid())
+  content   String
+  priority  Int @default(0)
+  completed Boolean @default(false)
+
+  user   		User    @relation(fields: [userId], references: [id])
+  userId 		String  @unique    @map("user_id")
+
+  createdAt DateTime @default(now())   @map("created_at")
+  updatedAt DateTime @updatedAt        @map("updated_at")
+
+  @@map("todo")
 }

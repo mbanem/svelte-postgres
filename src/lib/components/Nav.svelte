@@ -8,6 +8,9 @@
 	<a href="/users">user list</a>
 	<a href="/post">new post</a>
 	<a href="/profile">new profile</a>
+	<a href="/todo">todos</a>
+	<a href="/crossfade">crossfade</a>
+	<a href="/flip">FLIP</a>
 </nav>
 
 <style lang="scss">

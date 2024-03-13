@@ -1,6 +1,6 @@
 import { db } from '$lib/server/db';
 import type { PageServerLoad } from './$types';
-import { fail, type Actions, type RequestEvent } from '@sveltejs/kit';
+import { fail, type Actions, type RequestEvent, json } from '@sveltejs/kit';
 
 export const load: PageServerLoad = (async () => {
 	const users = await db.user.findMany();
@@ -22,14 +22,14 @@ export const load: PageServerLoad = (async () => {
 	}
 	// console.log('posts/PageServerLoad users', JSON.stringify(users, null, 2));
 	return {
-		users,
-		posts
+		users: users as User[],
+		posts: posts as Post[]
 	};
 }) satisfies PageServerLoad;
 
 export const actions: Actions = {
 	create: async ({ request }) => {
-		console.log('post/+page.server.ts create');
+		// console.log('post/+page.server.ts create');
 		const { title, content, authorId } = Object.fromEntries(
 			// @ts-expect-error
 			await request.formData()
@@ -38,7 +38,7 @@ export const actions: Actions = {
 			content: string;
 			authorId: string;
 		};
-		console.log(title, content, authorId);
+		// console.log(title, content, authorId);
 		try {
 			const user = await db.user.findUnique({
 				where: {
@@ -48,8 +48,8 @@ export const actions: Actions = {
 			if (!user) {
 				return fail(400, { post: { title, content, authorId }, message: 'Author notfound' });
 			}
-			console.log(JSON.stringify(user, null, 2));
-			const result = await db.post.create({
+			// console.log(JSON.stringify(user, null, 2));
+			const post = await db.post.create({
 				data: {
 					title,
 					content,
@@ -61,7 +61,10 @@ export const actions: Actions = {
 					author: true
 				}
 			});
-			console.log('db.post.create post', result);
+			console.log('db.post.create post', post);
+			return {
+				post: JSON.stringify(post, null, 2)
+			};
 		} catch (err) {
 			console.log('error occurred', JSON.stringify(err, null, 2));
 		}

@@ -11,9 +11,17 @@
 <ul>
 	{#if users}
 		{#each users as { id, firstName, lastName, email }}
-			<li>
+			<li class="post-list">
+				<a type="button" href="/api/delete/[user]x[{id}]">❌</a>
 				<a href="/user?id={id}">{firstName} {lastName}</a>
 			</li>
 		{/each}
 	{/if}
 </ul>
+
+<style lang="scss">
+	.post-list {
+		display: flex;
+		gap: 8px;
+	}
+</style>
