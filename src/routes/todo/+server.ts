@@ -8,13 +8,13 @@ import { fail, json, type RequestHandler } from '@sveltejs/kit';
 // that can deliver data: PageData to +page.svelte
 
 export const PATCH = (async ({ url }) => {
-	console.log(url.searchParams.get('id'));
+	// console.log(url.searchParams.get('id'));
 
 	return json({ toggled: true });
 }) satisfies RequestHandler;
 
 export const DELETE = (async ({ url }) => {
-	console.log('DELETE', JSON.stringify(url.searchParams.get('id'), null, 2));
+	// console.log('DELETE', JSON.stringify(url.searchParams.get('id'), null, 2));
 
 	return json({ deleted: true });
 }) satisfies RequestHandler;

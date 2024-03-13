@@ -19,7 +19,7 @@ export const actions: Actions = {
 			email: string;
 			password: string;
 		};
-		console.log(firstName, lastName, email, password);
+		// console.log(firstName, lastName, email, password);
 		if (!(firstName && lastName && email)) {
 			return fail(400, { data: { firstName, lastName, email } });
 		}

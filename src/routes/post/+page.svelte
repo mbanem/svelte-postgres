@@ -38,7 +38,7 @@
 			await tick();
 			// @ts-expect-error
 			const post = JSON.parse(form?.post);
-			console.log(post.id);
+			// console.log(post.id);
 			showFullPost(post.id);
 			setTimeout(() => {
 				success = '';

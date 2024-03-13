@@ -7,9 +7,9 @@ type Model = 'post' | 'user';
 export const GET: RequestHandler = (async ({ params }) => {
 	const table = params.type.slice(1, -1) as Model; // remove brackets around the type
 	const ID = params.id.slice(1, -1); // remove brackets around the id
-	console.log('id', ID);
+	// console.log('id', ID);
 	try {
-		console.log(table, ID);
+		// console.log(table, ID);
 		// @ts-expect-error
 		await dbModel[table].delete({
 			where: {

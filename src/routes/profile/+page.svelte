@@ -27,9 +27,11 @@
 			}, 3000);
 		};
 	};
-	const authorSelected = () => {
-		console.log('selectedAuthorId', selectedAuthorId);
-	};
+	// const authorSelected = () => {
+	// 	console.log('selectedAuthorId', selectedAuthorId);
+	// for below select box
+	// <select class="select-author" bind:value={selectedAuthorId} on:change={authorSelected}>
+	// };
 	$: ({ users } = data);
 </script>
 
@@ -56,7 +58,7 @@
 		<div class="user-list">
 			<ul>
 				<p>Select Profile Author</p>
-				<select class="select-author" bind:value={selectedAuthorId} on:change={authorSelected}>
+				<select class="select-author" bind:value={selectedAuthorId}>
 					<option value="" selected>Select the Author</option>
 					{#if users}
 						{#each users as user}

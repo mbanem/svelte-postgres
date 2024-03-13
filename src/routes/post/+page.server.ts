@@ -61,7 +61,7 @@ export const actions: Actions = {
 					author: true
 				}
 			});
-			console.log('db.post.create post', post);
+			// console.log('db.post.create post', post);
 			return {
 				post: JSON.stringify(post, null, 2)
 			};

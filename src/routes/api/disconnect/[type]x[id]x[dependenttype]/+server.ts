@@ -9,7 +9,7 @@ export const GET: RequestHandler = (async ({ params }) => {
 	const parent = params.type.slice(1, -1) as Model; // remove brackets around the type
 	const ID = String(params.id.slice(1, -1)); // remove brackets around the id
 	const dependent = params.dependenttype.slice(1, -1);
-	console.log(parent, ID, dependent);
+	// console.log(parent, ID, dependent);
 
 	try {
 		// @ts-expect-error

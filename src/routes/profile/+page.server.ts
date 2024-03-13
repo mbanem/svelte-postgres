@@ -31,7 +31,7 @@ export const load: PageServerLoad = (async () => {
 
 export const actions: Actions = {
 	create: async ({ request }) => {
-		console.log('profile/+page.server.ts create');
+		// console.log('profile/+page.server.ts create');
 		const { bio, authorId } = Object.fromEntries(
 			// @ts-expect-error
 			await request.formData()
@@ -39,7 +39,7 @@ export const actions: Actions = {
 			bio: string;
 			authorId: string;
 		};
-		console.log(bio, authorId);
+		// console.log(bio, authorId);
 		if (!bio || !authorId) {
 			return fail(400, { bio, message: 'Insufficient data supplied' });
 		}
@@ -52,7 +52,7 @@ export const actions: Actions = {
 			if (!user) {
 				return fail(400, { user: 'User not in db' });
 			}
-			console.log(JSON.stringify(user, null, 2));
+			// console.log(JSON.stringify(user, null, 2));
 			const result = await db.profile.create({
 				data: {
 					bio,
@@ -64,7 +64,7 @@ export const actions: Actions = {
 					user: true
 				}
 			});
-			console.log('include user', JSON.stringify(result, null, 2));
+			// console.log('include user', JSON.stringify(result, null, 2));
 		} catch (err) {
 			console.log('error occurred', JSON.stringify(err, null, 2));
 		}
