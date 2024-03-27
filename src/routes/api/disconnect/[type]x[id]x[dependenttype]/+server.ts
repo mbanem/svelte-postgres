@@ -6,6 +6,7 @@ type Model = 'post' | 'user';
 // path:  src/routes/api/disconnect/[type]x[id]x[dependenttype]
 export const GET: RequestHandler = (async ({ params }) => {
 	// console.log('/disconnect', JSON.stringify(params, null, 2));
+
 	const parent = params.type.slice(1, -1) as Model; // remove brackets around the type
 	const ID = String(params.id.slice(1, -1)); // remove brackets around the id
 	const dependent = params.dependenttype.slice(1, -1);

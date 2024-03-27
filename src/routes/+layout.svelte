@@ -1,10 +1,15 @@
 <script lang="ts">
-	import '$styles/app.scss'
-	import Nav from '$components/Nav.svelte'
+	import { page } from '$app/stores';
+	import '$styles/app.scss';
+	import Nav from '$components/Nav.svelte';
+	import type { LayoutData } from './$types';
+
+	export let data: LayoutData;
+	$: ({ locals } = data);
 </script>
 
 <main>
-	<Nav />
+	<Nav {locals} />
 	<slot />
 </main>
 

@@ -15,19 +15,19 @@
 		<div>
 			<label for="firstName">
 				First Name
-				<input type="text" name="firstName" value={data?.firstName ?? ''} />
+				<input type="text" id="firstName" name="firstName" value={data?.firstName ?? ''} />
 			</label>
 		</div>
 		<div>
 			<label for="lastName">
 				Last Name
-				<input type="text" name="lastName" value={data?.lastName ?? ''} />
+				<input type="text" id="lastName" name="lastName" value={data?.lastName ?? ''} />
 			</label>
 		</div>
 		<div>
 			<label for="email">
 				Email
-				<input type="text" name="email" value={data?.email ?? ''} />
+				<input type="text" id="email" name="email" value={data?.email ?? ''} />
 			</label>
 		</div>
 		<div>

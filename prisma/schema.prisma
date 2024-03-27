@@ -14,44 +14,33 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model User {
   id      			String   @id @default(uuid())
   firstName    	String   @map("first_name")
   lastName    	String   @map("last_name")
-  email   			String   @unique
-  passwordHash 	String   @map("passwword_hash")
-  userAuthToken	String   @map("user_auth_token")
+  email   			String
+  passwordHash 	String   @map("password_hash")
+  userAuthToken	String   @unique @map("user_auth_token")
 
-  // role   		Role    @relation(fields: [roleId], references: [id])
-  // roleId 		Int     @map("role_id")
-  // using enums instead
   role          Role    @default(USER)
-  posts   			Post[]
   profile 			Profile?
 
+  posts   			Post[]
   articles      Article[]
-  todos         Todo[]    // arrays are optional as they can be empry
+  todos         Todo[]    //arrays are optional and can be empry
 
   createdAt DateTime @default(now())   @map("created_at")
-  updatedAt DateTime @updatedAt        @map("updated_at")
+  updatedAt DateTime? @updatedAt        @map("updated_at")
 
-  @@unique([firstName, lastName, email], name:"firstName_lastname_email")
-
+	@@unique(name: "fullNameEmail", [firstName, lastName, email])
   @@map("users")
 }
-
-// model Role {
-//   id   Int    @id @default(autoincrement())
-//   name String @unique
-//   User User[]
-//   @@map("roles")
-// }
 
 enum Role {
   USER
   ADMIN
 }
+
 model Profile {
   id     		String  @id @default(uuid())
   bio    		String?
@@ -64,12 +53,14 @@ model Profile {
 
   @@map("profile")
 }
+
 model Article {
     id      	String @id @default(uuid())
     title   	String
     content 	String
+
     author 	 	User 	 @relation(fields: [authorId], references: [id])
-    authorId 	String	@map("author_id")
+    authorId 	String @map("author_id")
 
     @@map("article")
 }
@@ -81,7 +72,7 @@ model Post {
   published Boolean  @default(false)
 
   author    User     @relation(fields: [authorId], references: [id])
-  authorId  String
+  authorId  String   @map("author_id")
 
   categories Category[]
 
@@ -98,11 +89,12 @@ model Category {
 
   @@map("category")
 }
+
 model Todo {
-  id        String @id @default(uuid())
+  id        String  @id @default(uuid())
   title     String
   content   String
-  priority  Int @default(0)
+  priority  Int     @default(0)
   completed Boolean @default(false)
 
   user   		User    @relation(fields: [userId], references: [id])
@@ -118,7 +110,7 @@ model Todo {
 // Use enums if database supports it
 // https://www.prisma.io/docs/reference/database-reference/database-features#misc
 
-// @@unique([firstName, lastname, email], name: 'fnlnemail') is ignored by Prisma
+// @@unique([firstName, lastname, email], name: fnlnemail) is ignored by Prisma
 // she created  "User__firstName_lastName_email_key"
 
 // db.findUnique({

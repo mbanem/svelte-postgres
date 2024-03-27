@@ -1,257 +1,221 @@
 <script lang="ts">
-	import { tick } from 'svelte';
-	import type { PageData, ActionData } from './$types';
-	import type { SubmitFunction } from '@sveltejs/kit';
 	import { enhance } from '$app/forms';
+	import type { PageData, ActionData } from './$types';
+	import MultiSelect from '$lib/components/MultiSelect.svelte';
 
 	export let data: PageData;
 	export let form: ActionData;
 
-	// type Post = {
-	// 	id: string;
-	// 	createdAt: Date;
-	// 	updatedAt: Date;
-	// 	title: string;
-	// 	content: string | null;
-	// 	published: boolean;
-	// 	authorId: string;
-	// };
+	const clearMessage = () => {
+		setTimeout(() => {
+			deleted = '';
+		}, 2000);
+	};
 
-	let success = '';
-	let loading = false;
+	let deleted = '';
+	const deletePost = async (id: string) => {
+		const response = await fetch(`/post?id=${id}`, {
+			method: 'DELETE',
+			body: id
+		});
+		const data = await response.json();
+		deleted = data.deleted ? 'deleted successfully' : 'delete failed';
+		clearMessage();
+	};
+	$: result = deleted;
+	$: ({ queryPosts, user } = data);
 	let selectedAuthorId = '';
-	const createPost: SubmitFunction = ({ action }) => {
-		// action is URL e.g. http://localhost:5173/dodos?/addTodo
-		// action.search e.g. ?/addTodo	so action.search.slice(2) is addTodo route folder name
-		success = '';
-		// processing before form submit8
-		// if (!form?.missing) {
-		loading = true;
-		// }
-		// processing after the form submit
-		return async ({ update }) => {
-			await update();
-			loading = false;
-			success = action.search.slice(2) === 'addTodo' ? 'New todo added' : 'All todos cleared';
+	const authorId = data?.user?.id;
+	// console.log('authorId', data.user.id);
 
-			// wait for form:ActionData to become available
-			await tick();
-			// @ts-expect-error
-			const post = JSON.parse(form?.post);
-			// console.log(post.id);
-			showFullPost(post.id);
-			setTimeout(() => {
-				success = '';
-			}, 3000);
-		};
+	// let selectedCategories:string
+	let selected: string[] = [];
+	let categoryIDs: number[] = [];
+
+	const setCategoryIDs = (event: CustomEvent<{ ids: number[]; names: string[] }>) => {
+		categoryIDs = event.detail.ids;
+		selected = event.detail.names;
+		// ('categoryIDs', JSON.stringify(event.detail, null, 2));
 	};
-	let selectedAuthorName = '';
-	const authorSelected = () => {
-		selectedAuthorName = '';
-		selectedAuthorName = findUser(selectedAuthorId).firstName + "'s";
-	};
-	let thePost: Post;
-	let author: User;
-	const findUser = (id: string) => {
-		return users?.filter((user) => String(user.id) === id)[0] as unknown as User;
-	};
-	const showFullPost = (event: MouseEvent | string) => {
-		// as attribute uis named data-id so we read pEl.dataset.id
-		// i.e. what follows data- is the name of dataset attribute
-		let id: string;
-		if (event instanceof MouseEvent) {
-			const pEl = event.currentTarget as HTMLParagraphElement;
-			id = pEl.dataset.id as string;
-			if (!id) {
-				return;
-			}
-		} else {
-			id = event;
-		}
-		thePost = posts?.filter((post) => post.id === id)[0] as unknown as Post;
-		author = findUser(String(thePost.authorId));
-		// console.log('the post.id', JSON.stringify(thePost, null, 2));
-	};
-	$: ({ users, posts } = data);
+
+	$: msg = form?.success
+		? 'Saved - ' + form.success
+		: form?.error
+			? 'Error: ' + form?.error.message
+			: '';
 </script>
 
-<!-- {#if form}
-	<pre>{JSON.stringify(form, null, 2)}</pre>
-{/if} -->
-<h1>Posts Page</h1>
-<p>Selected AuthorId {JSON.stringify(selectedAuthorId, null, 2)}</p>
-<div class="container">
-	<div>
-		<form action="?/create" method="post" use:enhance={createPost}>
-			<label for="title">
-				Title
-				<input type="text" name="title" value={form?.post?.title ?? ''} />
-			</label>
-			<label for="title">
-				Content
-
-				<input type="text" name="content" value={form?.post?.content ?? ''} />
-			</label>
-			<input type="hidden" name="authorId" value={selectedAuthorId ?? ''} />
-			<button type="submit" disabled={selectedAuthorId === ''}>Create Post</button>
-		</form>
-		<div class="user-list">
-			<ul>
-				Select Post Author
-				<select bind:value={selectedAuthorId} on:change={authorSelected}>
-					<option value="" selected>Select the Author</option>
-					{#if users}
-						{#each users as user}
-							<option value={user.id}>
-								{user.firstName}
-								{user.lastName}
-							</option>
-						{/each}
-					{/if}
-				</select>
-			</ul>
-			{#if selectedAuthorName}
-				<a
-					class="disconnect-posts"
-					type="button"
-					href="/api/disconnect/[user]x[{selectedAuthorId}]x[post]"
-					>disconnect {selectedAuthorName ?? ''} posts
-				</a>
-				<a
-					class="disconnect-posts"
-					type="button"
-					href="/api/disconnect/[user]x[{selectedAuthorId}]x[profile]"
-					>disconnect {selectedAuthorName ?? ''} profile
-				</a>
-			{/if}
-		</div>
+<!-- <pre style="font-size:11px;"> {JSON.stringify(msg ?? '', null, 2)}</pre> -->
+<h1>
+	Post Page{#if msg}<p class="message">{msg}</p>{/if}
+</h1>
+<!-- <p>categoryIDs {JSON.stringify(categoryIDs, null, 2)}</p>
+<p>selected {JSON.stringify(selected, null, 2)}</p> -->
+{#if data.user.role === 'ADMIN'}
+	{#if data.users}
+		<select class="select-author" bind:value={selectedAuthorId}>
+			<option value="" selected>Select Post Author</option>
+			{#each data.users as user}
+				<option value={user.id}>
+					{user.firstName}
+					{user.lastName}
+				</option>
+			{/each}
+		</select>
+	{/if}
+{:else}
+	<p>{user.firstName} {user.lastName}</p>
+{/if}
+{#if result}
+	<span class="message">{result}</span>
+{/if}
+<span class="message">{user.firstName} {user.lastName}</span>
+<div class="board">
+	<form method="POST" action="?/create" use:enhance>
+		<input type="hidden" name="authorId" value={authorId} />
+		<input type="hidden" name="categoryIDs" value={categoryIDs} />
+		<input type="text" placeholder="enter post title?" name="title" />
+		<input type="text" placeholder="enter post content?" name="content" />
+		<label for="published">
+			<input type="checkbox" name="published" id="published" />
+			<span>published</span>
+		</label>
+		<button type="submit">save</button>
+	</form>
+	<div class="multi-select-container">
+		<MultiSelect
+			on:categoryids={setCategoryIDs}
+			data={data.categories}
+			select_box="select_box"
+			selected_categories="selected_categories"
+		/>
 	</div>
-	<div>
-		<p>Posts</p>
-		{#if posts}
+	<div class="post-container">
+		{#if data.queryPosts}
+			<!-- <pre style="font-size:11px;"> {JSON.stringify(data.queryPosts, null, 2)}</pre> -->
 			<ul>
-				{#each posts as post}
-					<li class="post-list">
-						<a type="button" href="/api/delete/[post]x[{post.id}]">❌</a>
-						<p class="post" on:click={showFullPost} aria-hidden="true" data-id={post.id}>
-							{post.title} -- {post.author.firstName}
-							{post.author.lastName}
-						</p>
+				{#each data.queryPosts as { title, content, author: { firstName, lastName } }}
+					<li class="post-block">
+						<p>{firstName} {lastName}</p>
+						<p>{title}</p>
+						<p>{content}</p>
 					</li>
 				{/each}
 			</ul>
 		{/if}
 	</div>
-	<div class="two-columns">
-		{#if thePost}
-			<p class="title">{thePost?.title}</p>
-			<p class="content">{thePost.content}</p>
-			<p>Created at {thePost.createdAt.toLocaleDateString()}</p>
-			{#if thePost.updatedAt}
-				<p>Created at {thePost.updatedAt.toLocaleDateString()}</p>
-			{/if}
-			<p>{thePost.published ? '' : 'not '}published</p>
-			<p>{thePost.authorId}</p>
-			{#if author}
-				<p>{author.firstName} {author.lastName}</p>
-			{/if}
-		{/if}
-	</div>
 </div>
 
 <style lang="scss">
-	.container {
+	.board {
 		display: grid;
-		grid-template-columns: 1fr 2fr;
-		width: 60rem;
-		justify-content: space-around;
-		align-items: flex-start;
-		margin: 1rem auto;
-	}
-	select {
-		appearance: none; /* remove default appearance set by the browser */
-		outline: none; /* remove the outline shown on focus */
-		cursor: pointer; /* change the mouse cursor icon */
+		grid-template-columns: 1fr 1fr;
+		grid-column-gap: 1em;
+		min-width: 36em;
+		width: 62vw;
+		gap: 2px;
+		padding: 1rem;
+		margin-left: 1rem;
+		form {
+			width: calc(100% - 1rem);
+		}
+		input,
+		button {
+			width: 8rem;
+			display: inline-block;
+			font-size: 18px;
+			padding-left: 0.5rem;
+			color: black;
+		}
+		input {
+			display: inline-block;
+			width: calc(100% - 1rem);
+			height: 1.5rem;
+		}
+		label input {
+			display: inline-block;
+			width: 1rem;
+			height: 1rem;
+		}
+		label {
+			display: flex;
+			gap: 1rem;
+			margin-bottom: 6px;
+		}
 
-		color: navy !important; /* text color */
-		background-color: white;
-		// border: 2px solid blue;
-
-		border-radius: 5px; /* round the border corners */
-		padding: 5px 10px;
-		width: 200px;
-		height: 40px;
-		box-shadow: 5px 8px 5px rgba(0, 0, 0, 0.8);
-
-		font-family: serif;
-		font-size: 16px;
-		font-weight: bold;
-		text-align: center;
-	}
-	p {
-		color: aliceblue;
-	}
-	button {
-		color: black;
-		font-size: 16px;
-		&:disabled {
-			background-color: gray;
+		:nth-child(1) {
+			grid-column: span 2;
+			display: flex;
+			flex-direction: column;
+			margin: 0;
+		}
+		.post-container {
+			grid-column: span 2;
+			width: 100%;
+			height: 16.5rem;
+			border: 1px solid gray;
+			border-radius: 8px;
+			overflow: auto;
 		}
 	}
-	ul {
-		text-align: left;
-	}
-	.post {
+	h1 {
 		display: flex;
+		align-items: baseline;
+		margin-left: 2rem;
+		height: 1.5rem;
+		.message {
+			display: inline-block;
+			font-size: 12px;
+			font-weight: 100;
+			color: yellow;
+			margin-left: 1rem;
+		}
+		// select {
+		// 	margin-left: 1rem;
+		// }
+	}
+
+	// for a child <MultiSelect component
+	.multi-select-container {
 		padding: 0;
 		margin: 0;
+		width: 50rem;
+		margin: 1rem 0;
+		border: 1px solid yellow;
+	}
+	.multi-select-container :global(.select_box) {
+		width: 40%;
+		height: 4rem;
+		font-weight: 500;
+	}
+	.multi-select-container :global(.selected_categories) {
+		border: 1px solid gray;
+		// width: 100;
 		height: 1.5rem;
-		color: yellow;
-		cursor: pointer;
-	}
-	.two-columns {
-		grid-column: span 2;
-		border: 1px solid lightgray;
-		border-radius: 8px;
-		padding: 10px 1rem;
-		width: 80%;
-		p {
-			margin: 2px 0 2px 2rem;
-		}
-	}
-	.title {
-		color: rgb(233, 233, 156);
-	}
-	.content {
-		color: rgb(246, 246, 103);
-		font-size: 18px;
-		font-weight: 200;
-		padding: 8px 0;
-	}
-	.post-list {
 		display: flex;
-		gap: 8px;
+		align-items: center;
+		gap: 5px;
+		padding: 0 0 0 5px;
+		margin: 0 0 2px 0;
+		color: skyblue;
+		font-family: 'Arial Narrow Bold', sans-serif;
+		font-size: 0.8em;
 	}
-	.user-list {
-		display: flex;
-		flex-direction: column;
-		// justify-content: flex-start;
-		align-items: flex-start;
-		// border: 0;
+	.select-author {
+		margin: 0 1rem 0 2rem;
+	}
+	.post-block,
+	.post-block {
+		list-style: none;
+		margin: 1rem 0 0 0;
 		padding: 0;
-		gap: 1rem;
-		ul {
-			list-style-type: none;
-			// border: 1px solid gray;
-			// margin: 0;
-			// padding: 0;
+		p {
+			margin: 0;
+			padding: 0;
 		}
-	}
-	.disconnect-posts {
-		border: 2px solid gray;
-		border-radius: 4px;
-		width: 16rem;
-		padding: 4px 0;
-		margin: 0 0 1rem 1rem;
+		p:nth-child(1) {
+			font-size: 12px;
+			font-style: italic;
+		}
 	}
 </style>

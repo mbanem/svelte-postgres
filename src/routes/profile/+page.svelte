@@ -35,7 +35,7 @@
 	$: ({ users } = data);
 </script>
 
-<pre>{JSON.stringify(data, null, 2)}</pre>
+<!-- <pre>{JSON.stringify(data, null, 2)}</pre> -->
 <h1>Profile Page</h1>
 <p>Selected AuthorId {JSON.stringify(selectedAuthorId, null, 2)}</p>
 <div class="container">
@@ -152,6 +152,7 @@
 					p:nth-child(2) {
 						margin-top: 8px;
 						font-size: 14px;
+						text-align: left;
 					}
 				}
 			}

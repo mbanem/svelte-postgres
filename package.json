@@ -43,6 +43,7 @@
 		"flowbite-svelte": "^0.44.24",
 		"gsap": "^3.12.5",
 		"prisma": "^5.11.0",
+		"svelte-multiselect": "^10.2.0",
 		"uuid": "^9.0.1"
 	}
 }

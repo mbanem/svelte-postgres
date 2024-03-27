@@ -1,16 +1,37 @@
 <script lang="ts">
+	export let locals: App.Locals;
 </script>
 
 <nav>
 	<a href="/">Home</a>
-	<a href="/login">login</a>
-	<a href="/register">register</a>
-	<a href="/users">user list</a>
-	<a href="/post">new post</a>
-	<a href="/profile">new profile</a>
-	<a href="/todo">todos</a>
+	{#if locals?.user}
+		<a href="/post">new post</a>
+		<a href="/profile">new profile</a>
+		<a href="/todo">todos</a>
+		<!--
+			in order to call /logout/+page.server.ts
+			default action we need a form with action ='/logout'
+			that we can call from any page across the app,
+			while action='?/logout' is if we have a sibling server.ts
+			that exports action names -- prefixed by question mark ?
+			e.gc. export const actions: Actions = {
+				logout:				-- which we target as .?/logout
+		-->
+		<form method="POST" action="/logout">
+			<button type="submit" class="logout">log out</button>
+		</form>
+		{#if locals.user.role === 'ADMIN'}
+			<a href="/admin">admin</a>
+			<a href="/users">user list</a>
+		{/if}
+	{:else}
+		<a href="/login">login</a>
+		<a href="/register">register</a>
+	{/if}
 	<a href="/crossfade">crossfade</a>
 	<a href="/flip">FLIP</a>
+	<a href="/multiselect">multi select</a>
+	<a href="/box">Box</a>
 </nav>
 
 <style lang="scss">
@@ -21,7 +42,8 @@
 		gap: 0.5rem;
 		width: 90vw;
 		height: 2rem;
-		a:any-link {
+		a:any-link,
+		form button {
 			display: inline-block;
 			width: 6rem;
 			padding: 4px 0;

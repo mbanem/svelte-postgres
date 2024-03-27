@@ -8,8 +8,8 @@
 
 <h1>Register</h1>
 <div class="container">
-	{#if form?.data}
-		<p class="error">Insufficient data supplied</p>
+	{#if form?.message}
+		<p class="error">{form.message}</p>
 	{/if}
 	<form method="POST" action="?/register" use:enhance>
 		<div>
@@ -33,7 +33,7 @@
 		<div>
 			<label for="password">
 				Password
-				<input type="password" name="password" value={data?.password ?? ''} />
+				<input type="password" name="password" />
 			</label>
 		</div>
 		<button type="submit">Register</button>

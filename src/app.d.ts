@@ -1,63 +1,89 @@
 // See https://kit.svelte.dev/docs/types#app
 // for information about these interfaces
 declare global {
+	type Person = {
+		name: string;
+		age: number;
+	};
+	type QueryAuthor = {
+		id: string;
+		firstName: string;
+		lastName: string;
+	};
+	type QueryPosts = (Post & Author)[];
 
-type Todo = {
-  id:        	string
-  content:   	string
-  priority:  	Int
-  completed: 	boolean
-  user:   		User
-  userId: 		string
-  createdAt: 	DateTime
-  updatedAt:? DateTime
-}
+	type Session = {
+		userAuthToken: string;
+		firstName: string;
+		lastName: string;
+	};
 
-type User = {
-  id:      				string
-  firstName:   		string
-  lastName:    		string
-  email:   				string
-  passwordHash: 	string
-  userAuthToken:	string
-  role:   				Roles
-  roleId: 				number
-  posts:   				Post[]
-  profile: 				Profile
-  todos:         	Todo[]
-  createdAt: 			DateTime
-  updatedAt:? 		DateTime
-}
+	type Article = {
+		id: string;
+		title: string;
+		content: string;
+		authorId: string;
+	};
 
-type Roles = {
-  id:   number
-  name: string
-  User: User[]
-}
+	type Todo = {
+		id: string;
+		title: string;
+		content: string;
+		priority: number;
+		completed: boolean;
+		userId: string;
+		createdAt: Date;
+		updatedAt: Date;
+	};
 
-type Profile = {
-  id:     		string
-  bio:?    		string
-  user:   		User
-  userId: 		string
-  createdAt: 	DateTime
-  updatedAt:? DateTime
-}
+	type User = {
+		id: string;
+		firstName: string;
+		lastName: string;
+		email: string;
+		passwordHash: string;
+		userAuthToken: string;
+		role: $Enums.Role;
+		createdAt: Date;
+		updatedAt: Date;
+	};
 
-type Post = {
-  id:        	string
-  title:    	 string
-  content:  	 string?
-  published:	 boolean
-  author:   	 User
-  authorId:  	string
-  createdAt: 	DateTime
-  updatedAt:? DateTime
-}
+	enum Role {
+		USER = 'USER',
+		ADMIN = 'ADMIN'
+	}
 
+	type Profile = {
+		id: string;
+		bio: string | null;
+		userId: string;
+		createdAt: Date;
+		updatedAt: Date;
+	};
+
+	type Category = {
+		id: number;
+		name: string;
+	};
+
+	type Post = {
+		id: string;
+		title: string;
+		content: string | null;
+		published: boolean;
+		authorId: string;
+		createdAt: Date;
+		updatedAt: Date;
+	};
 	namespace App {
 		// interface Error {}
-		// interface Locals {}
+		interface Locals {
+			user: {
+				firstName: string;
+				lastName: string;
+				role: Role;
+			};
+		}
 		// interface PageData {}
 		// interface PageState {}
 		// interface Platform {}

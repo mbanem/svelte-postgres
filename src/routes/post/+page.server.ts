@@ -1,73 +1,160 @@
-import { db } from '$lib/server/db';
+import { v4 as uuidv4 } from 'uuid';
 import type { PageServerLoad } from './$types';
-import { fail, type Actions, type RequestEvent, json } from '@sveltejs/kit';
+import { fail, type Actions, type RequestEvent, json, redirect, error } from '@sveltejs/kit';
+import { db } from '$lib/server/db';
 
-export const load: PageServerLoad = (async () => {
-	const users = await db.user.findMany();
-	if (!users) {
-		return fail(400, { message: 'No users in db' });
+export const load: PageServerLoad = (async ({ locals, cookies }) => {
+	// admin should be able to see all todos of any user
+	// so we have to load all todos with user info
+	// type UPosts = ({
+	// 	user: {
+	// 		id: string;
+	// 		firstName: string;
+	// 		lastName: string;
+	// 	};
+	// } & Post)[];
+
+	let userAuthToken = cookies.get('session') ?? '';
+	if (!userAuthToken) {
+		throw error(400, 'User cookie not found');
 	}
-	const posts = await db.post.findMany({
-		include: {
-			author: {
-				select: {
-					firstName: true,
-					lastName: true
+	// console.log('get user vua userAuthToken', userAuthToken);
+	const user = await db.user.findUnique({
+		where: {
+			userAuthToken: cookies.get('session')
+		}
+	});
+	if (!user) {
+		throw error(400, 'User not found');
+	}
+	// console.log('user', JSON.stringify(user, null, 2));
+	// let queryPosts: QueryPosts = [];
+	let queryPosts: QueryPosts = [];
+	if (locals.user?.role === 'ADMIN') {
+		queryPosts = await db.post.findMany({
+			include: {
+				author: true
+			}
+		});
+	} else {
+		queryPosts = await db.post.findMany({
+			where: {
+				authorId: user.id
+			},
+			include: {
+				author: {
+					select: {
+						id: true,
+						firstName: true,
+						lastName: true
+					}
 				}
+			}
+		});
+	}
+	// console.log('queryPosts', JSON.stringify(queryPosts, null, 2));
+	const userIDs = [...new Set(queryPosts.map((el) => el.author.id))];
+	const users = await db.user.findMany({
+		where: {
+			id: {
+				in: userIDs
 			}
 		}
 	});
-	if (!posts) {
-		return fail(400, { message: 'No posts in db' });
-	}
-	// console.log('posts/PageServerLoad users', JSON.stringify(users, null, 2));
+	// NOTE:mPrisma array from Postgres
+	// const categories = (await db.$queryRaw`SELECT array(SELECT name FROM Category)`) as string[];
+	// console.log('categories', JSON.stringify(categories, null, 2));
+
+	// for Post-Category many-to-many we need array of category.ids
+	// but for multiselect we need category names as well
+	const categories: { id: number; name: string }[] = await db.category.findMany();
+	// console.log('categories', JSON.stringify(categories, null, 2));
 	return {
-		users: users as User[],
-		posts: posts as Post[]
+		queryPosts, // as Todo[] is important for TypeScript
+		user,
+		users,
+		categories
 	};
 }) satisfies PageServerLoad;
 
+type InputData = {
+	title: string;
+	content: string;
+	published: string | boolean;
+	categoryIDs: string; // comma-separated category ids
+	authorId: string;
+};
 export const actions: Actions = {
 	create: async ({ request }) => {
-		// console.log('post/+page.server.ts create');
-		const { title, content, authorId } = Object.fromEntries(
+		// const obj = Object.fromEntries(
+		// const { title, content, published, categories, authorId } = Object.fromEntries(
+		const input_data = Object.fromEntries(
 			// @ts-expect-error
 			await request.formData()
-		) as {
-			title: string;
-			content: string;
-			authorId: string;
-		};
-		// console.log(title, content, authorId);
-		try {
-			const user = await db.user.findUnique({
-				where: {
-					id: authorId
+		) as InputData; //{
+		// title: string;
+		// content: string;
+		// published: boolean;
+		// authorId: string;
+		// };
+
+		const { title, content, published, categoryIDs, authorId } = input_data;
+		if (title === '' || content === '' || categoryIDs.length === 0 || !authorId) {
+			return fail(400, {
+				error: {
+					data: { title, content, published, authorId },
+					message: 'Insufficient data supplied'
 				}
 			});
-			if (!user) {
-				return fail(400, { post: { title, content, authorId }, message: 'Author notfound' });
-			}
-			// console.log(JSON.stringify(user, null, 2));
-			const post = await db.post.create({
+		}
+		console.log('input_data', JSON.stringify(input_data, null, 2));
+		let newPost: any;
+		// console.log('input_data', JSON.stringify(input_data, null, 2));
+
+		const cats = await db.category.findMany();
+		try {
+			// console.log('try post.create');
+			const rest = {
+				id: uuidv4(),
+				updatedAt: new Date()
+			};
+
+			const catIDs = categoryIDs.split(',').map((val) => {
+				return { id: Number(val) };
+			});
+			// console.log('catIDs', JSON.stringify(catIDs, null, 2));
+
+			newPost = await db.post.create({
 				data: {
 					title,
 					content,
-					author: {
-						connect: { id: user?.id }
+					published: published === 'on' ? true : false,
+					authorId,
+					updatedAt: new Date(),
+					categories: {
+						connect: catIDs
 					}
-				},
-				include: {
-					author: true
 				}
 			});
-			// console.log('db.post.create post', post);
-			return {
-				post: JSON.stringify(post, null, 2)
-			};
+			// console.log('{ ...obj}', JSON.stringify({ ...rest, ...obj }, null, 2));
+			// console.log('newPost', JSON.stringify(newPost, null, 2));
+			// 		title,
+			// 		content,
+			// 		priority,
+			// 		userId: userId
+			// 	}
+			// });
 		} catch (err) {
-			console.log('error occurred', JSON.stringify(err, null, 2));
+			// console.log('newPost', JSON.stringify(newPost, null, 2));
+			return fail(400, {
+				error: {
+					data: { title, content, published, authorId },
+					message: 'internal error occurred'
+				}
+			});
 		}
-		return;
+		return {
+			success: title
+		};
 	}
 } satisfies Actions;
