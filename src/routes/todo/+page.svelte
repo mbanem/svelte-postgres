@@ -10,8 +10,10 @@
 		setTimeout(() => {
 			deleted = '';
 			toggled = '';
+			result = '';
 		}, 2000);
 	};
+
 	let toggled = '';
 	const toggleCompleted = async (id: string) => {
 		const response = await fetch(`/todo?id=${id}`, {
@@ -21,6 +23,8 @@
 
 		const data = await response.json();
 
+		// setting toggled will dynamically set result, which in turn will show message
+		// for several seconds and then clear it out
 		toggled = data.toggled ? 'toggled successfully' : 'toggle failed';
 
 		if (data.toggled) {
@@ -30,9 +34,9 @@
 				}
 				return todo;
 			});
-			clearMessage();
 		}
 	};
+
 	let deleted = '';
 	const deleteTodo = async (id: string) => {
 		const response = await fetch(`/todo?id=${id}`, {
@@ -40,16 +44,29 @@
 			body: id
 		});
 		const data = await response.json();
+
+		// setting deleted will dynamically set result, which in turn will show message
+		// for several seconds and then clear it out
 		deleted = data.deleted ? 'deleted successfully' : 'delete failed';
-		clearMessage();
+		if (deleted) {
+			todos = todos.filter((todo) => todo.id !== id);
+		}
 	};
-	$: result = deleted || toggled;
+
+	$: result = deleted || toggled || form?.message;
+	// setting result will call showMessage and this onw will setTimeout
+	// to clear the message after several seconds
+	const showResult = () => {
+		clearMessage();
+		return result;
+	};
 	$: ({ todos, user } = data);
+
 	let selectedAuthorId = '';
 	const authorId = data?.user?.id;
-	// ('authorId', data.user.id);
 </script>
 
+<!-- <pre style="font-size:11px;"> {JSON.stringify(form?.message, null, 2)}</pre> -->
 <h1>
 	Todo Page
 	{#if data.user.role === 'ADMIN'}
@@ -62,23 +79,21 @@
 				</option>
 			{/each}
 		</select>
-	{:else}
-		<p>{user.firstName} {user.lastName}</p>
 	{/if}
 	{#if result}
-		<span class="message">{result}</span>
+		<span class="message">{showResult()}</span>
 	{/if}
-	<span class="message">{user.firstName} {user.lastName}</span>
+	<span class="user-name">{user.firstName} {user.lastName}</span>
 </h1>
 <div class="board">
 	<form method="POST" action="?/create" use:enhance>
 		<div class="two-inputs">
 			<input type="hidden" name="userId" value={authorId} />
-			<input type="text" placeholder="enter todo title?" name="title" />
+			<input type="text" name="title" placeholder="enter todo title" />
 			<input type="number" name="priority" placeholder="Priority" />
 		</div>
 		<div class="two-inputs">
-			<input type="text" placeholder="enter todo content" name="content" />
+			<input type="text" name="content" placeholder="enter todo content" />
 			<button type="submit">save</button>
 		</div>
 	</form>
@@ -91,12 +106,6 @@
 		<TodoList {todos} completed={true} {toggleCompleted} {deleteTodo} />
 	</div>
 </div>
-{#if form?.error}
-	<p>{form.error}</p>
-{/if}
-{#if form?.success}
-	<p>{form?.success}</p>
-{/if}
 
 <style lang="scss">
 	.board {
@@ -133,7 +142,6 @@
 				display: inline-block;
 				[type='number'] {
 					width: 5.1rem;
-					// color: red;
 					padding-left: 2px;
 				}
 				font-size: 1.1em;
@@ -162,12 +170,16 @@
 		display: flex;
 		align-items: baseline;
 		margin-left: 1rem;
-		.message {
+		.message,
+		.user-name {
 			display: inline-block;
 			font-size: 14px;
 			font-weight: 100;
-			// color: yellow;
+			color: yellow;
 			margin-left: 1rem;
+		}
+		.user-name {
+			color: white;
 		}
 		select {
 			margin-left: 1rem;

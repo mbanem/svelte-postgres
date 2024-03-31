@@ -50,6 +50,7 @@ a {
 	text-decoration: none;
 	text-align: center;
 	cursor: pointer;
+	user-select: none;
 	&:hover,
 	&:focus-visible {
 		color: $LINK-HOVER;

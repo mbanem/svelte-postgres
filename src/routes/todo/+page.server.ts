@@ -73,57 +73,47 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
 }) satisfies PageServerLoad;
 
 type InputData = {
+	userId: string;
 	title: string;
 	content: string;
 	priority: number;
-	userId: string;
 };
 export const actions: Actions = {
 	create: async ({ request }) => {
-		// const { title, content, priority, userId } = Object.fromEntries(
-		const obj = Object.fromEntries(
+		const input_data = Object.fromEntries(
 			// @ts-expect-error
 			await request.formData()
 		) as InputData;
-		// 	{
-		// 	title: string;
-		// 	content: string;
-		// 	priority: number;
-		// 	userId: string;
-		// };
-		// ('obj', JSON.stringify(obj, null, 2));
-		const { title, content, priority, userId } = obj;
-		// content, priority, userId);
-		if (!(title || content || userId)) {
-			fail(400, {
+
+		input_data.priority = Number(input_data.priority);
+		const { title, content, priority, userId } = input_data;
+		if (title === '' || content === '' || userId === '') {
+			return fail(400, {
 				data: { title, content, priority, userId },
 				message: 'Insufficient data supplied'
 			});
 		}
-		let newTodo: any;
+		const allData = {
+			...input_data,
+			updatedAt: new Date() // schema left this field non-default
+		};
+
 		try {
-			// ('try todo.create');
-			const rest = {
-				id: uuidv4(),
-				updatedAt: new Date()
-			};
-			newTodo = db.todo.create({
-				data: { ...rest, ...obj }
+			const newTodo = await db.todo.create({
+				data: {
+					title,
+					content,
+					priority: Number(priority),
+					userId,
+					updatedAt: new Date()
+				}
 			});
-			// gify({ ...rest, ...obj }, null, 2));
-			// o', JSON.stringify(newTodo, null, 2));
-			// 		title,
-			// 		content,
-			// 		priority,
-			// 		userId: userId
-			// 	}
-			// });
 		} catch (err) {
-			console.log('newTodo', JSON.stringify(newTodo, null, 2));
-			return fail(500, { error: 'internal error occurred' });
+			return fail(500, { message: 'internal error occurred' });
 		}
+
 		return {
-			success: obj.title
+			message: 'todo successfully created'
 		};
 	}
 } satisfies Actions;

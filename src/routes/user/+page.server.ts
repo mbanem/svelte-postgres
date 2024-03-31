@@ -12,6 +12,25 @@ export const load: PageServerLoad = (async ({ url }) => {
 		const user = await db.user.findUnique({
 			where: {
 				id: url.searchParams.get('id') as string
+			},
+			include: {
+				profile: {
+					select: {
+						bio: true
+					}
+				},
+				posts: {
+					select: {
+						title: true,
+						content: true
+					}
+				},
+				articles: {
+					select: {
+						title: true,
+						content: true
+					}
+				}
 			}
 		});
 		if (!user) {

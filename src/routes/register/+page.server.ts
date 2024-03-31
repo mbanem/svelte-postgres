@@ -21,7 +21,7 @@ export const actions: Actions = {
 			password: string;
 		};
 		// console.log('entered data', firstName, lastName, email, password);
-		if (!(firstName && lastName && email)) {
+		if (firstName === '' || lastName === '' || email === '') {
 			return fail(400, {
 				data: { firstName, lastName, email },
 				message: 'Insufficient data supplied'
@@ -36,7 +36,7 @@ export const actions: Actions = {
 			}
 		});
 		if (existingUser) {
-			// ('existingUser', JSON.stringify(existingUser));
+			// console.log('existingUser', JSON.stringify(existingUser));
 			return fail(400, { data: { firstName, lastName, email }, message: 'Unacceptable data' });
 		} else {
 			const user = await db.user.create({
@@ -46,7 +46,7 @@ export const actions: Actions = {
 					email,
 					passwordHash: await bcrypt.hash(password, 10),
 					userAuthToken: crypto.randomUUID()
-					// role: 'USER'		// a default in db
+					// role: 'USER'		// default by Prisma schema
 				}
 			});
 		}

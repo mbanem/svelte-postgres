@@ -4,8 +4,8 @@ import { fail, type Actions, type RequestEvent, json, redirect, error } from '@s
 import { db } from '$lib/server/db';
 
 export const load: PageServerLoad = (async ({ locals, cookies }) => {
-	// admin should be able to see all todos of any user
-	// so we have to load all todos with user info
+	// admin should be able to see all posts of any user
+	// so we have to load all posts with user info
 	// type UPosts = ({
 	// 	user: {
 	// 		id: string;
@@ -46,7 +46,8 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
 					select: {
 						id: true,
 						firstName: true,
-						lastName: true
+						lastName: true,
+						role: true
 					}
 				}
 			}

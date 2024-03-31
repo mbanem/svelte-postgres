@@ -8,13 +8,21 @@ import { fail, json, type RequestHandler } from '@sveltejs/kit';
 // that can deliver data: PageData to +page.svelte
 
 export const PATCH = (async ({ url }) => {
-	// searchParams id', url.searchParams.get('id'));
+	console.log('PATCH searchParams id', JSON.stringify(url.searchParams.get('id'), null, 2));
 
 	return json({ toggled: true });
 }) satisfies RequestHandler;
 
 export const DELETE = (async ({ url }) => {
-	// ('DELETE searchParams id', JSON.stringify(url.searchParams.get('id'), null, 2));
-
+	console.log('DELETE searchParams id', JSON.stringify(url.searchParams.get('id'), null, 2));
+	try {
+		await db.todo.delete({
+			where: {
+				id: url.searchParams.get('id') as string
+			}
+		});
+	} catch (err) {
+		return json({ deleted: false });
+	}
 	return json({ deleted: true });
 }) satisfies RequestHandler;
