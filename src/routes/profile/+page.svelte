@@ -10,14 +10,15 @@
 	let success = '';
 	let loading = false;
 	let selectedAuthorId = '';
+	let selectedUserWithBio: Bio;
 
 	const createProfile: SubmitFunction = ({ action }) => {
 		success = '';
-		loading = true; // start busy animation
+		loading = true; // start spinner animation
 
 		return async ({ update }) => {
 			await update();
-			loading = false; // stop budy animation
+			loading = false; // stop spinner animation
 			success = action.search.slice(2) === 'addTodo' ? 'New todo added' : 'All todos cleared';
 			setTimeout(() => {
 				// imitate network latency
@@ -65,7 +66,7 @@
 		for (let i = 0; i < queryProfiles.length; i++) {
 			if (queryProfiles[i]?.user?.id === id) {
 				const { id, bio, user } = queryProfiles[i];
-				return { id, bio, user };
+				return { id, bio, user } as Bio;
 			}
 		}
 	};

@@ -12,6 +12,11 @@ declare global {
 	};
 	type QueryPosts = (Post & Author)[];
 
+	type Bio {
+		id: string
+		bio: string
+		user: User
+	}
 	type Session = {
 		userAuthToken: string;
 		firstName: string;

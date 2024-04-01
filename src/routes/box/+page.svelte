@@ -1,15 +1,16 @@
 <script type="ts">
 	import Box from '$lib/components/Box.svelte';
-	let name = 'Mr. Filip Isakovic';
+	let city = 'San Diego';
+	// let name = 'Mr. Filip Isakovic';
 	let age = 18;
-	let person = { name, age };
+	let person = { name: 'Mr. Filip Isakovic', age: 18 };
 	$: nameUpper = person.name.toUpperCase();
 </script>
 
 <h2>Child actions on bind:person parent prop</h2>
-<Box bind:person />
+<Box bind:person userAge={age} {city} />
 
-<p>Reactive child value in the parent: {nameUpper}</p>
+<p>Reactive child controlled value displayed in the parent: {nameUpper}</p>
 <p style="color:yellow">{person.name} is of age {person.age}</p>
 
 <pre>

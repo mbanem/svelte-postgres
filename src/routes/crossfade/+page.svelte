@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { crossfade } from 'svelte/transition';
-
+	import CircleSpinner from '$lib/components/CircleSpinner.svelte';
 	const [send, receive] = crossfade({
 		duration: 2000
 	});
@@ -10,6 +10,11 @@
 	// function handleClick() {
 	// 	foo = !foo;
 	// }
+
+	let loading = false;
+	const toggleLoading = () => {
+		loading = !loading;
+	};
 </script>
 
 <h1>Crossfade Page</h1>
@@ -21,6 +26,11 @@
 		<div class="b" in:send={{ key: 'x' }} out:receive={{ key: 'x' }}>and me as well</div>
 	{/if}
 </div>
+
+<btton on:click={toggleLoading}>toggle loading</btton>
+{#if loading}
+	<CircleSpinner />
+{/if}
 
 <style lang="scss">
 	.main {

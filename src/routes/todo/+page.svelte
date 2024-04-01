@@ -2,6 +2,7 @@
 	import { enhance } from '$app/forms';
 	import TodoList from '$lib/components/TodoList.svelte';
 	import type { PageData, ActionData } from './$types';
+	import PageTitleCombo from '$lib/components/PageTitleCombo.svelte';
 
 	export let data: PageData;
 	export let form: ActionData;
@@ -52,8 +53,9 @@
 			todos = todos.filter((todo) => todo.id !== id);
 		}
 	};
-
-	$: result = deleted || toggled || form?.message;
+	$: message = form?.message;
+	$: result = toggled || deleted || message;
+	// $: message = form?.message ?? '';
 	// setting result will call showMessage and this onw will setTimeout
 	// to clear the message after several seconds
 	const showResult = () => {
@@ -62,29 +64,23 @@
 	};
 	$: ({ todos, user } = data);
 
-	let selectedAuthorId = '';
+	let selectedUserId = '';
 	const authorId = data?.user?.id;
 </script>
 
-<!-- <pre style="font-size:11px;"> {JSON.stringify(form?.message, null, 2)}</pre> -->
-<h1>
-	Todo Page
-	{#if data.user.role === 'ADMIN'}
-		<select class="select-author" bind:value={selectedAuthorId}>
-			<option value="" selected>Select Todo Author</option>
-			{#each data.users as user}
-				<option value={user.id}>
-					{user.firstName}
-					{user.lastName}
-				</option>
-			{/each}
-		</select>
-	{/if}
-	{#if result}
-		<span class="message">{showResult()}</span>
-	{/if}
-	<span class="user-name">{user.firstName} {user.lastName}</span>
-</h1>
+<pre style="font-size:11px;"> {JSON.stringify(message, null, 2)}</pre>
+<!-- <pre style="font-size:11px;"> {JSON.stringify(toggled, null, 2)}</pre> -->
+<PageTitleCombo
+	bind:result
+	bind:deleted
+	bind:toggled
+	bind:message
+	bind:selectedUserId
+	PageName="Todo"
+	user={data.user}
+	users={data.users}
+/>
+
 <div class="board">
 	<form method="POST" action="?/create" use:enhance>
 		<div class="two-inputs">
@@ -166,23 +162,23 @@
 		margin-left: 1rem;
 		border-bottom: 1px solid gray;
 	}
-	h1 {
-		display: flex;
-		align-items: baseline;
-		margin-left: 1rem;
-		.message,
-		.user-name {
-			display: inline-block;
-			font-size: 14px;
-			font-weight: 100;
-			color: yellow;
-			margin-left: 1rem;
-		}
-		.user-name {
-			color: white;
-		}
-		select {
-			margin-left: 1rem;
-		}
-	}
+	// h1 {
+	// 	display: flex;
+	// 	align-items: baseline;
+	// 	margin-left: 1rem;
+	// 	.message,
+	// 	.user-name {
+	// 		display: inline-block;
+	// 		font-size: 14px;
+	// 		font-weight: 100;
+	// 		color: yellow;
+	// 		margin-left: 1rem;
+	// 	}
+	// 	.user-name {
+	// 		color: white;
+	// 	}
+	// 	select {
+	// 		margin-left: 1rem;
+	// 	}
+	// }
 </style>
