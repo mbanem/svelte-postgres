@@ -1,5 +1,5 @@
 <script lang="ts">
-	export let color = `cornflowerblue`;
+	export let color = `black`;
 	export let duration = `1.5s`;
 	export let size = `1em`;
 </script>
@@ -24,6 +24,7 @@
 		position: absolute;
 		top: 20%;
 		left: 0;
+		color: black;
 	}
 	@keyframes rotate {
 		100% {

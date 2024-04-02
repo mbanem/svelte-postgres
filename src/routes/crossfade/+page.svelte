@@ -5,34 +5,35 @@
 	import { onMount } from 'svelte';
 	let start: boolean = true;
 	let [send, receive] = crossfade({
-		duration: 2
+		duration: 2000
 	});
 
-	// function handleClick() {
-	// 	start = !start;
-	// }
+	function handleClick() {
+		start = !start;
+	}
 
 	let loading = false;
 	const toggleLoading = () => {
-		loading = !loading;
+		// loading = !loading;
 	};
 
 	const handleStart = () => {
 		console.log('Transition started!');
+		loading = !loading;
 	};
 
 	const handleEnd = () => {
 		console.log('Transition ended!');
+		loading = !loading;
 	};
 
 	onMount(async () => {
-		start = false;
-		// just
-		await tick();
-		[send, receive] = crossfade({
-			duration: 2000
-		});
-		start = true;
+		// start = false;
+		// await tick();
+		// [send, receive] = crossfade({
+		// 	duration: 2000
+		// });
+		// start = true;
 		// setTimeout(() => {
 		// 	start = true;
 		// }, 0);
@@ -90,21 +91,24 @@
 		padding: 3px 1rem;
 		cursor: pointer;
 		&:hover {
-			border: 1px solid yellow;
+			// border: 1px solid yellow;
 			color: yellow;
 		}
 		&:active {
 			color: lightgreen;
+			border: 4px solid lightgreen;
 		}
 	}
 	.a {
 		position: absolute;
 		top: 2rem;
 		left: 2rem;
+		border: 4px solid yellow;
 	}
 	.b {
 		position: absolute;
 		top: 12rem;
-		left: 30rem;
+		left: 20rem;
+		border: 4px solid lightgreen;
 	}
 </style>
