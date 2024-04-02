@@ -21,6 +21,9 @@
 		border-style: solid;
 		border-radius: 50%;
 		animation: var(--duration) infinite rotate;
+		position: absolute;
+		top: 20%;
+		left: 0;
 	}
 	@keyframes rotate {
 		100% {

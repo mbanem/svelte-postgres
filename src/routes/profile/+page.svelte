@@ -92,7 +92,7 @@
 
 	$: ({ user, users, queryProfiles } = data);
 	$: selectedAuthorId = user.id;
-	$: selectedUserWithBio = getUserWithBio(selectedAuthorId) || form?.bio || '';
+	$: selectedUserWithBio = getUserWithBio(selectedAuthorId) as Bio;
 </script>
 
 <!-- <pre style="font-size:11px;">form {JSON.stringify(form, null, 2)}</pre> -->

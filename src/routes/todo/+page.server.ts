@@ -78,8 +78,19 @@ type InputData = {
 	content: string;
 	priority: number;
 };
+
+const sleep = async (ms: number) => {
+	return new Promise((resolve) => {
+		setTimeout(() => {
+			// ms here is a dummy value but required by
+			// resolve to get some argument
+			resolve(ms);
+		}, ms);
+	});
+};
+
 export const actions: Actions = {
-	create: async ({ request }) => {
+	addTodo: async ({ request }) => {
 		const input_data = Object.fromEntries(
 			// @ts-expect-error
 			await request.formData()
@@ -112,8 +123,9 @@ export const actions: Actions = {
 			return fail(500, { message: 'internal error occurred' });
 		}
 
+		await sleep(2000);
 		return {
-			message: 'todo successfully created'
+			success: 'todo successfully created'
 		};
 	}
 } satisfies Actions;

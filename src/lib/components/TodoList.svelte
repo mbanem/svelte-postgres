@@ -6,11 +6,25 @@
 	export let completed = false;
 	export let toggleCompleted: (id: string) => void;
 	export let deleteTodo: (id: string) => void;
+
+	const handleStart = () => {
+		console.log('Transition started!');
+	};
+
+	const handleEnd = () => {
+		console.log('Transition ended!');
+	};
 </script>
 
 <ul class="todos">
 	{#each todos.filter((todo) => todo.completed === completed) as todo (todo.id)}
-		<li class:uncompleted={!completed} in:send={{ key: todo.id }} out:receive={{ key: todo.id }}>
+		<li
+			class:uncompleted={!completed}
+			in:send={{ key: todo.id }}
+			out:receive={{ key: todo.id }}
+			on:introstart={handleEnd}
+			on:outroend={handleStart}
+		>
 			<label>
 				<input
 					type="checkbox"

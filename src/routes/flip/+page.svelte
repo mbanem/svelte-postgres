@@ -29,7 +29,7 @@
 <div class="container">
 	<div data-layout={layout}>
 		{#each { length: 10 } as circle, id}
-			<img class="circle" src="https://picsum.photos/100/100?id={id + 30}" alt="placeholder" />
+			<img class="circle" src="https://picsum.photos/100/100?id={id + 10}" alt="placeholder" />
 		{/each}
 	</div>
 </div>

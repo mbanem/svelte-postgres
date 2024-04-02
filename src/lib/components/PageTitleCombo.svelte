@@ -4,28 +4,21 @@
 	export let selectedUserId: string;
 	export let users: any[];
 	export let result: string = '';
+	export let saving: string = '';
 	export let deleted: string = '';
 	export let toggled: string = '';
-	export let message: string = '';
-	export let loading: boolean = false;
+	export let ignoreMessage: boolean = false;
 
-	import { Spinner } from 'flowbite-svelte';
-	import { browser } from '$app/environment';
 	// $: result = deleted || toggled || '';
 
-	const setColor = (color: string) => {
-		if (browser) {
-			document.documentElement.style.setProperty('--PLACEHOLDER_COLOR', color);
-		}
-	};
 	let msgEl: HTMLSpanElement;
 	const clearMessage = () => {
 		setTimeout(() => {
-			// message = '';
 			deleted = '';
 			toggled = '';
-			message = '';
+			saving = '';
 			result = '';
+			ignoreMessage = true;
 			msgEl.innerText = '';
 		}, 2000);
 	};
