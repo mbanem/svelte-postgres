@@ -120,7 +120,7 @@
 	const authorId = data?.user?.id;
 </script>
 
-<pre style="font-size:11px;"> {JSON.stringify(ignoreMessage, null, 2)}</pre>
+<!-- <pre style="font-size:11px;"> {JSON.stringify(ignoreMessage, null, 2)}</pre> -->
 <!-- <pre style="font-size:11px;"> {JSON.stringify(toggled, null, 2)}</pre> -->
 <PageTitleCombo
 	bind:result

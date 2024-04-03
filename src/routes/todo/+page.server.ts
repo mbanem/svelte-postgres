@@ -8,6 +8,10 @@ import { error, fail } from '@sveltejs/kit';
 // instead we should use this +page.server.ts as it
 // has +page in its name and so it has a load function
 // that can deliver data: PageData to +page.svelte
+// as export let data: PageData
+// though +layout.server.ts delivers to +layout.svelte
+// import type { LayoutData } from './$types'
+// where import type { LayoutData } from './$types'
 
 export const load: PageServerLoad = (async ({ locals, cookies }) => {
 	// admin should be able to see all todos of any user
@@ -89,6 +93,9 @@ const sleep = async (ms: number) => {
 	});
 };
 
+// we could implement patchTodo  and deleteTodo here but
+// we decided to implement in an end-point +server.ts
+// which is more cumbersome
 export const actions: Actions = {
 	addTodo: async ({ request }) => {
 		const input_data = Object.fromEntries(
