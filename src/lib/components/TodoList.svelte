@@ -6,6 +6,7 @@
 	export let completed = false;
 	export let toggleCompleted: (id: string) => void;
 	export let deleteTodo: (id: string) => void;
+	export let prepareUpdate: (id: string) => void;
 
 	const handleStart = () => {
 		console.log('Transition started!');
@@ -33,6 +34,7 @@
 				/>
 				<span>{todo.content}</span>
 				<button on:click={() => deleteTodo(todo.id)} aria-label="Delete Todo">❌</button>
+				<button on:click={() => prepareUpdate(todo.id)} aria-label="Update Todo"> 🖊️</button>
 			</label>
 		</li>
 	{/each}

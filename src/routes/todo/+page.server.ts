@@ -29,7 +29,6 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
 	if (!userAuthToken) {
 		throw error(400, 'User cookie not found');
 	}
-	// console.log('get user vua userAuthToken', userAuthToken);
 	const user = await db.user.findUnique({
 		where: {
 			userAuthToken: cookies.get('session')
@@ -38,7 +37,6 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
 	if (!user) {
 		throw error(400, 'User not found');
 	}
-	// console.log('user', JSON.stringify(user, null, 2));
 	if (locals.user?.role === 'ADMIN') {
 		todos = await db.todo.findMany({
 			include: {
@@ -77,6 +75,7 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
 }) satisfies PageServerLoad;
 
 type InputData = {
+	id?: string;
 	userId: string;
 	title: string;
 	content: string;
@@ -104,10 +103,10 @@ export const actions: Actions = {
 		) as InputData;
 
 		input_data.priority = Number(input_data.priority);
-		const { title, content, priority, userId } = input_data;
+		const { userId, title, content, priority } = input_data;
 		if (title === '' || content === '' || userId === '') {
 			return fail(400, {
-				data: { title, content, priority, userId },
+				data: { userId, title, content, priority },
 				message: 'Insufficient data supplied'
 			});
 		}
@@ -134,5 +133,40 @@ export const actions: Actions = {
 		return {
 			success: 'todo successfully created'
 		};
+	},
+	updateTodo: async ({ request }) => {
+		const input_data = Object.fromEntries(
+			// @ts-expect-error
+			await request.formData()
+		) as InputData;
+
+		// turn priority to numeric
+		input_data.priority = Number(input_data.priority);
+		const { id, userId, title, content, priority } = input_data;
+		if (id === '' || userId === '' || title === '' || content === '') {
+			return fail(400, {
+				data: { id, userId, title, content, priority },
+				message: 'Insufficient data supplied'
+			});
+		}
+		try {
+			await db.todo.update({
+				where: {
+					id
+				},
+				data: {
+					title,
+					content,
+					priority,
+					updatedAt: new Date()
+				}
+			});
+			await sleep(2000);
+			return {
+				success: 'todo successfully updated'
+			};
+		} catch (err) {
+			console.log('error', err);
+		}
 	}
 } satisfies Actions;

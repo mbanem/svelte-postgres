@@ -7,6 +7,7 @@
 	// https://flowbite-svelte.com/docs/components/spinner
 	import CircleSpinner from '$lib/components/CircleSpinner.svelte';
 	import { browser } from '$app/environment';
+	import { page } from '$app/stores';
 
 	export let data: PageData;
 	export let form: ActionData;
@@ -39,6 +40,7 @@
 	let phTitle = '';
 	let phContent = '';
 	const enhanceAddTodo: SubmitFunction = ({ action, formData }) => {
+		// console.log('page SubmitFunction enhanceAddTodo');
 		success = '';
 		phTitle = '';
 		ignoreMessage = false;
@@ -54,12 +56,19 @@
 
 		// processing before form submit
 		loading = true;
-		saving = 'saving todo...';
+		saving = action.search === '?/addTodo' ? 'saving todo...' : 'updating todo...';
 
 		return async ({ update }) => {
 			await update();
 			loading = false;
-			success = action.search === '?/addTodo' ? 'New todo added' : 'What to put here?';
+			// console.log('action.search', action.search);
+			// console.log('$page.status', $page.status);
+			// console.log('action', JSON.stringify(action, null, 2));
+			if (action.search === '?/addTodo') {
+				success = $page.status === 400 ? 'New todo added' : 'Adding todo failed';
+			} else if (action.search === '?/updateTodo') {
+				success = $page.status === 400 ? 'todo updated' : 'update failed';
+			}
 			ignoreMessage = true;
 		};
 	};
@@ -101,14 +110,44 @@
 		// for several seconds and then clear it out
 		deleted = data.deleted ? 'deleted successfully' : 'delete failed';
 		if (deleted) {
-			todos = todos.filter((todo) => todo.id !== id);
+			data.todos = data.todos.filter((todo: Todo) => todo.id !== id);
 		}
 	};
+
+	const toggleButtons = () => {
+		btnSave.classList.toggle('hidden');
+		btnUpdate.classList.toggle('hidden');
+	};
+	let todoIdEl: HTMLInputElement;
+	const prepareDataForEdit = (todoId: string) => {
+		const todo = data.todos.filter((todo) => todo.id === todoId)[0] as Partial<Todo>;
+		todoIdEl.value = todo.id as string;
+		console.log('todo', JSON.stringify(todo, null, 2));
+		(document.querySelector("input[name='userId']") as HTMLInputElement).value =
+			todo.userId as string;
+		(document.querySelector("input[name='title']") as HTMLInputElement).value =
+			todo.title as string;
+		(document.querySelector("input[name='content']") as HTMLInputElement).value =
+			todo.content as string;
+		(document.querySelector("input[name='priority']") as HTMLInputElement).value = String(
+			todo.priority
+		);
+		toggleButtons();
+	};
+
+	let updated = '';
+	let btnSave: HTMLButtonElement;
+	let btnUpdate: HTMLButtonElement;
+	let theForm: HTMLFormElement;
+	const prepareUpdate = async (todoId: string) => {
+		loading = true;
+		prepareDataForEdit(todoId);
+	};
+
 	$: message = ignoreMessage ? '' : form?.message ?? '';
-	$: result = toggled || deleted || saving || message;
-	// $: message = form?.message ?? '';
 	// setting result will call showMessage and this onw will setTimeout
 	// to clear the message after several seconds
+	$: result = toggled || deleted || updated || saving || message;
 	const showResult = () => {
 		clearMessage();
 		return result;
@@ -120,7 +159,9 @@
 	const authorId = data?.user?.id;
 </script>
 
-<!-- <pre style="font-size:11px;"> {JSON.stringify(ignoreMessage, null, 2)}</pre> -->
+<pre style="font-size:11px;"> {JSON.stringify(data?.user?.id, null, 2)}</pre>
+<pre style="font-size:11px;"> {JSON.stringify(authorId, null, 2)}</pre>
+
 <!-- <pre style="font-size:11px;"> {JSON.stringify(toggled, null, 2)}</pre> -->
 <PageTitleCombo
 	bind:result
@@ -135,29 +176,38 @@
 />
 
 <div class="board">
-	<form method="POST" action="?/addTodo" use:enhance={enhanceAddTodo}>
+	<form bind:this={theForm} method="POST" action="?/addTodo" use:enhance={enhanceAddTodo}>
 		<div class="two-inputs">
+			<input bind:this={todoIdEl} type="hidden" name="id" value="mili" />
 			<input type="hidden" name="userId" value={authorId} />
 			<input type="text" name="title" placeholder={phTitle ?? 'enter todo title'} />
 			<input type="number" name="priority" placeholder="Priority" />
 		</div>
 		<div class="two-inputs">
 			<input type="text" name="content" placeholder={phContent ?? 'enter todo content'} />
-			<button type="submit" style="text-align:center;position:relative;">
-				{#if loading}
-					<CircleSpinner color="blue" />
-				{/if}
-				save
-			</button>
+			<div>
+				<button bind:this={btnSave} type="submit" style="text-align:center;position:relative;">
+					{#if loading}
+						<CircleSpinner color="blue" />
+					{/if}
+					save
+				</button>
+				<button bind:this={btnUpdate} formaction="?/updateTodo" type="submit" class="hidden">
+					{#if loading}
+						<CircleSpinner color="blue" />
+					{/if}
+					update
+				</button>
+			</div>
 		</div>
 	</form>
 	<div class="left-column">
 		<h3>todo</h3>
-		<TodoList {todos} completed={false} {toggleCompleted} {deleteTodo} />
+		<TodoList {todos} completed={false} {toggleCompleted} {prepareUpdate} {deleteTodo} />
 	</div>
 	<div class="right-column">
 		<h3>done</h3>
-		<TodoList {todos} completed={true} {toggleCompleted} {deleteTodo} />
+		<TodoList {todos} completed={true} {toggleCompleted} {prepareUpdate} {deleteTodo} />
 	</div>
 </div>
 
@@ -215,6 +265,9 @@
 					padding: 6px 0;
 					color: black;
 				}
+				.hidden {
+					display: none;
+				}
 			}
 		}
 	}
@@ -224,6 +277,7 @@
 		margin-left: 1rem;
 		border-bottom: 1px solid gray;
 	}
+
 	// h1 {
 	// 	display: flex;
 	// 	align-items: baseline;

@@ -13,7 +13,7 @@
 
 		/* Language and Environment */
 		"target": "ESNext",
-		"lib": ["es6", "ESNext"],
+		"lib": ["ESNext"], // ["es6', "ESNext"]
 		// "jsx": "preserve",
 		// "experimentalDecorators": false,
 		// "emitDecoratorMetadata": true,
