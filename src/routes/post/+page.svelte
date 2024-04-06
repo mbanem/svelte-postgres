@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import type { PageData, ActionData } from './$types';
+	import PageTitleCombo from '$lib/components/PageTitleCombo.svelte';
+
 	import MultiSelect from '$lib/components/MultiSelect.svelte';
 	import { onMount } from 'svelte';
 

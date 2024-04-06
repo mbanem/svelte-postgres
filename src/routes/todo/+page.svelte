@@ -144,23 +144,23 @@
 		prepareDataForEdit(todoId);
 	};
 
-	$: message = ignoreMessage ? '' : form?.message ?? '';
+	$: formMessage = ignoreMessage ? '' : form?.message ?? '';
 	// setting result will call showMessage and this onw will setTimeout
 	// to clear the message after several seconds
-	$: result = toggled || deleted || updated || saving || message;
+	$: result = toggled || deleted || updated || saving || formMessage;
 	const showResult = () => {
 		clearMessage();
 		return result;
 	};
-
+	1;
 	$: ({ todos, user } = data);
 
 	let selectedUserId = '';
 	const authorId = data?.user?.id;
 </script>
 
-<pre style="font-size:11px;"> {JSON.stringify(data?.user?.id, null, 2)}</pre>
-<pre style="font-size:11px;"> {JSON.stringify(authorId, null, 2)}</pre>
+<!-- <pre style="font-size:11px;"> {JSON.stringify(data?.user?.id, null, 2)}</pre>
+<pre style="font-size:11px;"> {JSON.stringify(authorId, null, 2)}</pre> -->
 
 <!-- <pre style="font-size:11px;"> {JSON.stringify(toggled, null, 2)}</pre> -->
 <PageTitleCombo

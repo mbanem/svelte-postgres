@@ -9,8 +9,6 @@
 	export let toggled: string = '';
 	export let ignoreMessage: boolean = false;
 
-	// $: result = deleted || toggled || '';
-
 	let msgEl: HTMLSpanElement;
 	const clearMessage = () => {
 		setTimeout(() => {
