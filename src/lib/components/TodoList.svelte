@@ -1,7 +1,7 @@
 <script lang="ts">
-	// import { flip } from 'svelte/animate';
 	import { send, receive } from '$utils/transitions';
-
+	import { onMount } from 'svelte';
+	export let id: string = '';
 	export let todos: Todo[] = [];
 	export let completed = false;
 	export let toggleCompleted: (id: string) => void;
@@ -32,15 +32,18 @@
 					checked={todo.completed}
 					on:click|preventDefault={() => toggleCompleted(todo.id)}
 				/>
-				<span>{todo.content}</span>
+				<span class:blue={todo.userId === id}>{todo.content}</span>
 				<button on:click={() => deleteTodo(todo.id)} aria-label="Delete Todo">❌</button>
-				<button on:click={() => prepareUpdate(todo.id)} aria-label="Update Todo"> 🖊️</button>
+				<button on:click={() => prepareUpdate(todo.id)} aria-label="Update Todo"> 📝</button>
 			</label>
 		</li>
 	{/each}
 </ul>
 
 <style lang="scss">
+	.blue {
+		color: skyblue;
+	}
 	.todos {
 		margin-left: 1rem;
 		padding: 0;

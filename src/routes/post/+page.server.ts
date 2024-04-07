@@ -28,16 +28,13 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
 		throw error(400, 'User not found');
 	}
 	// console.log('user', JSON.stringify(user, null, 2));
-	// let queryPosts: QueryPosts = [];
-	let queryPosts: QueryPosts = [];
+	// let PostAuthor: PostAuthor = [];
+	let PostAuthor: PostAuthor = [];
 	if (locals.user?.role === 'ADMIN') {
-		queryPosts = await db.post.findMany({
-			include: {
-				author: true
-			}
-		});
+		PostAuthor =
+			await db.$queryRaw`select p.id, p.title, p.content, u.id as "authorId", u.first_name as "firstName", u.last_name as "lastName", u.role from post p join users u on p.author_id=u.id order by u.first_name asc, u.last_name asc`;
 	} else {
-		queryPosts = await db.post.findMany({
+		PostAuthor = await db.post.findMany({
 			where: {
 				authorId: user.id
 			},
@@ -53,8 +50,8 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
 			}
 		});
 	}
-	// console.log('queryPosts', JSON.stringify(queryPosts, null, 2));
-	const userIDs = [...new Set(queryPosts.map((el) => el.author.id))];
+	// console.log('PostAuthor', JSON.stringify(PostAuthor, null, 2));
+	const userIDs = [...new Set(PostAuthor.map((el) => el.authorId))];
 	const users = await db.user.findMany({
 		where: {
 			id: {
@@ -71,7 +68,7 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
 	const categories: { id: number; name: string }[] = await db.category.findMany();
 	// console.log('categories', JSON.stringify(categories, null, 2));
 	return {
-		queryPosts, // as Todo[] is important for TypeScript
+		PostAuthor, // as Todo[] is important for TypeScript
 		user,
 		users,
 		categories

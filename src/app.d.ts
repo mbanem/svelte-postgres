@@ -9,14 +9,23 @@ declare global {
 		id: string;
 		firstName: string;
 		lastName: string;
+		role: string;
 	};
-	type QueryPosts = (Post & Author)[];
+	type PartialUser = {
+		id: string;
+		firstName: string;
+		lastName: string;
+		role: string;
+	};
 
-	type Bio {
-		id: string
-		bio: string
-		user: User
-	}
+	type PostAuthor = (Post & Author)[];
+	type UserProfile = Profile & PartialUser;
+
+	type Bio = {
+		id: string;
+		bio: string;
+		user: Partial<User>;
+	};
 	type Session = {
 		userAuthToken: string;
 		firstName: string;
@@ -84,6 +93,7 @@ declare global {
 		// interface Error {}
 		interface Locals {
 			user: {
+				id: string;
 				firstName: string;
 				lastName: string;
 				role: Role;

@@ -2,80 +2,95 @@
 	import type { PageData, ActionData } from './$types';
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import { enhance } from '$app/forms';
+	import { invalidateAll } from '$app/navigation';
+	import { page } from '$app/stores'; // for $age.status code on actions
+	import { setColor, toggleButtons } from '$lib/utils';
 	import { onMount } from 'svelte';
+
+	import PageTitleCombo from '$lib/components/PageTitleCombo.svelte';
 
 	export let data: PageData;
 	export let form: ActionData;
-
+	let message = '';
+	let bioIsRequired = '';
+	// form?.message cannot be cleared by code but could be ignored when necessary
+	let ignoreFormMessage = false;
 	let success = '';
 	let loading = false;
-	let selectedAuthorId = '';
+	let selectedUserId = '';
 	let selectedUserWithBio: Bio;
 
-	const createProfile: SubmitFunction = ({ action }) => {
-		success = '';
-		loading = true; // start spinner animation
+	$: setColor(form?.message ? 'red' : 'green'); // toggle color for a message
 
+	// if form is fill with  data for update but user chose other action we
+	// clear form input elements
+	const resetForm = () => {
+		(document.querySelector("input[name='bio']") as HTMLTextAreaElement).value = '';
+		(document.querySelector("input[name='authorId']") as HTMLInputElement).value = '';
+		(document.querySelector("input[name='bioId']") as HTMLInputElement).value = '';
+	};
+	// keep message displayed for several seconds
+	const clearMessage = () => {
+		setTimeout(() => {
+			message = '';
+			ignoreFormMessage = false;
+			result = '';
+		}, 2000);
+	};
+	const enhanceCreateProfile: SubmitFunction = ({ action, formData }) => {
+		message = '';
+		bioIsRequired = '';
+		ignoreFormMessage = false;
+		let bio = formData.get('bio');
+		if (bio === '') {
+			bioIsRequired = 'Biography is required field';
+			return;
+		}
+		loading = true; // start spinner animation
 		return async ({ update }) => {
 			await update();
 			loading = false; // stop spinner animation
-			success = action.search.slice(2) === 'addTodo' ? 'New todo added' : 'All todos cleared';
-			setTimeout(() => {
-				// imitate network latency
-				success = '';
-			}, 3000);
+			message =
+				action.search === '?/create'
+					? $page.status === 200
+						? 'Profile added'
+						: 'create failed'
+					: 'error occurred';
+			message =
+				action.search === '?/update'
+					? $page.status === 200
+						? 'Profile updated'
+						: 'Update failed'
+					: 'error occurred';
+
+			toggleButtons(btnCreate, btnUpdate, 'create');
+			clearMessage();
+			if (action.search === '?/update') {
+				selectedUserWithBio.bio = bio as string;
+			}
 		};
 	};
 	let adminSelected: boolean;
 	let selectedUserName: string;
-	let selBox: HTMLSelectElement;
+	// let selBox: HTMLSelectElement;
 	onMount(() => {
-		selectedAuthorId = data.user.id;
-		adminSelected = data.user.role === 'ADMIN';
-		if (adminSelected) {
-			if (data.users.length == 1) {
-				selBox.selectedIndex = 1;
-			} else {
-				for (let i = 0; i < selBox.options.length; i++) {
-					if (selBox.options[i]?.value.slice(2) === selectedAuthorId) {
-						// @ts-expect-error
-						selBox.options[i].selected = true;
-					}
-				}
-			}
-		}
-		selectedUserName = `${data.user.firstName} ${data.user.lastName}`;
+		// selectedUserId = data.locals.user.id;
+		adminSelected = data.locals.user.role === 'ADMIN';
+		selectedUserName = `${data.locals.user.firstName} ${data.locals.user.lastName}`;
 	});
-	const userSelected = () => {
-		selectedAuthorId = String(selBox.value).slice(2);
-		adminSelected = String(selBox.value).slice(0, 1) === 'T';
-		// @ts-expect-error
-		selectedUserName = selBox.options[selBox.selectedIndex].text;
-		// if no admin is selected hide boardBlock if not hidden already
-		// if (boardBlock.classList.contains('hidden')) {
-		// 	if (adminSelected) {
-		// 		boardBlock.classList.toggle('hidden');
-		// 	}
-		// } else {
-		// 	if (!adminSelected) {
-		// 		boardBlock.classList.toggle('hidden');
-		// 	}
-		// }
-	};
-	const getUserWithBio = (id: string) => {
-		for (let i = 0; i < queryProfiles.length; i++) {
-			if (queryProfiles[i]?.user?.id === id) {
-				const { id, bio, user } = queryProfiles[i];
+
+	const getUserWithBio = (id: string): Bio | undefined => {
+		for (let i = 0; i < userProfiles.length; i++) {
+			if (userProfiles[i]?.user?.id === id) {
+				// @ts-expect-error
+				const { id, bio, user } = userProfiles[i] as UserProfile;
 				return { id, bio, user } as Bio;
 			}
 		}
 	};
-	let createBtn: HTMLButtonElement;
-	let updateBtn: HTMLButtonElement;
-	const toggleSubmitButtons = () => {
-		createBtn.classList.toggle('hidden');
-		updateBtn.classList.toggle('hidden');
-	};
+	let btnCreate: HTMLButtonElement;
+	let btnUpdate: HTMLButtonElement;
+
 	let bioTextArea: HTMLTextAreaElement;
 	const canBeUpdated = (event: MouseEvent) => {
 		const divEl = event.currentTarget as HTMLDivElement;
@@ -84,55 +99,51 @@
 		// NOTE: in order to say divEl.dataset.userId HTML name must be data-user-id
 		// as DOMStringMap capitalize every occurrence of dash user-new-id --> userNewId
 		// console.log('user.id', user.id, 'dataset.userId', divEl.dataset.userId);
-		if (user.id === divEl.dataset.userId) {
+		if (data.locals.user.id === divEl.dataset.userId) {
 			bioTextArea.value = selectedUserWithBio?.bio;
-			toggleSubmitButtons();
+			toggleButtons(btnCreate, btnUpdate, 'update');
 		}
 	};
 
-	$: ({ user, users, queryProfiles } = data);
-	$: selectedAuthorId = user.id;
-	$: selectedUserWithBio = getUserWithBio(selectedAuthorId) as Bio;
+	$: ({ users, userProfiles } = data);
+	// $: selectedUserId = data.locals.user.id;
+	$: selectedUserWithBio = getUserWithBio(selectedUserId) as Bio;
+	$: formMessage = ignoreFormMessage ? '' : form?.message ?? '';
+	$: result = message || formMessage;
 </script>
 
+<!-- <pre style="font-size:11px;">data {JSON.stringify(data, null, 2)}</pre> -->
+<PageTitleCombo
+	bind:result
+	bind:message
+	bind:ignoreFormMessage
+	bind:selectedUserId
+	PageName="Profile"
+	user={data.locals.user}
+	users={data.users}
+/>
 <!-- <pre style="font-size:11px;">form {JSON.stringify(form, null, 2)}</pre> -->
-<h1>Profile Page</h1>
-<div class="author-list">
-	<!-- <p>Selected AuthorId {JSON.stringify(selectedAuthorId, null, 2)}</p> -->
-	<p>Select an Author</p>
-	{#if user.role === 'ADMIN'}
-		<select on:click={userSelected} bind:this={selBox} class="select-author">
-			<option value="">Select Profile Author</option>
-			{#each users as user}
-				<option value="{user.role === 'ADMIN' ? 'T-' : 'F-'}{user.id}">
-					{user.firstName}
-					{user.lastName}
-				</option>
-			{/each}
-		</select>
-	{/if}
-</div>
 
 <div class="container">
 	<div class="left-column">
 		<div>
-			Author Bio
-			<form action="?/create" method="post" use:enhance={createProfile}>
+			User Bio
+			<form action="?/create" method="post" use:enhance={enhanceCreateProfile}>
 				<textarea
 					bind:this={bioTextArea}
 					class="text-area"
-					placeholder="Place bio here"
+					placeholder={bioIsRequired ?? 'Place bio here'}
 					rows={5}
 					cols={35}
 					name="bio"
 					value={form?.success ? '' : form?.bio ?? ''}
 				/>
-				<input type="hidden" name="authorId" value={selectedAuthorId ?? ''} />
+				<input type="hidden" name="authorId" value={selectedUserId ?? ''} />
 				<input type="hidden" name="bioId" value={selectedUserWithBio?.id ?? ''} />
-				<button bind:this={createBtn} type="submit" disabled={selectedAuthorId === ''}
+				<button bind:this={btnCreate} type="submit" disabled={selectedUserId === ''}
 					>Create Profile</button
 				>
-				<button bind:this={updateBtn} type="submit" formaction="?/update" class="hidden"
+				<button bind:this={btnUpdate} type="submit" formaction="?/update" class="hidden"
 					>Update Profile</button
 				>
 			</form>
@@ -223,21 +234,21 @@
 			// }
 		}
 	}
-	.author-list {
-		display: flex;
-		align-items: baseline;
-		gap: 1rem;
-	}
-	.select-author {
-		padding-left: 2rem;
-		width: 15rem;
-		font-size: 16px;
-		font-weight: 300;
-		margin: 1rem 2.5rem 0 0;
-		:focus {
-			outline: 2px dashed red;
-		}
-	}
+	// .author-list {
+	// 	display: flex;
+	// 	align-items: baseline;
+	// 	gap: 1rem;
+	// }
+	// .select-author {
+	// 	padding-left: 2rem;
+	// 	width: 15rem;
+	// 	font-size: 16px;
+	// 	font-weight: 300;
+	// 	margin: 1rem 2.5rem 0 0;
+	// 	:focus {
+	// 		outline: 2px dashed red;
+	// 	}
+	// }
 
 	// ul {
 	// 	display: flex;
@@ -245,4 +256,10 @@
 	// 	text-align: center;
 	// 	margin: 2px auto;
 	// }
+	textarea {
+		&::placeholder {
+			color: var(--PLACEHOLDER_COLOR);
+			font-weight: normal;
+		}
+	}
 </style>

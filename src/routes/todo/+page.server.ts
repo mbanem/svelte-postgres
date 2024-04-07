@@ -65,8 +65,20 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
 			}
 		});
 	}
-	const users = [...new Set(todos.map((todo) => todo.user))];
-	// ('users with todos', JSON.stringify(users, null, 2));
+	const getUser = (id: string) => {
+		for (let i = 0; i < todos.length; i++) {
+			// @ts-expect-error
+			if (id === todos[i].id) {
+				return todos[i];
+			}
+		}
+	};
+	// const userIds = [...new Set(todos.map((todo) => todo.user.id))];
+	// const users = [...new Set(todos.map((todo) => todo.id))].map((id) => getUser(id));
+
+	const users =
+		await db.$queryRaw`select distinct t.user_id as "id", u.first_name as "firstName",u.last_name as "lastName", u.role from todo t join users u on u.id = t.user_id`;
+	// console.log('users from todos', JSON.stringify(users, null, 2));
 	return {
 		todos, // as Todo[] is important for TypeScript
 		user,
@@ -101,9 +113,10 @@ export const actions: Actions = {
 			// @ts-expect-error
 			await request.formData()
 		) as InputData;
-
+		// console.log('input_data', JSON.stringify(input_data, null, 2));
 		input_data.priority = Number(input_data.priority);
 		const { userId, title, content, priority } = input_data;
+		// console.log(userId, title, content, priority);
 		if (title === '' || content === '' || userId === '') {
 			return fail(400, {
 				data: { userId, title, content, priority },
@@ -125,6 +138,7 @@ export const actions: Actions = {
 					updatedAt: new Date()
 				}
 			});
+			// console.log('newTodo', JSON.stringify(newTodo, null, 2));
 		} catch (err) {
 			return fail(500, { message: 'internal error occurred' });
 		}
@@ -168,5 +182,24 @@ export const actions: Actions = {
 		} catch (err) {
 			console.log('error', err);
 		}
+	},
+	deleteTodo: async ({ request }) => {
+		const obj = Object.fromEntries(
+			// @ts-expect-error
+			await request.formData()
+		);
+
+		if (obj.id === '') {
+			return fail(400, {
+				data: {
+					id: obj.id,
+					message: 'delete failed'
+				}
+			});
+		}
+		await sleep(2000);
+		return {
+			success: 'todo deleted'
+		};
 	}
 } satisfies Actions;

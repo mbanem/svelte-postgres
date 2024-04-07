@@ -1,22 +1,21 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
+
 	export let PageName: string;
-	export let user: any;
+	export let user: Partial<User>;
+	export let amendTFUserId = false;
 	export let selectedUserId: string;
-	export let users: any[];
+	export let users: Partial<User>[];
 	export let result: string = '';
-	export let saving: string = '';
-	export let deleted: string = '';
-	export let toggled: string = '';
-	export let ignoreMessage: boolean = false;
+	export let message: string = '';
+	export let ignoreFormMessage: boolean = false;
 
 	let msgEl: HTMLSpanElement;
 	const clearMessage = () => {
 		setTimeout(() => {
-			deleted = '';
-			toggled = '';
-			saving = '';
+			message = '';
 			result = '';
-			ignoreMessage = true;
+			ignoreFormMessage = true;
 			msgEl.innerText = '';
 		}, 2000);
 	};
@@ -24,17 +23,25 @@
 		clearMessage();
 		return result;
 	};
+	let selectBox: HTMLSelectElement;
+	onMount(() => {
+		const t = amendTFUserId ? (user.role === 'ADMIN' ? '-T' : '-F') : '';
+		selectedUserId = `${user.id}${t}`;
+		console.log('selectBox.value is ', user.id);
+	});
+	console.log('user.id', user.id);
 </script>
 
+<!-- <pre style="font-size:11px;">selectedUserId {JSON.stringify(selectedUserId, null, 2)}</pre> -->
 <h1>
 	{PageName} Page
 	{#if user.role === 'ADMIN'}
-		<select class="select-author" bind:value={selectedUserId}>
+		<select bind:this={selectBox} bind:value={selectedUserId}>
 			<option value="" selected>Select {PageName} Author</option>
-			{#each users as user}
-				<option value={user.id}>
-					{user.firstName}
-					{user.lastName}
+			{#each users as the_user}
+				<option value={the_user.id}>
+					{the_user.firstName}
+					{the_user.lastName}
 				</option>
 			{/each}
 		</select>

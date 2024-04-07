@@ -9,8 +9,12 @@
 	export let data: PageData;
 	export let form: ActionData;
 
-	$: ({ queryPosts, user } = data);
+	$: ({ PostAuthor, user } = data);
+
 	let selectedAuthorId = '';
+	let message = '';
+	let ignoreFormMessage = false;
+	let btnDelete: HTMLButtonElement;
 	const authorId = data?.user?.id;
 	// console.log('authorId', data.user.id);
 
@@ -44,26 +48,83 @@
 		}
 	};
 
-	let selBox: HTMLSelectElement;
+	// let selBox: HTMLSelectElement;
 	onMount(() => {
 		boardBlock.classList.toggle('hidden');
 		selectedAuthorId = data.user.id;
-		adminSelected = data.user.role === 'ADMIN';
-		if (adminSelected) {
-			if (data.users.length == 1) {
-				selBox.selectedIndex = 1;
-			} else {
-				for (let i = 0; i < selBox.options.length; i++) {
-					if (selBox.options[i]?.value.slice(2) === selectedAuthorId) {
-						// @ts-expect-error
-						selBox.options[i].selected = true;
-					}
-				}
-			}
-		}
-		selectedUserName = `${data.user.firstName} ${data.user.lastName}`;
+		adminSelected = data.locals.user.role === 'ADMIN';
+		// if (adminSelected) {
+		// 	if (data.users.length == 1) {
+		// 		selBox.selectedIndex = 1;
+		// 	} else {
+		// 		for (let i = 0; i < selBox.options.length; i++) {
+		// 			if (selBox.options[i]?.value.slice(2) === selectedAuthorId) {
+		// 				// @ts-expect-error
+		// 				selBox.options[i].selected = true;
+		// 			}
+		// 		}
+		// 	}
+		// }
+		// selectedUserName = `${data.user.firstName} ${data.user.lastName}`;
 	});
+	let fn: string = '';
+	let ln: string = '';
+	const isNameChanged = (firstName: string, lastName: string) => {
+		const result = fn === firstName && ln === lastName ? false : true;
+		if (result) {
+			fn = firstName;
+			ln = lastName;
+		}
+		return result;
+	};
+	const postsAuthors = () => {
+		console.log('postsAuthors');
+		const arr: {
+			id: string;
+			title: string;
+			content: string;
+			firstName: string;
+			lastName: string;
+		}[] = [];
 
+		if (selectedAuthorId === user.id) {
+			data.PostAuthor.forEach((post) => {
+				const {
+					id,
+					title,
+					content,
+					author: { firstName, lastName, role }
+				} = post;
+				arr.push({
+					id,
+					title,
+					content,
+					firstName: `${firstName}${role === 'ADMIN' ? 'T' : ''}`,
+					lastName
+				});
+			});
+		} else {
+			data.PostAuthor.forEach((post) => {
+				const {
+					id,
+					title,
+					content,
+					author: { firstName, lastName }
+				} = post;
+				arr.push({
+					id,
+					title,
+					content,
+					firstName,
+					lastName
+				});
+			});
+		}
+		console.log(arr);
+		return arr;
+	};
+
+	$: result = '';
 	$: msg = form?.success
 		? 'Saved - ' + form.success
 		: form?.error
@@ -71,17 +132,26 @@
 			: '';
 </script>
 
-<!-- <pre style="font-size:11px;"> {JSON.stringify(data.users.length ?? '', null, 2)}</pre> -->
-<h1>
-	Post Page{#if msg}<p class="message">{msg}</p>{/if}
-</h1>
+<!-- <pre style="font-size:11px;">data {JSON.stringify(data, null, 2)}</pre> -->
+<!-- <pre style="font-size:11px;"> {JSON.stringify(data.PostAuthor, null, 2)}</pre> -->
+<PageTitleCombo
+	bind:result
+	bind:message
+	bind:ignoreFormMessage
+	bind:selectedAuthorId
+	bind:btnDelete
+	amendTFUserId={true}
+	PageName="Post"
+	user={data.user}
+	users={data.users}
+/>
 
 <!-- <pre style="font-size:11px;"> {selectedAuthorId}</pre> -->
-<!-- <pre style="font-size:11px;">data {JSON.stringify(data, null, 2)}</pre> -->
-<!-- <p>selected {JSON.stringify(selected, null, 2)}</p> -->
+<!-- <pre style="font-size:11px;">data.postAuthor {JSON.stringify(data.PostAuthor, null, 2)}</pre> -->
+<!-- <p>selected {data.locals.user.role}</p>
 {#if data.user.role === 'ADMIN'}
 	{#if data.users}
-		<select on:click={userSelected} bind:this={selBox} class="select-author">
+		<select on:click={userSelected} class="select-author">
 			<option value="">Select Post Author</option>
 			{#each data.users as user}
 				<option value="{user.role === 'ADMIN' ? 'T-' : 'F-'}{user.id}">
@@ -91,9 +161,9 @@
 			{/each}
 		</select>
 	{/if}
-{/if}
+{/if} -->
 
-<span class="login-user">{selectedUserName} -- role {adminSelected ? 'ADMIN' : 'USER'}</span>
+<!-- <span class="login-user">{selectedUserName} -- role {adminSelected ? 'ADMIN' : 'USER'}</span> -->
 <div bind:this={boardBlock} class="board hidden">
 	<div>
 		<form method="POST" action="?/create" use:enhance>
@@ -118,13 +188,15 @@
 	</div>
 </div>
 <div class="post-container">
-	{#if data.queryPosts}
-		<!-- <pre style="font-size:11px;"> {JSON.stringify(data.queryPosts, null, 2)}</pre> -->
+	{#if data.PostAuthor}
+		<!-- <pre style="font-size:11px;"> {JSON.stringify(data.PostAuthor, null, 2)}</pre> -->
 		<ul>
-			{#each adminSelected ? data.queryPosts : data.queryPosts.filter((post) => post.authorId === selectedAuthorId) as { title, content, author: { firstName, lastName } }}
+			{#each postsAuthors() as { id, title, content, firstName, lastName }}
 				<li class="post-block">
-					<p>{firstName} {lastName}</p>
-					<p>{title}</p>
+					{#if isNameChanged(firstName, lastName)}
+						<p class="name">{firstName} {lastName}</p>
+					{/if}
+					<p class="title">{title}</p>
 					<p>{content}</p>
 				</li>
 			{/each}
@@ -168,9 +240,17 @@
 		gap: 1rem;
 		margin-bottom: 6px;
 	}
-
-	:nth-child(1) {
-		// grid-column: span 2;
+	p {
+		margin: 0;
+		padding: 0;
+	}
+	.name {
+		color: yellow;
+		font-size: 16px;
+		margin-bottom: 4px;
+	}
+	.title {
+		font-size: 12px;
 		display: flex;
 		flex-direction: column;
 		margin: 0;
@@ -215,45 +295,15 @@
 		// visibility: hidden;
 		// height: 0;
 	}
-	h1 {
-		display: flex;
-		align-items: baseline;
-		margin-left: 2rem;
-		height: 1.5rem;
-		.message {
-			display: inline-block;
-			font-size: 12px;
-			font-weight: 100;
-			color: yellow;
-			margin: 0 0 1rem 1rem;
-		}
-		// select {
-		// 	margin-left: 1rem;
-		// }
-	}
-	.login-user {
-		display: inline-block;
-		font-weight: 100;
-		margin-bottom: 0.5rem;
-	}
-
-	// for a child <MultiSelect component
-
-	.select-author {
-		margin: 0 1rem 0 2rem;
-	}
 	.post-block,
 	.post-block {
 		list-style: none;
 		margin: 1rem 0 0 0;
 		padding: 0;
-		p {
-			margin: 0;
-			padding: 0;
-		}
-		p:nth-child(1) {
-			font-size: 12px;
-			font-style: italic;
-		}
+
+		// p:nth-child(1) {
+		// 	font-size: 12px;
+		// 	font-style: italic;
+		// }
 	}
 </style>

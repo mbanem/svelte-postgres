@@ -1,91 +1,114 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
-	import TodoList from '$lib/components/TodoList.svelte';
 	import type { PageData, ActionData } from './$types';
-	import PageTitleCombo from '$lib/components/PageTitleCombo.svelte';
 	import type { SubmitFunction } from '@sveltejs/kit';
-	// https://flowbite-svelte.com/docs/components/spinner
+	import { enhance } from '$app/forms';
+	import { invalidateAll } from '$app/navigation';
+	import { page } from '$app/stores'; // for $age.status code on actions
 	import CircleSpinner from '$lib/components/CircleSpinner.svelte';
-	import { browser } from '$app/environment';
-	import { page } from '$app/stores';
+	import { setColor, toggleButtons } from '$lib/utils';
 
-	export let data: PageData;
-	export let form: ActionData;
+	import PageTitleCombo from '$lib/components/PageTitleCombo.svelte';
+	import TodoList from '$lib/components/TodoList.svelte';
+
+	export let data: PageData; // from +page.server.ts load function
+	export let form: ActionData; // form?.messages from action methods in +page.server.ts
 
 	let success: string;
 	let loading: boolean;
-	let saving: string;
+	let message = '';
+	// form?.message cannot be cleared by code but could be ignored when necessary
+	let ignoreFormMessage = false;
 
-	const setColor = (color: string) => {
-		if (browser) {
-			document.documentElement.style.setProperty('--PLACEHOLDER_COLOR', color);
-		}
-	};
-	$: setColor(form?.message ? 'red' : 'green');
+	$: setColor(form?.message ? 'red' : 'green'); // toggle color for a message
 
-	let ignoreMessage = false;
+	// keep message displayed for several seconds
 	const clearMessage = () => {
 		setTimeout(() => {
-			deleted = '';
-			toggled = '';
-			ignoreMessage = false;
-			saving = '';
+			message = '';
+			ignoreFormMessage = false;
 			result = '';
 		}, 2000);
+		toggleButtons(btnCreate, btnUpdate, 'create');
 	};
 
-	const toggleComplete = () => {
-		// loading = !loading;
+	// if form is fill with  data for update but user chose other action we
+	// clear form input elements
+	const clearForm = () => {
+		toggleButtons(btnCreate, btnUpdate, 'create');
+		(document.querySelector("input[name='title']") as HTMLInputElement).value = '';
+		(document.querySelector("input[name='content']") as HTMLInputElement).value = '';
+
+		// const children = theForm.getElementsByTagName('input');
+		// const max = children.length;
+		// for (let i = 0; i < max; i++) {
+		// 	if (children[i] instanceof HTMLInputElement) {
+		// 		// @ts-expect-error
+		// 		if (children[i].type === 'number') {
+		// 			// @ts-expect-error
+		// 			children[i].value = '0';
+		// 		} else {
+		// 			// @ts-expect-error
+		// 			children[i].value = '';
+		// 		}
+		// 	}
+		// }
 	};
-	let phTitle = '';
-	let phContent = '';
+	let titleIsRequired = '';
+	let contentIsRequired = '';
+	// get params action for URL amf formData to check on required fields
 	const enhanceAddTodo: SubmitFunction = ({ action, formData }) => {
 		// console.log('page SubmitFunction enhanceAddTodo');
 		success = '';
-		phTitle = '';
-		ignoreMessage = false;
+		titleIsRequired = '';
+		contentIsRequired = '';
+		ignoreFormMessage = false;
 		if (formData.get('title') === '') {
-			phTitle = 'Title is required field';
+			titleIsRequired = 'Title is required field';
 		}
-		phContent = '';
 		if (formData.get('content') === '') {
-			phContent = 'Content is required field';
+			contentIsRequired = 'Content is required field';
 		}
 
-		if (phTitle || phContent) return;
+		if (titleIsRequired || contentIsRequired) return;
 
-		// processing before form submit
+		// turn on spinner before form submit
 		loading = true;
-		saving = action.search === '?/addTodo' ? 'saving todo...' : 'updating todo...';
+		// show the intent of the action that follows
+		message = action.search === '?/addTodo' ? 'saving todo...' : 'updating todo...';
 
 		return async ({ update }) => {
 			await update();
-			loading = false;
-			// console.log('action.search', action.search);
-			// console.log('$page.status', $page.status);
-			// console.log('action', JSON.stringify(action, null, 2));
 			if (action.search === '?/addTodo') {
 				success = $page.status === 400 ? 'New todo added' : 'Adding todo failed';
 			} else if (action.search === '?/updateTodo') {
 				success = $page.status === 400 ? 'todo updated' : 'update failed';
 			}
-			ignoreMessage = true;
+			loading = false; // turn the spinner off
+			ignoreFormMessage = true;
+			toggleButtons(btnCreate, btnUpdate, 'create');
+			invalidateAll();
 		};
 	};
 
-	let toggled = '';
 	const toggleCompleted = async (id: string) => {
 		loading = true;
+		// if form fields are prepared for update but user
+		// select different action we clear the form fields
+		clearForm();
+		// instead of easier action in +page.server.ts we demonstrate
+		// here endpoint HTML remote communication via fetch
 		const response = await fetch(`/todo?id=${id}`, {
 			method: 'PATCH',
 			body: id
 		});
-
+		// console.log('response', response);
 		const data = await response.json();
+		// console.log('data', data);
 		loading = false;
-		// setting toggled will dynamically set result, which in turn will show message
+		// setting message will dynamically set result, which in turn will show message
 		// for several seconds and then clear it out
-		toggled = data.toggled ? 'toggled successfully' : 'toggle failed';
+		// console.log('data.toggled', data.toggled);
+		message = data.toggled ? 'toggled successfully' : data.message ?? 'toggle failed';
 
 		if (data.toggled) {
 			todos = todos.map((todo) => {
@@ -97,32 +120,32 @@
 		}
 	};
 
-	let deleted = '';
 	const deleteTodo = async (id: string) => {
 		loading = true;
+		clearForm();
 		const response = await fetch(`/todo?id=${id}`, {
 			method: 'DELETE',
 			body: id
 		});
-		const data = await response.json();
+		const result = await response.json();
 		loading = false;
-		// setting deleted will dynamically set result, which in turn will show message
+		// setting message will dynamically set result, which in turn will show message
 		// for several seconds and then clear it out
-		deleted = data.deleted ? 'deleted successfully' : 'delete failed';
-		if (deleted) {
-			data.todos = data.todos.filter((todo: Todo) => todo.id !== id);
+		message = result.deleted ? 'deleted successfully' : 'delete failed';
+		// console.log('data.deleted', result.deleted);
+		if (result.deleted) {
+			// data.todos = data.todos.filter((todo: Todo) => todo.id !== id);
+			todos = todos.filter((todo: Todo) => todo.id !== id);
 		}
 	};
 
-	const toggleButtons = () => {
-		btnSave.classList.toggle('hidden');
-		btnUpdate.classList.toggle('hidden');
-	};
 	let todoIdEl: HTMLInputElement;
 	const prepareDataForEdit = (todoId: string) => {
 		const todo = data.todos.filter((todo) => todo.id === todoId)[0] as Partial<Todo>;
+		// prevent ADMIN to update others todos
+		selectedUserId = todo.userId as string;
 		todoIdEl.value = todo.id as string;
-		console.log('todo', JSON.stringify(todo, null, 2));
+		// console.log('todo', JSON.stringify(todo, null, 2));
 		(document.querySelector("input[name='userId']") as HTMLInputElement).value =
 			todo.userId as string;
 		(document.querySelector("input[name='title']") as HTMLInputElement).value =
@@ -132,67 +155,74 @@
 		(document.querySelector("input[name='priority']") as HTMLInputElement).value = String(
 			todo.priority
 		);
-		toggleButtons();
+		toggleButtons(btnCreate, btnUpdate, 'update');
 	};
 
-	let updated = '';
-	let btnSave: HTMLButtonElement;
+	// updatePrepared say data is copied into the form elements
+	// and should be cleared if action other than click on an
+	// update button is taken
+	let updatePrepared = false;
+	let btnCreate: HTMLButtonElement;
 	let btnUpdate: HTMLButtonElement;
+	let btnDelete: HTMLButtonElement;
 	let theForm: HTMLFormElement;
 	const prepareUpdate = async (todoId: string) => {
-		loading = true;
+		// loading = true;
 		prepareDataForEdit(todoId);
+		updatePrepared = true;
 	};
 
-	$: formMessage = ignoreMessage ? '' : form?.message ?? '';
+	$: formMessage = ignoreFormMessage ? '' : form?.message ?? '';
 	// setting result will call showMessage and this onw will setTimeout
 	// to clear the message after several seconds
-	$: result = toggled || deleted || updated || saving || formMessage;
-	const showResult = () => {
-		clearMessage();
-		return result;
-	};
-	1;
+	$: result = message || formMessage;
 	$: ({ todos, user } = data);
 
 	let selectedUserId = '';
 	const authorId = data?.user?.id;
 </script>
 
-<!-- <pre style="font-size:11px;"> {JSON.stringify(data?.user?.id, null, 2)}</pre>
-<pre style="font-size:11px;"> {JSON.stringify(authorId, null, 2)}</pre> -->
+<!-- <pre style="font-size:11px;">authorId {authorId}</pre> -->
+<!-- <pre style="font-size:11px;">form.message {JSON.stringify(form?.message, null, 2)}</pre> -->
 
-<!-- <pre style="font-size:11px;"> {JSON.stringify(toggled, null, 2)}</pre> -->
 <PageTitleCombo
 	bind:result
-	bind:saving
-	bind:deleted
-	bind:toggled
-	bind:ignoreMessage
+	bind:message
+	bind:ignoreFormMessage
 	bind:selectedUserId
+	bind:btnDelete
 	PageName="Todo"
 	user={data.user}
 	users={data.users}
 />
-
 <div class="board">
 	<form bind:this={theForm} method="POST" action="?/addTodo" use:enhance={enhanceAddTodo}>
 		<div class="two-inputs">
 			<input bind:this={todoIdEl} type="hidden" name="id" value="mili" />
 			<input type="hidden" name="userId" value={authorId} />
-			<input type="text" name="title" placeholder={phTitle ?? 'enter todo title'} />
+			<input type="text" name="title" placeholder={titleIsRequired ?? 'enter todo title'} />
 			<input type="number" name="priority" placeholder="Priority" />
 		</div>
 		<div class="two-inputs">
-			<input type="text" name="content" placeholder={phContent ?? 'enter todo content'} />
-			<div>
-				<button bind:this={btnSave} type="submit" style="text-align:center;position:relative;">
+			<input type="text" name="content" placeholder={contentIsRequired ?? 'enter todo content'} />
+			<!-- position:relative here is essential for CircleSpinner
+					to stay inside the buttons
+			-->
+			<div style="position:relative;">
+				<button bind:this={btnCreate} type="submit" style="text-align:center;">
 					{#if loading}
 						<CircleSpinner color="blue" />
 					{/if}
 					save
 				</button>
-				<button bind:this={btnUpdate} formaction="?/updateTodo" type="submit" class="hidden">
+				<button
+					bind:this={btnUpdate}
+					disabled={selectedUserId !== authorId}
+					style:cursor={selectedUserId === authorId ? 'pointer' : 'not-allowed'}
+					formaction="?/updateTodo"
+					type="submit"
+					class="hidden"
+				>
 					{#if loading}
 						<CircleSpinner color="blue" />
 					{/if}
@@ -203,7 +233,14 @@
 	</form>
 	<div class="left-column">
 		<h3>todo</h3>
-		<TodoList {todos} completed={false} {toggleCompleted} {prepareUpdate} {deleteTodo} />
+		<TodoList
+			{todos}
+			completed={false}
+			id={user.id}
+			{toggleCompleted}
+			{prepareUpdate}
+			{deleteTodo}
+		/>
 	</div>
 	<div class="right-column">
 		<h3>done</h3>
@@ -277,7 +314,6 @@
 		margin-left: 1rem;
 		border-bottom: 1px solid gray;
 	}
-
 	// h1 {
 	// 	display: flex;
 	// 	align-items: baseline;

@@ -4,10 +4,11 @@
 	export let size = `1em`;
 </script>
 
+<!-- border-color for every side top right bottom left -->
 <div
-	style="--duration: {duration}"
 	style:border-color="{color} transparent {color}
 	{color}"
+	style="--duration: {duration}"
 	style:width={size}
 	style:height={size}
 />

@@ -4,24 +4,22 @@ import { error, fail, type RequestEvent } from '@sveltejs/kit';
 import type { Actions } from '@sveltejs/kit';
 
 export const load: PageServerLoad = (async ({ locals, cookies }) => {
+	// locals holds logged in user details
 	let userAuthToken = cookies.get('session') ?? '';
 	if (!userAuthToken) {
 		throw error(400, 'User cookie not found');
 	}
-	// console.log('get user vua userAuthToken', userAuthToken);
-	const user = await db.user.findUnique({
-		where: {
-			userAuthToken: cookies.get('session')
-		}
-	});
-	if (!user) {
-		throw error(400, 'User not found');
-	}
 
-	const users = await db.user.findMany(); //{
-	// 	include: {
+	// console.log('locals.user', JSON.stringify(locals.user, null, 2));
+	const users = await db.user.findMany();
+	// 	select: {
+	// 		id: true,
+	// 		firstName: true,
+	// 		lastName: true,
+	// 		role: true,
 	// 		profile: {
 	// 			select: {
+	// 				id: true,
 	// 				bio: true,
 	// 				createdAt: true,
 	// 				updatedAt: true
@@ -30,19 +28,36 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
 	// 	}
 	// });
 
-	let queryProfiles: QueryPosts = [];
+	let userProfiles = [];
 	if (locals.user?.role === 'ADMIN') {
-		queryProfiles = await db.profile.findMany({
-			include: {
-				user: true
+		userProfiles = await db.profile.findMany({
+			select: {
+				id: true,
+				bio: true,
+				userId: true,
+				createdAt: true,
+				updatedAt: true,
+				user: {
+					select: {
+						id: true,
+						firstName: true,
+						lastName: true,
+						role: true
+					}
+				}
 			}
 		});
 	} else {
-		queryProfiles = await db.profile.findMany({
+		userProfiles = await db.profile.findMany({
 			where: {
-				userId: user.id
+				userId: locals.user.id
 			},
-			include: {
+			select: {
+				id: true,
+				bio: true,
+				userId: true,
+				createdAt: true,
+				updatedAt: true,
 				user: {
 					select: {
 						id: true,
@@ -54,18 +69,16 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
 			}
 		});
 	}
-
-	// console.log('profiles/PageServerLoad users', JSON.stringify(users, null, 2));
+	// console.log('profiles/PageServerLoad userProfiles', JSON.stringify(userProfiles, null, 2));
 	return {
-		user,
 		users,
-		queryProfiles
+		userProfiles
 	};
 }) satisfies PageServerLoad;
 
 export const actions: Actions = {
 	create: async ({ request }) => {
-		console.log('profile/+page.server.ts create');
+		// console.log('profile/+page.server.ts create');
 		const { bio, authorId } = Object.fromEntries(
 			// @ts-expect-error
 			await request.formData()
@@ -105,7 +118,7 @@ export const actions: Actions = {
 		return;
 	},
 	update: async ({ request }) => {
-		console.log('profile/+page.server.ts update');
+		// console.log('profile/+page.server.ts update');
 		const { bio, bioId, authorId } = Object.fromEntries(
 			// @ts-expect-error
 			await request.formData()
@@ -114,11 +127,11 @@ export const actions: Actions = {
 			bioId: string;
 			authorId: string;
 		};
-		console.log(bio, bioId, authorId);
+		// console.log(bio, bioId, authorId);
 		if (bio === '' || authorId === '' || bioId === '') {
 			return fail(400, { bio, bioId, message: 'Insufficient data supplied' });
 		}
-		console.log('bio, authorId', JSON.stringify({ bio, bioId, authorId }, null, 2));
+		// console.log('bio, authorId', JSON.stringify({ bio, bioId, authorId }, null, 2));
 		try {
 			await db.profile.update({
 				where: {

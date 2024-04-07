@@ -21,9 +21,10 @@ export const PATCH = (async ({ url }) => {
 				completed: true
 			}
 		});
-		if (c) {
-			console.log('completed', c.completed, !c.completed);
-			const todo = await db.todo.update({
+		// we return  json({ toggled: true)} or
+		// on error json({ toggled: false, message: 'Internal error' });
+		if (c !== null) {
+			await db.todo.update({
 				where: {
 					id
 				},
@@ -31,16 +32,15 @@ export const PATCH = (async ({ url }) => {
 					completed: !c.completed
 				}
 			});
-			console.log(todo);
 		}
 	} catch (err) {
-		return json({ failed: 'Internal error' });
+		return json({ toggled: false, message: 'Internal error' });
 	}
 	return json({ toggled: true });
 }) satisfies RequestHandler;
 
 export const DELETE = (async ({ url }) => {
-	// console.log('DELETE searchParams id', JSON.stringify(url.searchParams.get('id'), null, 2));
+	// console.log('DELETE', url.searchParams.get('id'));
 	try {
 		await db.todo.delete({
 			where: {
@@ -51,26 +51,4 @@ export const DELETE = (async ({ url }) => {
 		return json({ deleted: false });
 	}
 	return json({ deleted: true });
-}) satisfies RequestHandler;
-
-export const PUT = (async ({ request }) => {
-	console.log('PUT entry');
-	// console.log('DELETE searchParams id', JSON.stringify(url.searchParams.get('id'), null, 2));
-	try {
-		const formData = await request.formData();
-		console.log('formData', JSON.stringify(formData, null, 2));
-		// await db.todo.update({
-		// 	where: {
-		// 		id:input.url.searchParams.get('id') as string
-		// 	},
-		// 	data: {
-		// 		title: url.searchParams.get('title') as string,
-		// 		content: url.searchParams.get('content') as string,
-		// 		priority: Number(url.searchParams.get('content'))
-		// 	}
-		// });
-	} catch (err) {
-		return json({ updated: false });
-	}
-	return json({ updated: true });
 }) satisfies RequestHandler;
