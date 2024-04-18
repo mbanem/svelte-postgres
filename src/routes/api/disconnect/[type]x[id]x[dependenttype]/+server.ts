@@ -25,7 +25,7 @@ export const GET: RequestHandler = (async ({ params }) => {
 			}
 		});
 	} catch (err) {
-		console.log('Bane', err);
+		console.log( err);
 	}
 	throw redirect(303, `/`);
 }) satisfies RequestHandler;

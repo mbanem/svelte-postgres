@@ -27,9 +27,9 @@
 	onMount(() => {
 		const t = amendTFUserId ? (user.role === 'ADMIN' ? '-T' : '-F') : '';
 		selectedUserId = `${user.id}${t}`;
-		console.log('selectBox.value is ', user.id);
+		// console.log('selectBox.value is ', user.id);
 	});
-	console.log('user.id', user.id);
+	// console.log('user.id', user.id);
 </script>
 
 <!-- <pre style="font-size:11px;">selectedUserId {JSON.stringify(selectedUserId, null, 2)}</pre> -->

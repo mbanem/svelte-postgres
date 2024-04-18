@@ -113,7 +113,7 @@ export const actions: Actions = {
 			});
 			// console.log('include user', JSON.stringify(result, null, 2));
 		} catch (err) {
-			console.log('error occurred', JSON.stringify(err, null, 2));
+			console.log(JSON.stringify(err, null, 2));
 		}
 		return;
 	},

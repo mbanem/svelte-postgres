@@ -23,7 +23,8 @@ button {
 	border: 1px solid gray;
 	border-radius: 5px;
 	padding: 3px 5px;
-	color: white;
+	color: $TEXT-COLOR;
+	background-color: $BACK-COLOR;
 	&:hover {
 		color: yellow;
 		border: 1px solid white;

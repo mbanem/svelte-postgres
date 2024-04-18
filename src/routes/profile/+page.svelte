@@ -4,7 +4,7 @@
 	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores'; // for $age.status code on actions
-	import { setColor, toggleButtons } from '$lib/utils';
+	import { setColor, setButtonVisible } from '$lib/utils';
 	import { onMount } from 'svelte';
 
 	import PageTitleCombo from '$lib/components/PageTitleCombo.svelte';
@@ -63,7 +63,7 @@
 						: 'Update failed'
 					: 'error occurred';
 
-			toggleButtons(btnCreate, btnUpdate, 'create');
+			setButtonVisible(btnCreate, btnUpdate, 'create');
 			clearMessage();
 			if (action.search === '?/update') {
 				selectedUserWithBio.bio = bio as string;
@@ -101,7 +101,7 @@
 		// console.log('user.id', user.id, 'dataset.userId', divEl.dataset.userId);
 		if (data.locals.user.id === divEl.dataset.userId) {
 			bioTextArea.value = selectedUserWithBio?.bio;
-			toggleButtons(btnCreate, btnUpdate, 'update');
+			setButtonVisible(btnCreate, btnUpdate, 'update');
 		}
 	};
 

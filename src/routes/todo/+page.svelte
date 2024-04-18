@@ -5,7 +5,7 @@
 	import { invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores'; // for $age.status code on actions
 	import CircleSpinner from '$lib/components/CircleSpinner.svelte';
-	import { setColor, toggleButtons } from '$lib/utils';
+	import { setColor, setButtonVisible } from '$lib/utils';
 
 	import PageTitleCombo from '$lib/components/PageTitleCombo.svelte';
 	import TodoList from '$lib/components/TodoList.svelte';
@@ -28,30 +28,15 @@
 			ignoreFormMessage = false;
 			result = '';
 		}, 2000);
-		toggleButtons(btnCreate, btnUpdate, 'create');
+		setButtonVisible(btnCreate, btnUpdate, 'create');
 	};
 
 	// if form is fill with  data for update but user chose other action we
 	// clear form input elements
 	const clearForm = () => {
-		toggleButtons(btnCreate, btnUpdate, 'create');
+		setButtonVisible(btnCreate, btnUpdate, 'create');
 		(document.querySelector("input[name='title']") as HTMLInputElement).value = '';
 		(document.querySelector("input[name='content']") as HTMLInputElement).value = '';
-
-		// const children = theForm.getElementsByTagName('input');
-		// const max = children.length;
-		// for (let i = 0; i < max; i++) {
-		// 	if (children[i] instanceof HTMLInputElement) {
-		// 		// @ts-expect-error
-		// 		if (children[i].type === 'number') {
-		// 			// @ts-expect-error
-		// 			children[i].value = '0';
-		// 		} else {
-		// 			// @ts-expect-error
-		// 			children[i].value = '';
-		// 		}
-		// 	}
-		// }
 	};
 	let titleIsRequired = '';
 	let contentIsRequired = '';
@@ -85,7 +70,7 @@
 			}
 			loading = false; // turn the spinner off
 			ignoreFormMessage = true;
-			toggleButtons(btnCreate, btnUpdate, 'create');
+			setButtonVisible(btnCreate, btnUpdate, 'create');
 			invalidateAll();
 		};
 	};
@@ -155,7 +140,7 @@
 		(document.querySelector("input[name='priority']") as HTMLInputElement).value = String(
 			todo.priority
 		);
-		toggleButtons(btnCreate, btnUpdate, 'update');
+		setButtonVisible(btnCreate, btnUpdate, 'update');
 	};
 
 	// updatePrepared say data is copied into the form elements
@@ -164,7 +149,6 @@
 	let updatePrepared = false;
 	let btnCreate: HTMLButtonElement;
 	let btnUpdate: HTMLButtonElement;
-	let btnDelete: HTMLButtonElement;
 	let theForm: HTMLFormElement;
 	const prepareUpdate = async (todoId: string) => {
 		// loading = true;
@@ -190,7 +174,6 @@
 	bind:message
 	bind:ignoreFormMessage
 	bind:selectedUserId
-	bind:btnDelete
 	PageName="Todo"
 	user={data.user}
 	users={data.users}
@@ -200,11 +183,11 @@
 		<div class="two-inputs">
 			<input bind:this={todoIdEl} type="hidden" name="id" value="mili" />
 			<input type="hidden" name="userId" value={authorId} />
-			<input type="text" name="title" placeholder={titleIsRequired ?? 'enter todo title'} />
+			<input type="text" name="title" placeholder={titleIsRequired || 'enter todo title'} />
 			<input type="number" name="priority" placeholder="Priority" />
 		</div>
 		<div class="two-inputs">
-			<input type="text" name="content" placeholder={contentIsRequired ?? 'enter todo content'} />
+			<input type="text" name="content" placeholder={contentIsRequired || 'enter todo content'} />
 			<!-- position:relative here is essential for CircleSpinner
 					to stay inside the buttons
 			-->

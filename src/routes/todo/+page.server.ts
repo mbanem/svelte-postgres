@@ -1,7 +1,8 @@
 import type { PageServerLoad, Actions } from './$types';
+import { error, fail } from '@sveltejs/kit';
 import { v4 as uuidv4 } from 'uuid';
 import { db } from '$lib/server/db';
-import { error, fail } from '@sveltejs/kit';
+import * as utils from '$lib/utils';
 // import type { User, Todo} from '@prisma/client'
 // in order to load todos we cannot use end point
 // +server.ts as it can only Respond on a request;
@@ -94,15 +95,15 @@ type InputData = {
 	priority: number;
 };
 
-const sleep = async (ms: number) => {
-	return new Promise((resolve) => {
-		setTimeout(() => {
-			// ms here is a dummy value but required by
-			// resolve to get some argument
-			resolve(ms);
-		}, ms);
-	});
-};
+// const sleep = async (ms: number) => {
+// 	return new Promise((resolve) => {
+// 		setTimeout(() => {
+// 			// ms here is a dummy value but required by
+// 			// resolve to get some argument
+// 			resolve(ms);
+// 		}, ms);
+// 	});
+// };
 
 // we could implement patchTodo  and deleteTodo here but
 // we decided to implement in an end-point +server.ts
@@ -143,7 +144,7 @@ export const actions: Actions = {
 			return fail(500, { message: 'internal error occurred' });
 		}
 
-		await sleep(2000);
+		await utils.sleep(2000);
 		return {
 			success: 'todo successfully created'
 		};
@@ -175,12 +176,12 @@ export const actions: Actions = {
 					updatedAt: new Date()
 				}
 			});
-			await sleep(2000);
+			await utils.sleep(2000);
 			return {
 				success: 'todo successfully updated'
 			};
 		} catch (err) {
-			console.log('error', err);
+			console.log(err);
 		}
 	},
 	deleteTodo: async ({ request }) => {
@@ -197,7 +198,7 @@ export const actions: Actions = {
 				}
 			});
 		}
-		await sleep(2000);
+		await utils.sleep(2000);
 		return {
 			success: 'todo deleted'
 		};

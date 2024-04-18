@@ -32,6 +32,7 @@
 	<a href="/flip">FLIP</a>
 	<a href="/multiselect">multi select</a>
 	<a href="/box">Box</a>
+	<a href="/parent-child-comm">parent-child-comm</a>
 </nav>
 
 <style lang="scss">

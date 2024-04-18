@@ -17,9 +17,9 @@
 		</div>
 		<div class="user-includes">
 			<p>Posts</p>
-			{#each user?.posts as { title, content }}
-				<p>{title}</p>
-				<p>{content}</p>
+			{#each user?.posts as { title, content }, index}
+				<p>{index + 1} {title}</p>
+				<p style="padding-left:1rem;">{content}</p>
 			{/each}
 		</div>
 		<div class="user-includes">

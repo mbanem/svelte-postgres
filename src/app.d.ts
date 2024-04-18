@@ -47,7 +47,7 @@ declare global {
 		completed: boolean;
 		userId: string;
 		createdAt: Date;
-		updatedAt: Date;
+		updatedAt: ?Date;
 	};
 
 	type User = {
@@ -59,7 +59,7 @@ declare global {
 		userAuthToken: string;
 		role: $Enums.Role;
 		createdAt: Date;
-		updatedAt: Date;
+		updatedAt: ?Date;
 	};
 
 	enum Role {

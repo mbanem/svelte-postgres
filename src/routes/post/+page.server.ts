@@ -2,19 +2,13 @@ import { v4 as uuidv4 } from 'uuid';
 import type { PageServerLoad } from './$types';
 import { fail, type Actions, type RequestEvent, json, redirect, error } from '@sveltejs/kit';
 import { db } from '$lib/server/db';
+import * as utils from '$lib/utils';
 
 export const load: PageServerLoad = (async ({ locals, cookies }) => {
 	// admin should be able to see all posts of any user
 	// so we have to load all posts with user info
-	// type UPosts = ({
-	// 	user: {
-	// 		id: string;
-	// 		firstName: string;
-	// 		lastName: string;
-	// 	};
-	// } & Post)[];
 
-	let userAuthToken = cookies.get('session') ?? '';
+	let userAuthToken = cookies.get('session') || '';
 	if (!userAuthToken) {
 		throw error(400, 'User cookie not found');
 	}
@@ -30,25 +24,36 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
 	// console.log('user', JSON.stringify(user, null, 2));
 	// let PostAuthor: PostAuthor = [];
 	let PostAuthor: PostAuthor = [];
+
 	if (locals.user?.role === 'ADMIN') {
-		PostAuthor =
-			await db.$queryRaw`select p.id, p.title, p.content, u.id as "authorId", u.first_name as "firstName", u.last_name as "lastName", u.role from post p join users u on p.author_id=u.id order by u.first_name asc, u.last_name asc`;
+		PostAuthor = await db.$queryRaw`
+			select
+				p.id, p.title, p.content, STRING_AGG(c.id::character varying,',') "categoryIds",
+				STRING_AGG(c.name, ',') "categoryNames", u.id as "authorId", p.published,
+				u.first_name as "firstName", u.last_name as "lastName", u.role
+			from users u
+				join post p on p.author_id = u.id
+				join "_CategoryToPost" c2p on p.id = c2p."B"
+				join category c on c.id = c2p."A"
+			group by
+					p.id,
+					u.id
+				order by
+					u.first_name asc,
+					u.last_name asc;`;
 	} else {
-		PostAuthor = await db.post.findMany({
-			where: {
-				authorId: user.id
-			},
-			include: {
-				author: {
-					select: {
-						id: true,
-						firstName: true,
-						lastName: true,
-						role: true
-					}
-				}
-			}
-		});
+		PostAuthor = await db.$queryRaw`select
+			p.id, p.title, p.content, STRING_AGG(c.id::character varying,',') "categoryIds",
+			STRING_AGG(c.name, ',') "categoryNames", u.id as "authorId", p.published,
+			u.first_name as "firstName", u.last_name as "lastName", u.role
+		from users u
+			join post p on p.author_id = u.id
+			join "_CategoryToPost" c2p on p.id = c2p."B"
+			join category c on c.id = c2p."A"
+		where u.id=${user.id}
+		order by
+			u.first_name asc,
+			u.last_name asc;`;
 	}
 	// console.log('PostAuthor', JSON.stringify(PostAuthor, null, 2));
 	const userIDs = [...new Set(PostAuthor.map((el) => el.authorId))];
@@ -76,6 +81,7 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
 }) satisfies PageServerLoad;
 
 type InputData = {
+	id?: string;
 	title: string;
 	content: string;
 	published: string | boolean;
@@ -83,35 +89,25 @@ type InputData = {
 	authorId: string;
 };
 export const actions: Actions = {
-	create: async ({ request }) => {
-		// const obj = Object.fromEntries(
-		// const { title, content, published, categories, authorId } = Object.fromEntries(
+	addPost: async ({ request }) => {
 		const input_data = Object.fromEntries(
 			// @ts-expect-error
 			await request.formData()
 		) as InputData; //{
-		// title: string;
-		// content: string;
-		// published: boolean;
-		// authorId: string;
-		// };
 
 		const { title, content, published, categoryIDs, authorId } = input_data;
 		if (title === '' || content === '' || categoryIDs.length === 0 || !authorId) {
 			return fail(400, {
-				error: {
-					data: { title, content, published, authorId },
-					message: 'Insufficient data supplied'
-				}
+				data: { title, content, published, authorId },
+				message: 'Insufficient data supplied'
 			});
 		}
-		console.log('input_data', JSON.stringify(input_data, null, 2));
-		let newPost: any;
 		// console.log('input_data', JSON.stringify(input_data, null, 2));
+		await utils.sleep(2000);
+		let newPost: any;
 
 		const cats = await db.category.findMany();
 		try {
-			// console.log('try post.create');
 			const rest = {
 				id: uuidv4(),
 				updatedAt: new Date()
@@ -120,7 +116,6 @@ export const actions: Actions = {
 			const catIDs = categoryIDs.split(',').map((val) => {
 				return { id: Number(val) };
 			});
-			// console.log('catIDs', JSON.stringify(catIDs, null, 2));
 
 			newPost = await db.post.create({
 				data: {
@@ -134,25 +129,80 @@ export const actions: Actions = {
 					}
 				}
 			});
-			// console.log('{ ...obj}', JSON.stringify({ ...rest, ...obj }, null, 2));
-			// console.log('newPost', JSON.stringify(newPost, null, 2));
-			// 		title,
-			// 		content,
-			// 		priority,
-			// 		userId: userId
-			// 	}
-			// });
 		} catch (err) {
-			// console.log('newPost', JSON.stringify(newPost, null, 2));
 			return fail(400, {
-				error: {
-					data: { title, content, published, authorId },
-					message: 'internal error occurred'
-				}
+				data: { title, content, published, authorId },
+				message: 'internal error occurred'
 			});
 		}
 		return {
 			success: title
+		};
+	},
+	deletePost: async ({ request }) => {
+		console.log('deletePost');
+		const body = await request.formData();
+		const id = body.get('id') as string;
+
+		if (id === '') {
+			return fail(400, { message: 'post id is missing' });
+		}
+		await utils.sleep(2000);
+		try {
+			await db.post.delete({
+				where: {
+					id
+				}
+			});
+		} catch (err) {
+			throw new Error('internal error on post delete');
+		}
+		return {
+			success: true
+		};
+	},
+	updatePost: async ({ request }) => {
+		const input_data = Object.fromEntries(
+			// @ts-expect-error
+			await request.formData()
+		) as InputData;
+
+		const { id, title, content, published, categoryIDs, authorId } = input_data;
+		console.log(JSON.stringify(input_data, null, 2));
+		if (id === '' || title === '' || content === '' || categoryIDs.length === 0 || !authorId) {
+			return fail(400, {
+				data: { id, title, content, published, authorId },
+				message: 'Insufficient data supplied'
+			});
+		}
+		// console.log('input_data', JSON.stringify(input_data, null, 2));
+		await utils.sleep(2000);
+		const catIDs = categoryIDs.split(',').map((val) => {
+			return { id: Number(val) };
+		});
+
+		try {
+			await db.post.update({
+				where: {
+					id: id as string
+				},
+				data: {
+					title,
+					content,
+					published: published === 'false' ? false : true,
+					authorId,
+					updatedAt: new Date(),
+					categories: {
+						connect: catIDs
+					}
+				}
+			});
+		} catch (err) {
+			throw new Error('internal error on post update');
+		}
+		return {
+			success: true,
+			message: 'successfully updated'
 		};
 	}
 } satisfies Actions;

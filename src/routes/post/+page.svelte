@@ -1,41 +1,124 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
 	import type { PageData, ActionData } from './$types';
-	import PageTitleCombo from '$lib/components/PageTitleCombo.svelte';
-
-	import MultiSelect from '$lib/components/MultiSelect.svelte';
+	import type { SubmitFunction } from '@sveltejs/kit';
+	import { enhance } from '$app/forms';
+	import { invalidateAll } from '$app/navigation';
+	import { browser } from '$app/environment';
+	import { page } from '$app/stores'; // for $age.status code on actions
+	import CircleSpinner from '$lib/components/CircleSpinner.svelte';
+	import { setColor, setButtonVisible } from '$lib/utils';
 	import { onMount } from 'svelte';
+
+	import PageTitleCombo from '$lib/components/PageTitleCombo.svelte';
+	// categories
+	import MultiSelect from '$lib/components/MultiSelect.svelte';
+	import PostList from '$lib/components/PostList.svelte';
 
 	export let data: PageData;
 	export let form: ActionData;
 
-	$: ({ PostAuthor, user } = data);
-
-	let selectedAuthorId = '';
 	let message = '';
+	let loading = false;
 	let ignoreFormMessage = false;
-	let btnDelete: HTMLButtonElement;
-	const authorId = data?.user?.id;
-	// console.log('authorId', data.user.id);
+	let selectedUserId = '';
+	let titleIsRequired = '';
+	let contentIsRequired = '';
+	let categoryIsRequired = '';
 
-	// let selectedCategories:string
+	let btnCreate: HTMLButtonElement;
+	let btnDelete: HTMLButtonElement;
+	let btnUpdate: HTMLButtonElement;
+	const authorId = data?.user?.id;
+
 	let selected: string[] = [];
 	let categoryIDs: number[] = [];
 
-	const setCategoryIDs = (event: CustomEvent<{ ids: number[]; names: string[] }>) => {
-		categoryIDs = event.detail.ids;
-		selected = event.detail.names;
-		// ('categoryIDs', JSON.stringify(event.detail, null, 2));
+	$: setColor(form?.message ? 'red' : 'green'); // toggle color for a message
+
+	const resetForm = () => {
+		(document.querySelector("input[name='bio']") as HTMLTextAreaElement).value = '';
+		(document.querySelector("input[name='authorId']") as HTMLInputElement).value = '';
+		(document.querySelector("input[name='bioId']") as HTMLInputElement).value = '';
+	};
+
+	// keep message displayed for several seconds
+	const clearMessage = () => {
+		setTimeout(() => {
+			message = '';
+			ignoreFormMessage = false;
+			result = '';
+		}, 2000);
+	};
+
+	const required = {
+		title: '',
+		content: '',
+		categoryIDs: ''
+	};
+	let selectedCategoryIds: () => string;
+	const enhancePostActions: SubmitFunction = ({ action, formData }) => {
+		loading = true; // start spinner animation
+		message = '';
+		titleIsRequired = '';
+		contentIsRequired = '';
+		categoryIsRequired = '';
+
+		for (const key of Object.keys(required)) {
+			if (formData.get(key) == '') {
+				switch (key) {
+					case 'title':
+						titleIsRequired = 'Title is required';
+						break;
+					case 'content':
+						contentIsRequired = 'Content is required';
+						break;
+					case 'categoryIDs':
+						categoryIsRequired = 'Category is required';
+						break;
+					default:
+						break;
+				}
+			}
+		}
+		ignoreFormMessage = false;
+		if (action.search === '?/createPost') {
+			setButtonVisible([btnCreate, btnUpdate, btnDelete]);
+			message = 'saving post...';
+		} else if (action.search === '?/deletePost') {
+			message = 'deleting post...';
+		} else if (action.search === '?/updatePost') {
+			(document.querySelector("input[name='categoryIDs']") as HTMLInputElement).value =
+				selectedCategoryIds();
+			console.log(JSON.stringify(selectedCategoryIds(), null, 2));
+			message = 'updating post...';
+		}
+
+		return async ({ update }) => {
+			await update();
+			ignoreFormMessage = true;
+
+			if (action.search === '?/createPost') {
+				$page.status === 200 ? 'Post created' : 'create failed';
+			} else if (action.search === '?/deletePost') {
+				$page.status === 200 ? 'Post deleted' : 'delete failed';
+			} else if (action.search === '?/updatePost') {
+				$page.status === 200 ? 'Post updated' : 'update failed';
+			}
+			clearMessage();
+			invalidateAll();
+			setButtonVisible([btnCreate, btnUpdate, btnDelete]);
+			clearForm();
+			// resetButtons([btnCreate, btnDelete, btnUpdate]);
+			loading = false; // stop spinner animation
+			// if (action.search === '?/update') {
+			// 	selectedUserWithBio.bio = bio as string;
+			// }
+		};
 	};
 
 	let boardBlock: HTMLDivElement;
 	let adminSelected: boolean;
-	let selectedUserName: string = '';
 	const userSelected = () => {
-		selectedAuthorId = String(selBox.value).slice(2);
-		adminSelected = String(selBox.value).slice(0, 1) === 'T';
-		// @ts-expect-error
-		selectedUserName = selBox.options[selBox.selectedIndex].text;
 		// if no admin is selected hide boardBlock if not hidden already
 		if (boardBlock.classList.contains('hidden')) {
 			if (adminSelected) {
@@ -51,34 +134,11 @@
 	// let selBox: HTMLSelectElement;
 	onMount(() => {
 		boardBlock.classList.toggle('hidden');
-		selectedAuthorId = data.user.id;
+		selectedUserId = data.user.id;
 		adminSelected = data.locals.user.role === 'ADMIN';
-		// if (adminSelected) {
-		// 	if (data.users.length == 1) {
-		// 		selBox.selectedIndex = 1;
-		// 	} else {
-		// 		for (let i = 0; i < selBox.options.length; i++) {
-		// 			if (selBox.options[i]?.value.slice(2) === selectedAuthorId) {
-		// 				// @ts-expect-error
-		// 				selBox.options[i].selected = true;
-		// 			}
-		// 		}
-		// 	}
-		// }
-		// selectedUserName = `${data.user.firstName} ${data.user.lastName}`;
 	});
-	let fn: string = '';
-	let ln: string = '';
-	const isNameChanged = (firstName: string, lastName: string) => {
-		const result = fn === firstName && ln === lastName ? false : true;
-		if (result) {
-			fn = firstName;
-			ln = lastName;
-		}
-		return result;
-	};
+
 	const postsAuthors = () => {
-		console.log('postsAuthors');
 		const arr: {
 			id: string;
 			title: string;
@@ -87,14 +147,9 @@
 			lastName: string;
 		}[] = [];
 
-		if (selectedAuthorId === user.id) {
-			data.PostAuthor.forEach((post) => {
-				const {
-					id,
-					title,
-					content,
-					author: { firstName, lastName, role }
-				} = post;
+		data.PostAuthor.forEach((post) => {
+			if (selectedUserId === post.authorId) {
+				const { id, title, content, firstName, lastName, role } = post;
 				arr.push({
 					id,
 					title,
@@ -102,85 +157,109 @@
 					firstName: `${firstName}${role === 'ADMIN' ? 'T' : ''}`,
 					lastName
 				});
-			});
-		} else {
-			data.PostAuthor.forEach((post) => {
-				const {
-					id,
-					title,
-					content,
-					author: { firstName, lastName }
-				} = post;
-				arr.push({
-					id,
-					title,
-					content,
-					firstName,
-					lastName
-				});
-			});
-		}
-		console.log(arr);
+			}
+		});
+
 		return arr;
 	};
 
-	$: result = '';
+	const clearForm = () => {
+		const els = ['id', 'authorId', 'title', 'content', 'published', 'categoryIDs'];
+		els.forEach((k) => {
+			(document.querySelector(`input[name='${k}']`) as HTMLInputElement).value = '';
+		});
+	};
+	let selectOptions: (arr: number[]) => void;
+	const toUpdatePost = (postId: string) => {
+		// todo
+		const authorPost = data.PostAuthor.filter((pa) => pa.id === postId);
+		const { id, authorId, published, categoryIds, title, content } = authorPost[0];
+		//todo
+		// selectOptions(categoryIDs);
+		const els = [
+			{ id: id },
+			{ authorId: authorId },
+			{ title: title },
+			{ content: content },
+			{ published: published }
+			// { categoryIDs: categoryIDs }
+		];
+		selectOptions((categoryIds.split(',') as string[]).map((el) => Number(el)));
+		setButtonVisible([btnUpdate, btnCreate, btnDelete]);
+
+		// NOTE: in TypeScript Playground instead of using nested loops as we use below,
+		// the spread operators works, but here does not
+		// for (const [k,v] of Object.entries([...els])) { code here }
+		els.forEach((el) => {
+			for (const [k, v] of Object.entries(el)) {
+				(document.querySelector(`input[name='${k}']`) as HTMLInputElement).value = `${v}`;
+			}
+		});
+	};
+
+	const deletePost = (id: string) => {
+		if (browser) {
+			(document.querySelector("input[name='id']") as HTMLInputElement).value = id;
+			btnDelete.click();
+		}
+	};
+
+	$: ({ PostAuthor } = data);
+	$: formMessage = ignoreFormMessage ? '' : form?.message || '';
+	$: result = message || formMessage;
 	$: msg = form?.success
 		? 'Saved - ' + form.success
-		: form?.error
-			? 'Error: ' + form?.error.message
+		: form?.message
+			? 'Error: ' + form.message
 			: '';
 </script>
 
 <!-- <pre style="font-size:11px;">data {JSON.stringify(data, null, 2)}</pre> -->
-<!-- <pre style="font-size:11px;"> {JSON.stringify(data.PostAuthor, null, 2)}</pre> -->
 <PageTitleCombo
 	bind:result
 	bind:message
 	bind:ignoreFormMessage
-	bind:selectedAuthorId
-	bind:btnDelete
+	bind:selectedUserId
 	amendTFUserId={true}
 	PageName="Post"
 	user={data.user}
 	users={data.users}
 />
 
-<!-- <pre style="font-size:11px;"> {selectedAuthorId}</pre> -->
-<!-- <pre style="font-size:11px;">data.postAuthor {JSON.stringify(data.PostAuthor, null, 2)}</pre> -->
-<!-- <p>selected {data.locals.user.role}</p>
-{#if data.user.role === 'ADMIN'}
-	{#if data.users}
-		<select on:click={userSelected} class="select-author">
-			<option value="">Select Post Author</option>
-			{#each data.users as user}
-				<option value="{user.role === 'ADMIN' ? 'T-' : 'F-'}{user.id}">
-					{user.firstName}
-					{user.lastName}
-				</option>
-			{/each}
-		</select>
-	{/if}
-{/if} -->
+<!-- <pre style="font-size:11px;"> {selectedUserId}</pre> -->
+<!-- <pre style="font-size:1/1px;">data.postAuthor {JSON.stringify(data, null, 2)}</pre> -->
 
-<!-- <span class="login-user">{selectedUserName} -- role {adminSelected ? 'ADMIN' : 'USER'}</span> -->
 <div bind:this={boardBlock} class="board hidden">
 	<div>
-		<form method="POST" action="?/create" use:enhance>
+		<form method="POST" action="?/createPost" use:enhance={enhancePostActions}>
+			<input type="hidden" name="id" />
 			<input type="hidden" name="authorId" value={authorId} />
 			<input type="hidden" name="categoryIDs" value={categoryIDs} />
-			<input type="text" placeholder="enter post title?" name="title" />
-			<input type="text" placeholder="enter post content?" name="content" />
-			<label for="published">
+			<input type="text" name="title" placeholder={titleIsRequired || 'enter post title'} />
+			<input type="text" name="content" placeholder={contentIsRequired || 'enter post content'} />
+			<label for="published" class="label-save">
 				<input type="checkbox" name="published" id="published" />
 				<span style="user-select:none">published</span>
+				<button bind:this={btnCreate} type="submit" class="button">
+					{#if loading}
+						<CircleSpinner color="skyblue" />
+					{/if}
+					create
+				</button>
+				<button bind:this={btnDelete} type="submit" formaction="?/deletePost" class="button hidden"
+					>delete</button
+				>
+				<button bind:this={btnUpdate} type="submit" formaction="?/updatePost" class="button hidden"
+					>update</button
+				>
 			</label>
-			<button type="submit">save</button>
 		</form>
 		<div class="multi-select-container">
 			<MultiSelect
-				on:categoryids={setCategoryIDs}
+				bind:categoryIsRequired
 				data={data.categories}
+				bind:setSelectedIds={selectOptions}
+				bind:getSelectedCategoryIDs={selectedCategoryIds}
 				select_box="select_box"
 				selected_categories="selected_categories"
 			/>
@@ -188,47 +267,53 @@
 	</div>
 </div>
 <div class="post-container">
-	{#if data.PostAuthor}
+	{#key PostAuthor}
 		<!-- <pre style="font-size:11px;"> {JSON.stringify(data.PostAuthor, null, 2)}</pre> -->
-		<ul>
-			{#each postsAuthors() as { id, title, content, firstName, lastName }}
-				<li class="post-block">
-					{#if isNameChanged(firstName, lastName)}
-						<p class="name">{firstName} {lastName}</p>
-					{/if}
-					<p class="title">{title}</p>
-					<p>{content}</p>
-				</li>
-			{/each}
-		</ul>
-	{/if}
+		{#key selectedUserId}
+			<PostList postAuthors={postsAuthors()} {toUpdatePost} {deletePost} />
+		{/key}
+	{/key}
 </div>
 
 <style lang="scss">
-	// .board {
-	// 	// display: grid;
-	// 	// grid-template-columns: 1fr 1fr;
-	// 	// grid-column-gap: 1em;
-	// 	min-width: 36em;
-	// 	width: 62vw;
-	// 	gap: 2px;
-	// 	padding: 1rem;
-	// 	margin-left: 1rem;
-	form {
-		width: calc(100% - 1rem);
+	.board {
+		// display: grid;
+		// grid-template-columns: 1fr 1fr;
+		// grid-column-gap: 1em;
+		min-width: 36em;
+		width: 70vw;
+		gap: 2px;
+		padding: 0 1rem 1rem 1rem;
+		margin-left: 1rem;
+		form {
+			width: calc(100% - 1rem);
+		}
 	}
-	input,
+	.label-save {
+		display: flex;
+		align-items: baseline;
+	}
 	button {
-		width: 8rem;
 		display: inline-block;
-		font-size: 18px;
-		padding-left: 0.5rem;
-		color: black;
+		position: relative;
+		height: 1.9rem;
+		width: 6rem;
+		font-size: 16px;
+		background-color: $BACK-COLOR;
 	}
+
 	input {
 		display: inline-block;
+		width: 5rem;
 		width: 100%;
-		height: 1.5rem;
+		padding-left: 0.5rem;
+		line-height: 0.8rem;
+		color: $BACK-COLOR;
+		height: 1.3rem;
+		&::placeholder {
+			color: var(--PLACEHOLDER_COLOR);
+			font-weight: normal;
+		}
 	}
 	label input {
 		display: inline-block;
@@ -237,39 +322,16 @@
 	}
 	label {
 		display: flex;
-		gap: 1rem;
-		margin-bottom: 6px;
+		gap: 1.5rem;
+		// margin: 0;
 	}
-	p {
-		margin: 0;
-		padding: 0;
-	}
-	.name {
-		color: yellow;
-		font-size: 16px;
-		margin-bottom: 4px;
-	}
-	.title {
-		font-size: 12px;
-		display: flex;
-		flex-direction: column;
-		margin: 0;
-	}
-	.post-container {
-		// grid-column: span 2;
-		width: 100%;
-		height: 16.5rem;
-		border: 1px solid gray;
-		border-radius: 8px;
-		overflow: auto;
-	}
+
 	.multi-select-container {
 		// grid-column: span 2;
 		padding: 0;
 		margin: 0;
 		width: 100%;
-		margin: 1rem 0;
-		border: 1px solid yellow;
+		border: 1px solid gray;
 	}
 	.multi-select-container :global(.select_box) {
 		width: 40%;
@@ -289,21 +351,9 @@
 		font-family: 'Arial Narrow Bold', sans-serif;
 		font-size: 0.8em;
 	}
+
 	// }
 	.hidden {
 		display: none;
-		// visibility: hidden;
-		// height: 0;
-	}
-	.post-block,
-	.post-block {
-		list-style: none;
-		margin: 1rem 0 0 0;
-		padding: 0;
-
-		// p:nth-child(1) {
-		// 	font-size: 12px;
-		// 	font-style: italic;
-		// }
 	}
 </style>
