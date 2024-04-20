@@ -48,6 +48,7 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
 			}
 		});
 	} else {
+		// though for USER it is unique we use userProfiles as in case for ADMIN
 		userProfiles = await db.profile.findMany({
 			where: {
 				userId: locals.user.id
@@ -113,7 +114,7 @@ export const actions: Actions = {
 			});
 			// console.log('include user', JSON.stringify(result, null, 2));
 		} catch (err) {
-			console.log(JSON.stringify(err, null, 2));
+			console.log(err);
 		}
 		return;
 	},

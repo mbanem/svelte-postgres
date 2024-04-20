@@ -1,7 +1,6 @@
 <script type="ts">
 	import Box from '$lib/components/Box.svelte';
 	let city = 'San Diego';
-	// let name = 'Mr. Filip Isakovic';
 	let age = 18;
 	let person = { name: 'Mr. Filip Isakovic', age: 18 };
 	$: nameUpper = person.name.toUpperCase();

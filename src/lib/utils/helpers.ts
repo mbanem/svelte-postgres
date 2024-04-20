@@ -9,16 +9,17 @@ export const setColor = (color: string) => {
 
 export const setButtonVisible = (buttons: HTMLButtonElement[]) => {
 	resetButtons(buttons);
-	// if (buttons[0] && buttons[0].classList.contains('hidden')) {
-	// @ts-expect-error
-	buttons[0].classList.toggle('hidden');
-	// }
+	if (buttons[0] && buttons[0].classList.contains('hidden')) {
+		buttons[0].classList.toggle('hidden');
+	}
 };
 
 export const resetButtons = (buttons: HTMLButtonElement[]) => {
-	buttons.forEach((btn) => {
-		btn.classList.add('hidden');
-	});
+	try {
+		buttons.forEach((btn) => {
+			btn.classList.add('hidden');
+		});
+	} catch {}
 };
 
 let fn: string = '';
@@ -40,4 +41,12 @@ export const sleep = async (ms: number) => {
 			resolve(ms);
 		}, ms);
 	});
+};
+
+export const arrStringToNumArr = (arr: string[]): Number[] => {
+	return arr.map((el) => Number(el));
+};
+
+export const csvToNumArr = (s: string): number[] => {
+	return s.split(',').map((el) => Number(el));
 };

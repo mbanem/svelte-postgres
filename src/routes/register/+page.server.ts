@@ -37,7 +37,10 @@ export const actions: Actions = {
 		});
 		if (existingUser) {
 			// console.log('existingUser', JSON.stringify(existingUser));
-			return fail(400, { data: { firstName, lastName, email }, message: 'Unacceptable data' });
+			return fail(400, {
+				data: { firstName, lastName, email },
+				message: 'Unacceptable data'
+			});
 		} else {
 			const user = await db.user.create({
 				data: {

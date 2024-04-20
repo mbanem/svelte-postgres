@@ -2,10 +2,10 @@
 	import { onMount } from 'svelte';
 
 	export let PageName: string;
-	export let user: Partial<User>;
+	export let user: Partial<User> | {};
+	export let users: Partial<User>[] | [];
 	export let amendTFUserId = false;
 	export let selectedUserId: string;
-	export let users: Partial<User>[];
 	export let result: string = '';
 	export let message: string = '';
 	export let ignoreFormMessage: boolean = false;
@@ -46,7 +46,7 @@
 			{/each}
 		</select>
 	{/if}
-	{#if result}
+	{#if result !== ''}
 		<span bind:this={msgEl} class="message">{showResult()}</span>
 	{/if}
 	<span class="user-name">{user.firstName} {user.lastName}</span>

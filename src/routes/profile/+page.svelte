@@ -20,7 +20,7 @@
 	let selectedUserId = '';
 	let selectedUserWithBio: Bio;
 
-	$: setColor(form?.message ? 'red' : 'green'); // toggle color for a message
+	$: setColor(form?.message ? (form.message.includes('successfully') ? 'green' : 'red') : 'green');
 
 	// if form is fill with  data for update but user chose other action we
 	// clear form input elements
@@ -47,9 +47,11 @@
 			return;
 		}
 		loading = true; // start spinner animation
+		message = action.search === '?/create' ? 'creating profile...' : 'updating profile...';
 		return async ({ update }) => {
 			await update();
-			loading = false; // stop spinner animation
+			ignoreFormMessage = true;
+
 			message =
 				action.search === '?/create'
 					? $page.status === 200
@@ -63,18 +65,18 @@
 						: 'Update failed'
 					: 'error occurred';
 
-			setButtonVisible(btnCreate, btnUpdate, 'create');
+			setButtonVisible([btnCreate, btnUpdate]);
 			clearMessage();
+			invalidateAll();
 			if (action.search === '?/update') {
 				selectedUserWithBio.bio = bio as string;
 			}
+			loading = false; // stop spinner animation
 		};
 	};
 	let adminSelected: boolean;
 	let selectedUserName: string;
-	// let selBox: HTMLSelectElement;
 	onMount(() => {
-		// selectedUserId = data.locals.user.id;
 		adminSelected = data.locals.user.role === 'ADMIN';
 		selectedUserName = `${data.locals.user.firstName} ${data.locals.user.lastName}`;
 	});
@@ -92,7 +94,9 @@
 	let btnUpdate: HTMLButtonElement;
 
 	let bioTextArea: HTMLTextAreaElement;
+	let bioUpdateAllowed = false;
 	const canBeUpdated = (event: MouseEvent) => {
+		bioUpdateAllowed = true;
 		const divEl = event.currentTarget as HTMLDivElement;
 		// instead of taking id easier as selectedUserWithBio?.user.id
 		// we use here attribute dada-user-id as divEl.dataset.userId -- a string
@@ -101,18 +105,16 @@
 		// console.log('user.id', user.id, 'dataset.userId', divEl.dataset.userId);
 		if (data.locals.user.id === divEl.dataset.userId) {
 			bioTextArea.value = selectedUserWithBio?.bio;
-			setButtonVisible(btnCreate, btnUpdate, 'update');
+			setButtonVisible([btnUpdate, btnCreate]);
 		}
 	};
 
 	$: ({ users, userProfiles } = data);
-	// $: selectedUserId = data.locals.user.id;
 	$: selectedUserWithBio = getUserWithBio(selectedUserId) as Bio;
-	$: formMessage = ignoreFormMessage ? '' : form?.message ?? '';
-	$: result = message || formMessage;
+	$: formMessage = ignoreFormMessage ? '' : form?.message || '';
+	$: result = formMessage || message;
 </script>
 
-<!-- <pre style="font-size:11px;">data {JSON.stringify(data, null, 2)}</pre> -->
 <PageTitleCombo
 	bind:result
 	bind:message
@@ -122,7 +124,7 @@
 	user={data.locals.user}
 	users={data.users}
 />
-<!-- <pre style="font-size:11px;">form {JSON.stringify(form, null, 2)}</pre> -->
+<pre style="font-size:11px;">bioUpdateAllowed {JSON.stringify(bioUpdateAllowed, null, 2)}</pre>
 
 <div class="container">
 	<div class="left-column">
@@ -140,12 +142,23 @@
 				/>
 				<input type="hidden" name="authorId" value={selectedUserId ?? ''} />
 				<input type="hidden" name="bioId" value={selectedUserWithBio?.id ?? ''} />
-				<button bind:this={btnCreate} type="submit" disabled={selectedUserId === ''}
-					>Create Profile</button
-				>
-				<button bind:this={btnUpdate} type="submit" formaction="?/update" class="hidden"
-					>Update Profile</button
-				>
+				{#if data.userProfiles[0]?.bio}
+					<p class="instead-of-button" class:hidden={bioUpdateAllowed}>
+						To update bio click on bio text on the right
+					</p>
+				{:else}
+					<button
+						bind:this={btnCreate}
+						type="submit"
+						disabled={selectedUserId === ''}
+						class="button"
+					>
+						Create Profile
+					</button>
+				{/if}
+				<button bind:this={btnUpdate} type="submit" formaction="?/update" class="button hidden"
+					>Update Profile
+				</button>
 			</form>
 		</div>
 	</div>
@@ -173,8 +186,6 @@
 		width: 80vw;
 		grid-template-columns: 1fr 3fr;
 		text-align: center;
-		// border: 1px solid gray;
-		// width: 20em;
 		.left-column {
 			display: flex;
 			flex-direction: column;
@@ -183,9 +194,18 @@
 			align-items: center;
 			border-radius: 6px;
 			padding-top: 1rem;
-			// width: 30vw;
 			p {
 				text-align: left;
+			}
+			.instead-of-button {
+				border: 1px solid gray;
+				border-radius: 4px;
+				width: 11rem;
+				padding: 2px 1rem;
+				text-align: center;
+				margin-left: 1.7rem;
+				font-size: 14px;
+				user-select: none;
 			}
 			textarea {
 				text-align: left;
@@ -193,16 +213,8 @@
 				margin-top: 1rem;
 			}
 			button {
-				display: block;
-				color: black;
-				font-size: 16px;
-				margin: 1rem 0 0 3.5em;
-				&:disabled {
-					background-color: gray;
-				}
-			}
-			.hidden {
-				display: none;
+				// add margin to the class defined in styles/app.scss
+				margin: 1rem 0;
 			}
 		}
 		.right-column {
@@ -211,55 +223,15 @@
 			.bio {
 				cursor: pointer;
 			}
-			// ul {
-			// 	list-style: none;
-			// 	li {
-			// 		display: flex;
-			// 		flex-direction: column;
-			// 		align-items: flex-start;
-			// 		justify-content: flex-start;
-			// 		margin: 0;
-			// 		padding: 0;
-			// 		p:nth-child(1) {
-			// 			color: yellow;
-			// 			font-style: italic;
-			// 			margin: 1rem 0 0 0;
-			// 		}
-			// 		p:nth-child(2) {
-			// 			margin-top: 8px;
-			// 			font-size: 14px;
-			// 			text-align: left;
-			// 		}
-			// 	}
-			// }
 		}
 	}
-	// .author-list {
-	// 	display: flex;
-	// 	align-items: baseline;
-	// 	gap: 1rem;
-	// }
-	// .select-author {
-	// 	padding-left: 2rem;
-	// 	width: 15rem;
-	// 	font-size: 16px;
-	// 	font-weight: 300;
-	// 	margin: 1rem 2.5rem 0 0;
-	// 	:focus {
-	// 		outline: 2px dashed red;
-	// 	}
-	// }
-
-	// ul {
-	// 	display: flex;
-	// 	flex-direction: column;
-	// 	text-align: center;
-	// 	margin: 2px auto;
-	// }
 	textarea {
 		&::placeholder {
 			color: var(--PLACEHOLDER_COLOR);
 			font-weight: normal;
 		}
+	}
+	.hidden {
+		display: none;
 	}
 </style>

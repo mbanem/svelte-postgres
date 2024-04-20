@@ -22,7 +22,8 @@ button {
 	width: 8rem;
 	border: 1px solid gray;
 	border-radius: 5px;
-	padding: 3px 5px;
+	padding: 5px 5px;
+	font-size: 16px;
 	color: $TEXT-COLOR;
 	background-color: $BACK-COLOR;
 	&:hover {
@@ -31,6 +32,9 @@ button {
 	}
 	&:active {
 		border: 1px solid yellow;
+	}
+	&:disabled {
+		background-color: gray;
 	}
 }
 input {

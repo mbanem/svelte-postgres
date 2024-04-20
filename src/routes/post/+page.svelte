@@ -6,7 +6,7 @@
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores'; // for $age.status code on actions
 	import CircleSpinner from '$lib/components/CircleSpinner.svelte';
-	import { setColor, setButtonVisible } from '$lib/utils';
+	import { setColor, setButtonVisible, csvToNumArr } from '$lib/utils';
 	import { onMount } from 'svelte';
 
 	import PageTitleCombo from '$lib/components/PageTitleCombo.svelte';
@@ -33,8 +33,7 @@
 	let selected: string[] = [];
 	let categoryIDs: number[] = [];
 
-	$: setColor(form?.message ? 'red' : 'green'); // toggle color for a message
-
+	$: setColor(form?.message ? (form.message.includes('successfully') ? 'green' : 'red') : 'green');
 	const resetForm = () => {
 		(document.querySelector("input[name='bio']") as HTMLTextAreaElement).value = '';
 		(document.querySelector("input[name='authorId']") as HTMLInputElement).value = '';
@@ -55,6 +54,7 @@
 		content: '',
 		categoryIDs: ''
 	};
+
 	let selectedCategoryIds: () => string;
 	const enhancePostActions: SubmitFunction = ({ action, formData }) => {
 		loading = true; // start spinner animation
@@ -63,6 +63,7 @@
 		contentIsRequired = '';
 		categoryIsRequired = '';
 
+		formData.set('categoryIDs', selectedCategoryIds());
 		for (const key of Object.keys(required)) {
 			if (formData.get(key) == '') {
 				switch (key) {
@@ -87,9 +88,7 @@
 		} else if (action.search === '?/deletePost') {
 			message = 'deleting post...';
 		} else if (action.search === '?/updatePost') {
-			(document.querySelector("input[name='categoryIDs']") as HTMLInputElement).value =
-				selectedCategoryIds();
-			console.log(JSON.stringify(selectedCategoryIds(), null, 2));
+			// console.log('enhance selectedCategoryIDs', JSON.stringify(selectedCategoryIds(), null, 2));
 			message = 'updating post...';
 		}
 
@@ -131,7 +130,6 @@
 		}
 	};
 
-	// let selBox: HTMLSelectElement;
 	onMount(() => {
 		boardBlock.classList.toggle('hidden');
 		selectedUserId = data.user.id;
@@ -164,12 +162,12 @@
 	};
 
 	const clearForm = () => {
-		const els = ['id', 'authorId', 'title', 'content', 'published', 'categoryIDs'];
+		const els = ['id', 'title', 'content', 'published', 'categoryIDs'];
 		els.forEach((k) => {
 			(document.querySelector(`input[name='${k}']`) as HTMLInputElement).value = '';
 		});
 	};
-	let selectOptions: (arr: number[]) => void;
+	let setSelectedIds: (arr: number[]) => void;
 	const toUpdatePost = (postId: string) => {
 		// todo
 		const authorPost = data.PostAuthor.filter((pa) => pa.id === postId);
@@ -180,13 +178,12 @@
 			{ id: id },
 			{ authorId: authorId },
 			{ title: title },
-			{ content: content },
-			{ published: published }
+			{ content: content }
+			// { published: published }
 			// { categoryIDs: categoryIDs }
 		];
-		selectOptions((categoryIds.split(',') as string[]).map((el) => Number(el)));
-		setButtonVisible([btnUpdate, btnCreate, btnDelete]);
 
+		setButtonVisible([btnUpdate, btnCreate, btnDelete]);
 		// NOTE: in TypeScript Playground instead of using nested loops as we use below,
 		// the spread operators works, but here does not
 		// for (const [k,v] of Object.entries([...els])) { code here }
@@ -195,6 +192,8 @@
 				(document.querySelector(`input[name='${k}']`) as HTMLInputElement).value = `${v}`;
 			}
 		});
+		(document.querySelector(`input[name='published']`) as HTMLInputElement).checked = published;
+		setSelectedIds(csvToNumArr(categoryIds));
 	};
 
 	const deletePost = (id: string) => {
@@ -214,6 +213,7 @@
 			: '';
 </script>
 
+<pre>message {message} result {result}</pre>
 <!-- <pre style="font-size:11px;">data {JSON.stringify(data, null, 2)}</pre> -->
 <PageTitleCombo
 	bind:result
@@ -256,12 +256,10 @@
 		</form>
 		<div class="multi-select-container">
 			<MultiSelect
-				bind:categoryIsRequired
 				data={data.categories}
-				bind:setSelectedIds={selectOptions}
+				bind:categoryIsRequired
+				bind:setSelectedIds
 				bind:getSelectedCategoryIDs={selectedCategoryIds}
-				select_box="select_box"
-				selected_categories="selected_categories"
 			/>
 		</div>
 	</div>
@@ -293,14 +291,6 @@
 		display: flex;
 		align-items: baseline;
 	}
-	button {
-		display: inline-block;
-		position: relative;
-		height: 1.9rem;
-		width: 6rem;
-		font-size: 16px;
-		background-color: $BACK-COLOR;
-	}
 
 	input {
 		display: inline-block;
@@ -324,32 +314,6 @@
 		display: flex;
 		gap: 1.5rem;
 		// margin: 0;
-	}
-
-	.multi-select-container {
-		// grid-column: span 2;
-		padding: 0;
-		margin: 0;
-		width: 100%;
-		border: 1px solid gray;
-	}
-	.multi-select-container :global(.select_box) {
-		width: 40%;
-		height: 4rem;
-		font-weight: 500;
-	}
-	.multi-select-container :global(.selected_categories) {
-		border: 1px solid gray;
-		// width: 100;
-		height: 1.5rem;
-		display: flex;
-		align-items: center;
-		gap: 5px;
-		padding: 0 0 0 5px;
-		margin: 0 0 2px 0;
-		color: skyblue;
-		font-family: 'Arial Narrow Bold', sans-serif;
-		font-size: 0.8em;
 	}
 
 	// }

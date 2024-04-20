@@ -22,7 +22,6 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
 		throw error(400, 'User not found');
 	}
 	// console.log('user', JSON.stringify(user, null, 2));
-	// let PostAuthor: PostAuthor = [];
 	let PostAuthor: PostAuthor = [];
 
 	if (locals.user?.role === 'ADMIN') {
@@ -51,6 +50,9 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
 			join "_CategoryToPost" c2p on p.id = c2p."B"
 			join category c on c.id = c2p."A"
 		where u.id=${user.id}
+		group by
+					p.id,
+					u.id
 		order by
 			u.first_name asc,
 			u.last_name asc;`;
@@ -89,20 +91,19 @@ type InputData = {
 	authorId: string;
 };
 export const actions: Actions = {
-	addPost: async ({ request }) => {
+	createPost: async ({ request }) => {
 		const input_data = Object.fromEntries(
 			// @ts-expect-error
 			await request.formData()
 		) as InputData; //{
 
 		const { title, content, published, categoryIDs, authorId } = input_data;
-		if (title === '' || content === '' || categoryIDs.length === 0 || !authorId) {
+		if (title === '' || content === '' || categoryIDs === '' || authorId === '') {
 			return fail(400, {
-				data: { title, content, published, authorId },
+				data: { title, content, published, categoryIDs, authorId },
 				message: 'Insufficient data supplied'
 			});
 		}
-		// console.log('input_data', JSON.stringify(input_data, null, 2));
 		await utils.sleep(2000);
 		let newPost: any;
 
@@ -116,7 +117,6 @@ export const actions: Actions = {
 			const catIDs = categoryIDs.split(',').map((val) => {
 				return { id: Number(val) };
 			});
-
 			newPost = await db.post.create({
 				data: {
 					title,
@@ -136,11 +136,11 @@ export const actions: Actions = {
 			});
 		}
 		return {
-			success: title
+			success: true,
+			message: 'Post successfully created'
 		};
 	},
 	deletePost: async ({ request }) => {
-		console.log('deletePost');
 		const body = await request.formData();
 		const id = body.get('id') as string;
 
@@ -158,7 +158,8 @@ export const actions: Actions = {
 			throw new Error('internal error on post delete');
 		}
 		return {
-			success: true
+			success: true,
+			message: 'Post successfully deleted'
 		};
 	},
 	updatePost: async ({ request }) => {
@@ -168,8 +169,7 @@ export const actions: Actions = {
 		) as InputData;
 
 		const { id, title, content, published, categoryIDs, authorId } = input_data;
-		console.log(JSON.stringify(input_data, null, 2));
-		if (id === '' || title === '' || content === '' || categoryIDs.length === 0 || !authorId) {
+		if (id === '' || title === '' || content === '' || categoryIDs === '' || authorId === '') {
 			return fail(400, {
 				data: { id, title, content, published, authorId },
 				message: 'Insufficient data supplied'
@@ -180,19 +180,24 @@ export const actions: Actions = {
 		const catIDs = categoryIDs.split(',').map((val) => {
 			return { id: Number(val) };
 		});
-
+		const categories = await db.category.findMany({
+			select: {
+				id: true
+			}
+		});
 		try {
 			await db.post.update({
 				where: {
-					id: id as string
+					id
 				},
 				data: {
 					title,
 					content,
-					published: published === 'false' ? false : true,
+					published: published === 'on' ? true : false,
 					authorId,
 					updatedAt: new Date(),
 					categories: {
+						disconnect: categories,
 						connect: catIDs
 					}
 				}
@@ -202,7 +207,7 @@ export const actions: Actions = {
 		}
 		return {
 			success: true,
-			message: 'successfully updated'
+			message: 'Post successfully updated'
 		};
 	}
 } satisfies Actions;

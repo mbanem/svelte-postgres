@@ -77,9 +77,9 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
 	// const userIds = [...new Set(todos.map((todo) => todo.user.id))];
 	// const users = [...new Set(todos.map((todo) => todo.id))].map((id) => getUser(id));
 
+	// {id:string, firstName:string, lastName:string, role:string}
 	const users =
 		await db.$queryRaw`select distinct t.user_id as "id", u.first_name as "firstName",u.last_name as "lastName", u.role from todo t join users u on u.id = t.user_id`;
-	// console.log('users from todos', JSON.stringify(users, null, 2));
 	return {
 		todos, // as Todo[] is important for TypeScript
 		user,
@@ -146,7 +146,7 @@ export const actions: Actions = {
 
 		await utils.sleep(2000);
 		return {
-			success: 'todo successfully created'
+			success: 'Todo successfully created'
 		};
 	},
 	updateTodo: async ({ request }) => {
@@ -178,7 +178,7 @@ export const actions: Actions = {
 			});
 			await utils.sleep(2000);
 			return {
-				success: 'todo successfully updated'
+				success: 'Todo successfully updated'
 			};
 		} catch (err) {
 			console.log(err);
@@ -192,10 +192,8 @@ export const actions: Actions = {
 
 		if (obj.id === '') {
 			return fail(400, {
-				data: {
-					id: obj.id,
-					message: 'delete failed'
-				}
+				id: obj.id,
+				message: 'delete failed'
 			});
 		}
 		await utils.sleep(2000);

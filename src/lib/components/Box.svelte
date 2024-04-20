@@ -16,8 +16,8 @@
 	<label for="age">Person age</label>
 	<input type="number" bind:value={person.age} min="1" max="105" id="age" style="width:2rem" />
 	<p>Leaving in {city} of age {userAge}</p>
-	<button style="color:black;" on:click={() => (person.age += 1)}>increment age</button>
-	<button style="color:black;" on:click={decrement}>decrement age</button>
+	<button on:click={() => (person.age += 1)}>increment age</button>
+	<button on:click={decrement}>decrement age</button>
 </div>
 ``
 

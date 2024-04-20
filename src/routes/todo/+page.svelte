@@ -19,7 +19,7 @@
 	// form?.message cannot be cleared by code but could be ignored when necessary
 	let ignoreFormMessage = false;
 
-	$: setColor(form?.message ? 'red' : 'green'); // toggle color for a message
+	$: setColor(form?.message ? (form.message.includes('successfully') ? 'green' : 'red') : 'green');
 
 	// keep message displayed for several seconds
 	const clearMessage = () => {
@@ -28,13 +28,13 @@
 			ignoreFormMessage = false;
 			result = '';
 		}, 2000);
-		setButtonVisible(btnCreate, btnUpdate, 'create');
+		setButtonVisible([btnCreate, btnUpdate]);
 	};
 
-	// if form is fill with  data for update but user chose other action we
-	// clear form input elements
+	// if form is filled with  data for update, but user chose other action, we
+	// clear the form input elements
 	const clearForm = () => {
-		setButtonVisible(btnCreate, btnUpdate, 'create');
+		setButtonVisible([btnCreate, btnUpdate]);
 		(document.querySelector("input[name='title']") as HTMLInputElement).value = '';
 		(document.querySelector("input[name='content']") as HTMLInputElement).value = '';
 	};
@@ -42,7 +42,6 @@
 	let contentIsRequired = '';
 	// get params action for URL amf formData to check on required fields
 	const enhanceAddTodo: SubmitFunction = ({ action, formData }) => {
-		// console.log('page SubmitFunction enhanceAddTodo');
 		success = '';
 		titleIsRequired = '';
 		contentIsRequired = '';
@@ -70,7 +69,7 @@
 			}
 			loading = false; // turn the spinner off
 			ignoreFormMessage = true;
-			setButtonVisible(btnCreate, btnUpdate, 'create');
+			setButtonVisible([btnCreate, btnUpdate]);
 			invalidateAll();
 		};
 	};
@@ -86,9 +85,7 @@
 			method: 'PATCH',
 			body: id
 		});
-		// console.log('response', response);
 		const data = await response.json();
-		// console.log('data', data);
 		loading = false;
 		// setting message will dynamically set result, which in turn will show message
 		// for several seconds and then clear it out
@@ -119,7 +116,6 @@
 		message = result.deleted ? 'deleted successfully' : 'delete failed';
 		// console.log('data.deleted', result.deleted);
 		if (result.deleted) {
-			// data.todos = data.todos.filter((todo: Todo) => todo.id !== id);
 			todos = todos.filter((todo: Todo) => todo.id !== id);
 		}
 	};
@@ -130,7 +126,6 @@
 		// prevent ADMIN to update others todos
 		selectedUserId = todo.userId as string;
 		todoIdEl.value = todo.id as string;
-		// console.log('todo', JSON.stringify(todo, null, 2));
 		(document.querySelector("input[name='userId']") as HTMLInputElement).value =
 			todo.userId as string;
 		(document.querySelector("input[name='title']") as HTMLInputElement).value =
@@ -140,24 +135,23 @@
 		(document.querySelector("input[name='priority']") as HTMLInputElement).value = String(
 			todo.priority
 		);
-		setButtonVisible(btnCreate, btnUpdate, 'update');
+		setButtonVisible([btnCreate, btnUpdate]);
 	};
 
 	// updatePrepared say data is copied into the form elements
-	// and should be cleared if action other than click on an
+	// and should be cleared if action other than click on the
 	// update button is taken
 	let updatePrepared = false;
 	let btnCreate: HTMLButtonElement;
 	let btnUpdate: HTMLButtonElement;
 	let theForm: HTMLFormElement;
 	const prepareUpdate = async (todoId: string) => {
-		// loading = true;
 		prepareDataForEdit(todoId);
 		updatePrepared = true;
 	};
 
 	$: formMessage = ignoreFormMessage ? '' : form?.message ?? '';
-	// setting result will call showMessage and this onw will setTimeout
+	// setting result will call showMessage and this one will setTimeout
 	// to clear the message after several seconds
 	$: result = message || formMessage;
 	$: ({ todos, user } = data);
@@ -192,7 +186,7 @@
 					to stay inside the buttons
 			-->
 			<div style="position:relative;">
-				<button bind:this={btnCreate} type="submit" style="text-align:center;">
+				<button bind:this={btnCreate} type="submit">
 					{#if loading}
 						<CircleSpinner color="blue" />
 					{/if}
@@ -242,8 +236,7 @@
 		border: 1px solid gray;
 		border-radius: 8px;
 		margin-left: 1rem;
-		input,
-		button {
+		input {
 			display: inline-block;
 			font-size: 18px;
 			padding-left: 0.5rem;
@@ -279,17 +272,15 @@
 						font-weight: normal;
 					}
 				}
-				button {
-					display: inline-block;
-					width: 8rem;
-					padding: 6px 0;
-					color: black;
-				}
 				.hidden {
 					display: none;
 				}
 			}
 		}
+	}
+	button {
+		// display: inline-block;
+		margin-top: 1rem !important;
 	}
 	h3 {
 		display: block;
@@ -297,23 +288,4 @@
 		margin-left: 1rem;
 		border-bottom: 1px solid gray;
 	}
-	// h1 {
-	// 	display: flex;
-	// 	align-items: baseline;
-	// 	margin-left: 1rem;
-	// 	.message,
-	// 	.user-name {
-	// 		display: inline-block;
-	// 		font-size: 14px;
-	// 		font-weight: 100;
-	// 		color: yellow;
-	// 		margin-left: 1rem;
-	// 	}
-	// 	.user-name {
-	// 		color: white;
-	// 	}
-	// 	select {
-	// 		margin-left: 1rem;
-	// 	}
-	// }
 </style>

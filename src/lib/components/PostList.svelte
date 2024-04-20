@@ -15,7 +15,11 @@
 <div class="post-container">
 	<ul>
 		{#if postAuthors[0]}
-			<p class="name">{postAuthors[0].firstName.slice(0, -1)} {postAuthors[0].lastName}</p>
+			<p class="name">
+				{postAuthors[0].firstName.slice(0, -1)}
+				{postAuthors[0].lastName}
+				<span class="count">{postAuthors.length} post{postAuthors.length === 1 ? '' : 's'}</span>
+			</p>
 			{#each postAuthors as { id, title, content, firstName, lastName }}
 				<li class="post-block">
 					<div class="title">
@@ -30,7 +34,7 @@
 	</ul>
 </div>
 
-<style>
+<style lang="scss">
 	.post-container {
 		overflow-y: auto;
 		width: 70vw;
@@ -42,17 +46,22 @@
 	}
 	.name {
 		position: sticky;
-		top: -5px;
+		top: -2px;
 		font-style: italic;
 		color: yellow;
 		font-size: 16px;
 		margin-bottom: 8px;
-		padding: 5px 1rem 5px 1rem;
+		padding: 2px 1rem 0 1rem;
 		background-color: #3e3e3e; /*  $BACK-COLOR; */
+		.count {
+			// color: skyblue;
+			font-size: 12px;
+			margin-left: 1.5rem;
+		}
 	}
 	.post-block {
 		list-style: none;
-		margin: 1rem 0 0 0;
+		margin: 0.6rem 0 0 0;
 		padding: 0 5px 0 0;
 	}
 	.title {
@@ -64,6 +73,10 @@
 		/* flex-direction: column; */
 		padding: 0;
 		margin: 0;
+		p {
+			margin: 0;
+			padding: 0;
+		}
 	}
 	.highlight:hover {
 		background-color: pink;
