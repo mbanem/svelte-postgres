@@ -4,7 +4,6 @@ import type { Actions } from './$types';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = (async ({ cookies }) => {
-	// console.log('logout load');
 	cookies.set('session', '', {
 		path: '/',
 		expires: new Date(0)

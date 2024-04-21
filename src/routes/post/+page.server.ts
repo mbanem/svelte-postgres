@@ -12,7 +12,6 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
 	if (!userAuthToken) {
 		throw error(400, 'User cookie not found');
 	}
-	// console.log('get user vua userAuthToken', userAuthToken);
 	const user = await db.user.findUnique({
 		where: {
 			userAuthToken: cookies.get('session')
@@ -21,7 +20,6 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
 	if (!user) {
 		throw error(400, 'User not found');
 	}
-	// console.log('user', JSON.stringify(user, null, 2));
 	let PostAuthor: PostAuthor = [];
 
 	if (locals.user?.role === 'ADMIN') {
@@ -57,7 +55,6 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
 			u.first_name asc,
 			u.last_name asc;`;
 	}
-	// console.log('PostAuthor', JSON.stringify(PostAuthor, null, 2));
 	const userIDs = [...new Set(PostAuthor.map((el) => el.authorId))];
 	const users = await db.user.findMany({
 		where: {
@@ -68,12 +65,10 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
 	});
 	// NOTE:mPrisma array from Postgres
 	// const categories = (await db.$queryRaw`SELECT array(SELECT name FROM Category)`) as string[];
-	// console.log('categories', JSON.stringify(categories, null, 2));
 
 	// for Post-Category many-to-many we need array of category.ids
 	// but for multiselect we need category names as well
 	const categories: { id: number; name: string }[] = await db.category.findMany();
-	// console.log('categories', JSON.stringify(categories, null, 2));
 	return {
 		PostAuthor, // as Todo[] is important for TypeScript
 		user,
@@ -175,7 +170,6 @@ export const actions: Actions = {
 				message: 'Insufficient data supplied'
 			});
 		}
-		// console.log('input_data', JSON.stringify(input_data, null, 2));
 		await utils.sleep(2000);
 		const catIDs = categoryIDs.split(',').map((val) => {
 			return { id: Number(val) };

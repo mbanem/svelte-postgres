@@ -3,7 +3,6 @@
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
-	import { browser } from '$app/environment';
 	import { page } from '$app/stores'; // for $age.status code on actions
 	import CircleSpinner from '$lib/components/CircleSpinner.svelte';
 	import { setColor, setButtonVisible, csvToNumArr } from '$lib/utils';
@@ -30,15 +29,9 @@
 	let btnUpdate: HTMLButtonElement;
 	const authorId = data?.user?.id;
 
-	let selected: string[] = [];
 	let categoryIDs: number[] = [];
 
 	$: setColor(form?.message ? (form.message.includes('successfully') ? 'green' : 'red') : 'green');
-	const resetForm = () => {
-		(document.querySelector("input[name='bio']") as HTMLTextAreaElement).value = '';
-		(document.querySelector("input[name='authorId']") as HTMLInputElement).value = '';
-		(document.querySelector("input[name='bioId']") as HTMLInputElement).value = '';
-	};
 
 	// keep message displayed for several seconds
 	const clearMessage = () => {
@@ -49,6 +42,13 @@
 		}, 2000);
 	};
 
+	const clearForm = () => {
+		const els = ['id', 'title', 'content', 'published', 'categoryIDs'];
+		els.forEach((k) => {
+			(document.querySelector(`input[name='${k}']`) as HTMLInputElement).value = '';
+		});
+	};
+
 	const required = {
 		title: '',
 		content: '',
@@ -56,10 +56,11 @@
 	};
 
 	let selectedCategoryIds: () => string;
-	const enhancePostActions: SubmitFunction = ({ action, formData }) => {
-		loading = true; // start spinner animation
+
+	const enhancePost: SubmitFunction = ({ action, formData }) => {
 		message = '';
 		titleIsRequired = '';
+		ignoreFormMessage = false;
 		contentIsRequired = '';
 		categoryIsRequired = '';
 
@@ -81,14 +82,13 @@
 				}
 			}
 		}
-		ignoreFormMessage = false;
+		loading = true; // start spinner animation
 		if (action.search === '?/createPost') {
 			setButtonVisible([btnCreate, btnUpdate, btnDelete]);
 			message = 'saving post...';
 		} else if (action.search === '?/deletePost') {
 			message = 'deleting post...';
 		} else if (action.search === '?/updatePost') {
-			// console.log('enhance selectedCategoryIDs', JSON.stringify(selectedCategoryIds(), null, 2));
 			message = 'updating post...';
 		}
 
@@ -97,21 +97,17 @@
 			ignoreFormMessage = true;
 
 			if (action.search === '?/createPost') {
-				$page.status === 200 ? 'Post created' : 'create failed';
+				message = $page.status === 200 ? 'Post created' : 'create failed';
 			} else if (action.search === '?/deletePost') {
-				$page.status === 200 ? 'Post deleted' : 'delete failed';
+				message = $page.status === 200 ? 'Post deleted' : 'delete failed';
 			} else if (action.search === '?/updatePost') {
-				$page.status === 200 ? 'Post updated' : 'update failed';
+				message = $page.status === 200 ? 'Post updated' : 'update failed';
 			}
 			clearMessage();
 			invalidateAll();
 			setButtonVisible([btnCreate, btnUpdate, btnDelete]);
 			clearForm();
-			// resetButtons([btnCreate, btnDelete, btnUpdate]);
 			loading = false; // stop spinner animation
-			// if (action.search === '?/update') {
-			// 	selectedUserWithBio.bio = bio as string;
-			// }
 		};
 	};
 
@@ -161,12 +157,6 @@
 		return arr;
 	};
 
-	const clearForm = () => {
-		const els = ['id', 'title', 'content', 'published', 'categoryIDs'];
-		els.forEach((k) => {
-			(document.querySelector(`input[name='${k}']`) as HTMLInputElement).value = '';
-		});
-	};
 	let setSelectedIds: (arr: number[]) => void;
 	const toUpdatePost = (postId: string) => {
 		// todo
@@ -197,23 +187,18 @@
 	};
 
 	const deletePost = (id: string) => {
-		if (browser) {
-			(document.querySelector("input[name='id']") as HTMLInputElement).value = id;
-			btnDelete.click();
-		}
+		// if (browser) {
+		(document.querySelector("input[name='id']") as HTMLInputElement).value = id;
+		btnDelete.click();
+		// }
 	};
 
 	$: ({ PostAuthor } = data);
 	$: formMessage = ignoreFormMessage ? '' : form?.message || '';
 	$: result = message || formMessage;
-	$: msg = form?.success
-		? 'Saved - ' + form.success
-		: form?.message
-			? 'Error: ' + form.message
-			: '';
 </script>
 
-<pre>message {message} result {result}</pre>
+<!-- <pre>message {message} result {result}</pre> -->
 <!-- <pre style="font-size:11px;">data {JSON.stringify(data, null, 2)}</pre> -->
 <PageTitleCombo
 	bind:result
@@ -222,7 +207,7 @@
 	bind:selectedUserId
 	amendTFUserId={true}
 	PageName="Post"
-	user={data.user}
+	user={data.locals.user}
 	users={data.users}
 />
 
@@ -231,7 +216,7 @@
 
 <div bind:this={boardBlock} class="board hidden">
 	<div>
-		<form method="POST" action="?/createPost" use:enhance={enhancePostActions}>
+		<form method="POST" action="?/createPost" use:enhance={enhancePost}>
 			<input type="hidden" name="id" />
 			<input type="hidden" name="authorId" value={authorId} />
 			<input type="hidden" name="categoryIDs" value={categoryIDs} />
@@ -249,9 +234,12 @@
 				<button bind:this={btnDelete} type="submit" formaction="?/deletePost" class="button hidden"
 					>delete</button
 				>
-				<button bind:this={btnUpdate} type="submit" formaction="?/updatePost" class="button hidden"
-					>update</button
-				>
+				<button bind:this={btnUpdate} type="submit" formaction="?/updatePost" class="button hidden">
+					{#if loading}
+						<CircleSpinner color="skyblue" />
+					{/if}
+					update
+				</button>
 			</label>
 		</form>
 		<div class="multi-select-container">
@@ -316,7 +304,9 @@
 		// margin: 0;
 	}
 
-	// }
+	.button {
+		position: relative;
+	}
 	.hidden {
 		display: none;
 	}

@@ -34,15 +34,6 @@
 			// @ts-expect-error
 			return { value: el.value, text: el.text };
 		});
-		// console.log(JSON.stringify(values, null, 2));
-		// get selected options values
-		// const selected = Array.from(document.querySelectorAll('#selBox option:checked'))
-		// 	.map((el) => {
-		// 		console.log(JSON.stringify(el, null, 2));
-		// 		// @ts-expect-error
-		// 		return el.value;
-		// 	})
-		// 	.join(',');
 		selectedOption.innerText = selected.length
 			? selected.map((el) => el.text).join(', ')
 			: categoryIsRequired;

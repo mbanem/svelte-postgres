@@ -32,7 +32,7 @@
 					checked={todo.completed}
 					on:click|preventDefault={() => toggleCompleted(todo.id)}
 				/>
-				<span class:blue={todo.userId === id}>{todo.content}</span>
+				<span class:blue={todo.userId === id}>{todo.title}</span>
 				<button on:click={() => deleteTodo(todo.id)} aria-label="Delete Todo">❌</button>
 				<button on:click={() => prepareUpdate(todo.id)} aria-label="Update Todo"> 📝</button>
 			</label>

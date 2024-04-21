@@ -3,7 +3,6 @@ import { db } from '$lib/server/db';
 import { fail, redirect } from '@sveltejs/kit';
 
 export const load: PageServerLoad = (async ({ url }) => {
-	// console.log('user/+page.server.ts url', JSON.stringify(url, null, 2));
 	try {
 		const id = url.searchParams.get('id') as string;
 		if (!id) {

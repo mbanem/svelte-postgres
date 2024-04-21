@@ -93,3 +93,37 @@ $font-size: (24px, 22px, 20px, 18px);
 		color: $LINK-COLOR;
 	}
 }
+.relative {
+	position: relative;
+
+	.tooltip {
+		position: absolute;
+		top: -3rem !important;
+		display: inline-block;
+		color: yellow;
+		font-size: 14px;
+		font-weight: 400;
+		padding: 3px 1rem;
+		border: 1px solid gray;
+		border-radius: 4px;
+		text-align: center;
+	}
+	// master class has higher specificity than tooltip class, e.g.
+	/* <Tooltip
+				placement="top"
+				type="custom"
+				defaultClass="tooltip"
+				class="master"
+				arrow={false}
+		>
+			flowbite-svelte Tooltip
+		</Tooltip>
+		NOTE: defaultClass holds primary style
+		while master class could be for warning, error,...
+	*/
+	.master {
+		color: yellow;
+		font-size: 14px;
+		font-weight: 400;
+	}
+}

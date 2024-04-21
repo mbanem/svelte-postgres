@@ -4,6 +4,7 @@
 	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores'; // for $age.status code on actions
+	import CircleSpinner from '$lib/components/CircleSpinner.svelte';
 	import { setColor, setButtonVisible } from '$lib/utils';
 	import { onMount } from 'svelte';
 
@@ -11,6 +12,7 @@
 
 	export let data: PageData;
 	export let form: ActionData;
+
 	let message = '';
 	let bioIsRequired = '';
 	// form?.message cannot be cleared by code but could be ignored when necessary
@@ -20,15 +22,11 @@
 	let selectedUserId = '';
 	let selectedUserWithBio: Bio;
 
+	let btnCreate: HTMLButtonElement;
+	let btnUpdate: HTMLButtonElement;
+
 	$: setColor(form?.message ? (form.message.includes('successfully') ? 'green' : 'red') : 'green');
 
-	// if form is fill with  data for update but user chose other action we
-	// clear form input elements
-	const resetForm = () => {
-		(document.querySelector("input[name='bio']") as HTMLTextAreaElement).value = '';
-		(document.querySelector("input[name='authorId']") as HTMLInputElement).value = '';
-		(document.querySelector("input[name='bioId']") as HTMLInputElement).value = '';
-	};
 	// keep message displayed for several seconds
 	const clearMessage = () => {
 		setTimeout(() => {
@@ -37,7 +35,13 @@
 			result = '';
 		}, 2000);
 	};
-	const enhanceCreateProfile: SubmitFunction = ({ action, formData }) => {
+
+	const clearForm = () => {
+		(document.querySelector("input[name='bio']") as HTMLTextAreaElement).value = '';
+		// (document.querySelector("input[name='authorId']") as HTMLInputElement).value = '';
+		(document.querySelector("input[name='bioId']") as HTMLInputElement).value = '';
+	};
+	const enhanceProfile: SubmitFunction = ({ action, formData }) => {
 		message = '';
 		bioIsRequired = '';
 		ignoreFormMessage = false;
@@ -48,30 +52,26 @@
 		}
 		loading = true; // start spinner animation
 		message = action.search === '?/create' ? 'creating profile...' : 'updating profile...';
+
 		return async ({ update }) => {
 			await update();
 			ignoreFormMessage = true;
 
-			message =
-				action.search === '?/create'
-					? $page.status === 200
-						? 'Profile added'
-						: 'create failed'
-					: 'error occurred';
-			message =
-				action.search === '?/update'
-					? $page.status === 200
-						? 'Profile updated'
-						: 'Update failed'
-					: 'error occurred';
-
+			if (action.search === '?/create') {
+				message = $page.status === 200 ? 'Profile created' : 'create failed';
+			} else if (action.search === '?/delete') {
+				message = $page.status === 200 ? 'Profile deleted' : 'delete failed';
+			} else if (action.search === '?/update') {
+				message = $page.status === 200 ? 'Profile updated' : 'update failed';
+			}
 			setButtonVisible([btnCreate, btnUpdate]);
 			clearMessage();
 			invalidateAll();
+			loading = false; // stop spinner animation
+			clearForm();
 			if (action.search === '?/update') {
 				selectedUserWithBio.bio = bio as string;
 			}
-			loading = false; // stop spinner animation
 		};
 	};
 	let adminSelected: boolean;
@@ -90,8 +90,6 @@
 			}
 		}
 	};
-	let btnCreate: HTMLButtonElement;
-	let btnUpdate: HTMLButtonElement;
 
 	let bioTextArea: HTMLTextAreaElement;
 	let bioUpdateAllowed = false;
@@ -109,10 +107,10 @@
 		}
 	};
 
-	$: ({ users, userProfiles } = data);
+	$: ({ userProfiles } = data);
 	$: selectedUserWithBio = getUserWithBio(selectedUserId) as Bio;
 	$: formMessage = ignoreFormMessage ? '' : form?.message || '';
-	$: result = formMessage || message;
+	$: result = message || formMessage;
 </script>
 
 <PageTitleCombo
@@ -124,13 +122,13 @@
 	user={data.locals.user}
 	users={data.users}
 />
-<pre style="font-size:11px;">bioUpdateAllowed {JSON.stringify(bioUpdateAllowed, null, 2)}</pre>
+<!-- <pre style="font-size:11px;">bioUpdateAllowed {JSON.stringify(bioUpdateAllowed, null, 2)}</pre> -->
 
 <div class="container">
 	<div class="left-column">
 		<div>
 			User Bio
-			<form action="?/create" method="post" use:enhance={enhanceCreateProfile}>
+			<form action="?/create" method="post" use:enhance={enhanceProfile}>
 				<textarea
 					bind:this={bioTextArea}
 					class="text-area"
@@ -153,11 +151,17 @@
 						disabled={selectedUserId === ''}
 						class="button"
 					>
-						Create Profile
+						{#if loading}
+							<CircleSpinner color="skyblue" />
+						{/if}
+						create
 					</button>
 				{/if}
-				<button bind:this={btnUpdate} type="submit" formaction="?/update" class="button hidden"
-					>Update Profile
+				<button bind:this={btnUpdate} type="submit" formaction="?/update" class="button hidden">
+					{#if loading}
+						<CircleSpinner color="skyblue" />
+					{/if}
+					update
 				</button>
 			</form>
 		</div>
@@ -213,6 +217,7 @@
 				margin-top: 1rem;
 			}
 			button {
+				position: relative;
 				// add margin to the class defined in styles/app.scss
 				margin: 1rem 0;
 			}

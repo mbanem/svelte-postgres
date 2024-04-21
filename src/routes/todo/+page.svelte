@@ -13,7 +13,6 @@
 	export let data: PageData; // from +page.server.ts load function
 	export let form: ActionData; // form?.messages from action methods in +page.server.ts
 
-	let success: string;
 	let loading: boolean;
 	let message = '';
 	// form?.message cannot be cleared by code but could be ignored when necessary
@@ -41,8 +40,7 @@
 	let titleIsRequired = '';
 	let contentIsRequired = '';
 	// get params action for URL amf formData to check on required fields
-	const enhanceAddTodo: SubmitFunction = ({ action, formData }) => {
-		success = '';
+	const enhanceTodo: SubmitFunction = ({ action, formData }) => {
 		titleIsRequired = '';
 		contentIsRequired = '';
 		ignoreFormMessage = false;
@@ -58,19 +56,19 @@
 		// turn on spinner before form submit
 		loading = true;
 		// show the intent of the action that follows
-		message = action.search === '?/addTodo' ? 'saving todo...' : 'updating todo...';
+		message = action.search === '?/addTodo' ? 'created todo...' : 'updating todo...';
 
 		return async ({ update }) => {
 			await update();
 			if (action.search === '?/addTodo') {
-				success = $page.status === 400 ? 'New todo added' : 'Adding todo failed';
+				message = $page.status === 200 ? 'todo created' : 'create failed';
 			} else if (action.search === '?/updateTodo') {
-				success = $page.status === 400 ? 'todo updated' : 'update failed';
+				message = $page.status === 200 ? 'todo updated' : 'update failed';
 			}
-			loading = false; // turn the spinner off
-			ignoreFormMessage = true;
-			setButtonVisible([btnCreate, btnUpdate]);
 			invalidateAll();
+			ignoreFormMessage = true;
+			loading = false; // turn the spinner off
+			setButtonVisible([btnCreate, btnUpdate]);
 		};
 	};
 
@@ -89,7 +87,6 @@
 		loading = false;
 		// setting message will dynamically set result, which in turn will show message
 		// for several seconds and then clear it out
-		// console.log('data.toggled', data.toggled);
 		message = data.toggled ? 'toggled successfully' : data.message ?? 'toggle failed';
 
 		if (data.toggled) {
@@ -114,7 +111,6 @@
 		// setting message will dynamically set result, which in turn will show message
 		// for several seconds and then clear it out
 		message = result.deleted ? 'deleted successfully' : 'delete failed';
-		// console.log('data.deleted', result.deleted);
 		if (result.deleted) {
 			todos = todos.filter((todo: Todo) => todo.id !== id);
 		}
@@ -173,7 +169,7 @@
 	users={data.users}
 />
 <div class="board">
-	<form bind:this={theForm} method="POST" action="?/addTodo" use:enhance={enhanceAddTodo}>
+	<form bind:this={theForm} method="POST" action="?/addTodo" use:enhance={enhanceTodo}>
 		<div class="two-inputs">
 			<input bind:this={todoIdEl} type="hidden" name="id" value="mili" />
 			<input type="hidden" name="userId" value={authorId} />
@@ -188,7 +184,7 @@
 			<div style="position:relative;">
 				<button bind:this={btnCreate} type="submit">
 					{#if loading}
-						<CircleSpinner color="blue" />
+						<CircleSpinner color="skyblue" />
 					{/if}
 					save
 				</button>
@@ -201,7 +197,7 @@
 					class="hidden"
 				>
 					{#if loading}
-						<CircleSpinner color="blue" />
+						<CircleSpinner color="skyblue" />
 					{/if}
 					update
 				</button>

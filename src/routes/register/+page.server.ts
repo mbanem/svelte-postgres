@@ -20,7 +20,6 @@ export const actions: Actions = {
 			email: string;
 			password: string;
 		};
-		// console.log('entered data', firstName, lastName, email, password);
 		if (firstName === '' || lastName === '' || email === '') {
 			return fail(400, {
 				data: { firstName, lastName, email },
@@ -36,7 +35,6 @@ export const actions: Actions = {
 			}
 		});
 		if (existingUser) {
-			// console.log('existingUser', JSON.stringify(existingUser));
 			return fail(400, {
 				data: { firstName, lastName, email },
 				message: 'Unacceptable data'

@@ -9,7 +9,6 @@ import { fail, json, type RequestHandler } from '@sveltejs/kit';
 // as export let data: PageData
 
 export const PATCH = (async ({ url }) => {
-	// console.log('PATCH searchParams id', JSON.stringify(url.searchParams.get('id'), null, 2));
 	// PATCH searchParams id "2bf177d5-ceaa-4742-9a0d-89aed438c8c0"
 	const id = url.searchParams.get('id') as string;
 	try {
@@ -40,7 +39,6 @@ export const PATCH = (async ({ url }) => {
 }) satisfies RequestHandler;
 
 export const DELETE = (async ({ url }) => {
-	// console.log('DELETE', url.searchParams.get('id'));
 	try {
 		await db.todo.delete({
 			where: {

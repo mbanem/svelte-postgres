@@ -2,6 +2,7 @@ import { db } from '$lib/server/db';
 import type { PageServerLoad } from './$types';
 import { error, fail, type RequestEvent } from '@sveltejs/kit';
 import type { Actions } from '@sveltejs/kit';
+import * as utils from '$lib/utils';
 
 export const load: PageServerLoad = (async ({ locals, cookies }) => {
 	// locals holds logged in user details
@@ -10,23 +11,7 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
 		throw error(400, 'User cookie not found');
 	}
 
-	// console.log('locals.user', JSON.stringify(locals.user, null, 2));
 	const users = await db.user.findMany();
-	// 	select: {
-	// 		id: true,
-	// 		firstName: true,
-	// 		lastName: true,
-	// 		role: true,
-	// 		profile: {
-	// 			select: {
-	// 				id: true,
-	// 				bio: true,
-	// 				createdAt: true,
-	// 				updatedAt: true
-	// 			}
-	// 		}
-	// 	}
-	// });
 
 	let userProfiles = [];
 	if (locals.user?.role === 'ADMIN') {
@@ -70,7 +55,6 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
 			}
 		});
 	}
-	// console.log('profiles/PageServerLoad userProfiles', JSON.stringify(userProfiles, null, 2));
 	return {
 		users,
 		userProfiles
@@ -79,7 +63,6 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
 
 export const actions: Actions = {
 	create: async ({ request }) => {
-		// console.log('profile/+page.server.ts create');
 		const { bio, authorId } = Object.fromEntries(
 			// @ts-expect-error
 			await request.formData()
@@ -87,10 +70,10 @@ export const actions: Actions = {
 			bio: string;
 			authorId: string;
 		};
-		// console.log(bio, authorId);
 		if (!bio || !authorId) {
 			return fail(400, { bio, message: 'Insufficient data supplied' });
 		}
+		await utils.sleep(2000);
 		try {
 			const user = await db.user.findUnique({
 				where: {
@@ -100,7 +83,6 @@ export const actions: Actions = {
 			if (!user) {
 				return fail(400, { bio, user: 'User not in db' });
 			}
-			// console.log(JSON.stringify(user, null, 2));
 			const result = await db.profile.create({
 				data: {
 					bio,
@@ -112,14 +94,15 @@ export const actions: Actions = {
 					user: true
 				}
 			});
-			// console.log('include user', JSON.stringify(result, null, 2));
 		} catch (err) {
 			console.log(err);
 		}
-		return;
+		return {
+			bio,
+			success: 'Profile created'
+		};
 	},
 	update: async ({ request }) => {
-		// console.log('profile/+page.server.ts update');
 		const { bio, bioId, authorId } = Object.fromEntries(
 			// @ts-expect-error
 			await request.formData()
@@ -128,11 +111,10 @@ export const actions: Actions = {
 			bioId: string;
 			authorId: string;
 		};
-		// console.log(bio, bioId, authorId);
 		if (bio === '' || authorId === '' || bioId === '') {
 			return fail(400, { bio, bioId, message: 'Insufficient data supplied' });
 		}
-		// console.log('bio, authorId', JSON.stringify({ bio, bioId, authorId }, null, 2));
+		await utils.sleep(2000);
 		try {
 			await db.profile.update({
 				where: {
@@ -144,7 +126,7 @@ export const actions: Actions = {
 			});
 			return {
 				bio,
-				success: 'Profile successfully updated'
+				success: 'Profile updated'
 			};
 		} catch (err) {
 			return fail(500, { message: 'Internal error occurred' });

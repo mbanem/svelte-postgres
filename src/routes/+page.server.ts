@@ -16,7 +16,6 @@ export const actions: Actions = {
 			throw redirect(303, '/');
 		}
 
-		// console.log('+page.server.ts set locals', JSON.stringify(locals));
 		cookies.set('sessionId', sessionId, {
 			path: '/'
 		});

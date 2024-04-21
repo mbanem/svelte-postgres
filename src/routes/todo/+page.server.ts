@@ -114,10 +114,8 @@ export const actions: Actions = {
 			// @ts-expect-error
 			await request.formData()
 		) as InputData;
-		// console.log('input_data', JSON.stringify(input_data, null, 2));
 		input_data.priority = Number(input_data.priority);
 		const { userId, title, content, priority } = input_data;
-		// console.log(userId, title, content, priority);
 		if (title === '' || content === '' || userId === '') {
 			return fail(400, {
 				data: { userId, title, content, priority },
@@ -139,7 +137,6 @@ export const actions: Actions = {
 					updatedAt: new Date()
 				}
 			});
-			// console.log('newTodo', JSON.stringify(newTodo, null, 2));
 		} catch (err) {
 			return fail(500, { message: 'internal error occurred' });
 		}
