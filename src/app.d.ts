@@ -18,7 +18,7 @@ declare global {
 		role: string;
 	};
 
-	type PostAuthor = (Post & Author)[];
+	type PostAuthors = (Post & Author)[];
 	type UserProfile = Profile & PartialUser;
 
 	type Bio = {

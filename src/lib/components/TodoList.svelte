@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { send, receive } from '$utils/transitions';
-	import { onMount } from 'svelte';
+	import { Tooltip } from 'flowbite-svelte';
+
 	export let id: string = '';
 	export let todos: Todo[] = [];
 	export let completed = false;
@@ -32,7 +33,13 @@
 					checked={todo.completed}
 					on:click|preventDefault={() => toggleCompleted(todo.id)}
 				/>
-				<span class:blue={todo.userId === id}>{todo.title}</span>
+				<div class="tooltip-wrapper">
+					<span class:blue={todo.userId === id}>{todo.title}</span>
+					<Tooltip placement="top" defaultClass="tooltip-todo" class="master-todo" arrow={false}>
+						<p>created on {todo.createdAt.toLocaleDateString()}</p>
+						<p>updated on {todo.updatedAt?.toLocaleDateString()}</p>
+					</Tooltip>
+				</div>
 				<button on:click={() => deleteTodo(todo.id)} aria-label="Delete Todo">❌</button>
 				<button on:click={() => prepareUpdate(todo.id)} aria-label="Update Todo"> 📝</button>
 			</label>
@@ -41,6 +48,33 @@
 </ul>
 
 <style lang="scss">
+	.tooltip-wrapper {
+		position: relative;
+	}
+
+	:global(.tooltip-todo) {
+		position: absolute;
+		left: 7rem !important;
+		top: -2rem !important;
+		display: inline-block;
+		width: 11rem !important;
+		color: yellow !important;
+		font-size: 14px;
+		font-weight: 400;
+		padding: 3px 1rem;
+		text-align: center;
+		background-color: $BACK-COLOR;
+	}
+	:global(.master-todo) {
+		// top: -0.5rem !important;
+		color: yellow !important;
+		font-size: 14px;
+		font-weight: 400;
+		p {
+			padding: 0;
+			margin: 0;
+		}
+	}
 	.blue {
 		color: skyblue;
 	}

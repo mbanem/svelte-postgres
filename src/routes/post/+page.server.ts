@@ -20,12 +20,13 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
 	if (!user) {
 		throw error(400, 'User not found');
 	}
-	let PostAuthor: PostAuthor = [];
+	let postAuthors: PostAuthors = [];
 
 	if (locals.user?.role === 'ADMIN') {
-		PostAuthor = await db.$queryRaw`
+		postAuthors = await db.$queryRaw`
 			select
-				p.id, p.title, p.content, STRING_AGG(c.id::character varying,',') "categoryIds",
+				p.id, p.title, p.content, p.created_at as "createdAt", p.updated_at as "updatedAt",
+				STRING_AGG(c.id::character varying,',') "categoryIds",
 				STRING_AGG(c.name, ',') "categoryNames", u.id as "authorId", p.published,
 				u.first_name as "firstName", u.last_name as "lastName", u.role
 			from users u
@@ -39,8 +40,9 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
 					u.first_name asc,
 					u.last_name asc;`;
 	} else {
-		PostAuthor = await db.$queryRaw`select
-			p.id, p.title, p.content, STRING_AGG(c.id::character varying,',') "categoryIds",
+		postAuthors = await db.$queryRaw`select
+			p.id, p.title, p.content, p.created_at as "createdAt", p.updated_at as "updatedAt",
+			STRING_AGG(c.id::character varying,',') "categoryIds",
 			STRING_AGG(c.name, ',') "categoryNames", u.id as "authorId", p.published,
 			u.first_name as "firstName", u.last_name as "lastName", u.role
 		from users u
@@ -55,7 +57,7 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
 			u.first_name asc,
 			u.last_name asc;`;
 	}
-	const userIDs = [...new Set(PostAuthor.map((el) => el.authorId))];
+	const userIDs = [...new Set(postAuthors.map((el) => el.authorId))];
 	const users = await db.user.findMany({
 		where: {
 			id: {
@@ -70,7 +72,7 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
 	// but for multiselect we need category names as well
 	const categories: { id: number; name: string }[] = await db.category.findMany();
 	return {
-		PostAuthor, // as Todo[] is important for TypeScript
+		postAuthors, // as Todo[] is important for TypeScript
 		user,
 		users,
 		categories

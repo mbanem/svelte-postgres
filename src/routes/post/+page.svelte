@@ -137,17 +137,21 @@
 			id: string;
 			title: string;
 			content: string;
+			createdAt: Date;
+			updatedAt: Date;
 			firstName: string;
 			lastName: string;
 		}[] = [];
 
-		data.PostAuthor.forEach((post) => {
+		data.postAuthors.forEach((post) => {
 			if (selectedUserId === post.authorId) {
-				const { id, title, content, firstName, lastName, role } = post;
+				const { id, title, content, createdAt, updatedAt, firstName, lastName, role } = post;
 				arr.push({
 					id,
 					title,
 					content,
+					createdAt,
+					updatedAt,
 					firstName: `${firstName}${role === 'ADMIN' ? 'T' : ''}`,
 					lastName
 				});
@@ -160,7 +164,7 @@
 	let setSelectedIds: (arr: number[]) => void;
 	const toUpdatePost = (postId: string) => {
 		// todo
-		const authorPost = data.PostAuthor.filter((pa) => pa.id === postId);
+		const authorPost = data.postAuthors.filter((pa) => pa.id === postId);
 		const { id, authorId, published, categoryIds, title, content } = authorPost[0];
 		//todo
 		// selectOptions(categoryIDs);
@@ -193,7 +197,7 @@
 		// }
 	};
 
-	$: ({ PostAuthor } = data);
+	$: ({ postAuthors } = data);
 	$: formMessage = ignoreFormMessage ? '' : form?.message || '';
 	$: result = message || formMessage;
 </script>
@@ -212,7 +216,7 @@
 />
 
 <!-- <pre style="font-size:11px;"> {selectedUserId}</pre> -->
-<!-- <pre style="font-size:1/1px;">data.postAuthor {JSON.stringify(data, null, 2)}</pre> -->
+<!-- <pre style="font-size:1/1px;">PAGE data {JSON.stringify(data, null, 2)}</pre> -->
 
 <div bind:this={boardBlock} class="board hidden">
 	<div>
@@ -252,14 +256,14 @@
 		</div>
 	</div>
 </div>
-<div class="post-container">
-	{#key PostAuthor}
-		<!-- <pre style="font-size:11px;"> {JSON.stringify(data.PostAuthor, null, 2)}</pre> -->
+<di>
+	{#key postAuthors}
+		<!-- <pre style="font-size:11px;"> {JSON.stringify(data.PostAuthors, null, 2)}</pre> -->
 		{#key selectedUserId}
 			<PostList postAuthors={postsAuthors()} {toUpdatePost} {deletePost} />
 		{/key}
 	{/key}
-</div>
+</di>
 
 <style lang="scss">
 	.board {

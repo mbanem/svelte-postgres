@@ -2,7 +2,7 @@
 	import { crossfade } from 'svelte/transition';
 	import CircleSpinner from '$lib/components/CircleSpinner.svelte';
 	// import { Tooltip, tooltip } from '@svelte-plugins/tooltips';
-	import { Tooltip, Button } from 'flowbite-svelte';
+	import { Tooltip } from 'flowbite-svelte';
 
 	let showTooltip = false;
 
@@ -40,6 +40,8 @@
 		loading = !loading;
 		showTooltip = true;
 	};
+	let createdAt = new Date('2/18/2006').toLocaleDateString();
+	let updatedAt = new Date('8/22/2007').toLocaleDateString();
 </script>
 
 <h1>Crossfade Page</h1>
@@ -65,9 +67,12 @@
 </div>
 
 <div class="container">
-	<div class="relative">
-		<p class="tooltip-base">some text with tooltip</p>
-		<Tooltip placement="top" defaultClass="tooltip" arrow={false}>flowbite-svelte Tooltip</Tooltip>
+	<div class="tooltip-wrapper">
+		<p class="tooltip-base">Post content is here</p>
+		<Tooltip placement="top" defaultClass="local-tooltip" class="local-master" arrow={false}>
+			<p>created on {createdAt}</p>
+			<p>updated on {updatedAt}</p>
+		</Tooltip>
 	</div>
 </div>
 
@@ -100,6 +105,33 @@
 <p style="margin:5rem 0 0 5rem;">showTooltip {showTooltip}</p>
 
 <style lang="scss">
+	.tooltip-wrapper {
+		position: relative;
+	}
+
+	:global(.local-tooltip) {
+		position: absolute;
+		top: -4rem !important;
+		display: inline-block;
+		font-size: 14px;
+		font-weight: 400;
+		padding: 3px 1rem;
+		// border: 1px solid gray;
+		// border-radius: 4px;
+		text-align: center;
+	}
+	:global(.local-master) {
+		// top: -0.5rem !important;
+		color: skyblue;
+		font-size: 14px;
+		font-weight: 400;
+		p {
+			padding: 0;
+			margin: 0;
+			color: skyblue;
+		}
+	}
+
 	.container {
 		position: absolute;
 		border: 1px solid gray;

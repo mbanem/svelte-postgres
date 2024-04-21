@@ -7,12 +7,20 @@
 	import CircleSpinner from '$lib/components/CircleSpinner.svelte';
 	import { setColor, setButtonVisible } from '$lib/utils';
 	import { onMount } from 'svelte';
+	import { Tooltip } from 'flowbite-svelte';
 
 	import PageTitleCombo from '$lib/components/PageTitleCombo.svelte';
 
 	export let data: PageData;
 	export let form: ActionData;
 
+	type UserWithBio = {
+		id: string;
+		bio: string;
+		createdAt: Date;
+		updatedAt: Date;
+		user: User;
+	};
 	let message = '';
 	let bioIsRequired = '';
 	// form?.message cannot be cleared by code but could be ignored when necessary
@@ -20,7 +28,7 @@
 	let success = '';
 	let loading = false;
 	let selectedUserId = '';
-	let selectedUserWithBio: Bio;
+	let selectedUserWithBio: UserWithBio;
 
 	let btnCreate: HTMLButtonElement;
 	let btnUpdate: HTMLButtonElement;
@@ -81,12 +89,12 @@
 		selectedUserName = `${data.locals.user.firstName} ${data.locals.user.lastName}`;
 	});
 
-	const getUserWithBio = (id: string): Bio | undefined => {
+	const getUserWithBio = (id: string): UserWithBio | undefined => {
 		for (let i = 0; i < userProfiles.length; i++) {
 			if (userProfiles[i]?.user?.id === id) {
 				// @ts-expect-error
-				const { id, bio, user } = userProfiles[i] as UserProfile;
-				return { id, bio, user } as Bio;
+				const { id, bio, createdAt, updatedAt, user } = userProfiles[i] as UserProfile;
+				return { id, bio, createdAt, updatedAt, user } as UserWithBio;
 			}
 		}
 	};
@@ -108,7 +116,7 @@
 	};
 
 	$: ({ userProfiles } = data);
-	$: selectedUserWithBio = getUserWithBio(selectedUserId) as Bio;
+	$: selectedUserWithBio = getUserWithBio(selectedUserId) as UserWithBio;
 	$: formMessage = ignoreFormMessage ? '' : form?.message || '';
 	$: result = message || formMessage;
 </script>
@@ -122,7 +130,7 @@
 	user={data.locals.user}
 	users={data.users}
 />
-<!-- <pre style="font-size:11px;">bioUpdateAllowed {JSON.stringify(bioUpdateAllowed, null, 2)}</pre> -->
+<!-- <pre style="font-size:11px;">data {JSON.stringify(data, null, 2)}</pre> -->
 
 <div class="container">
 	<div class="left-column">
@@ -169,14 +177,25 @@
 	{#if selectedUserWithBio}
 		<div class="right-column">
 			<p>{selectedUserWithBio.user.firstName} {selectedUserWithBio.user.lastName}</p>
-			<p
-				class="bio"
-				on:click={canBeUpdated}
-				data-user-id={selectedUserWithBio.user.id}
-				aria-hidden={true}
-			>
-				{selectedUserWithBio.bio ?? ''}
-			</p>
+			<div class="relative">
+				<p
+					class="bio"
+					on:click={canBeUpdated}
+					data-user-id={selectedUserWithBio.user.id}
+					aria-hidden={true}
+				>
+					{selectedUserWithBio.bio ?? ''}
+				</p>
+				<Tooltip
+					placement="top"
+					defaultClass="tooltip-profile"
+					class="master-profile"
+					arrow={false}
+				>
+					<p>created on {selectedUserWithBio.createdAt.toLocaleDateString()}</p>
+					<p>updated on {selectedUserWithBio.updatedAt.toLocaleDateString()}</p>
+				</Tooltip>
+			</div>
 		</div>
 	{:else}
 		<div class="right-column">There is no profile for this user</div>
@@ -184,6 +203,29 @@
 </div>
 
 <style lang="scss">
+	.relative {
+		position: relative;
+	}
+	:global(.tooltip-profile) {
+		position: absolute;
+		left: calc(100% - 14rem) !important;
+		display: inline-block;
+		width: 11rem !important;
+		font-size: 14px;
+		font-weight: 400;
+		padding: 3px 1rem;
+		text-align: center;
+	}
+	:global(.master-profile) {
+		color: skyblue;
+		font-size: 14px;
+		font-weight: 400;
+		p {
+			padding: 0;
+			margin: 0;
+			color: skyblue;
+		}
+	}
 	.container {
 		display: grid;
 		gap: 1rem;
