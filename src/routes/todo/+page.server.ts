@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { db } from '$lib/server/db';
 import * as utils from '$lib/utils';
 // import type { User, Todo} from '@prisma/client'
-// in order to load todos we cannot use end point
+// in order to load uTodos we cannot use end point
 // +server.ts as it can only Respond on a request;
 // instead we should use this +page.server.ts as it
 // has +page in its name and so it has a load function
@@ -14,74 +14,92 @@ import * as utils from '$lib/utils';
 // import type { LayoutData } from './$types'
 // where import type { LayoutData } from './$types'
 
+// admin should be able to see all uTodos of any user
+// so we have to load all uTodos with user info
+// type UTodos = ({
+// 	user: {
+// 		id: string;
+// 		firstName: string;
+// 		lastName: string;
+// 	};
+// } & Todo)[];
+
 export const load: PageServerLoad = (async ({ locals, cookies }) => {
-	// admin should be able to see all todos of any user
-	// so we have to load all todos with user info
-	type UTodos = ({
-		user: {
-			id: string;
-			firstName: string;
-			lastName: string;
-		};
-	} & Todo)[];
-	let todos: UTodos = [];
+	let uTodos: UTodos = [];
 
 	let userAuthToken = cookies.get('session') ?? '';
 	if (!userAuthToken) {
 		throw error(400, 'User cookie not found');
 	}
-	const user = await db.user.findUnique({
+	const user = (await db.user.findUnique({
 		where: {
 			userAuthToken: cookies.get('session')
+		},
+		select: {
+			id: true,
+			firstName: true,
+			lastName: true,
+			role: true
 		}
-	});
+	})) as Partial<User>;
 	if (!user) {
 		throw error(400, 'User not found');
 	}
 	if (locals.user?.role === 'ADMIN') {
-		todos = await db.todo.findMany({
-			include: {
-				user: {
-					select: {
-						id: true,
-						firstName: true,
-						lastName: true
-					}
-				}
-			}
-		});
+		uTodos = (await db.$queryRaw`select
+				u.id,
+				u.first_name as "firstName",
+				u.last_name as "lastName",
+				u.role,
+				t.id as "todoId",
+				t.title,
+				t.content,
+				t.priority,
+				t.completed,
+				t.created_at as "createdAt",
+				t.updated_at as "updatedAt"
+		from 	todo t
+		join 	users u on t.user_id = u.id
+		order by 		u.last_name ASC,
+								u.first_name ASC,
+								t.priority DESC;`) as UTodos;
 	} else {
-		todos = await db.todo.findMany({
-			where: {
-				userId: user.id
-			},
-			include: {
-				user: {
-					select: {
-						id: true,
-						firstName: true,
-						lastName: true
-					}
-				}
-			}
-		});
+		uTodos = (await db.$queryRaw`select
+					u.id,
+					u.first_name as "firstName",
+					u.last_name as "lastName",
+					u.role,
+					t.id as "todoId",
+					t.title,
+					t.content,
+					t.priority,
+					t.completed,
+					t.created_at as "createdAt",
+					t.updated_at as "updatedAt"
+			from 	todo t
+			join 	users u on t.user_id = u.id
+			where u.user_id = ${user.id}
+			order by 		u.last_name ASC,
+									u.first_name ASC,
+									t.priority DESC;`) as UTodos;
 	}
+	// console.log(JSON.stringify(uTodos, null, 2));
 	const getUser = (id: string) => {
-		for (let i = 0; i < todos.length; i++) {
+		for (let i = 0; i < uTodos.length; i++) {
 			// @ts-expect-error
-			if (id === todos[i].id) {
-				return todos[i];
+			if (id === uTodos[i].id) {
+				return uTodos[i];
 			}
 		}
 	};
-	// const userIds = [...new Set(todos.map((todo) => todo.user.id))];
-	// const users = [...new Set(todos.map((todo) => todo.id))].map((id) => getUser(id));
+	// const userIds = [...new Set(uTodos.map((todo) => todo.user.id))];
+	// const users = [...new Set(uTodos.map((todo) => todo.id))].map((id) => getUser(id));
 
 	// {id:string, firstName:string, lastName:string, role:string}
-	const users =
+	const users: Partial<User>[] =
 		await db.$queryRaw`select distinct t.user_id as "id", u.first_name as "firstName",u.last_name as "lastName", u.role from todo t join users u on u.id = t.user_id`;
 	return {
-		todos, // as Todo[] is important for TypeScript
+		uTodos, // as UTodos is important for TypeScript
 		user,
 		users
 	};
@@ -94,16 +112,6 @@ type InputData = {
 	content: string;
 	priority: number;
 };
-
-// const sleep = async (ms: number) => {
-// 	return new Promise((resolve) => {
-// 		setTimeout(() => {
-// 			// ms here is a dummy value but required by
-// 			// resolve to get some argument
-// 			resolve(ms);
-// 		}, ms);
-// 	});
-// };
 
 // we could implement patchTodo  and deleteTodo here but
 // we decided to implement in an end-point +server.ts
@@ -138,7 +146,10 @@ export const actions: Actions = {
 				}
 			});
 		} catch (err) {
-			return fail(500, { message: 'internal error occurred' });
+			return fail(500, {
+				data: { userId, title, content, priority },
+				message: 'internal error occurred'
+			});
 		}
 
 		await utils.sleep(2000);
@@ -178,22 +189,31 @@ export const actions: Actions = {
 				success: 'Todo successfully updated'
 			};
 		} catch (err) {
-			console.log(err);
+			return fail(500, {
+				data: { userId, title, content, priority },
+				message: 'internal error occurred'
+			});
 		}
 	},
 	deleteTodo: async ({ request }) => {
-		const obj = Object.fromEntries(
+		const body = Object.fromEntries(
 			// @ts-expect-error
 			await request.formData()
 		);
+		const id = body.get('id');
 
-		if (obj.id === '') {
+		if (id === '') {
 			return fail(400, {
-				id: obj.id,
-				message: 'delete failed'
+				data: id,
+				message: 'id not provided'
 			});
 		}
 		await utils.sleep(2000);
+		await db.todo.delete({
+			where: {
+				id
+			}
+		});
 		return {
 			success: 'todo deleted'
 		};

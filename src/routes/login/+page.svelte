@@ -46,7 +46,4 @@
 		margin: 3rem auto;
 		padding: 1rem;
 	}
-	button {
-		color: black;
-	}
 </style>

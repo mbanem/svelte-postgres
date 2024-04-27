@@ -12,36 +12,53 @@
 	};
 	let rand: HTMLParagraphElement;
 	const callRandom = () => {
-		rand.innerText = String(randomNumber());
+		rand.innerText = 'from child random: ' + String(randomNumber());
 	};
 	let p: HTMLParagraphElement;
 	let g: HTMLParagraphElement;
 </script>
 
-<p bind:this={rand}>random number</p>
 <!-- svelte:window reacts on resize event as specified
-		with on:resize={...} when the app is calling onResize
-		with a message 'OK' displayed when user resize window
+	with on:resize={...} when the app is calling onResize
+	with a message 'OK' displayed when user resize window
 -->
 <svelte:window on:resize={() => onResize('Window resized')} />
 <!-- resize is exported from child component and
 		we bind child resize to parent variable
 		resizeChild, which we can call from parent
 		<Child bind:resize={to parent component}/>
--->
-
-<!-- for parent to call child function do not use bind
-		as bind is used for child to call parent function
--->
+	-->
+<button on:click={() => onResize('Hello Filip')} class="resize">parent resize button</button>
+<br />
 <Child bind:resize={resizeChild} bind:getRandomNumber={randomNumber} callParent={greeting} />
-
-<p bind:this={g} class="info">waiting for greeting....</p>
-<button on:click={() => onResize('Hello Filip')}>greeting</button>
-
+<p bind:this={g} class="info">waiting for greeting from child....</p>
 <p bind:this={p} class="info">App react on window resize</p>
-<button on:click={callRandom}>call random</button>
+<hr style="width:35vw;margin-left:0;" />
+<!-- for parent to call child function do not use bind
+	as bind is used for child to call parent function
+-->
+
+<pre class="width:35vw;">clicking on resize or resizing the window itself will
+render here 'Hello Filip' or 'Window resized' respectively</pre>
+<hr style="width:35vw;margin-left:0;" />
+
+<div class="random-container">
+	<p>call child function for random number</p>
+	<p bind:this={rand}>render here the random number</p>
+	<button on:click={callRandom}>parent child random button</button>
+</div>
 
 <style lang="scss">
+	.resize {
+		color: skyblue;
+	}
+	.random-container {
+		width: 30rem;
+		border: 1px solid gray;
+		border-radius: 8px;
+		padding: 0.5rem 1rem;
+		text-align: center;
+	}
 	.info {
 		font-size: 14px;
 		font-style: italic;

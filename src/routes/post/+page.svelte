@@ -22,7 +22,8 @@
 	let selectedUserId = '';
 	let titleIsRequired = '';
 	let contentIsRequired = '';
-	let categoryIsRequired = '';
+	const requiredCategory = 'Please select corresponding categories';
+	let categoryIsRequired = requiredCategory;
 
 	let btnCreate: HTMLButtonElement;
 	let btnDelete: HTMLButtonElement;
@@ -39,6 +40,7 @@
 			message = '';
 			ignoreFormMessage = false;
 			result = '';
+			categoryIsRequired = requiredCategory;
 		}, 2000);
 	};
 
@@ -47,6 +49,7 @@
 		els.forEach((k) => {
 			(document.querySelector(`input[name='${k}']`) as HTMLInputElement).value = '';
 		});
+		setSelectedIds([]);
 	};
 
 	const required = {
@@ -62,7 +65,7 @@
 		titleIsRequired = '';
 		ignoreFormMessage = false;
 		contentIsRequired = '';
-		categoryIsRequired = '';
+		// categoryIsRequired = '';
 
 		formData.set('categoryIDs', selectedCategoryIds());
 		for (const key of Object.keys(required)) {
@@ -137,6 +140,7 @@
 			id: string;
 			title: string;
 			content: string;
+			published: boolean;
 			createdAt: Date;
 			updatedAt: Date;
 			firstName: string;
@@ -145,11 +149,13 @@
 
 		data.postAuthors.forEach((post) => {
 			if (selectedUserId === post.authorId) {
-				const { id, title, content, createdAt, updatedAt, firstName, lastName, role } = post;
+				const { id, title, content, published, createdAt, updatedAt, firstName, lastName, role } =
+					post;
 				arr.push({
 					id,
 					title,
 					content,
+					published,
 					createdAt,
 					updatedAt,
 					firstName: `${firstName}${role === 'ADMIN' ? 'T' : ''}`,
@@ -161,12 +167,10 @@
 		return arr;
 	};
 
-	let setSelectedIds: (arr: number[]) => void;
+	let setSelectedIds: (arr: number[] | []) => void;
 	const toUpdatePost = (postId: string) => {
-		// todo
 		const authorPost = data.postAuthors.filter((pa) => pa.id === postId);
 		const { id, authorId, published, categoryIds, title, content } = authorPost[0];
-		//todo
 		// selectOptions(categoryIDs);
 		const els = [
 			{ id: id },
@@ -209,7 +213,7 @@
 	bind:message
 	bind:ignoreFormMessage
 	bind:selectedUserId
-	amendTFUserId={true}
+	amendTrueFalseUserId={true}
 	PageName="Post"
 	user={data.locals.user}
 	users={data.users}

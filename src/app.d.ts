@@ -4,6 +4,7 @@ declare global {
 	type Person = {
 		name: string;
 		age: number;
+		city?: string;
 	};
 	type QueryAuthor = {
 		id: string;
@@ -20,6 +21,21 @@ declare global {
 
 	type PostAuthors = (Post & Author)[];
 	type UserProfile = Profile & PartialUser;
+
+	type UTodo = {
+		id: string;
+		firstName: string;
+		lastName: string;
+		role: string;
+		todoId: string;
+		title: string;
+		content: string;
+		priority: string;
+		completed: boolean;
+		createdAt: Date;
+		updatedAt: Date;
+	};
+	type UTodos = UTodo[];
 
 	type Bio = {
 		id: string;

@@ -23,7 +23,8 @@ const config = {
 			$server: path.resolve('./src/lib/server/'),
 			$utils: path.resolve('./src/lib/utils/'),
 			$store: path.resolve('./src/lib/stores'),
-			$assets: path.resolve('./src/static/assets')
+			$assets: path.resolve('./src/static/assets'),
+			$images: path.resolve('./src/images')
 		}
 	}
 };

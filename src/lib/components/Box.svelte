@@ -14,16 +14,27 @@
 	<input type="text" placeholder="put the name here" bind:value={person.name} />
 	<br />
 	<label for="age">Person age</label>
-	<input type="number" bind:value={person.age} min="1" max="105" id="age" style="width:2rem" />
-	<p>Leaving in {city} of age {userAge}</p>
+	<input
+		type="number"
+		bind:value={person.age}
+		min="1"
+		max="105"
+		id="age"
+		style="width:2rem;margin:0;"
+	/>
+	<p>While city and userAge are child variables they are exported but not changed</p>
+	<p>Fixed: Leaving in {city} of age {userAge}</p>
+	While Person is exported where name and age are controlled
+	<br />
+	as in here
+	<span style="color:skyblue">Person {person.name} age {person.age} city {person.city}</span>
 	<button on:click={() => (person.age += 1)}>increment age</button>
 	<button on:click={decrement}>decrement age</button>
 </div>
-``
 
 <style lang="scss">
 	.container {
-		padding: 1rem;
+		padding: 0 1rem;
 		border: 1px solid gray;
 		border-radius: 6px;
 	}

@@ -5,6 +5,7 @@
 	import { invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores'; // for $age.status code on actions
 	import CircleSpinner from '$lib/components/CircleSpinner.svelte';
+	import { Tooltip } from 'flowbite-svelte';
 	import { setColor, setButtonVisible } from '$lib/utils';
 
 	import PageTitleCombo from '$lib/components/PageTitleCombo.svelte';
@@ -36,12 +37,18 @@
 		setButtonVisible([btnCreate, btnUpdate]);
 		(document.querySelector("input[name='title']") as HTMLInputElement).value = '';
 		(document.querySelector("input[name='content']") as HTMLInputElement).value = '';
+		(document.querySelector("input[type='number']") as HTMLInputElement).value = '0';
+		titleIsRequired = contentIsRequired = '';
+		setColor('green');
 	};
+
 	let titleIsRequired = '';
 	let contentIsRequired = '';
+
 	// get params action for URL amf formData to check on required fields
 	const enhanceTodo: SubmitFunction = ({ action, formData }) => {
 		titleIsRequired = '';
+		console.log(JSON.stringify(formData, null, 2));
 		contentIsRequired = '';
 		ignoreFormMessage = false;
 		if (formData.get('title') === '') {
@@ -56,7 +63,7 @@
 		// turn on spinner before form submit
 		loading = true;
 		// show the intent of the action that follows
-		message = action.search === '?/addTodo' ? 'created todo...' : 'updating todo...';
+		message = action.search === '?/addTodo' ? 'creating todo...' : 'updating todo...';
 
 		return async ({ update }) => {
 			await update();
@@ -90,8 +97,8 @@
 		message = data.toggled ? 'toggled successfully' : data.message ?? 'toggle failed';
 
 		if (data.toggled) {
-			todos = todos.map((todo) => {
-				if (todo.id === id) {
+			uTodos = (uTodos as UTodos).map((todo) => {
+				if (todo.todoId === id) {
 					todo.completed = !todo.completed;
 				}
 				return todo;
@@ -101,6 +108,7 @@
 
 	const deleteTodo = async (id: string) => {
 		loading = true;
+		message = 'deleting todo...';
 		clearForm();
 		const response = await fetch(`/todo?id=${id}`, {
 			method: 'DELETE',
@@ -112,26 +120,26 @@
 		// for several seconds and then clear it out
 		message = result.deleted ? 'deleted successfully' : 'delete failed';
 		if (result.deleted) {
-			todos = todos.filter((todo: Todo) => todo.id !== id);
+			uTodos = uTodos.filter((uTodo: UTodo) => uTodo.todoId !== id);
 		}
 	};
 
 	let todoIdEl: HTMLInputElement;
 	const prepareDataForEdit = (todoId: string) => {
-		const todo = data.todos.filter((todo) => todo.id === todoId)[0] as Partial<Todo>;
+		const uTodo = data.uTodos.filter((uTodo) => uTodo.todoId === todoId)[0] as UTodo;
 		// prevent ADMIN to update others todos
-		selectedUserId = todo.userId as string;
-		todoIdEl.value = todo.id as string;
+		selectedUserId = uTodo.id as string;
+		todoIdEl.value = uTodo.todoId as string;
 		(document.querySelector("input[name='userId']") as HTMLInputElement).value =
-			todo.userId as string;
+			uTodo.userId as string;
 		(document.querySelector("input[name='title']") as HTMLInputElement).value =
-			todo.title as string;
+			uTodo.title as string;
 		(document.querySelector("input[name='content']") as HTMLInputElement).value =
-			todo.content as string;
+			uTodo.content as string;
 		(document.querySelector("input[name='priority']") as HTMLInputElement).value = String(
-			todo.priority
+			uTodo.priority
 		);
-		setButtonVisible([btnCreate, btnUpdate]);
+		setButtonVisible([btnUpdate, btnCreate]);
 	};
 
 	// updatePrepared say data is copied into the form elements
@@ -150,14 +158,14 @@
 	// setting result will call showMessage and this one will setTimeout
 	// to clear the message after several seconds
 	$: result = message || formMessage;
-	$: ({ todos, user } = data);
+	$: ({ uTodos, user } = data);
 
 	let selectedUserId = '';
-	const authorId = data?.user?.id;
+	let authorId = data?.user?.id;
 </script>
 
 <!-- <pre style="font-size:11px;">authorId {authorId}</pre> -->
-<!-- <pre style="font-size:11px;">form.message {JSON.stringify(form?.message, null, 2)}</pre> -->
+<!-- <pre style="font-size:11px;">data {JSON.stringify({ selectedUserId, authorId }, null, 2)}</pre> -->
 
 <PageTitleCombo
 	bind:result
@@ -181,12 +189,12 @@
 			<!-- position:relative here is essential for CircleSpinner
 					to stay inside the buttons
 			-->
-			<div style="position:relative;">
+			<div class="buttons-relative">
 				<button bind:this={btnCreate} type="submit">
 					{#if loading}
 						<CircleSpinner color="skyblue" />
 					{/if}
-					save
+					create
 				</button>
 				<button
 					bind:this={btnUpdate}
@@ -201,27 +209,61 @@
 					{/if}
 					update
 				</button>
+				{#if selectedUserId !== authorId}
+					<Tooltip
+						placement="top"
+						defaultClass="tooltip-update-button"
+						class="master-todo"
+						arrow={false}
+					>
+						<p>owner only permission</p>
+					</Tooltip>
+				{/if}
+				<button on:click|preventDefault={clearForm}>clear form</button>
 			</div>
 		</div>
 	</form>
 	<div class="left-column">
 		<h3>todo</h3>
 		<TodoList
-			{todos}
+			{uTodos}
 			completed={false}
 			id={user.id}
+			bind:selectedUserId
 			{toggleCompleted}
 			{prepareUpdate}
 			{deleteTodo}
 		/>
 	</div>
 	<div class="right-column">
-		<h3>done</h3>
-		<TodoList {todos} completed={true} {toggleCompleted} {prepareUpdate} {deleteTodo} />
+		<h3>completed</h3>
+		<TodoList
+			{uTodos}
+			completed={true}
+			id={user.id}
+			bind:selectedUserId
+			{toggleCompleted}
+			{prepareUpdate}
+			{deleteTodo}
+		/>
 	</div>
 </div>
 
 <style lang="scss">
+	:global(.tooltip-update-button) {
+		position: absolute;
+		left: 8rem !important;
+		top: 1.1rem !important;
+		width: 11rem !important;
+		color: yellow !important;
+		font-size: 14px;
+		font-weight: 400;
+		padding: 3px 1rem;
+		text-align: center;
+		background-color: $BACK-COLOR;
+		border: 1px solid gray;
+		border-radius: 6px;
+	}
 	.board {
 		display: grid;
 		grid-template-columns: 1fr 1fr;
@@ -277,6 +319,11 @@
 	button {
 		// display: inline-block;
 		margin-top: 1rem !important;
+	}
+	.buttons-relative {
+		position: relative;
+		display: flex;
+		gap: 1rem;
 	}
 	h3 {
 		display: block;

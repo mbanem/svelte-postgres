@@ -37,7 +37,7 @@ export const sleep = async (ms: number) => {
 	return new Promise((resolve) => {
 		setTimeout(() => {
 			// ms here is a dummy value but required by
-			// resolve to get some argument
+			// resolve to send out some value
 			resolve(ms);
 		}, ms);
 	});

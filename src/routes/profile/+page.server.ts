@@ -11,7 +11,14 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
 		throw error(400, 'User cookie not found');
 	}
 
-	const users = await db.user.findMany();
+	const users = (await db.user.findMany({
+		select: {
+			id: true,
+			firstName: true,
+			lastName: true,
+			role: true
+		}
+	})) as Partial<User>[];
 
 	let userProfiles = [];
 	if (locals.user?.role === 'ADMIN') {
@@ -131,5 +138,25 @@ export const actions: Actions = {
 		} catch (err) {
 			return fail(500, { message: 'Internal error occurred' });
 		}
+	},
+	delete: async ({ request }) => {
+		const body = await request.formData();
+		const id = body.get('authorId') as string;
+		try {
+			await db.profile.delete({
+				where: {
+					userId: id
+				}
+			});
+		} catch (err) {
+			return fail(400, {
+				data: { authorId: id },
+				message: 'internal error occurred'
+			});
+		}
+		return {
+			success: true,
+			message: 'Profile successfully deleted'
+		};
 	}
 } satisfies Actions;

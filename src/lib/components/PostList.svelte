@@ -4,6 +4,7 @@
 		id: string;
 		title: string;
 		content: string;
+		published: boolean;
 		createdAt: Date;
 		updatedAt: Date;
 		firstName: string;
@@ -23,7 +24,7 @@
 				{postAuthors[0].lastName}
 				<span class="count">{postAuthors.length} post{postAuthors.length === 1 ? '' : 's'}</span>
 			</p>
-			{#each postAuthors as { id, title, content, createdAt, updatedAt, firstName, lastName }}
+			{#each postAuthors as { id, title, content, published, createdAt, updatedAt, firstName, lastName }}
 				<li class="post-block">
 					<div class="title">
 						<p>{title}</p>
@@ -38,8 +39,9 @@
 							class="local-master"
 							arrow={false}
 						>
-							<p>created on {createdAt.toLocaleDateString()}</p>
-							<p>updated on {updatedAt.toLocaleDateString()}</p>
+							<p>published <span class="prop-value">{published ? 'yes' : 'not yet'}</span></p>
+							<p>created on <span class="prop-value">{createdAt.toLocaleDateString()}</span></p>
+							<p>updated on <span class="prop-value">{updatedAt.toLocaleDateString()}</span></p>
 						</Tooltip>
 					</div>
 				</li>
@@ -63,7 +65,7 @@
 		padding: 3px 1rem;
 		border: 1px solid gray;
 		border-radius: 4px;
-		text-align: center;
+		text-align: left;
 	}
 	:global(.local-master) {
 		top: -2.2rem !important;
@@ -72,8 +74,15 @@
 		font-size: 14px;
 		font-weight: 400;
 		p {
+			display: flex;
+			justify-content: space-between;
+			align-content: flex-start;
+			gap: 0.5rem;
 			padding: 0;
 			margin: 0;
+			.prop-value {
+				color: yellow;
+			}
 		}
 	}
 	.post-container {

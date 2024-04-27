@@ -8,58 +8,74 @@
 		});
 		return values.join(',');
 	};
+	// data contains all category options including selected flag
 	export let data: { id: number; name: string; selected?: boolean }[];
 
 	export const setSelectedIds = (arr: number[]) => {
+		// arr: selected category ids 1-based instead of zero-based arrays
 		const selectBox = document.getElementById('selBox') as HTMLSelectElement;
 		const options = selectBox.options as HTMLOptionsCollection;
+
+		// clear all selections
 		for (let i = 0; i < options.length; i++) {
 			(options[i] as HTMLOptionElement).selected = false;
 		}
-		selectBox.selectedIndex = -1;
 		const selectedNames: string[] = [];
+		// categoryIds count from 1 but options from zero, so ix - 1
 		arr.forEach((ix) => {
+			// arr contains all SELECTED options so we set selected = true for every arr entry
 			(options[ix - 1] as HTMLOptionElement).selected = true;
+			// we render selected names above the select bo so make a list
 			// @ts-expect-error
-			selectedNames.push(data[ix].name);
+			selectedNames.push(data[ix - 1].name);
 		});
 
-		selectedOption.innerText = selectedNames.join(',');
+		// we place CSV string in selectedOptions HTML paragraph element
+		selectedOptions.innerText = selectedNames.join(', ');
 		selectBox.focus();
 	};
 	export let categoryIsRequired = 'Please select corresponding categories';
 
+	let selected: { value: number; text: string }[] = [];
 	const onChange = () => {
-		const selected = Array.from(document.querySelectorAll('#selBox option:checked')).map((el) => {
+		// querySelectorAll can get all selected options so we map them in an array of {value:number, text:string}
+		selected = Array.from(document.querySelectorAll('#selBox option:checked')).map((el) => {
 			// @ts-expect-error
 			return { value: el.value, text: el.text };
 		});
-		selectedOption.innerText = selected.length
-			? selected.map((el) => el.text).join(', ')
-			: categoryIsRequired;
+
+		// we place CSV string in selectedOptions HTML paragraph element
+		selectedOptions.innerText =
+			selected.length > 0 ? selected.map((el) => el.text).join(', ') : categoryIsRequired;
 	};
 
-	let selectedOption: HTMLParagraphElement;
+	let selectedOptions: HTMLParagraphElement;
 	onMount(() => {
 		let options = '';
+		let selectedCats = '';
+		// data contains all category options including selected flag
+		// so we prepare HTML string for selectBox options
 		data.forEach((opt) => {
 			options += '<option id="' + opt.id + '" value="' + opt.id + '">' + opt.name + '</option>';
 		});
 		const selectBox = document.getElementById('selBox') as HTMLSelectElement;
+		// now we build options from prepared HTML string options
 		selectBox.innerHTML = options;
-		selectBox.selectedIndex = 1;
+		selectBox.selectedIndex = -1; // select nothing
+		selectedOptions.innerText = categoryIsRequired;
 	});
 
-	// categoryIDs does not behave like dynamic and cannot use categoryIDs.length
-	// but instead in onClick above we set n = categoryIDs.length which is dynamic
+	// categoryIDs does not behave like dynamic variable and cannot use categoryIDs.length
+	// but instead in onClick above we set n = categoryIDs.length which is dynamic variable
 	// we use n and categoryIsRequired to render required message
+	// $: n = selected.length;
 	$: color = categoryIsRequired === 'Category is required' ? 'pink' : 'skyblue';
 </script>
 
 <!-- <pre style="font-size:11px;">categories {JSON.stringify(data, null, 2)}</pre> -->
 
 <div>
-	<p style:color bind:this={selectedOption}>
+	<p style:color bind:this={selectedOptions}>
 		{categoryIsRequired}
 	</p>
 	<select id="selBox" on:change={onChange} name="categories" multiple> </select>

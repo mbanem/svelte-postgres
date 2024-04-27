@@ -2,9 +2,9 @@
 	import { onMount } from 'svelte';
 
 	export let PageName: string;
-	export let user: Partial<User> | {};
+	export let user: Partial<User> | null;
 	export let users: Partial<User>[] | [];
-	export let amendTFUserId = false;
+	export let amendTrueFalseUserId = false;
 	export let selectedUserId: string;
 	export let result: string = '';
 	export let message: string = '';
@@ -16,7 +16,9 @@
 			message = '';
 			result = '';
 			ignoreFormMessage = true;
-			msgEl.innerText = '';
+			if (msgEl) {
+				msgEl.innerText = '';
+			}
 		}, 2000);
 	};
 	const showResult = () => {
@@ -25,7 +27,7 @@
 	};
 	let selectBox: HTMLSelectElement;
 	onMount(() => {
-		const t = amendTFUserId ? (user.role === 'ADMIN' ? '-T' : '-F') : '';
+		const t = amendTrueFalseUserId ? (user.role === 'ADMIN' ? '-T' : '-F') : '';
 		selectedUserId = `${user.id}${t}`;
 	});
 </script>
@@ -33,7 +35,7 @@
 <!-- <pre style="font-size:11px;">selectedUserId {JSON.stringify(selectedUserId, null, 2)}</pre> -->
 <h1>
 	{PageName} Page
-	{#if user.role === 'ADMIN'}
+	{#if user?.role === 'ADMIN'}
 		<select bind:this={selectBox} bind:value={selectedUserId}>
 			<option value="" selected>Select {PageName} Author</option>
 			{#each users as the_user}
@@ -49,7 +51,7 @@
 			<span bind:this={msgEl} class="message">{showResult()}</span>
 		{/if}
 	{/key}
-	<span class="user-name">{user.firstName} {user.lastName}</span>
+	<span class="user-name">{user?.firstName} {user?.lastName}</span>
 </h1>
 
 <style lang="scss">

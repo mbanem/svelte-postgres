@@ -11,7 +11,8 @@
 		pElement.innerText = pElement.innerText === txt ? msg : txt;
 	};
 	let pElement: HTMLParagraphElement;
-	let txt = 'waiting for greeting...';
+	let txt =
+		'waiting for parent to trigger greeting from child via resize button or to resize window....';
 	let b = true;
 
 	const getMessage = () => {
@@ -21,7 +22,7 @@
 	};
 </script>
 
-<button on:click={() => callParent(getMessage())}>call parent</button>
+<button on:click={() => callParent(getMessage())}>child button to call parent</button>
 <p class="info" bind:this={pElement}>{txt}</p>
 
 <style lang="scss">

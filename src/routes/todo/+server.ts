@@ -1,5 +1,6 @@
-import { db } from '$lib/server/db';
 import { fail, json, type RequestHandler } from '@sveltejs/kit';
+import * as utils from '$lib/utils';
+import { db } from '$lib/server/db';
 
 // in order to load todos we cannot use end point
 // +server.ts as it can only Respond on a request;
@@ -39,6 +40,7 @@ export const PATCH = (async ({ url }) => {
 }) satisfies RequestHandler;
 
 export const DELETE = (async ({ url }) => {
+	await utils.sleep(2000);
 	try {
 		await db.todo.delete({
 			where: {

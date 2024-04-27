@@ -12,11 +12,17 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
 	if (!userAuthToken) {
 		throw error(400, 'User cookie not found');
 	}
-	const user = await db.user.findUnique({
+	const user = (await db.user.findUnique({
 		where: {
 			userAuthToken: cookies.get('session')
+		},
+		select: {
+			id: true,
+			firstName: true,
+			lastName: true,
+			role: true
 		}
-	});
+	})) as Partial<User>;
 	if (!user) {
 		throw error(400, 'User not found');
 	}
@@ -58,11 +64,17 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
 			u.last_name asc;`;
 	}
 	const userIDs = [...new Set(postAuthors.map((el) => el.authorId))];
-	const users = await db.user.findMany({
+	const users: Partial<User>[] = await db.user.findMany({
 		where: {
 			id: {
 				in: userIDs
 			}
+		},
+		select: {
+			id: true,
+			firstName: true,
+			lastName: true,
+			role: true
 		}
 	});
 	// NOTE:mPrisma array from Postgres
@@ -134,7 +146,7 @@ export const actions: Actions = {
 		}
 		return {
 			success: true,
-			message: 'Post successfully created'
+			message: 'Post created'
 		};
 	},
 	deletePost: async ({ request }) => {
@@ -156,7 +168,7 @@ export const actions: Actions = {
 		}
 		return {
 			success: true,
-			message: 'Post successfully deleted'
+			message: 'Post deleted'
 		};
 	},
 	updatePost: async ({ request }) => {

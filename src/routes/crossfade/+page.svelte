@@ -30,7 +30,7 @@
 
 	// unable to handle other events just on:outroend={handleEnd}
 	const handleEnd = () => {
-		console.log('Transition ended!');
+		// console.log('Transition ended!');
 		loading = !loading;
 		showTooltip = false;
 	};
@@ -111,7 +111,9 @@
 
 	:global(.local-tooltip) {
 		position: absolute;
-		top: -4rem !important;
+		top: -1rem;
+		left: 0;
+		// left: calc(80% + 5rem) !important;
 		display: inline-block;
 		font-size: 14px;
 		font-weight: 400;
@@ -122,7 +124,7 @@
 	}
 	:global(.local-master) {
 		// top: -0.5rem !important;
-		color: skyblue;
+		color: lightgreen;
 		font-size: 14px;
 		font-weight: 400;
 		p {

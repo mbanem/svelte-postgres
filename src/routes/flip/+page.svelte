@@ -2,6 +2,7 @@
 	import { tick } from 'svelte';
 	import { gsap } from 'gsap';
 	import Flip from 'gsap/dist/Flip';
+
 	gsap.registerPlugin(Flip);
 
 	type Layout = 'stack' | 'grid';
@@ -29,7 +30,7 @@
 <div class="container">
 	<div data-layout={layout}>
 		{#each { length: 10 } as circle, id}
-			<img class="circle" src="https://picsum.photos/100/100?id={id + 10}" alt="placeholder" />
+			<img class="circle" src="/assets/P{id}-100x100.jpg" alt="" />
 		{/each}
 	</div>
 </div>

@@ -32,6 +32,8 @@
 
 	let btnCreate: HTMLButtonElement;
 	let btnUpdate: HTMLButtonElement;
+	let btnDelete: HTMLButtonElement;
+	let iconDelete: HTMLSpanElement;
 
 	$: setColor(form?.message ? (form.message.includes('successfully') ? 'green' : 'red') : 'green');
 
@@ -41,15 +43,18 @@
 			message = '';
 			ignoreFormMessage = false;
 			result = '';
+			selectedUserWithBio = getUserWithBio(selectedUserId) as UserWithBio;
 		}, 2000);
 	};
 
 	const clearForm = () => {
-		(document.querySelector("input[name='bio']") as HTMLTextAreaElement).value = '';
-		// (document.querySelector("input[name='authorId']") as HTMLInputElement).value = '';
-		(document.querySelector("input[name='bioId']") as HTMLInputElement).value = '';
+		(document.querySelector("textarea[name='bio']") as HTMLTextAreaElement).value = '';
+		setButtonVisible([btnCreate, btnUpdate]);
+		// change bioId only when selectedUserId changes
+		// (document.querySelector("input[name='bioId']") as HTMLInputElement).value = '';
 	};
 	const enhanceProfile: SubmitFunction = ({ action, formData }) => {
+		console.log(action.search);
 		message = '';
 		bioIsRequired = '';
 		ignoreFormMessage = false;
@@ -59,8 +64,12 @@
 			return;
 		}
 		loading = true; // start spinner animation
-		message = action.search === '?/create' ? 'creating profile...' : 'updating profile...';
-
+		message =
+			action.search === '?/create'
+				? 'creating profile...'
+				: action.search === '?/update'
+					? 'updating profile...'
+					: 'deleting profile...';
 		return async ({ update }) => {
 			await update();
 			ignoreFormMessage = true;
@@ -71,15 +80,19 @@
 				message = $page.status === 200 ? 'Profile deleted' : 'delete failed';
 			} else if (action.search === '?/update') {
 				message = $page.status === 200 ? 'Profile updated' : 'update failed';
+			} else if (action.search === '?/delete') {
+				message = $page.status === 200 ? 'Profile deleted' : 'delete failed';
+				iconDelete.classList.toggle('hidden');
+				setButtonVisible([btnCreate, btnUpdate]);
 			}
-			setButtonVisible([btnCreate, btnUpdate]);
-			clearMessage();
 			invalidateAll();
 			loading = false; // stop spinner animation
 			clearForm();
-			if (action.search === '?/update') {
-				selectedUserWithBio.bio = bio as string;
-			}
+			// if (action.search === '?/update') {
+			// 	selectedUserWithBio.bio = bio as string;
+			// }
+			// setButtonVisible([btnCreate, btnUpdate]);
+			clearMessage();
 		};
 	};
 	let adminSelected: boolean;
@@ -93,7 +106,7 @@
 		for (let i = 0; i < userProfiles.length; i++) {
 			if (userProfiles[i]?.user?.id === id) {
 				// @ts-expect-error
-				const { id, bio, createdAt, updatedAt, user } = userProfiles[i] as UserProfile;
+				const { id, bio, createdAt, updatedAt, user } = data.userProfiles[i] as UserProfile;
 				return { id, bio, createdAt, updatedAt, user } as UserWithBio;
 			}
 		}
@@ -112,6 +125,7 @@
 		if (data.locals.user.id === divEl.dataset.userId) {
 			bioTextArea.value = selectedUserWithBio?.bio;
 			setButtonVisible([btnUpdate, btnCreate]);
+			iconDelete.classList.toggle('hidden');
 		}
 	};
 
@@ -148,11 +162,8 @@
 				/>
 				<input type="hidden" name="authorId" value={selectedUserId ?? ''} />
 				<input type="hidden" name="bioId" value={selectedUserWithBio?.id ?? ''} />
-				{#if data.userProfiles[0]?.bio}
-					<p class="instead-of-button" class:hidden={bioUpdateAllowed}>
-						To update bio click on bio text on the right
-					</p>
-				{:else}
+
+				<p class="buttons">
 					<button
 						bind:this={btnCreate}
 						type="submit"
@@ -164,12 +175,15 @@
 						{/if}
 						create
 					</button>
-				{/if}
-				<button bind:this={btnUpdate} type="submit" formaction="?/update" class="button hidden">
-					{#if loading}
-						<CircleSpinner color="skyblue" />
-					{/if}
-					update
+					<button bind:this={btnUpdate} type="submit" formaction="?/update" class="button hidden">
+						{#if loading}
+							<CircleSpinner color="skyblue" />
+						{/if}
+						update
+					</button>
+					<button on:click={clearForm}>clear</button>
+				</p>
+				<button bind:this={btnDelete} type="submit" formaction="?/delete" class="button hidden">
 				</button>
 			</form>
 		</div>
@@ -185,6 +199,13 @@
 					aria-hidden={true}
 				>
 					{selectedUserWithBio.bio ?? ''}
+					<span
+						bind:this={iconDelete}
+						on:click={() => {
+							btnDelete.click();
+						}}
+						aria-hidden={true}>❌</span
+					>
 				</p>
 				<Tooltip
 					placement="top"
@@ -192,8 +213,16 @@
 					class="master-profile"
 					arrow={false}
 				>
-					<p>created on {selectedUserWithBio.createdAt.toLocaleDateString()}</p>
-					<p>updated on {selectedUserWithBio.updatedAt.toLocaleDateString()}</p>
+					<p>
+						created on <span class="prop-value"
+							>{selectedUserWithBio.createdAt.toLocaleDateString()}</span
+						>
+					</p>
+					<p>
+						updated on <span class="prop-value"
+							>{selectedUserWithBio.updatedAt.toLocaleDateString()}</span
+						>
+					</p>
 				</Tooltip>
 			</div>
 		</div>
@@ -221,9 +250,15 @@
 		font-size: 14px;
 		font-weight: 400;
 		p {
+			display: flex;
+			justify-content: space-between;
+			align-content: flex-start;
+			gap: 0.5rem;
 			padding: 0;
 			margin: 0;
-			color: skyblue;
+			.prop-value {
+				color: yellow;
+			}
 		}
 	}
 	.container {
@@ -246,7 +281,7 @@
 			.instead-of-button {
 				border: 1px solid gray;
 				border-radius: 4px;
-				width: 11rem;
+				width: 11.5rem;
 				padding: 2px 1rem;
 				text-align: center;
 				margin-left: 1.7rem;
@@ -280,5 +315,14 @@
 	}
 	.hidden {
 		display: none;
+	}
+	.buttons {
+		display: flex;
+		gap: 1rem;
+		justify-content: center;
+		width: 100%;
+	}
+	button {
+		width: 5rem;
 	}
 </style>
