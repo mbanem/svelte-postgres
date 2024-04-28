@@ -48,7 +48,6 @@
 	// get params action for URL amf formData to check on required fields
 	const enhanceTodo: SubmitFunction = ({ action, formData }) => {
 		titleIsRequired = '';
-		console.log(JSON.stringify(formData, null, 2));
 		contentIsRequired = '';
 		ignoreFormMessage = false;
 		if (formData.get('title') === '') {

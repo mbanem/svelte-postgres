@@ -106,20 +106,19 @@
 </ul>
 
 <style lang="scss">
-	.not-allowed {
-		cursor: not-allowed;
-	}
-	.tu-su {
-		// user when todo.userId !== selectedUserId
-		color: gray;
-		fill: gray;
-		&:hover {
-			cursor: not-allowed;
-			border-color: gray;
-		}
-	}
 	.tooltip-wrapper {
 		position: relative;
+		p {
+			display: flex;
+			justify-content: space-between;
+			align-content: flex-start;
+			gap: 0.5rem;
+			padding: 0 0 0 5px;
+			margin: 0;
+			.prop-value {
+				color: yellow;
+			}
+		}
 	}
 
 	:global(.tooltip-todo) {
@@ -155,19 +154,8 @@
 		// top: -0.5rem !important;
 		font-size: 14px;
 		font-weight: 400;
-		p {
-			display: flex;
-			justify-content: space-between;
-			align-content: flex-start;
-			gap: 0.5rem;
-			padding: 0 0 0 5px;
-			margin: 0;
-			.prop-value {
-				color: yellow;
-			}
-		}
 	}
-	.blue {
+	p .blue {
 		color: skyblue;
 	}
 	.todos {

@@ -22,6 +22,7 @@
 		});
 		loading = true;
 		ignoreFormMessage = true;
+		// cannot use $page.status === 200 as on successful login we redirect to thr home page
 		message = action.search === '?/register' ? 'registering account...' : 'updating account...';
 	};
 	let result: string;

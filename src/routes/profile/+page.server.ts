@@ -106,7 +106,8 @@ export const actions: Actions = {
 		}
 		return {
 			bio,
-			success: 'Profile created'
+			success: true,
+			message: 'Profile successfully created'
 		};
 	},
 	update: async ({ request }) => {

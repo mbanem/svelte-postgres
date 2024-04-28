@@ -54,7 +54,6 @@
 		// (document.querySelector("input[name='bioId']") as HTMLInputElement).value = '';
 	};
 	const enhanceProfile: SubmitFunction = ({ action, formData }) => {
-		console.log(action.search);
 		message = '';
 		bioIsRequired = '';
 		ignoreFormMessage = false;
@@ -277,16 +276,6 @@
 			padding-top: 1rem;
 			p {
 				text-align: left;
-			}
-			.instead-of-button {
-				border: 1px solid gray;
-				border-radius: 4px;
-				width: 11.5rem;
-				padding: 2px 1rem;
-				text-align: center;
-				margin-left: 1.7rem;
-				font-size: 14px;
-				user-select: none;
 			}
 			textarea {
 				text-align: left;

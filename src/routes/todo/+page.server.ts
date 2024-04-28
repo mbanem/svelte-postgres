@@ -154,7 +154,8 @@ export const actions: Actions = {
 
 		await utils.sleep(2000);
 		return {
-			success: 'Todo successfully created'
+			success: true,
+			message: 'Todo successfully created'
 		};
 	},
 	updateTodo: async ({ request }) => {
@@ -186,7 +187,8 @@ export const actions: Actions = {
 			});
 			await utils.sleep(2000);
 			return {
-				success: 'Todo successfully updated'
+				success: true,
+				message: 'Todo successfully updated'
 			};
 		} catch (err) {
 			return fail(500, {
