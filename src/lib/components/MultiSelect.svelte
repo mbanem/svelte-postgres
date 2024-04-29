@@ -11,7 +11,7 @@
 	// data contains all category options including selected flag
 	export let data: { id: number; name: string; selected?: boolean }[];
 
-	export const setSelectedIds = (arr: number[]) => {
+	export const setSelectedOptions = (arr: number[], _: string) => {
 		// arr: selected category ids 1-based instead of zero-based arrays
 		const selectBox = document.getElementById('selBox') as HTMLSelectElement;
 		const options = selectBox.options as HTMLOptionsCollection;

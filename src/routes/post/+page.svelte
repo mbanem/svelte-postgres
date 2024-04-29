@@ -50,7 +50,7 @@
 			(document.querySelector(`input[name='${k}']`) as HTMLInputElement).value = '';
 		});
 		(document.querySelector(`input[name='published']`) as HTMLInputElement).checked = false;
-		setSelectedIds([]);
+		setSelectedOptions([], categoryIsRequired);
 		setColor('green');
 	};
 
@@ -67,6 +67,11 @@
 
 	let selectedCategoryIds: () => string;
 
+	/*
+		After processing the request (for example, logging the user in by setting a cookie),
+		the action can respond with data that will be available through the form property on
+		the corresponding page and through $page.form app-wide until the next update.
+	*/
 	const enhancePost: SubmitFunction = ({ action, formData }) => {
 		message = '';
 		titleIsRequired = '';
@@ -174,7 +179,8 @@
 		return arr;
 	};
 
-	let setSelectedIds: (arr: number[] | []) => void;
+	let setSelectedOptions: (arr: number[] | [], nameList: string) => void;
+
 	const toUpdatePost = (postId: string) => {
 		const authorPost = data.postAuthors.filter((pa) => pa.id === postId);
 		const { id, authorId, published, categoryIds, title, content } = authorPost[0];
@@ -199,7 +205,7 @@
 		});
 		(document.querySelector(`input[name='published']`) as HTMLInputElement).checked = published;
 		const numArr = csvToNumArr(categoryIds);
-		setSelectedIds(numArr, categoryList(numArr));
+		setSelectedOptions(numArr, categoryList(numArr));
 	};
 
 	const deletePost = (id: string) => {
@@ -268,7 +274,7 @@
 			<MultiSelectBox
 				categories={data.categories}
 				bind:categoryIsRequired
-				bind:setSelectedIds
+				bind:setSelectedOptions
 				bind:getSelectedCategoryIDs={selectedCategoryIds}
 			/>
 		</div>

@@ -8,7 +8,7 @@
 
 <h2>Parent Page</h2>
 <h4 style="font-weight:400;margin:0;width:60rem;">
-	Ona bound value both parent and child (&lt;Box) have access. See the child blue and parent yellow
+	On a bound value both parent and (&lt;Box) child have access. See the child blue and parent yellow
 	text about parent's bound prop person &lt;Box bind:person... sent to child defined as export let
 	person:Person
 </h4>

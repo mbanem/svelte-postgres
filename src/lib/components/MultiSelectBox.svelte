@@ -4,7 +4,15 @@
 	export let categories: Category[];
 	const pleaseSelect = 'Please select corresponding categories';
 	export let categoryIsRequired = pleaseSelect;
-	export const setSelectedIds = (arr: number[], selOptions: string) => {
+
+	let selectedOptions: HTMLParagraphElement;
+	// cannot be const as setSelectedOptions rebuilds them
+	let selectedIds = new Set<string>();
+	let selectedNames = new Set<string>();
+
+	export const setSelectedOptions = (arr: number[], selOptions: string) => {
+		selectedIds = new Set(arr.map((n) => String(n)));
+		selectedNames = new Set(selOptions.split(','));
 		if (arr.length === 0) {
 			selectedOptions.innerText = categoryIsRequired;
 			utils.setTextColor('--MESSAGE-COLOR', 'lightgreen');
@@ -19,10 +27,6 @@
 	export const getSelectedCategoryIDs = () => {
 		return [...selectedIds].join(', ');
 	};
-
-	let selectedOptions: HTMLParagraphElement;
-	const selectedIds = new Set<string>();
-	const selectedNames = new Set<string>();
 
 	const idFromName = (name: string) => {
 		for (let i = 0; i < categories.length; i++) {
@@ -120,6 +124,7 @@
 	}
 	.selected {
 		color: tomato;
+		width: 100%;
 	}
 
 	button {

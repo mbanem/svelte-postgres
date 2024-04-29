@@ -116,8 +116,9 @@
 	const canBeUpdated = (event: MouseEvent) => {
 		bioUpdateAllowed = true;
 		const divEl = event.currentTarget as HTMLDivElement;
-		// instead of taking id easier as selectedUserWithBio?.user.id
-		// we use here attribute dada-user-id as divEl.dataset.userId -- a string
+		// instead of taking id easier way as selectedUserWithBio?.user.id
+		// we use here data attribute data-user-id as divEl.dataset.userId -- a string
+
 		// NOTE: in order to say divEl.dataset.userId HTML name must be data-user-id
 		// as DOMStringMap capitalize every occurrence of dash user-new-id --> userNewId
 		// console.log('user.id', user.id, 'dataset.userId', divEl.dataset.userId);
@@ -191,6 +192,7 @@
 		<div class="right-column">
 			<p>{selectedUserWithBio.user.firstName} {selectedUserWithBio.user.lastName}</p>
 			<div class="relative">
+				<!-- see NOTE above for data-user-id -->
 				<p
 					class="bio"
 					on:click={canBeUpdated}
