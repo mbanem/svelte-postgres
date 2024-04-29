@@ -2,6 +2,7 @@
 	import { tick } from 'svelte';
 	import { gsap } from 'gsap';
 	import Flip from 'gsap/dist/Flip';
+	import { error } from '@sveltejs/kit';
 
 	gsap.registerPlugin(Flip);
 
@@ -22,18 +23,36 @@
 			ease: 'ease-out'
 		});
 	};
+	const makeError = () => {
+		throw error(420, 'Enhance your calm');
+	};
 </script>
 
-<svelte:window on:click={flip} />
-<h3>Click anywhere to FLIP</h3>
+<!-- <svelte:window on:click={flip} /> -->
+<h3>Click on a circle to FLIP</h3>
 
 <div class="container">
-	<div data-layout={layout}>
+	<div
+		data-layout={layout}
+		on:click={flip}
+		on:keydown={flip}
+		role="button"
+		tabindex="0"
+		aria-label="press a key to flip"
+	>
 		{#each { length: 10 } as circle, id}
 			<img class="circle" src="/assets/P{id}-100x100.jpg" alt="" />
 		{/each}
 	</div>
 </div>
+
+<pre>We cause error on purpose in order to show Custom Error Page
+by submitting form with POST method to fake URL
+</pre>
+<form method="POST" action="?/nowhere">
+	<input type="hidden" value="make an error" />
+	<button type="submit">make error</button>
+</form>
 
 <style lang="scss">
 	h3 {
@@ -46,7 +65,7 @@
 	}
 	.container {
 		display: grid;
-		height: 100vh;
+		height: 50vh;
 		place-content: center;
 		cursor: pointer;
 	}
