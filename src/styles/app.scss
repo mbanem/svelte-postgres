@@ -1,16 +1,3 @@
-:root {
-	font-size: 16px;
-	--PLACEHOLDER_COLOR: black;
-}
-
-$TEXT-COLOR: white;
-$BACK-COLOR: #3e3e3e;
-$LINK-COLOR: white;
-$LINK-HOVER: yellow;
-$LINK-ACTIVE: lightgreen;
-$BORDER: 1px solid gray;
-$BORDER-RADIUS: 6px;
-
 body {
 	padding: 0;
 	margin: 0;
@@ -136,5 +123,5 @@ $font-size: (24px, 22px, 20px, 18px);
 pre {
 	color: skyblue;
 	font-family: Times New Roman;
-	font-size: 18px;
+	font-size: 14px;
 }

@@ -1,0 +1,133 @@
+<script lang="ts">
+	import { onMount } from 'svelte';
+	import * as utils from '$lib/utils';
+	export let categories: Category[];
+	const pleaseSelect = 'Please select corresponding categories';
+	export let categoryIsRequired = pleaseSelect;
+	export const setSelectedIds = (arr: number[], selOptions: string) => {
+		if (arr.length === 0) {
+			selectedOptions.innerText = categoryIsRequired;
+			utils.setTextColor('--MESSAGE-COLOR', 'lightgreen');
+		} else {
+			selectedOptions.innerText = selOptions;
+			utils.setTextColor('--MESSAGE-COLOR', 'yellow');
+		}
+		categories = categories.map((cat) => {
+			return { id: cat.id, name: cat.name, selected: arr.includes(cat.id) };
+		});
+	};
+	export const getSelectedCategoryIDs = () => {
+		return [...selectedIds].join(', ');
+	};
+
+	let selectedOptions: HTMLParagraphElement;
+	const selectedIds = new Set<string>();
+	const selectedNames = new Set<string>();
+
+	const idFromName = (name: string) => {
+		for (let i = 0; i < categories.length; i++) {
+			// @ts-expect-error
+			if (categories[i].name === name) {
+				// @ts-expect-error
+				return categories[i].id;
+			}
+		}
+	};
+	const onClick = (event: MouseEvent) => {
+		const btn = event.target as HTMLButtonElement;
+		const name = btn.innerText as string;
+		const id = String(idFromName(name));
+		const add = () => {
+			selectedIds.add(id);
+			selectedNames.add(name);
+			btn.style.color = 'tomato';
+		};
+		const remove = () => {
+			selectedIds.delete(id);
+			selectedNames.delete(name);
+			btn.style.color = 'white';
+		};
+
+		selectedIds.has(id) ? remove() : add();
+
+		// we place CSV string in selectedOptions HTML paragraph element
+		selectedOptions.innerText =
+			selectedNames.size > 0 ? [...selectedNames].join(', ') : categoryIsRequired;
+	};
+
+	onMount(() => {});
+
+	// categoryIds does not behave like dynamic variable and cannot use categoryIds.length
+	// but instead in onClick above we set n = categoryIds.length which is dynamic variable
+	// we use n and categoryIsRequired to render required message
+	// $: n = selected.length;
+	$: color = categoryIsRequired === 'Category is required' ? 'red' : 'skyblue';
+</script>
+
+<!-- <pre style="font-size:11px;">data {JSON.stringify(categories, null, 2)}</pre> -->
+
+<p bind:this={selectedOptions} class="selected-cats">
+	{pleaseSelect}
+</p>
+<ul>
+	{#key categories}
+		{#each categories as category}
+			<li>
+				<button on:click|preventDefault={onClick} class:selected={category.selected}>
+					{category.name}
+				</button>
+			</li>
+		{/each}
+	{/key}
+</ul>
+
+<style lang="scss">
+	.selected-cats {
+		width: 42rem;
+		height: 1.5rem; // more entries? 2.7rem
+		line-height: 1.5rem;
+		padding: 4px 1rem;
+		margin: 5px 0;
+		border: 1px solid gray;
+		border-radius: 5px;
+		color: var(--MESSAGE-COLOR);
+		font-weight: 300;
+		font-family: Arial, sans-serif;
+	}
+	ul {
+		list-style: none;
+		border: 1px solid yellow;
+		border-radius: 5px;
+		padding: 5px 1rem;
+		margin: 0;
+		height: 9rem;
+		width: 8rem;
+		overflow-y: auto;
+		li {
+			margin-bottom: 4px;
+			&:first-child {
+				margin-top: 5px;
+			}
+		}
+	}
+	p {
+		margin: 0;
+		color: $TEXT-COLOR;
+		&:hover {
+			color: yellow;
+			cursor: pointer;
+		}
+	}
+	.selected {
+		color: tomato;
+	}
+
+	button {
+		border: none;
+		outline: none;
+		height: 1rem;
+		width: 5rem;
+		text-align: left;
+		padding: 0;
+	}
+</style>

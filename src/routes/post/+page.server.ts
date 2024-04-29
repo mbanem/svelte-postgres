@@ -96,7 +96,7 @@ type InputData = {
 	title: string;
 	content: string;
 	published: string | boolean;
-	categoryIDs: string; // comma-separated category ids
+	categoryIds: string; // comma-separated category ids
 	authorId: string;
 };
 export const actions: Actions = {
@@ -106,10 +106,10 @@ export const actions: Actions = {
 			await request.formData()
 		) as InputData; //{
 
-		const { title, content, published, categoryIDs, authorId } = input_data;
-		if (title === '' || content === '' || categoryIDs === '' || authorId === '') {
+		const { title, content, published, categoryIds, authorId } = input_data;
+		if (title === '' || content === '' || categoryIds === '' || authorId === '') {
 			return fail(400, {
-				data: { title, content, published, categoryIDs, authorId },
+				data: { title, content, published, categoryIds, authorId },
 				message: 'Insufficient data supplied'
 			});
 		}
@@ -123,7 +123,7 @@ export const actions: Actions = {
 				updatedAt: new Date()
 			};
 
-			const catIDs = categoryIDs.split(',').map((val) => {
+			const catIDs = categoryIds.split(',').map((val) => {
 				return { id: Number(val) };
 			});
 			newPost = await db.post.create({
@@ -177,15 +177,15 @@ export const actions: Actions = {
 			await request.formData()
 		) as InputData;
 
-		const { id, title, content, published, categoryIDs, authorId } = input_data;
-		if (id === '' || title === '' || content === '' || categoryIDs === '' || authorId === '') {
+		const { id, title, content, published, categoryIds, authorId } = input_data;
+		if (id === '' || title === '' || content === '' || categoryIds === '' || authorId === '') {
 			return fail(400, {
 				data: { id, title, content, published, authorId },
 				message: 'Insufficient data supplied'
 			});
 		}
 		await utils.sleep(2000);
-		const catIDs = categoryIDs.split(',').map((val) => {
+		const catIDs = categoryIds.split(',').map((val) => {
 			return { id: Number(val) };
 		});
 		const categories = await db.category.findMany({

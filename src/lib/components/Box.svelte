@@ -28,8 +28,8 @@
 	<br />
 	as in here
 	<span style="color:skyblue">Person {person.name} age {person.age} city {person.city}</span>
-	<button on:click={() => (person.age += 1)}>increment age</button>
-	<button on:click={decrement}>decrement age</button>
+	<button on:click|self={() => (person.age += 1)}>increment age</button>
+	<button on:click|self={decrement}>decrement age</button>
 </div>
 
 <style lang="scss">

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
+	import SelectBox from '$lib/components/MultiSelectBox.svelte';
 	import { AdvancedRating } from 'flowbite-svelte';
 
 	export let data: PageData;
@@ -56,9 +57,17 @@
 		});
 		selectBox.innerHTML = options;
 	});
+	type Category = {
+		id: number | string;
+		name: string;
+	};
 </script>
 
 <h2>Multi Select Page</h2>
+<!-- <pre style="font-size:11px;">data {JSON.stringify(data, null, 2)}</pre> -->
+
+<SelectBox categories={data.categories} />
+
 <slot {selectedOptions}>
 	<pre>
 clicking on an option toggles its selected status

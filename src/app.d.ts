@@ -19,8 +19,15 @@ declare global {
 		role: string;
 	};
 
+	type Category = {
+		id: number;
+		name: string;
+		selected?: boolean;
+	};
+
 	type PostAuthors = (Post & Author)[];
 	type UserProfile = Profile & PartialUser;
+	// type Categories = Category[];
 
 	type UTodo = {
 		id: string;

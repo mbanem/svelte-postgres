@@ -10,7 +10,7 @@
 
 	import PageTitleCombo from '$lib/components/PageTitleCombo.svelte';
 	// categories
-	import MultiSelect from '$lib/components/MultiSelect.svelte';
+	import MultiSelectBox from '$lib/components/MultiSelectBox.svelte';
 	import PostList from '$lib/components/PostList.svelte';
 
 	export let data: PageData;
@@ -30,7 +30,7 @@
 	let btnUpdate: HTMLButtonElement;
 	const authorId = data?.user?.id;
 
-	let categoryIDs: number[] = [];
+	let categoryIds: number[] = [];
 
 	$: setColor(form?.message ? (form.message.includes('successfully') ? 'green' : 'red') : 'green');
 
@@ -45,17 +45,24 @@
 	};
 
 	const clearForm = () => {
-		const els = ['id', 'title', 'content', 'published', 'categoryIDs'];
+		const els = ['id', 'title', 'content', 'categoryIds'];
 		els.forEach((k) => {
 			(document.querySelector(`input[name='${k}']`) as HTMLInputElement).value = '';
 		});
+		(document.querySelector(`input[name='published']`) as HTMLInputElement).checked = false;
 		setSelectedIds([]);
+		setColor('green');
 	};
 
 	const required = {
 		title: '',
 		content: '',
-		categoryIDs: ''
+		categoryIds: ''
+	};
+
+	const categoryList = (arr: number[]) => {
+		// @ts-expect-error
+		return arr.map((n) => data.categories[n - 1].name).join(', ');
 	};
 
 	let selectedCategoryIds: () => string;
@@ -65,9 +72,9 @@
 		titleIsRequired = '';
 		ignoreFormMessage = false;
 		contentIsRequired = '';
-		// categoryIsRequired = '';
+		// categoryIsRequired = '';	// test formData.get('categoryIds')
 
-		formData.set('categoryIDs', selectedCategoryIds());
+		// formData.set('categoryIds', selectedCategoryIds());
 		for (const key of Object.keys(required)) {
 			if (formData.get(key) == '') {
 				switch (key) {
@@ -77,7 +84,7 @@
 					case 'content':
 						contentIsRequired = 'Content is required';
 						break;
-					case 'categoryIDs':
+					case 'categoryIds':
 						categoryIsRequired = 'Category is required';
 						break;
 					default:
@@ -131,7 +138,7 @@
 
 	onMount(() => {
 		boardBlock.classList.toggle('hidden');
-		selectedUserId = data.user.id;
+		selectedUserId = data.user.id as string;
 		adminSelected = data.locals.user.role === 'ADMIN';
 	});
 
@@ -171,14 +178,14 @@
 	const toUpdatePost = (postId: string) => {
 		const authorPost = data.postAuthors.filter((pa) => pa.id === postId);
 		const { id, authorId, published, categoryIds, title, content } = authorPost[0];
-		// selectOptions(categoryIDs);
+		// selectOptions(categoryIds);
 		const els = [
 			{ id: id },
 			{ authorId: authorId },
 			{ title: title },
-			{ content: content }
-			// { published: published }
-			// { categoryIDs: categoryIDs }
+			{ content: content },
+			// { published: published },
+			{ categoryIds: categoryIds }
 		];
 
 		setButtonVisible([btnUpdate, btnCreate, btnDelete]);
@@ -191,7 +198,8 @@
 			}
 		});
 		(document.querySelector(`input[name='published']`) as HTMLInputElement).checked = published;
-		setSelectedIds(csvToNumArr(categoryIds));
+		const numArr = csvToNumArr(categoryIds);
+		setSelectedIds(numArr, categoryList(numArr));
 	};
 
 	const deletePost = (id: string) => {
@@ -227,7 +235,7 @@
 		<form method="POST" action="?/createPost" use:enhance={enhancePost}>
 			<input type="hidden" name="id" />
 			<input type="hidden" name="authorId" value={authorId} />
-			<input type="hidden" name="categoryIDs" value={categoryIDs} />
+			<input type="hidden" name="categoryIds" value={categoryIds} />
 			<input type="text" name="title" placeholder={titleIsRequired || 'enter post title'} />
 			<input type="text" name="content" placeholder={contentIsRequired || 'enter post content'} />
 			<label for="published" class="label-save">
@@ -248,11 +256,17 @@
 					{/if}
 					update
 				</button>
+				<button
+					on:click|preventDefault={() => {
+						clearForm();
+						return false;
+					}}>clear</button
+				>
 			</label>
 		</form>
 		<div class="multi-select-container">
-			<MultiSelect
-				data={data.categories}
+			<MultiSelectBox
+				categories={data.categories}
 				bind:categoryIsRequired
 				bind:setSelectedIds
 				bind:getSelectedCategoryIDs={selectedCategoryIds}

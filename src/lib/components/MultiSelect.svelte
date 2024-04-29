@@ -65,11 +65,11 @@
 		selectedOptions.innerText = categoryIsRequired;
 	});
 
-	// categoryIDs does not behave like dynamic variable and cannot use categoryIDs.length
-	// but instead in onClick above we set n = categoryIDs.length which is dynamic variable
+	// categoryIds does not behave like dynamic variable and cannot use categoryIds.length
+	// but instead in onClick above we set n = categoryIds.length which is dynamic variable
 	// we use n and categoryIsRequired to render required message
 	// $: n = selected.length;
-	$: color = categoryIsRequired === 'Category is required' ? 'pink' : 'skyblue';
+	$: color = categoryIsRequired === 'Category is required' ? 'red' : 'skyblue';
 </script>
 
 <!-- <pre style="font-size:11px;">categories {JSON.stringify(data, null, 2)}</pre> -->
