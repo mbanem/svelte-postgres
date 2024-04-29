@@ -6,7 +6,7 @@ import * as utils from '$lib/utils';
 
 export const load: PageServerLoad = (async ({ locals, cookies }) => {
 	// admin should be able to see all posts of any user
-	// so we have to load all posts with user info
+	// so we have to load all posts with the user info
 
 	let userAuthToken = cookies.get('session') || '';
 	if (!userAuthToken) {
@@ -77,14 +77,14 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
 			role: true
 		}
 	});
-	// NOTE:mPrisma array from Postgres
+	// NOTE: Prisma array from Postgres
 	// const categories = (await db.$queryRaw`SELECT array(SELECT name FROM Category)`) as string[];
 
 	// for Post-Category many-to-many we need array of category.ids
 	// but for multiselect we need category names as well
 	const categories: { id: number; name: string }[] = await db.category.findMany();
 	return {
-		postAuthors, // as Todo[] is important for TypeScript
+		postAuthors,
 		user,
 		users,
 		categories

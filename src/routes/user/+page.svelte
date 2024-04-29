@@ -52,8 +52,6 @@
 		flex-direction: column;
 		align-items: flex-start;
 		max-height: 13.8rem;
-		// border: 1px solid yellow;
-		// border-radius: 4px;
 		margin-top: 1.5rem 0;
 		width: 40rem;
 		padding: 5px 0 10px 1rem;

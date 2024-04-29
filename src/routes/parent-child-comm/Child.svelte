@@ -5,8 +5,8 @@
 		return Math.floor(Math.random() * 1000000);
 	};
 	// resize is exported to parent to bind to its
-	// variable and to call it
-	// it is cons function (str) => void
+	// variable and to call on it
+	// it is const function (str) => void
 	export const resize = (msg: string) => {
 		pElement.innerText = pElement.innerText === txt ? msg : txt;
 	};

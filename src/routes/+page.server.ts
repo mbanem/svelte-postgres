@@ -8,7 +8,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 };
 
 export const actions: Actions = {
-	// ard is event, but we destructure it
+	// arg is an event, but we destructure it to get cookies and request
 	default: async ({ cookies, request }) => {
 		const data = await request.formData();
 		const sessionId = (data.get('sessionId') as string) ?? '';

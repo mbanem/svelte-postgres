@@ -77,9 +77,7 @@
 		titleIsRequired = '';
 		ignoreFormMessage = false;
 		contentIsRequired = '';
-		// categoryIsRequired = '';	// test formData.get('categoryIds')
 
-		// formData.set('categoryIds', selectedCategoryIds());
 		for (const key of Object.keys(required)) {
 			if (formData.get(key) == '') {
 				switch (key) {
@@ -190,7 +188,6 @@
 			{ authorId: authorId },
 			{ title: title },
 			{ content: content },
-			// { published: published },
 			{ categoryIds: categoryIds }
 		];
 
@@ -220,8 +217,6 @@
 	$: result = message || formMessage;
 </script>
 
-<!-- <pre>message {message} result {result}</pre> -->
-<!-- <pre style="font-size:11px;">data {JSON.stringify(data, null, 2)}</pre> -->
 <PageTitleCombo
 	bind:result
 	bind:message
@@ -232,9 +227,6 @@
 	user={data.locals.user}
 	users={data.users}
 />
-
-<!-- <pre style="font-size:11px;"> {selectedUserId}</pre> -->
-<!-- <pre style="font-size:1/1px;">PAGE data {JSON.stringify(data, null, 2)}</pre> -->
 
 <div bind:this={boardBlock} class="board hidden">
 	<div>
@@ -282,7 +274,6 @@
 </div>
 <di>
 	{#key postAuthors}
-		<!-- <pre style="font-size:11px;"> {JSON.stringify(data.PostAuthors, null, 2)}</pre> -->
 		{#key selectedUserId}
 			<PostList postAuthors={postsAuthors()} {toUpdatePost} {deletePost} />
 		{/key}
@@ -291,9 +282,6 @@
 
 <style lang="scss">
 	.board {
-		// display: grid;
-		// grid-template-columns: 1fr 1fr;
-		// grid-column-gap: 1em;
 		min-width: 36em;
 		width: 70vw;
 		gap: 2px;
@@ -329,7 +317,6 @@
 	label {
 		display: flex;
 		gap: 1.5rem;
-		// margin: 0;
 	}
 
 	.button {

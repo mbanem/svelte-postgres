@@ -6,7 +6,7 @@
 	export let categoryIsRequired = pleaseSelect;
 
 	let selectedOptions: HTMLParagraphElement;
-	// cannot be const as setSelectedOptions rebuilds them
+	// cannot be const as setSelectedOptions rebuilds them via new Set()
 	let selectedIds = new Set<string>();
 	let selectedNames = new Set<string>();
 
@@ -61,10 +61,6 @@
 
 	onMount(() => {});
 
-	// categoryIds does not behave like dynamic variable and cannot use categoryIds.length
-	// but instead in onClick above we set n = categoryIds.length which is dynamic variable
-	// we use n and categoryIsRequired to render required message
-	// $: n = selected.length;
 	$: color = categoryIsRequired === 'Category is required' ? 'red' : 'skyblue';
 </script>
 

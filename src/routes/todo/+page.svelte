@@ -45,7 +45,7 @@
 	let titleIsRequired = '';
 	let contentIsRequired = '';
 
-	// get params action for URL amf formData to check on required fields
+	// get params action for URL and formData to check on required fields
 	const enhanceTodo: SubmitFunction = ({ action, formData }) => {
 		titleIsRequired = '';
 		contentIsRequired = '';
@@ -129,8 +129,7 @@
 		// prevent ADMIN to update others todos
 		selectedUserId = uTodo.id as string;
 		todoIdEl.value = uTodo.todoId as string;
-		(document.querySelector("input[name='userId']") as HTMLInputElement).value =
-			uTodo.userId as string;
+		(document.querySelector("input[name='userId']") as HTMLInputElement).value = uTodo.id as string;
 		(document.querySelector("input[name='title']") as HTMLInputElement).value =
 			uTodo.title as string;
 		(document.querySelector("input[name='content']") as HTMLInputElement).value =
@@ -316,7 +315,6 @@
 		}
 	}
 	button {
-		// display: inline-block;
 		margin-top: 1rem !important;
 	}
 	.buttons-relative {

@@ -5,7 +5,7 @@ import type { Actions } from '@sveltejs/kit';
 import * as utils from '$lib/utils';
 
 export const load: PageServerLoad = (async ({ locals, cookies }) => {
-	// locals holds logged in user details
+	// locals holds the logged in user details
 	let userAuthToken = cookies.get('session') ?? '';
 	if (!userAuthToken) {
 		throw error(400, 'User cookie not found');
@@ -40,7 +40,6 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
 			}
 		});
 	} else {
-		// though for USER it is unique we use userProfiles as in case for ADMIN
 		userProfiles = await db.profile.findMany({
 			where: {
 				userId: locals.user.id

@@ -25,7 +25,7 @@
 		arr.forEach((ix) => {
 			// arr contains all SELECTED options so we set selected = true for every arr entry
 			(options[ix - 1] as HTMLOptionElement).selected = true;
-			// we render selected names above the select bo so make a list
+			// we render selected names above the select box so we make a list
 			// @ts-expect-error
 			selectedNames.push(data[ix - 1].name);
 		});
@@ -54,7 +54,7 @@
 		let options = '';
 		let selectedCats = '';
 		// data contains all category options including selected flag
-		// so we prepare HTML string for selectBox options
+		// so we prepare HTML string for selectBox <options> elements
 		data.forEach((opt) => {
 			options += '<option id="' + opt.id + '" value="' + opt.id + '">' + opt.name + '</option>';
 		});
@@ -65,10 +65,6 @@
 		selectedOptions.innerText = categoryIsRequired;
 	});
 
-	// categoryIds does not behave like dynamic variable and cannot use categoryIds.length
-	// but instead in onClick above we set n = categoryIds.length which is dynamic variable
-	// we use n and categoryIsRequired to render required message
-	// $: n = selected.length;
 	$: color = categoryIsRequired === 'Category is required' ? 'red' : 'skyblue';
 </script>
 

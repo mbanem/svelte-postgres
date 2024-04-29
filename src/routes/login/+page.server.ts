@@ -26,15 +26,18 @@ export const actions: Actions = {
 		};
 
 		if (!(firstName && lastName && email)) {
-			return fail(400, { data: { firstName, lastName, email } });
+			return fail(400, {
+				data: { firstName, lastName, email },
+				message: 'Incorrect authentication data'
+			});
 		}
 
 		// for findUnique Prisma checks whether the where part is really unique
-		// so idf we specify where: {firstName, lastName, email} it will complain
-		// putting squiggly on the where clause, nut when we include fullNameEmail
+		// so if we specify where: {firstName, lastName, email} it will complain
+		// putting squiggly on the where clause, but when we include fullNameEmail
 		// which schema.prisma say
 		// @@unique(name: "fullNameEmail', [firstName,lastName,email")
-		// it accepts findUnique as acceptable
+		// it takes findUnique acceptable
 		const user = await db.user.findUnique({
 			where: {
 				fullNameEmail: {
@@ -45,12 +48,18 @@ export const actions: Actions = {
 			}
 		});
 		if (!user) {
-			return fail(400, { data: { firstName, lastName, email } });
+			return fail(400, {
+				data: { firstName, lastName, email },
+				message: 'User not found'
+			});
 		}
 
 		const passwordOK = await bcrypt.compare(password, user.passwordHash);
 		if (!passwordOK) {
-			fail(400, { data: { firstName, lastName, email } });
+			fail(400, {
+				data: { firstName, lastName, email },
+				message: 'Incorrect authentication data'
+			});
 		}
 
 		// create new userAuthToken in case it was compromised

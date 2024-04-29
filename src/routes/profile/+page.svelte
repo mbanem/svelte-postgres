@@ -23,7 +23,7 @@
 	};
 	let message = '';
 	let bioIsRequired = '';
-	// form?.message cannot be cleared by code but could be ignored when necessary
+	// form?.message cannot be cleared by code but could be ignored when required
 	let ignoreFormMessage = false;
 	let success = '';
 	let loading = false;
@@ -51,7 +51,6 @@
 		(document.querySelector("textarea[name='bio']") as HTMLTextAreaElement).value = '';
 		setButtonVisible([btnCreate, btnUpdate]);
 		// change bioId only when selectedUserId changes
-		// (document.querySelector("input[name='bioId']") as HTMLInputElement).value = '';
 	};
 	const enhanceProfile: SubmitFunction = ({ action, formData }) => {
 		message = '';
@@ -87,10 +86,6 @@
 			invalidateAll();
 			loading = false; // stop spinner animation
 			clearForm();
-			// if (action.search === '?/update') {
-			// 	selectedUserWithBio.bio = bio as string;
-			// }
-			// setButtonVisible([btnCreate, btnUpdate]);
 			clearMessage();
 		};
 	};
@@ -286,7 +281,7 @@
 			}
 			button {
 				position: relative;
-				// add margin to the class defined in styles/app.scss
+				// add margin to the class defined in app-wide styles/app.scss
 				margin: 1rem 0;
 			}
 		}

@@ -83,7 +83,6 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
 									u.first_name ASC,
 									t.priority DESC;`) as UTodos;
 	}
-	// console.log(JSON.stringify(uTodos, null, 2));
 	const getUser = (id: string) => {
 		for (let i = 0; i < uTodos.length; i++) {
 			// @ts-expect-error
@@ -92,10 +91,7 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
 			}
 		}
 	};
-	// const userIds = [...new Set(uTodos.map((todo) => todo.user.id))];
-	// const users = [...new Set(uTodos.map((todo) => todo.id))].map((id) => getUser(id));
 
-	// {id:string, firstName:string, lastName:string, role:string}
 	const users: Partial<User>[] =
 		await db.$queryRaw`select distinct t.user_id as "id", u.first_name as "firstName",u.last_name as "lastName", u.role from todo t join users u on u.id = t.user_id`;
 	return {

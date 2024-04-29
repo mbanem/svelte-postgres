@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { crossfade } from 'svelte/transition';
 	import CircleSpinner from '$lib/components/CircleSpinner.svelte';
-	// import { Tooltip, tooltip } from '@svelte-plugins/tooltips';
 	import { Tooltip } from 'flowbite-svelte';
 
 	let showTooltip = false;
@@ -45,7 +44,6 @@
 </script>
 
 <h1>Crossfade Page</h1>
-<!-- <button on:click={() => (start = !start)}>start{start}</button> -->
 <div class="main" on:click={toggleStartAndLoading} aria-hidden={true}>
 	{#if start}
 		<div class="a" in:send={{ key: 'x' }} out:receive={{ key: 'x' }} on:outroend={handleEnd}>
@@ -76,32 +74,6 @@
 	</div>
 </div>
 
-<!-- <p
-	class="tooltip"
-	title="{user.firstName} {user.lastName}, age {user.age}"
-	action="hover"
-	use:tooltip
->
-	top
-</p> -->
-<!--
-<div class="container">
-	<Tooltip
-		content="<b>Tooltip Top</b><p>This is an example of using the 'show' prop.</p>"
-		position="top"
-		animation="slide"
-		bind:show={showTooltip}
-		autoPosition
-		arrow={false}
-		action="prop"
-	>
-		Should show here
-	</Tooltip>
-
-	<button on:click={() => (showTooltip = true)}>Show</button>
-	<button on:click={() => (showTooltip = false)}>Hide</button>
-</div> -->
-
 <p style="margin:5rem 0 0 5rem;">showTooltip {showTooltip}</p>
 
 <style lang="scss">
@@ -113,17 +85,13 @@
 		position: absolute;
 		top: -1rem;
 		left: 0;
-		// left: calc(80% + 5rem) !important;
 		display: inline-block;
 		font-size: 14px;
 		font-weight: 400;
 		padding: 3px 1rem;
-		// border: 1px solid gray;
-		// border-radius: 4px;
 		text-align: center;
 	}
 	:global(.local-master) {
-		// top: -0.5rem !important;
 		color: lightgreen;
 		font-size: 14px;
 		font-weight: 400;
@@ -152,7 +120,6 @@
 		padding: 3px 1rem;
 		cursor: pointer;
 		&:hover {
-			// border: 1px solid yellow;
 			color: yellow;
 		}
 		&:active {
