@@ -30,6 +30,10 @@
 	$: message = form?.message || '';
 </script>
 
+<svelte:head>
+	<title>Register</title>
+</svelte:head>
+
 <h2>Register Page</h2>
 
 <div class="container">

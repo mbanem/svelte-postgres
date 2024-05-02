@@ -43,6 +43,10 @@
 	let updatedAt = new Date('8/22/2007').toLocaleDateString();
 </script>
 
+<svelte:head>
+	<title>CrossFade</title>
+</svelte:head>
+
 <h1>Crossfade Page</h1>
 <div class="main" on:click={toggleStartAndLoading} aria-hidden={true}>
 	{#if start}

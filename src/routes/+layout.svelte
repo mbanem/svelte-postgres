@@ -8,6 +8,10 @@
 	$: ({ locals } = data);
 </script>
 
+<svelte:head>
+	<title>Users</title>
+</svelte:head>
+
 <main>
 	<Nav {locals} />
 	<slot />

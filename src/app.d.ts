@@ -1,6 +1,10 @@
 // See https://kit.svelte.dev/docs/types#app
 // for information about these interfaces
 declare global {
+	interface WritableStore<T> extends Writable<T> {
+		getPath: () => string;
+		setPath: (name: string) => void;
+	}
 	type Person = {
 		name: string;
 		age: number;
@@ -44,6 +48,13 @@ declare global {
 	};
 	type UTodos = UTodo[];
 
+	type TodoFormData = {
+		id: string;
+		authorId: string;
+		title: string;
+		priority: number;
+		content: string;
+	};
 	type Bio = {
 		id: string;
 		bio: string;

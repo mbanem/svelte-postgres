@@ -1,5 +1,15 @@
 <script lang="ts">
 	export let locals: App.Locals;
+	import { setContext } from 'svelte';
+	import { writable } from 'svelte/store';
+	const prevPath = writable();
+
+	// when user leave partially or fully loaded page
+	// we save its path into the previousPath store and
+	// if user clicks on the button to turn back we
+	// use history.back() instead of the url as that way
+	// the page data would be preserved
+	setContext('previousPath', prevPath);
 </script>
 
 <nav>

@@ -6,6 +6,10 @@
 	$: data = form?.data;
 </script>
 
+<svelte:head>
+	<title>Login</title>
+</svelte:head>
+
 <h1>Log In</h1>
 <div class="container">
 	{#if form?.data}

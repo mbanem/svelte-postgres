@@ -5,6 +5,10 @@
 	$: ({ user } = data);
 </script>
 
+<svelte:head>
+	<title>User</title>
+</svelte:head>
+
 <!-- <pre style="font-size:10px;"> {JSON.stringify(data, null, 2)}</pre> -->
 <div class="container">
 	{#if user}

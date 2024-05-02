@@ -28,6 +28,10 @@
 	};
 </script>
 
+<svelte:head>
+	<title>Flip</title>
+</svelte:head>
+
 <!-- <svelte:window on:click={flip} /> -->
 <h3>Click on a circle to FLIP</h3>
 

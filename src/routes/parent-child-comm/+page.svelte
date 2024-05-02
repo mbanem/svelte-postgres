@@ -18,6 +18,10 @@
 	let g: HTMLParagraphElement;
 </script>
 
+<svelte:head>
+	<title>Parent-Child Comm</title>
+</svelte:head>
+
 <!-- svelte:window reacts on resize event as specified
 	with on:resize={...} when the app is calling onResize
 	with a message 'OK' displayed when user resize window

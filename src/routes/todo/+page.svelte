@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { Snapshot } from './$types';
 	import type { PageData, ActionData } from './$types';
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import { enhance } from '$app/forms';
@@ -10,14 +11,37 @@
 
 	import PageTitleCombo from '$lib/components/PageTitleCombo.svelte';
 	import TodoList from '$lib/components/TodoList.svelte';
+	import { stringify } from 'uuid';
+	import { getContext, setContext, type Writable } from 'svelte';
 
 	export let data: PageData; // from +page.server.ts load function
 	export let form: ActionData; // form?.messages from action methods in +page.server.ts
 
+	const prevPath:Writable<String> = getContext('previousPath');
+	const beforeUnload = () => {
+		console.log($page.url.pathname);
+		prevPath.set($page.url.pathname);
+	};
 	let loading: boolean;
 	let message = '';
 	// form?.message cannot be cleared by code but could be ignored when necessary
 	let ignoreFormMessage = false;
+
+	let snap: TodoFormData = {
+		id: '',
+		authorId: '',
+		title: '',
+		priority: 0,
+		content: ''
+	};
+	export const snapshot: Snapshot<TodoFormData> = {
+		capture: () => {
+			return snap;
+		},
+		restore: (value) => {
+			snap = value;
+		}
+	};
 
 	$: setColor(form?.message ? (form.message.includes('successfully') ? 'green' : 'red') : 'green');
 
@@ -162,6 +186,12 @@
 	let authorId = data?.user?.id;
 </script>
 
+<svelte:window on:beforeunload={beforeUnload} />
+
+<svelte:head>
+	<title>Todo</title>
+</svelte:head>
+
 <!-- <pre style="font-size:11px;">authorId {authorId}</pre> -->
 <!-- <pre style="font-size:11px;">data {JSON.stringify({ selectedUserId, authorId }, null, 2)}</pre> -->
 
@@ -177,13 +207,23 @@
 <div class="board">
 	<form bind:this={theForm} method="POST" action="?/addTodo" use:enhance={enhanceTodo}>
 		<div class="two-inputs">
-			<input bind:this={todoIdEl} type="hidden" name="id" value="mili" />
-			<input type="hidden" name="userId" value={authorId} />
-			<input type="text" name="title" placeholder={titleIsRequired || 'enter todo title'} />
-			<input type="number" name="priority" placeholder="Priority" />
+			<input bind:this={todoIdEl} type="hidden" name="id" bind:value={snap.id} />
+			<input type="hidden" name="userId" bind:value={snap.authorId} />
+			<input
+				type="text"
+				name="title"
+				placeholder={titleIsRequired || 'enter todo title'}
+				bind:value={snap.title}
+			/>
+			<input type="number" name="priority" placeholder="Priority" bind:value={snap.priority} />
 		</div>
 		<div class="two-inputs">
-			<input type="text" name="content" placeholder={contentIsRequired || 'enter todo content'} />
+			<input
+				type="text"
+				name="content"
+				placeholder={contentIsRequired || 'enter todo content'}
+				bind:value={snap.content}
+			/>
 			<!-- position:relative here is essential for CircleSpinner
 					to stay inside the buttons
 			-->

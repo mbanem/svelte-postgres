@@ -155,7 +155,7 @@
 		font-size: 14px;
 		font-weight: 400;
 	}
-	p .blue {
+	.blue {
 		color: skyblue;
 	}
 	.todos {

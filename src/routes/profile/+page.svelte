@@ -130,6 +130,10 @@
 	$: result = message || formMessage;
 </script>
 
+<svelte:head>
+	<title>Profile</title>
+</svelte:head>
+
 <PageTitleCombo
 	bind:result
 	bind:message

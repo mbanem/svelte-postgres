@@ -1,11 +1,21 @@
-<script type="ts">
+<script lang="ts">
 	import Box from '$lib/components/Box.svelte';
+	import type { PageData } from './$types';
+	import { page } from '$app/stores'; // get data from main +layout.server.ts if any
+	export let data: PageData;
 	let city = 'San Diego';
 	let age = 18;
 	let person = { name: 'Mr. Filip Isakovic', age: 18, city: 'San Diego' };
 	$: nameUpper = person.name.toUpperCase();
 </script>
 
+<svelte:head>
+	<title>Box</title>
+</svelte:head>
+
+<pre style="font-size:11px;">data {JSON.stringify(data, null, 2)}</pre>
+<hr />
+<pre style="font-size:11px;">$page.data {JSON.stringify($page.data, null, 2)}</pre>
 <h2>Parent Page</h2>
 <h4 style="font-weight:400;margin:0;width:60rem;">
 	On a bound value both parent and (&lt;Box) child have access. See the child blue and parent yellow

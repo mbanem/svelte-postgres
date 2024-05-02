@@ -2,7 +2,6 @@
 	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
 	import SelectBox from '$lib/components/MultiSelectBox.svelte';
-	import { AdvancedRating } from 'flowbite-svelte';
 
 	export let data: PageData;
 
@@ -33,7 +32,7 @@
 		selectedOptionsLi.innerText =
 			selectedLi.length > 0 ? selectedLi.join(', ') : 'Nothing selected';
 	};
-	const onClick = (event: MouseEvent) => {
+	const onClick = (event: MouseEvent | KeyboardEvent) => {
 		const className = 'option-background';
 		const select = (opt: HTMLOptionElement) => {
 			selected.push(opt.value); // opt.value is text
@@ -63,6 +62,10 @@
 	};
 </script>
 
+<svelte:head>
+	<title>MultiSelect</title>
+</svelte:head>
+
 <h2>Multi Select Page</h2>
 <!-- <pre style="font-size:11px;">data {JSON.stringify(data, null, 2)}</pre> -->
 
@@ -78,6 +81,8 @@ and appends it to the yellow colored list
 		bind:this={selectBox}
 		class="select"
 		on:click|preventDefault={onClick}
+		on:keypress|preventDefault={onClick}
+		aria-hidden={true}
 		name="categories"
 		multiple
 	>
