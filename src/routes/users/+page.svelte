@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { page } from '$app/stores';
+	import { onMount, getContext } from 'svelte';
 	import { P } from 'flowbite-svelte';
 
 	import type { PageData } from './$types';
@@ -6,6 +8,14 @@
 	export let data: PageData;
 
 	$: ({ users } = data);
+
+	let mrPath = getContext('mrPath') as SvelteStore<string>;
+
+	onMount(() => {
+		return () => {
+			mrPath.set($page.url.pathname);
+		};
+	});
 </script>
 
 <h1>User List</h1>

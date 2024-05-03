@@ -1,4 +1,6 @@
 <script lang="ts">
+	import type { Snapshot } from '../$types';
+	import { onMount, getContext } from 'svelte';
 	import type { PageData, ActionData } from './$types';
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import { enhance } from '$app/forms';
@@ -6,7 +8,6 @@
 	import { page } from '$app/stores'; // for $age.status code on actions
 	import CircleSpinner from '$lib/components/CircleSpinner.svelte';
 	import { setColor, setButtonVisible } from '$lib/utils';
-	import { onMount } from 'svelte';
 	import { Tooltip } from 'flowbite-svelte';
 
 	import PageTitleCombo from '$lib/components/PageTitleCombo.svelte';
@@ -128,6 +129,29 @@
 	$: selectedUserWithBio = getUserWithBio(selectedUserId) as UserWithBio;
 	$: formMessage = ignoreFormMessage ? '' : form?.message || '';
 	$: result = message || formMessage;
+
+	let snap = {
+		bioId: '',
+		bio: '',
+		authorId: ''
+	};
+	export const snapshot: Snapshot = {
+		capture: () => {
+			// console.log('snap.capture');
+			return snap;
+		},
+		restore: (value) => {
+			// console.log('snap.restore');
+			snap = value;
+		}
+	};
+	let mrPath = getContext('mrPath') as SvelteStore<string>;
+
+	onMount(() => {
+		return () => {
+			mrPath.set($page.url.pathname);
+		};
+	});
 </script>
 
 <svelte:head>
@@ -157,10 +181,10 @@
 					rows={5}
 					cols={35}
 					name="bio"
-					value={form?.success ? '' : form?.bio ?? ''}
+					bind:value={snap.bio}
 				/>
-				<input type="hidden" name="authorId" value={selectedUserId ?? ''} />
-				<input type="hidden" name="bioId" value={selectedUserWithBio?.id ?? ''} />
+				<input type="hidden" name="authorId" bind:value={snap.authorId} />
+				<input type="hidden" name="bioId" bind:value={snap.bioId} />
 
 				<p class="buttons">
 					<button

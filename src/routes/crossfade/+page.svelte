@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { page } from '$app/stores';
+	import { onMount, getContext } from 'svelte';
 	import { crossfade } from 'svelte/transition';
 	import CircleSpinner from '$lib/components/CircleSpinner.svelte';
 	import { Tooltip } from 'flowbite-svelte';
@@ -41,6 +43,14 @@
 	};
 	let createdAt = new Date('2/18/2006').toLocaleDateString();
 	let updatedAt = new Date('8/22/2007').toLocaleDateString();
+
+	let mrPath = getContext('mrPath') as SvelteStore<string>;
+
+	onMount(() => {
+		return () => {
+			mrPath.set($page.url.pathname);
+		};
+	});
 </script>
 
 <svelte:head>

@@ -63,3 +63,7 @@ export const setTextColor = (varName: string, color: string) => {
 		console.log('setTextColor, err');
 	}
 };
+
+export const capitalize = (str: string) => {
+	return str.toLowerCase().replace(/\b[a-z](?=[a-z]{2})/g, (char) => char.toUpperCase());
+};

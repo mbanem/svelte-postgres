@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { page } from '$app/stores';
+	import { onMount, getContext } from 'svelte';
 	import { tick } from 'svelte';
 	import { gsap } from 'gsap';
 	import Flip from 'gsap/dist/Flip';
@@ -26,6 +28,14 @@
 	const makeError = () => {
 		throw error(420, 'Enhance your calm');
 	};
+
+	let mrPath = getContext('mrPath') as SvelteStore<string>;
+
+	onMount(() => {
+		return () => {
+			mrPath.set($page.url.pathname);
+		};
+	});
 </script>
 
 <svelte:head>

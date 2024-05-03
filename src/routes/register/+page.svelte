@@ -1,9 +1,11 @@
 <script lang="ts">
+	import type { Snapshot } from '../$types'; // .sveltekit/$types
+	import { page } from '$app/stores';
+	import { onMount, getContext } from 'svelte';
 	import { enhance } from '$app/forms';
 	import { setColor } from '$lib/utils';
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import type { ActionData } from './$types';
-	import PageTitleCombo from '$lib/components/PageTitleCombo.svelte';
 
 	export let form: ActionData;
 	$: data = form?.data;
@@ -28,6 +30,39 @@
 	let result: string;
 	$: setColor(form?.message ? (form.message.includes('successfully') ? 'green' : 'red') : 'green');
 	$: message = form?.message || '';
+
+	let snap = {
+		firstName: '',
+		lastName: '',
+		email: ''
+	};
+	export const snapshot: Snapshot = {
+		capture: () => {
+			// console.log('snap.capture');
+			return snap;
+		},
+		restore: (value) => {
+			// console.log('snap.restore');
+			snap = value;
+		}
+	};
+	let mrPath = getContext('mrPath') as SvelteStore<string>;
+
+	// const shallowCopy = (source: Object, target: Object) => {
+	// 	for (const [k, v] of Object.entries(source)) {
+	// 		target[key] = v;
+	// 	}
+	// };
+	onMount(() => {
+		// shallowCopy(data as Object, snap);
+		if (form?.data) {
+			snap = form.data;
+		}
+		return () => {
+			// @ts-expect-error
+			mrPath.set($page.url.pathname);
+		};
+	});
 </script>
 
 <svelte:head>
@@ -47,7 +82,7 @@
 				<input
 					type="text"
 					name="firstName"
-					value={data?.firstName || ''}
+					bind:value={snap.firstName}
 					placeholder={firstNameIsRequired || 'Enter first name here'}
 				/>
 			</label>
@@ -58,7 +93,7 @@
 				<input
 					type="text"
 					name="lastName"
-					value={data?.lastName || ''}
+					bind:value={snap.lastName}
 					placeholder={lastNameIsRequired || 'Enter last name here'}
 				/>
 			</label>
@@ -69,7 +104,7 @@
 				<input
 					type="text"
 					name="email"
-					value={data?.email || ''}
+					bind:value={snap.email}
 					placeholder={emailIsRequired || 'Enter email here'}
 				/>
 			</label>

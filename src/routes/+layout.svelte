@@ -1,10 +1,16 @@
 <script lang="ts">
+	export let data: LayoutData;
 	import { page } from '$app/stores';
 	import '$styles/app.scss';
 	import Nav from '$components/Nav.svelte';
 	import type { LayoutData } from './$types';
+	import { getContext, setContext } from 'svelte';
+	import { writable } from 'svelte/store';
 
-	export let data: LayoutData;
+	let navPath = writable<string>('/');
+	setContext('mrPath', navPath);
+	let mrPath = getContext('mrPath') as SvelteStore<string>;
+
 	$: ({ locals } = data);
 </script>
 

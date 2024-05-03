@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { page } from '$app/stores';
+	import { onMount, getContext } from 'svelte';
 	import type { PageData } from './$types';
 	import SelectBox from '$lib/components/MultiSelectBox.svelte';
 
@@ -60,6 +61,14 @@
 		id: number | string;
 		name: string;
 	};
+
+	let mrPath = getContext('mrPath') as SvelteStore<string>;
+
+	onMount(() => {
+		return () => {
+			mrPath.set($page.url.pathname);
+		};
+	});
 </script>
 
 <svelte:head>

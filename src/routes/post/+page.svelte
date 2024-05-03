@@ -1,4 +1,6 @@
 <script lang="ts">
+	import type { Snapshot } from '../$types'; // .sveltekit/$types
+	import { onMount, getContext } from 'svelte';
 	import type { PageData, ActionData } from './$types';
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import { enhance } from '$app/forms';
@@ -6,7 +8,6 @@
 	import { page } from '$app/stores'; // for $age.status code on actions
 	import CircleSpinner from '$lib/components/CircleSpinner.svelte';
 	import { setColor, setButtonVisible, csvToNumArr } from '$lib/utils';
-	import { onMount } from 'svelte';
 
 	import PageTitleCombo from '$lib/components/PageTitleCombo.svelte';
 	// categories
@@ -215,6 +216,32 @@
 	$: ({ postAuthors } = data);
 	$: formMessage = ignoreFormMessage ? '' : form?.message || '';
 	$: result = message || formMessage;
+
+	let snap = {
+		id: '',
+		authorId: '',
+		categoryIds: '',
+		title: '',
+		content: '',
+		published: false
+	};
+	export const snapshot: Snapshot = {
+		capture: () => {
+			// console.log('snap.capture');
+			return snap;
+		},
+		restore: (value) => {
+			// console.log('snap.restore');
+			snap = value;
+		}
+	};
+	let mrPath = getContext('mrPath') as SvelteStore<string>;
+
+	onMount(() => {
+		return () => {
+			mrPath.set($page.url.pathname);
+		};
+	});
 </script>
 
 <svelte:head>
@@ -235,13 +262,23 @@
 <div bind:this={boardBlock} class="board hidden">
 	<div>
 		<form method="POST" action="?/createPost" use:enhance={enhancePost}>
-			<input type="hidden" name="id" />
-			<input type="hidden" name="authorId" value={authorId} />
-			<input type="hidden" name="categoryIds" value={categoryIds} />
-			<input type="text" name="title" placeholder={titleIsRequired || 'enter post title'} />
-			<input type="text" name="content" placeholder={contentIsRequired || 'enter post content'} />
+			<input type="hidden" name="id" bind:value={snap.id} />
+			<input type="hidden" name="authorId" bind:value={snap.authorId} />
+			<input type="hidden" name="categoryIds" bind:value={snap.categoryIds} />
+			<input
+				type="text"
+				name="title"
+				bind:value={snap.title}
+				placeholder={titleIsRequired || 'enter post title'}
+			/>
+			<input
+				type="text"
+				name="content"
+				bind:value={snap.content}
+				placeholder={contentIsRequired || 'enter post content'}
+			/>
 			<label for="published" class="label-save">
-				<input type="checkbox" name="published" id="published" />
+				<input type="checkbox" name="published" id="published" bind:value={snap.published} />
 				<span style="user-select:none">published</span>
 				<button bind:this={btnCreate} type="submit" class="button">
 					{#if loading}

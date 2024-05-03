@@ -12,36 +12,20 @@
 	import PageTitleCombo from '$lib/components/PageTitleCombo.svelte';
 	import TodoList from '$lib/components/TodoList.svelte';
 	import { stringify } from 'uuid';
-	import { getContext, setContext, type Writable } from 'svelte';
-
+	import { onMount, getContext, setContext } from 'svelte';
+	import type { Writable } from 'svelte/store';
 	export let data: PageData; // from +page.server.ts load function
 	export let form: ActionData; // form?.messages from action methods in +page.server.ts
 
-	const prevPath:Writable<String> = getContext('previousPath');
+	const prevPath: Writable<String> = getContext('previousPath');
 	const beforeUnload = () => {
-		console.log($page.url.pathname);
+		// console.log($page.url.pathname);
 		prevPath.set($page.url.pathname);
 	};
 	let loading: boolean;
 	let message = '';
 	// form?.message cannot be cleared by code but could be ignored when necessary
 	let ignoreFormMessage = false;
-
-	let snap: TodoFormData = {
-		id: '',
-		authorId: '',
-		title: '',
-		priority: 0,
-		content: ''
-	};
-	export const snapshot: Snapshot<TodoFormData> = {
-		capture: () => {
-			return snap;
-		},
-		restore: (value) => {
-			snap = value;
-		}
-	};
 
 	$: setColor(form?.message ? (form.message.includes('successfully') ? 'green' : 'red') : 'green');
 
@@ -184,6 +168,30 @@
 
 	let selectedUserId = '';
 	let authorId = data?.user?.id;
+
+	let snap: TodoFormData = {
+		id: '',
+		authorId: '',
+		title: '',
+		priority: 0,
+		content: ''
+	};
+	export const snapshot: Snapshot<TodoFormData> = {
+		capture: () => {
+			return snap;
+		},
+		restore: (value) => {
+			snap = value;
+		}
+	};
+	let mrPath = getContext('mrPath') as SvelteStore<string>;
+
+	onMount(() => {
+		return () => {
+			// @ts-expect-error
+			mrPath.set($page.url.pathname);
+		};
+	});
 </script>
 
 <svelte:window on:beforeunload={beforeUnload} />

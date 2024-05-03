@@ -1,5 +1,7 @@
 <script lang="ts">
 	// https://svelte.dev/repl/ba7f569af4a44553b201a9efd8dc6ec2?version=4.2.14
+	import { page } from '$app/stores';
+	import { onMount, getContext } from 'svelte';
 	import Child from './Child.svelte';
 	let resizeChild: (msg: string) => void;
 	let randomNumber: () => number;
@@ -16,10 +18,17 @@
 	};
 	let p: HTMLParagraphElement;
 	let g: HTMLParagraphElement;
+	let mrPath = getContext('mrPath') as SvelteStore<string>;
+
+	onMount(() => {
+		return () => {
+			mrPath.set($page.url.pathname);
+		};
+	});
 </script>
 
 <svelte:head>
-	<title>Parent-Child Comm</title>
+	<title>Communicate</title>
 </svelte:head>
 
 <!-- svelte:window reacts on resize event as specified

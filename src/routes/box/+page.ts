@@ -1,6 +1,6 @@
 import type { PageLoad } from './$types';
 export const load: PageLoad = (async ({ data }) => {
-	console.log('/box/+page.ts data', data);
+	// console.log('/box/+page.ts data', data);
 	return {
 		data,
 		visitor: {
