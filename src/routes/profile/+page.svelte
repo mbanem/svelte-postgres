@@ -8,7 +8,8 @@
 	import { page } from '$app/stores'; // for $age.status code on actions
 	import CircleSpinner from '$lib/components/CircleSpinner.svelte';
 	import { setColor, setButtonVisible } from '$lib/utils';
-	import { Tooltip } from 'flowbite-svelte';
+	import { Checkbox, P, Tooltip } from 'flowbite-svelte';
+	import * as utils from '$lib/utils';
 
 	import PageTitleCombo from '$lib/components/PageTitleCombo.svelte';
 
@@ -21,6 +22,17 @@
 		createdAt: Date;
 		updatedAt: Date;
 		user: User;
+	};
+
+	const initialSnap = {
+		bioId: '',
+		bio: '',
+		authorId: ''
+	};
+	let snap = {
+		bioId: '',
+		bio: '',
+		authorId: ''
 	};
 	let message = '';
 	let bioIsRequired = '';
@@ -54,6 +66,9 @@
 		// change bioId only when selectedUserId changes
 	};
 	const enhanceProfile: SubmitFunction = ({ action, formData }) => {
+		if (wrongUser || wrongUser === undefined) {
+			return;
+		}
 		message = '';
 		bioIsRequired = '';
 		ignoreFormMessage = false;
@@ -93,56 +108,77 @@
 	let adminSelected: boolean;
 	let selectedUserName: string;
 	onMount(() => {
+		utils.shallowCopy(initialSnap, snap);
 		adminSelected = data.locals.user.role === 'ADMIN';
 		selectedUserName = `${data.locals.user.firstName} ${data.locals.user.lastName}`;
 	});
-
 	const getUserWithBio = (id: string): UserWithBio | undefined => {
-		for (let i = 0; i < userProfiles.length; i++) {
-			if (userProfiles[i]?.user?.id === id) {
-				// @ts-expect-error
-				const { id, bio, createdAt, updatedAt, user } = data.userProfiles[i] as UserProfile;
-				return { id, bio, createdAt, updatedAt, user } as UserWithBio;
-			}
+		if (bioTextArea) {
+			bioTextArea.value = '';
 		}
+
+		try {
+			for (let i = 0; i < userProfiles.length; i++) {
+				if (userProfiles[i]?.user?.id === id) {
+					// @ts-expect-error
+					const { id, bio, createdAt, updatedAt, user } = data.userProfiles[i] as UserProfile;
+					snap.bioId = id;
+					// snap.bio = bio as string;
+					snap.authorId = user.id;
+					return { id, bio, createdAt, updatedAt, user } as UserWithBio;
+				}
+			}
+		} catch (err) {
+			console.log(err);
+		}
+		utils.shallowCopy(initialSnap, snap);
 	};
 
 	let bioTextArea: HTMLTextAreaElement;
 	let bioUpdateAllowed = false;
 	const canBeUpdated = (event: MouseEvent) => {
+		if (wrongUser) {
+			bioTextArea.value = '';
+			console.log('wrong user');
+			return;
+		}
 		bioUpdateAllowed = true;
 		const divEl = event.currentTarget as HTMLDivElement;
+		if (data.locals.user.id !== divEl.dataset.userId) return;
 		// instead of taking id easier way as selectedUserWithBio?.user.id
 		// we use here data attribute data-user-id as divEl.dataset.userId -- a string
 
 		// NOTE: in order to say divEl.dataset.userId HTML name must be data-user-id
 		// as DOMStringMap capitalize every occurrence of dash user-new-id --> userNewId
 		// console.log('user.id', user.id, 'dataset.userId', divEl.dataset.userId);
-		if (data.locals.user.id === divEl.dataset.userId) {
-			bioTextArea.value = selectedUserWithBio?.bio;
-			setButtonVisible([btnUpdate, btnCreate]);
-			iconDelete.classList.toggle('hidden');
-		}
+		bioTextArea.value = selectedUserWithBio?.bio;
+		setButtonVisible([btnUpdate, btnCreate]);
+		iconDelete.classList.toggle('hidden');
 	};
 
 	$: ({ userProfiles } = data);
-	$: selectedUserWithBio = getUserWithBio(selectedUserId) as UserWithBio;
+	$: if (selectedUserId) {
+		selectedUserWithBio = getUserWithBio(selectedUserId) as UserWithBio;
+	}
 	$: formMessage = ignoreFormMessage ? '' : form?.message || '';
 	$: result = message || formMessage;
+	$: wrongUser = selectedUserId !== data.locals.user.id;
+	$: if (selectedUserWithBio?.id) {
+		setButtonVisible([btnUpdate, btnCreate]);
+	}
 
-	let snap = {
-		bioId: '',
-		bio: '',
-		authorId: ''
-	};
 	export const snapshot: Snapshot = {
 		capture: () => {
 			// console.log('snap.capture');
 			return snap;
 		},
 		restore: (value) => {
-			// console.log('snap.restore');
-			snap = value;
+			// console.log('snap.restore');\
+			if (value.id !== data.locals.user.id) {
+				utils.shallowCopy(initialSnap, snap);
+			} else {
+				snap = value;
+			}
 		}
 	};
 	let mrPath = getContext('mrPath') as SvelteStore<string>;
@@ -154,6 +190,7 @@
 	});
 </script>
 
+<p>wrongUser {wrongUser}</p>
 <svelte:head>
 	<title>Profile</title>
 </svelte:head>
@@ -186,28 +223,30 @@
 				<input type="hidden" name="authorId" bind:value={snap.authorId} />
 				<input type="hidden" name="bioId" bind:value={snap.bioId} />
 
-				<p class="buttons">
-					<button
-						bind:this={btnCreate}
-						type="submit"
-						disabled={selectedUserId === ''}
-						class="button"
-					>
-						{#if loading}
-							<CircleSpinner color="skyblue" />
-						{/if}
-						create
+				{#if !wrongUser}
+					<p class="buttons">
+						<button
+							bind:this={btnCreate}
+							type="submit"
+							disabled={selectedUserId === ''}
+							class="button"
+						>
+							{#if loading}
+								<CircleSpinner color="skyblue" />
+							{/if}
+							create
+						</button>
+						<button bind:this={btnUpdate} type="submit" formaction="?/update" class="button hidden">
+							{#if loading}
+								<CircleSpinner color="skyblue" />
+							{/if}
+							update
+						</button>
+						<button on:click={clearForm}>clear</button>
+					</p>
+					<button bind:this={btnDelete} type="submit" formaction="?/delete" class="button hidden">
 					</button>
-					<button bind:this={btnUpdate} type="submit" formaction="?/update" class="button hidden">
-						{#if loading}
-							<CircleSpinner color="skyblue" />
-						{/if}
-						update
-					</button>
-					<button on:click={clearForm}>clear</button>
-				</p>
-				<button bind:this={btnDelete} type="submit" formaction="?/delete" class="button hidden">
-				</button>
+				{/if}
 			</form>
 		</div>
 	</div>
@@ -216,21 +255,36 @@
 			<p>{selectedUserWithBio.user.firstName} {selectedUserWithBio.user.lastName}</p>
 			<div class="relative">
 				<!-- see NOTE above for data-user-id -->
-				<p
-					class="bio"
-					on:click={canBeUpdated}
-					data-user-id={selectedUserWithBio.user.id}
-					aria-hidden={true}
-				>
-					{selectedUserWithBio.bio ?? ''}
-					<span
-						bind:this={iconDelete}
-						on:click={() => {
-							btnDelete.click();
-						}}
-						aria-hidden={true}>❌</span
+				{#if wrongUser}
+					<p class="bio" data-user-id={selectedUserWithBio.user.id} aria-hidden={true}>
+						{selectedUserWithBio.bio ?? ''}
+						<span bind:this={iconDelete} aria-hidden={true}>❌</span>
+					</p>
+					<Tooltip
+						placement="top"
+						defaultClass="tooltip-profile"
+						class="master-profile"
+						arrow={false}
 					>
-				</p>
+						<p>owner only allowed</p>
+					</Tooltip>
+				{:else}
+					<p
+						class="bio"
+						on:click={canBeUpdated}
+						data-user-id={selectedUserWithBio.user.id}
+						aria-hidden={true}
+					>
+						{selectedUserWithBio.bio ?? ''}
+						<span
+							bind:this={iconDelete}
+							on:click={() => {
+								btnDelete.click();
+							}}
+							aria-hidden={true}>❌</span
+						>
+					</p>
+				{/if}
 				<Tooltip
 					placement="top"
 					defaultClass="tooltip-profile"

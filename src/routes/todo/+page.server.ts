@@ -120,6 +120,7 @@ export const actions: Actions = {
 		) as InputData;
 		input_data.priority = Number(input_data.priority);
 		const { userId, title, content, priority } = input_data;
+		console.log(JSON.stringify(input_data, null, 2));
 		if (title === '' || content === '' || userId === '') {
 			return fail(400, {
 				data: { userId, title, content, priority },

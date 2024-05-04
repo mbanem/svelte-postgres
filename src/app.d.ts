@@ -28,8 +28,32 @@ declare global {
 		name: string;
 		selected?: boolean;
 	};
-
-	type PostAuthors = (Post & Author)[];
+	type PAuthor = {
+		id: string;
+		title: string;
+		content: string;
+		published: boolean;
+		createdAt: Date;
+		updatedAt: Date;
+		firstName: string;
+		lastName: string;
+		author: boolean;
+	};
+	type PostAuthor = {
+		id: string;
+		title: string;
+		content: string;
+		createdAt: Date;
+		updatedAt: Date;
+		author: boolean;
+		categoryIds: string;
+		categoryNames: string;
+		authorId: string;
+		published: boolean;
+		firstName: string;
+		lastName: string;
+		role: string;
+	};
 	type UserProfile = Profile & PartialUser;
 	// type Categories = Category[];
 
@@ -41,7 +65,7 @@ declare global {
 		todoId: string;
 		title: string;
 		content: string;
-		priority: string;
+		priority: string | number;
 		completed: boolean;
 		createdAt: Date;
 		updatedAt: Date;
@@ -123,6 +147,7 @@ declare global {
 		createdAt: Date;
 		updatedAt: Date;
 	};
+
 	namespace App {
 		// interface Error {}
 		interface Locals {

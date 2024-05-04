@@ -4,7 +4,7 @@
 	export let PageName: string;
 	export let user: Partial<User> | null;
 	export let users: Partial<User>[] | [];
-	export let amendTrueFalseUserId = false;
+	export let amendTrueFalseUserId = false; // selectBox value userId is prefixed with T=ADMIN, F=USER
 	export let selectedUserId: string;
 	export let result: string = '';
 	export let message: string = '';
@@ -46,12 +46,12 @@
 			{/each}
 		</select>
 	{/if}
+	<span class="user-name">{user?.firstName} {user?.lastName}</span>
 	{#key result}
 		{#if result !== ''}
 			<span bind:this={msgEl} class="message">{showResult()}</span>
 		{/if}
 	{/key}
-	<span class="user-name">{user?.firstName} {user?.lastName}</span>
 </h1>
 
 <style lang="scss">

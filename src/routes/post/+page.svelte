@@ -7,7 +7,7 @@
 	import { invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores'; // for $age.status code on actions
 	import CircleSpinner from '$lib/components/CircleSpinner.svelte';
-	import { setColor, setButtonVisible, csvToNumArr } from '$lib/utils';
+	import * as utils from '$lib/utils';
 
 	import PageTitleCombo from '$lib/components/PageTitleCombo.svelte';
 	// categories
@@ -33,7 +33,9 @@
 
 	let categoryIds: number[] = [];
 
-	$: setColor(form?.message ? (form.message.includes('successfully') ? 'green' : 'red') : 'green');
+	$: utils.setColor(
+		form?.message ? (form.message.includes('successfully') ? 'green' : 'red') : 'green'
+	);
 
 	// keep message displayed for several seconds
 	const clearMessage = () => {
@@ -52,7 +54,7 @@
 		});
 		(document.querySelector(`input[name='published']`) as HTMLInputElement).checked = false;
 		setSelectedOptions([], categoryIsRequired);
-		setColor('green');
+		utils.setColor('green');
 	};
 
 	const required = {
@@ -98,7 +100,7 @@
 		}
 		loading = true; // start spinner animation
 		if (action.search === '?/createPost') {
-			setButtonVisible([btnCreate, btnUpdate, btnDelete]);
+			utils.setButtonVisible([btnCreate, btnUpdate, btnDelete]);
 			message = 'saving post...';
 		} else if (action.search === '?/deletePost') {
 			message = 'deleting post...';
@@ -119,7 +121,7 @@
 			}
 			clearMessage();
 			invalidateAll();
-			setButtonVisible([btnCreate, btnUpdate, btnDelete]);
+			utils.setButtonVisible([btnCreate, btnUpdate, btnDelete]);
 			clearForm();
 			loading = false; // stop spinner animation
 		};
@@ -141,27 +143,32 @@
 	};
 
 	onMount(() => {
+		// if (data.postAuthors[0]) {
+		// 	utils.shallowCopy(data.postAuthors[0], snap);
+		// }
+		snap.authorId = authorId as string;
 		boardBlock.classList.toggle('hidden');
 		selectedUserId = data.user.id as string;
 		adminSelected = data.locals.user.role === 'ADMIN';
 	});
 
 	const postsAuthors = () => {
-		const arr: {
-			id: string;
-			title: string;
-			content: string;
-			published: boolean;
-			createdAt: Date;
-			updatedAt: Date;
-			firstName: string;
-			lastName: string;
-		}[] = [];
+		const arr: PAuthor[] = [];
 
 		data.postAuthors.forEach((post) => {
 			if (selectedUserId === post.authorId) {
-				const { id, title, content, published, createdAt, updatedAt, firstName, lastName, role } =
-					post;
+				const {
+					id,
+					title,
+					content,
+					published,
+					createdAt,
+					updatedAt,
+					firstName,
+					lastName,
+					role,
+					author
+				} = post;
 				arr.push({
 					id,
 					title,
@@ -170,7 +177,8 @@
 					createdAt,
 					updatedAt,
 					firstName: `${firstName}${role === 'ADMIN' ? 'T' : ''}`,
-					lastName
+					lastName,
+					author
 				});
 			}
 		});
@@ -181,18 +189,18 @@
 	let setSelectedOptions: (arr: number[] | [], nameList: string) => void;
 
 	const toUpdatePost = (postId: string) => {
-		const authorPost = data.postAuthors.filter((pa) => pa.id === postId);
-		const { id, authorId, published, categoryIds, title, content } = authorPost[0];
-		// selectOptions(categoryIds);
+		const authorPost = data.postAuthors.filter((pa) => pa.id === postId)[0] as PostAuthor;
+		utils.shallowCopy(authorPost, snap);
+		const { published, categoryIds, title, content } = authorPost;
+		// // selectOptions(categoryIds);
 		const els = [
-			{ id: id },
-			{ authorId: authorId },
+			{ published: published },
 			{ title: title },
 			{ content: content },
 			{ categoryIds: categoryIds }
 		];
 
-		setButtonVisible([btnUpdate, btnCreate, btnDelete]);
+		utils.setButtonVisible([btnUpdate, btnCreate, btnDelete]);
 		// NOTE: in TypeScript Playground instead of using nested loops as we use below,
 		// the spread operators works, but here does not
 		// for (const [k,v] of Object.entries([...els])) { code here }
@@ -202,7 +210,7 @@
 			}
 		});
 		(document.querySelector(`input[name='published']`) as HTMLInputElement).checked = published;
-		const numArr = csvToNumArr(categoryIds);
+		const numArr = utils.csvToNumArr(categoryIds);
 		setSelectedOptions(numArr, categoryList(numArr));
 	};
 
@@ -216,8 +224,17 @@
 	$: ({ postAuthors } = data);
 	$: formMessage = ignoreFormMessage ? '' : form?.message || '';
 	$: result = message || formMessage;
+	$: wrongUser = selectedUserId !== data.locals.user.id;
 
-	let snap = {
+	type TSnap = {
+		id: string;
+		authorId: string;
+		categoryIds: string;
+		title: string;
+		content: string;
+		published: boolean;
+	};
+	let snap: TSnap = {
 		id: '',
 		authorId: '',
 		categoryIds: '',
@@ -247,7 +264,8 @@
 <svelte:head>
 	<title>Post</title>
 </svelte:head>
-
+<!-- <pre style="font-size:11px;">postAuthors {JSON.stringify(postAuthors, null, 2)}</pre> -->
+<!-- amendTrueFalseUserId = {true} forced selectBox value userId to be prefixed with T=ADMIN, F=USER -->
 <PageTitleCombo
 	bind:result
 	bind:message
@@ -280,21 +298,31 @@
 			<label for="published" class="label-save">
 				<input type="checkbox" name="published" id="published" bind:value={snap.published} />
 				<span style="user-select:none">published</span>
-				<button bind:this={btnCreate} type="submit" class="button">
-					{#if loading}
-						<CircleSpinner color="skyblue" />
-					{/if}
-					create
-				</button>
-				<button bind:this={btnDelete} type="submit" formaction="?/deletePost" class="button hidden"
-					>delete</button
-				>
-				<button bind:this={btnUpdate} type="submit" formaction="?/updatePost" class="button hidden">
-					{#if loading}
-						<CircleSpinner color="skyblue" />
-					{/if}
-					update
-				</button>
+				{#if !wrongUser}
+					<button bind:this={btnCreate} type="submit" class="button">
+						{#if loading}
+							<CircleSpinner color="skyblue" />
+						{/if}
+						create
+					</button>
+					<button
+						bind:this={btnDelete}
+						type="submit"
+						formaction="?/deletePost"
+						class="button hidden">delete</button
+					>
+					<button
+						bind:this={btnUpdate}
+						type="submit"
+						formaction="?/updatePost"
+						class="button hidden"
+					>
+						{#if loading}
+							<CircleSpinner color="skyblue" />
+						{/if}
+						update
+					</button>
+				{/if}
 				<button
 					on:click|preventDefault={() => {
 						clearForm();
@@ -308,7 +336,7 @@
 				categories={data.categories}
 				bind:categoryIsRequired
 				bind:setSelectedOptions
-				bind:getSelectedCategoryIDs={selectedCategoryIds}
+				bind:selectedCategoryIds={snap.categoryIds}
 			/>
 		</div>
 	</div>

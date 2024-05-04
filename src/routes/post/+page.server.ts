@@ -23,15 +23,17 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
 			role: true
 		}
 	})) as Partial<User>;
+
 	if (!user) {
 		throw error(400, 'User not found');
 	}
-	let postAuthors: PostAuthors = [];
+	let postAuthors: PostAuthor[] = [];
 
 	if (locals.user?.role === 'ADMIN') {
 		postAuthors = await db.$queryRaw`
 			select
 				p.id, p.title, p.content, p.created_at as "createdAt", p.updated_at as "updatedAt",
+				(u.id=${user.id}) as author,
 				STRING_AGG(c.id::character varying,',') "categoryIds",
 				STRING_AGG(c.name, ',') "categoryNames", u.id as "authorId", p.published,
 				u.first_name as "firstName", u.last_name as "lastName", u.role
@@ -50,7 +52,8 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
 			p.id, p.title, p.content, p.created_at as "createdAt", p.updated_at as "updatedAt",
 			STRING_AGG(c.id::character varying,',') "categoryIds",
 			STRING_AGG(c.name, ',') "categoryNames", u.id as "authorId", p.published,
-			u.first_name as "firstName", u.last_name as "lastName", u.role
+			u.first_name as "firstName", u.last_name as "lastName", u.role,
+			TRUE as author
 		from users u
 			join post p on p.author_id = u.id
 			join "_CategoryToPost" c2p on p.id = c2p."B"
@@ -77,6 +80,7 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
 			role: true
 		}
 	});
+	// console.log(JSON.stringify(postAuthors, null, 2));
 	// NOTE: Prisma array from Postgres
 	// const categories = (await db.$queryRaw`SELECT array(SELECT name FROM Category)`) as string[];
 
@@ -106,6 +110,7 @@ export const actions: Actions = {
 			await request.formData()
 		) as InputData; //{
 
+		console.log(JSON.stringify(input_data, null, 2));
 		const { title, content, published, categoryIds, authorId } = input_data;
 		if (title === '' || content === '' || categoryIds === '' || authorId === '') {
 			return fail(400, {

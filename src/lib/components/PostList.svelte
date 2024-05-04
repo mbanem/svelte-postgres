@@ -1,16 +1,7 @@
 <script lang="ts">
 	import { Tooltip } from 'flowbite-svelte';
-	type PostList = {
-		id: string;
-		title: string;
-		content: string;
-		published: boolean;
-		createdAt: Date;
-		updatedAt: Date;
-		firstName: string;
-		lastName: string;
-	};
-	export let postAuthors: PostList[];
+
+	export let postAuthors: PAuthor[];
 	export let deletePost: (id: string) => void;
 	export let toUpdatePost: (id: string) => void;
 </script>
@@ -24,12 +15,14 @@
 				{postAuthors[0].lastName}
 				<span class="count">{postAuthors.length} post{postAuthors.length === 1 ? '' : 's'}</span>
 			</p>
-			{#each postAuthors as { id, title, content, published, createdAt, updatedAt, firstName, lastName }}
+			{#each postAuthors as { id, title, content, published, createdAt, updatedAt, firstName, lastName, author }}
 				<li class="post-block">
 					<div class="title">
 						<p>{title}</p>
-						<p on:click={() => deletePost(id)} class="highlight" aria-hidden={true}>❌</p>
-						<p on:click={() => toUpdatePost(id)} class="highlight" aria-hidden={true}>📝</p>
+						{#if author}
+							<p on:click={() => deletePost(id)} class="highlight" aria-hidden={true}>❌</p>
+							<p on:click={() => toUpdatePost(id)} class="highlight" aria-hidden={true}>📝</p>
+						{/if}
 					</div>
 					<div class="tooltip-wrapper">
 						<p class="content">{content}</p>
@@ -49,6 +42,8 @@
 		{/if}
 	</ul>
 </div>
+
+<!-- <pre style="font-size:11px;">postAuthors {JSON.stringify(postAuthors, null, 2)}</pre> -->
 
 <style lang="scss">
 	.tooltip-wrapper {

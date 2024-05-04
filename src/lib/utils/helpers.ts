@@ -67,3 +67,35 @@ export const setTextColor = (varName: string, color: string) => {
 export const capitalize = (str: string) => {
 	return str.toLowerCase().replace(/\b[a-z](?=[a-z]{2})/g, (char) => char.toUpperCase());
 };
+
+const isKeyOf = <T extends Object>(key: keyof T, obj: T): key is keyof T => {
+	return key in obj;
+};
+
+const _shallowCopy = <S, T extends Object>(source: S, target: T): T => {
+	for (const k of Object.keys(target)) {
+		if (isKeyOf<T>(k as keyof T, target)) {
+			// @ts-expect-error
+			target[k] = source[k as keyof T];
+		}
+	}
+	return target;
+};
+export const shallowCopy = (source: Object, target: Object): Object => {
+	return _shallowCopy(source, target);
+};
+//  Test Items
+// let source: T[] = [
+// 	{ id: '14', name: 'Matia', age: '21' },
+// 	{ id: '22', name: 'Filip', age: '18', city: 'San Diego' }
+// ];
+
+type T = Record<string | number, unknown>;
+// NOTE: filter returns array
+export const selectItems = <T extends unknown>(keyName: keyof T, key: string, arr: T[]): T => {
+	const item = arr.filter((el) => el[keyName] === key) as T;
+	return item;
+};
+
+// console.log(selectItem<T>('name', 'Filip', source));
+// console.log(selectItem<T>('id', '14', source));

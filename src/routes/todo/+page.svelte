@@ -11,9 +11,10 @@
 
 	import PageTitleCombo from '$lib/components/PageTitleCombo.svelte';
 	import TodoList from '$lib/components/TodoList.svelte';
-	import { stringify } from 'uuid';
 	import { onMount, getContext, setContext } from 'svelte';
 	import type { Writable } from 'svelte/store';
+	import * as utils from '$lib/utils';
+
 	export let data: PageData; // from +page.server.ts load function
 	export let form: ActionData; // form?.messages from action methods in +page.server.ts
 
@@ -136,15 +137,20 @@
 		const uTodo = data.uTodos.filter((uTodo) => uTodo.todoId === todoId)[0] as UTodo;
 		// prevent ADMIN to update others todos
 		selectedUserId = uTodo.id as string;
-		todoIdEl.value = uTodo.todoId as string;
-		(document.querySelector("input[name='userId']") as HTMLInputElement).value = uTodo.id as string;
-		(document.querySelector("input[name='title']") as HTMLInputElement).value =
-			uTodo.title as string;
-		(document.querySelector("input[name='content']") as HTMLInputElement).value =
-			uTodo.content as string;
-		(document.querySelector("input[name='priority']") as HTMLInputElement).value = String(
-			uTodo.priority
-		);
+		snap.id = uTodo.todoId;
+		snap.authorId = uTodo.id;
+		snap.title = uTodo.title;
+		snap.content = uTodo.content;
+		snap.priority = Number(uTodo.priority);
+		// todoIdEl.value = uTodo.todoId as string;
+		// (document.querySelector("input[name='userId']") as HTMLInputElement).value = uTodo.id as string;
+		// (document.querySelector("input[name='title']") as HTMLInputElement).value =
+		// 	uTodo.title as string;
+		// (document.querySelector("input[name='content']") as HTMLInputElement).value =
+		// 	uTodo.content as string;
+		// (document.querySelector("input[name='priority']") as HTMLInputElement).value = String(
+		// 	uTodo.priority
+		// );
 		setButtonVisible([btnUpdate, btnCreate]);
 	};
 
@@ -173,8 +179,8 @@
 		id: '',
 		authorId: '',
 		title: '',
-		priority: 0,
-		content: ''
+		content: '',
+		priority: 0
 	};
 	export const snapshot: Snapshot<TodoFormData> = {
 		capture: () => {
@@ -186,7 +192,21 @@
 	};
 	let mrPath = getContext('mrPath') as SvelteStore<string>;
 
+	// const todoUserToSnap = (tUser: UTodo, snap: TodoFormData) => {
+	// 	snap.id = tUser.todoId;
+	// 	snap.authorId = tUser.id;
+	// 	snap.title = tUser.title;
+	// 	snap.content = tUser.content;
+	// 	snap.priority = Number(tUser.priority);
+	// };
 	onMount(() => {
+		if (selectedUserId !== data.locals.user.id) {
+			console.log('onMount no selectedUserId');
+			return;
+		}
+		const tUser = utils.selectItems<UTodo>('id', selectedUserId, data.uTodos);
+		// console.log('onMount', tUser);
+		snap.authorId = selectedUserId;
 		return () => {
 			// @ts-expect-error
 			mrPath.set($page.url.pathname);

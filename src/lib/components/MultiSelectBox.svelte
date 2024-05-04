@@ -2,11 +2,12 @@
 	import { onMount } from 'svelte';
 	import * as utils from '$lib/utils';
 	export let categories: Category[];
+	export let selectedCategoryIds;
 	const pleaseSelect = 'Please select corresponding categories';
 	export let categoryIsRequired = pleaseSelect;
 
 	let selectedOptions: HTMLParagraphElement;
-	// cannot be const as setSelectedOptions rebuilds them via new Set()
+	// cannot be const as the setSelectedOptions rebuilds them via new Set()
 	let selectedIds = new Set<string>();
 	let selectedNames = new Set<string>();
 
@@ -23,9 +24,6 @@
 		categories = categories.map((cat) => {
 			return { id: cat.id, name: cat.name, selected: arr.includes(cat.id) };
 		});
-	};
-	export const getSelectedCategoryIDs = () => {
-		return [...selectedIds].join(', ');
 	};
 
 	const idFromName = (name: string) => {
@@ -53,7 +51,7 @@
 		};
 
 		selectedIds.has(id) ? remove() : add();
-
+		selectedCategoryIds = [...selectedIds].join(',');
 		// we place CSV string in selectedOptions HTML paragraph element
 		selectedOptions.innerText =
 			selectedNames.size > 0 ? [...selectedNames].join(', ') : categoryIsRequired;
