@@ -11,13 +11,9 @@
 	export let prepareUpdate: (todoId: string) => void;
 
 	const permission = 'owner only permission';
-	const handleStart = () => {
-		// console.log('Transition started!');
-	};
+	const handleStart = () => {};
 
-	const handleEnd = () => {
-		// console.log('Transition ended!');
-	};
+	const handleEnd = () => {};
 </script>
 
 <ul class="todos">

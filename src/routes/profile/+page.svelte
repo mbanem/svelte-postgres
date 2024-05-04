@@ -40,7 +40,7 @@
 	let ignoreFormMessage = false;
 	let success = '';
 	let loading = false;
-	let selectedUserId = '';
+	// let snap.authorId = '';
 	let selectedUserWithBio: UserWithBio;
 
 	let btnCreate: HTMLButtonElement;
@@ -56,17 +56,18 @@
 			message = '';
 			ignoreFormMessage = false;
 			result = '';
-			selectedUserWithBio = getUserWithBio(selectedUserId) as UserWithBio;
+			selectedUserWithBio = getUserWithBio(snap.authorId) as UserWithBio;
 		}, 2000);
 	};
 
 	const clearForm = () => {
+		// bioTextArea.value =''	// using querySelector on attribute name and value
 		(document.querySelector("textarea[name='bio']") as HTMLTextAreaElement).value = '';
 		setButtonVisible([btnCreate, btnUpdate]);
-		// change bioId only when selectedUserId changes
+		// change bioId only when snap.authorId changes
 	};
 	const enhanceProfile: SubmitFunction = ({ action, formData }) => {
-		if (wrongUser || wrongUser === undefined) {
+		if (wrongUser) {
 			return;
 		}
 		message = '';
@@ -107,19 +108,15 @@
 	};
 	let adminSelected: boolean;
 	let selectedUserName: string;
-	onMount(() => {
-		utils.shallowCopy(initialSnap, snap);
-		adminSelected = data.locals.user.role === 'ADMIN';
-		selectedUserName = `${data.locals.user.firstName} ${data.locals.user.lastName}`;
-	});
+
 	const getUserWithBio = (id: string): UserWithBio | undefined => {
 		if (bioTextArea) {
 			bioTextArea.value = '';
 		}
 
 		try {
-			for (let i = 0; i < userProfiles.length; i++) {
-				if (userProfiles[i]?.user?.id === id) {
+			for (let i = 0; i < data.userProfiles.length; i++) {
+				if (data.userProfiles[i]?.user?.id === id) {
 					// @ts-expect-error
 					const { id, bio, createdAt, updatedAt, user } = data.userProfiles[i] as UserProfile;
 					snap.bioId = id;
@@ -128,20 +125,20 @@
 					return { id, bio, createdAt, updatedAt, user } as UserWithBio;
 				}
 			}
+			// no profile for selected user, but they could create one so set authorId
 		} catch (err) {
 			console.log(err);
 		}
-		utils.shallowCopy(initialSnap, snap);
+		// utils.shallowCopy(initialSnap, snap);
 	};
 
 	let bioTextArea: HTMLTextAreaElement;
 	let bioUpdateAllowed = false;
 	const canBeUpdated = (event: MouseEvent) => {
-		if (wrongUser) {
-			bioTextArea.value = '';
-			console.log('wrong user');
-			return;
-		}
+		// if (wrongUser) {
+		// 	bioTextArea.value = '';
+		// 	return;
+		// }
 		bioUpdateAllowed = true;
 		const divEl = event.currentTarget as HTMLDivElement;
 		if (data.locals.user.id !== divEl.dataset.userId) return;
@@ -153,28 +150,25 @@
 		// console.log('user.id', user.id, 'dataset.userId', divEl.dataset.userId);
 		bioTextArea.value = selectedUserWithBio?.bio;
 		setButtonVisible([btnUpdate, btnCreate]);
-		iconDelete.classList.toggle('hidden');
+		// iconDelete.classList.toggle('hidden');
 	};
 
+	let wrongUser: boolean = false;
 	$: ({ userProfiles } = data);
-	$: if (selectedUserId) {
-		selectedUserWithBio = getUserWithBio(selectedUserId) as UserWithBio;
-	}
+	// $: selectedUserWithBio = getUserWithBio(snap.authorId) as UserWithBio;
 	$: formMessage = ignoreFormMessage ? '' : form?.message || '';
 	$: result = message || formMessage;
-	$: wrongUser = selectedUserId !== data.locals.user.id;
+	$: snap.bio = snap_bio;
+	$: wrongUser = snap.authorId !== data.locals.user.id;
 	$: if (selectedUserWithBio?.id) {
 		setButtonVisible([btnUpdate, btnCreate]);
 	}
-
 	export const snapshot: Snapshot = {
 		capture: () => {
-			// console.log('snap.capture');
 			return snap;
 		},
 		restore: (value) => {
-			// console.log('snap.restore');\
-			if (value.id !== data.locals.user.id) {
+			if (value.authorId !== data.locals.user.id) {
 				utils.shallowCopy(initialSnap, snap);
 			} else {
 				snap = value;
@@ -183,14 +177,49 @@
 	};
 	let mrPath = getContext('mrPath') as SvelteStore<string>;
 
+	// NOTE: binding sna.bio to TextArea element clears complete snap when
+	// any character is entered, though there is no event listener attached to
+	// so we bind dummy snap_bio and dynamically update snap.bio from it
+	let snap_bio = '';
+
 	onMount(() => {
+		// utils.shallowCopy(initialSnap, snap);
+		// snap.authorId = data.locals.user.id;
+		if (data.locals.user.role === 'USER') {
+			if (data.userProfiles[0]) {
+				utils.copyPairingAttributes(data.userProfiles[0], snap, {
+					id: 'bioId',
+					bio: 'bio',
+					userId: 'authorId'
+				});
+				// snap_bio = data.userProfiles[0].bio as string;
+				snap.authorId = data.userProfiles[0].userId;
+				selectedUserWithBio = getUserWithBio(snap.authorId) as UserWithBio;
+			}
+		}
+		// snap.authorId = data.locals.user.id;
+		adminSelected = data.locals.user.role === 'ADMIN';
+		selectedUserName = `${data.locals.user.firstName} ${data.locals.user.lastName}`;
 		return () => {
+			// @ts-expect-error
 			mrPath.set($page.url.pathname);
 		};
 	});
 </script>
 
-<p>wrongUser {wrongUser}</p>
+{#key snap.authorId}
+	<p>wrongUser {wrongUser}</p>
+{/key}
+<!-- <pre>
+	snap.authorId {snap.authorId}
+	{data.locals.user.id}
+	{snap.authorId !== data.locals.user.id}
+</pre>
+<pre style="font-size:11px;">selectedUserWithBio {JSON.stringify(
+		selectedUserWithBio,
+		null,
+		2
+	)}</pre> -->
 <svelte:head>
 	<title>Profile</title>
 </svelte:head>
@@ -199,17 +228,17 @@
 	bind:result
 	bind:message
 	bind:ignoreFormMessage
-	bind:selectedUserId
+	bind:selectedUserId={snap.authorId}
 	PageName="Profile"
 	user={data.locals.user}
 	users={data.users}
 />
-<!-- <pre style="font-size:11px;">data {JSON.stringify(data, null, 2)}</pre> -->
+<!-- <pre style="font-size:11px;">snap {JSON.stringify(snap, null, 2)}</pre> -->
 
 <div class="container">
 	<div class="left-column">
 		<div>
-			User Bio
+			<span class="title">User Bio</span>
 			<form action="?/create" method="post" use:enhance={enhanceProfile}>
 				<textarea
 					bind:this={bioTextArea}
@@ -218,35 +247,34 @@
 					rows={5}
 					cols={35}
 					name="bio"
-					bind:value={snap.bio}
+					bind:value={snap_bio}
 				/>
 				<input type="hidden" name="authorId" bind:value={snap.authorId} />
 				<input type="hidden" name="bioId" bind:value={snap.bioId} />
 
-				{#if !wrongUser}
-					<p class="buttons">
-						<button
-							bind:this={btnCreate}
-							type="submit"
-							disabled={selectedUserId === ''}
-							class="button"
-						>
-							{#if loading}
-								<CircleSpinner color="skyblue" />
-							{/if}
-							create
-						</button>
+				<p class="buttons">
+					<button bind:this={btnCreate} type="submit" disabled={!snap.authorId} class="button">
+						{#if loading}
+							<CircleSpinner color="skyblue" />
+						{/if}
+						create
+					</button>
+					{#if !wrongUser}
 						<button bind:this={btnUpdate} type="submit" formaction="?/update" class="button hidden">
 							{#if loading}
 								<CircleSpinner color="skyblue" />
 							{/if}
 							update
 						</button>
-						<button on:click={clearForm}>clear</button>
-					</p>
-					<button bind:this={btnDelete} type="submit" formaction="?/delete" class="button hidden">
-					</button>
-				{/if}
+						<button
+							bind:this={btnDelete}
+							type="submit"
+							formaction="?/delete"
+							class="button hidden"
+						/>
+					{/if}
+					<button on:click={clearForm}>clear</button>
+				</p>
 			</form>
 		</div>
 	</div>
@@ -255,20 +283,7 @@
 			<p>{selectedUserWithBio.user.firstName} {selectedUserWithBio.user.lastName}</p>
 			<div class="relative">
 				<!-- see NOTE above for data-user-id -->
-				{#if wrongUser}
-					<p class="bio" data-user-id={selectedUserWithBio.user.id} aria-hidden={true}>
-						{selectedUserWithBio.bio ?? ''}
-						<span bind:this={iconDelete} aria-hidden={true}>❌</span>
-					</p>
-					<Tooltip
-						placement="top"
-						defaultClass="tooltip-profile"
-						class="master-profile"
-						arrow={false}
-					>
-						<p>owner only allowed</p>
-					</Tooltip>
-				{:else}
+				{#if !wrongUser}
 					<p
 						class="bio"
 						on:click={canBeUpdated}
@@ -284,6 +299,15 @@
 							aria-hidden={true}>❌</span
 						>
 					</p>
+				{:else}
+					{selectedUserWithBio.bio ?? ''}
+					<span
+						bind:this={iconDelete}
+						on:click={() => {
+							btnDelete.click();
+						}}
+						aria-hidden={true}>❌</span
+					>
 				{/if}
 				<Tooltip
 					placement="top"
@@ -343,23 +367,33 @@
 		display: grid;
 		gap: 1rem;
 		width: 80vw;
-		grid-template-columns: 1fr 3fr;
+		height: 70vh;
+		grid-template-columns: 1fr 1fr;
 		text-align: center;
 		.left-column {
 			display: flex;
 			flex-direction: column;
 			justify-content: flex-start;
+			align-items: stretch;
 			border: 1px solid gray;
 			align-items: center;
 			border-radius: 6px;
 			padding-top: 1rem;
 			p {
 				text-align: left;
+				flex: 1;
+			}
+			.title {
+				color: skyblue;
+				font-size: 20px;
 			}
 			textarea {
+				width: 33rem;
+				height: 23rem;
 				text-align: left;
 				color: black;
 				margin-top: 1rem;
+				overflow-y: auto;
 			}
 			button {
 				position: relative;
@@ -370,6 +404,8 @@
 		.right-column {
 			border: 1px solid gray;
 			border-radius: 6px;
+			padding: 2rem 8px 1rem 1rem;
+			overflow-y: auto;
 			.bio {
 				cursor: pointer;
 			}

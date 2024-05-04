@@ -110,7 +110,6 @@ export const actions: Actions = {
 			await request.formData()
 		) as InputData; //{
 
-		console.log(JSON.stringify(input_data, null, 2));
 		const { title, content, published, categoryIds, authorId } = input_data;
 		if (title === '' || content === '' || categoryIds === '' || authorId === '') {
 			return fail(400, {

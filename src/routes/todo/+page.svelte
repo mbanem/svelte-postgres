@@ -20,7 +20,6 @@
 
 	const prevPath: Writable<String> = getContext('previousPath');
 	const beforeUnload = () => {
-		// console.log($page.url.pathname);
 		prevPath.set($page.url.pathname);
 	};
 	let loading: boolean;
@@ -201,11 +200,9 @@
 	// };
 	onMount(() => {
 		if (selectedUserId !== data.locals.user.id) {
-			console.log('onMount no selectedUserId');
 			return;
 		}
 		const tUser = utils.selectItems<UTodo>('id', selectedUserId, data.uTodos);
-		// console.log('onMount', tUser);
 		snap.authorId = selectedUserId;
 		return () => {
 			// @ts-expect-error
@@ -294,7 +291,7 @@
 		<TodoList
 			{uTodos}
 			completed={false}
-			id={user.id}
+			id={data.locals.user.id}
 			bind:selectedUserId
 			{toggleCompleted}
 			{prepareUpdate}

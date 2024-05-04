@@ -19,7 +19,6 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
 			role: true
 		}
 	})) as Partial<User>[];
-
 	let userProfiles = [];
 	if (locals.user?.role === 'ADMIN') {
 		userProfiles = await db.profile.findMany({
@@ -87,7 +86,7 @@ export const actions: Actions = {
 				}
 			});
 			if (!user) {
-				return fail(400, { bio, user: 'User not in db' });
+				return fail(400, { bio, message: 'User not in db' });
 			}
 			const result = await db.profile.create({
 				data: {
@@ -154,6 +153,7 @@ export const actions: Actions = {
 				message: 'internal error occurred'
 			});
 		}
+		await utils.sleep(2000);
 		return {
 			success: true,
 			message: 'Profile successfully deleted'

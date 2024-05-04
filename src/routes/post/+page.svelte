@@ -48,11 +48,13 @@
 	};
 
 	const clearForm = () => {
-		const els = ['id', 'title', 'content', 'categoryIds'];
-		els.forEach((k) => {
-			(document.querySelector(`input[name='${k}']`) as HTMLInputElement).value = '';
-		});
-		(document.querySelector(`input[name='published']`) as HTMLInputElement).checked = false;
+		utils.shallowCopy(initialSnap, snap);
+		snap.authorId = data.locals.user.id;
+		// const els = ['id', 'title', 'content', 'categoryIds'];
+		// els.forEach((k) => {
+		// 	(document.querySelector(`input[name='${k}']`) as HTMLInputElement).value = '';
+		// });
+		// (document.querySelector(`input[name='published']`) as HTMLInputElement).checked = false;
 		setSelectedOptions([], categoryIsRequired);
 		utils.setColor('green');
 	};
@@ -192,9 +194,9 @@
 		const authorPost = data.postAuthors.filter((pa) => pa.id === postId)[0] as PostAuthor;
 		utils.shallowCopy(authorPost, snap);
 		const { published, categoryIds, title, content } = authorPost;
-		// // selectOptions(categoryIds);
+		// selectOptions(categoryIds);
 		const els = [
-			{ published: published },
+			// { published: published },
 			{ title: title },
 			{ content: content },
 			{ categoryIds: categoryIds }
@@ -234,6 +236,14 @@
 		content: string;
 		published: boolean;
 	};
+	const initialSnap: TSnap = {
+		id: '',
+		authorId: '',
+		categoryIds: '',
+		title: '',
+		content: '',
+		published: false
+	};
 	let snap: TSnap = {
 		id: '',
 		authorId: '',
@@ -244,23 +254,25 @@
 	};
 	export const snapshot: Snapshot = {
 		capture: () => {
-			// console.log('snap.capture');
 			return snap;
 		},
 		restore: (value) => {
-			// console.log('snap.restore');
 			snap = value;
 		}
 	};
 	let mrPath = getContext('mrPath') as SvelteStore<string>;
 
 	onMount(() => {
+		utils.shallowCopy(initialSnap, snap);
+		snap.authorId = data.locals.user.id;
 		return () => {
+			// @ts-expect-error
 			mrPath.set($page.url.pathname);
 		};
 	});
 </script>
 
+<p>published {snap.published}</p>
 <svelte:head>
 	<title>Post</title>
 </svelte:head>
@@ -296,7 +308,7 @@
 				placeholder={contentIsRequired || 'enter post content'}
 			/>
 			<label for="published" class="label-save">
-				<input type="checkbox" name="published" id="published" bind:value={snap.published} />
+				<input type="checkbox" name="published" id="published" bind:checked={snap.published} />
 				<span style="user-select:none">published</span>
 				{#if !wrongUser}
 					<button bind:this={btnCreate} type="submit" class="button">

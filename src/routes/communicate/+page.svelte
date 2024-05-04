@@ -22,6 +22,7 @@
 
 	onMount(() => {
 		return () => {
+			// @ts-expect-error
 			mrPath.set($page.url.pathname);
 		};
 	});

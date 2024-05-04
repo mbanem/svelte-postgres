@@ -78,7 +78,7 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
 					t.updated_at as "updatedAt"
 			from 	todo t
 			join 	users u on t.user_id = u.id
-			where u.user_id = ${user.id}
+			where u.id = ${user.id}
 			order by 		u.last_name ASC,
 									u.first_name ASC,
 									t.priority DESC;`) as UTodos;
@@ -120,7 +120,6 @@ export const actions: Actions = {
 		) as InputData;
 		input_data.priority = Number(input_data.priority);
 		const { userId, title, content, priority } = input_data;
-		console.log(JSON.stringify(input_data, null, 2));
 		if (title === '' || content === '' || userId === '') {
 			return fail(400, {
 				data: { userId, title, content, priority },

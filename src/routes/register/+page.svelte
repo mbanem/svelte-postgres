@@ -38,11 +38,9 @@
 	};
 	export const snapshot: Snapshot = {
 		capture: () => {
-			// console.log('snap.capture');
 			return snap;
 		},
 		restore: (value) => {
-			// console.log('snap.restore');
 			snap = value;
 		}
 	};

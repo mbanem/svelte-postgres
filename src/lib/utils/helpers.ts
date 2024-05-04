@@ -74,7 +74,7 @@ const isKeyOf = <T extends Object>(key: keyof T, obj: T): key is keyof T => {
 
 const _shallowCopy = <S, T extends Object>(source: S, target: T): T => {
 	for (const k of Object.keys(target)) {
-		if (isKeyOf<T>(k as keyof T, target)) {
+		if (isKeyOf<S>(k as keyof T, target)) {
 			// @ts-expect-error
 			target[k] = source[k as keyof T];
 		}
@@ -97,5 +97,20 @@ export const selectItems = <T extends unknown>(keyName: keyof T, key: string, ar
 	return item;
 };
 
+// example
 // console.log(selectItem<T>('name', 'Filip', source));
 // console.log(selectItem<T>('id', '14', source));
+
+export const copyPairingAttributes = <S, T extends Object>(
+	source: S,
+	target: T,
+	pairs: Object
+): T => {
+	for (const [k, v] of Object.entries(pairs)) {
+		// if (isKeyOf<T>(k as keyof T, target)) {
+		// @ts-expect-error
+		target[v] = source[k as keyof T] as string | number;
+		// }
+	}
+	return target;
+};

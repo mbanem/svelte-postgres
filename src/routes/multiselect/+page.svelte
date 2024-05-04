@@ -66,9 +66,11 @@
 
 	onMount(() => {
 		return () => {
+			// @ts-expect-error
 			mrPath.set($page.url.pathname);
 		};
 	});
+	let selectedCategoryIds = '';
 </script>
 
 <svelte:head>
@@ -78,7 +80,7 @@
 <h2>Multi Select Page</h2>
 <!-- <pre style="font-size:11px;">data {JSON.stringify(data, null, 2)}</pre> -->
 
-<SelectBox categories={data.categories} />
+<SelectBox categories={data.categories} {selectedCategoryIds} />
 
 <slot {selectedOptions}>
 	<pre>
@@ -108,7 +110,7 @@ and appends it to the yellow colored list
 <ul>
 	{#each data.categories as category}
 		<li>
-			<p on:click|preventDefault={liClick}>
+			<p on:click|preventDefault={liClick} aria-hidden={true}>
 				{category.name}
 			</p>
 		</li>

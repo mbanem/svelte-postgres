@@ -6,10 +6,10 @@
 
 	const followPath = (path: string) => {
 		if (path === prevPath.slice(1)) {
-			// console.log('history to', prevPath);
+			// 'history to', prevPath);
 			history.back();
 		} else {
-			// console.log('followPath to', path);
+			// 'followPath to', path);
 			path === 'home' ? goto('/') : goto(`/${path}`);
 		}
 	};
