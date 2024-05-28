@@ -22,12 +22,12 @@
 </script>
 
 <nav>
-	<a href="/">Home</a>
+	<a href="/" data-sveltekit-preload-data="tap">Home</a>
 	{#if locals?.user}
 		<!-- <a href="/post">new post</a>
 		<a href="/profile">new profile</a>
 		<a href="/todo">todos</a> -->
-		<Links paths={['post', 'profile', 'todo']} {prevPath} />
+		<Links paths={['home', 'post', 'profile', 'todo']} {prevPath} />
 		<!--
 			in order to call /logout/+page.server.ts
 			default action we need a form with action ='/logout'
@@ -44,7 +44,9 @@
 			<!-- <a href="/admin">admin</a>
 			<a href="/users">user list</a> -->
 			<Links paths={['admin', 'users']} {prevPath} />
-		{/if}
+		{/if}let ButtonProps1: TButtonProps = ['HOME', 'post', 'profile', 'todo', 'news'] let
+		ButtonProps2: TButtonProps = [ 'admin', 'users', ['notifications', '/about/notifications'],
+		['pavlovci', '/about/pavlovci'] ]
 	{:else}
 		<!-- <a href="/login">login</a>
 		<a href="/register">register</a> -->
@@ -64,9 +66,9 @@
 		display: flex;
 		justify-content: left;
 		text-align: center;
-		gap: 0.5rem;
+		gap: 0;
 		width: 90vw;
-		height: 2rem;
+		height: 1.8rem;
 		a:any-link,
 		form button {
 			display: inline-block;

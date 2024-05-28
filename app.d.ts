@@ -1,10 +1,39 @@
 // See https://kit.svelte.dev/docs/types#app
 // for information about these interfaces
 declare global {
-	interface WritableStore<T> extends Writable<T> {
-		getPath: () => string;
-		setPath: (name: string) => void;
+	type TNavBar = {
+		navId: string;
+		pIx: number;
+		oIx: number;
+		activeEl: HTMLInputElement | undefined;
+	};
+	type TBarContext = Writable<TNavBar[]>;
+	type TButtonObject = {
+		title: string;
+		href?: string;
+		ix?: number;
+		className?: string;
+		cssRules?: string;
+		onHover?: string;
+	};
+	type TButtonObjects = TButtonObject[];
+	type TButtonProps = Array<string | string[]>;
+	declare module 'FrontBackButton' {
+		import { SvelteComponentTyped } from 'svelte';
+		interface FBButtonProps
+			extends svelte.JSX.HTMLAttributes<HTMLElementTagNameMap['HTMLButtonElement']> {
+			target_href: string;
+			title: string;
+			css_class?: string;
+			css_style_active?: string;
+		}
+		export default class FBButton extends SvelteComponentTyped<FBButtonProps> {}
 	}
+	// interface WritableStore<T> extends Writable<T> {
+	// 	getPath: () => string;
+	// 	setPath: (name: string) => void;
+	// }
+
 	type Person = {
 		name: string;
 		age: number;
@@ -14,13 +43,13 @@ declare global {
 		id: string;
 		firstName: string;
 		lastName: string;
-		role: string;
+		role: Role;
 	};
 	type PartialUser = {
 		id: string;
 		firstName: string;
 		lastName: string;
-		role: string;
+		role: Role;
 	};
 
 	type Category = {
@@ -52,7 +81,7 @@ declare global {
 		published: boolean;
 		firstName: string;
 		lastName: string;
-		role: string;
+		role: Role;
 	};
 	type UserProfile = Profile & PartialUser;
 	// type Categories = Category[];
@@ -61,7 +90,7 @@ declare global {
 		id: string;
 		firstName: string;
 		lastName: string;
-		role: string;
+		role: Role;
 		todoId: string;
 		title: string;
 		content: string;
@@ -105,7 +134,7 @@ declare global {
 		completed: boolean;
 		userId: string;
 		createdAt: Date;
-		updatedAt: ?Date;
+		updatedAt?: Date;
 	};
 
 	type User = {
@@ -115,14 +144,15 @@ declare global {
 		email: string;
 		passwordHash: string;
 		userAuthToken: string;
-		role: $Enums.Role;
+		role: Role;
 		createdAt: Date;
-		updatedAt: ?Date;
+		updatedAt?: Date;
 	};
 
 	enum Role {
 		USER = 'USER',
-		ADMIN = 'ADMIN'
+		ADMIN = 'ADMIN',
+		UNKNOWN = 'UNKNOWN'
 	}
 
 	type Profile = {
@@ -133,10 +163,10 @@ declare global {
 		updatedAt: Date;
 	};
 
-	type Category = {
-		id: number;
-		name: string;
-	};
+	// type Category = {
+	// 	id: number;
+	// 	name: string;
+	// };
 
 	type Post = {
 		id: string;

@@ -1,3 +1,4 @@
+
 // This is
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
@@ -30,7 +31,7 @@ model User {
   todos         Todo[]    //arrays are optional and can be empry
 
   createdAt DateTime @default(now())   @map("created_at")
-  updatedAt DateTime? @updatedAt        @map("updated_at")
+  updatedAt DateTime? @updatedAt  @map("updated_at")
 
 	@@unique(name: "fullNameEmail", [firstName, lastName, email])
   @@map("users")
@@ -49,7 +50,7 @@ model Profile {
   userId 		String  @unique    @map("user_id")
 
   createdAt DateTime @default(now())   @map("created_at")
-  updatedAt DateTime @updatedAt        @map("updated_at")
+  updatedAt DateTime? @updatedAt        @map("updated_at")
 
   @@map("profile")
 }
@@ -77,7 +78,7 @@ model Post {
   categories Category[]
 
   createdAt DateTime @default(now())   @map("created_at")
-  updatedAt DateTime @updatedAt        @map("updated_at")
+  updatedAt DateTime? @updatedAt        @map("updated_at")
 
   @@map("post")
 }
@@ -101,7 +102,7 @@ model Todo {
   userId 		String  @unique    @map("user_id")
 
   createdAt DateTime @default(now())   @map("created_at")
-  updatedAt DateTime @updatedAt        @map("updated_at")
+  updatedAt DateTime? @updatedAt       @map("updated_at")
 
   @@map("todo")
 }

@@ -23,3 +23,28 @@ export const GET: RequestHandler = (async ({ params }) => {
 	}
 	throw redirect(303, `/${table}`);
 }) satisfies RequestHandler;
+
+export const POST: RequestHandler = (async ({ params }) => {
+	try {
+		// for this existing schema delete does not work as the User record
+		// has relationship with Profile, Post[] and Article[] and there is
+		// no onDelete cascade, setNull
+		const user = await db.user.delete({
+			where: {
+				id: String(params)
+			}
+		});
+	} catch (err) {
+		console.log('api delete endpoint', err);
+	}
+	return new Response(
+		JSON.stringify({
+			success: true
+		}),
+		{
+			headers: {
+				ContentType: 'application/json'
+			}
+		}
+	);
+}) satisfies RequestHandler;

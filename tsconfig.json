@@ -1,5 +1,5 @@
 {
-	"extends": "./.svelte-kit/.tsconfig.json",
+	"extends": "./.svelte-kit/tsconfig.json",
 	"compilerOptions": {
 		/* Visit https://aka.ms/tsconfig to read more about this file */
 
@@ -13,7 +13,7 @@
 
 		/* Language and Environment */
 		"target": "ESNext",
-		"lib": ["ESNext"], // ["es6', "ESNext"]
+		"lib": ["es6", "ESNext"], // ["es6', "ESNext"]
 		// "jsx": "preserve",
 		// "experimentalDecorators": false,
 		// "emitDecoratorMetadata": true,
@@ -28,7 +28,7 @@
 		/* Modules */
 		"module": "ESNext",
 		"rootDir": "./src/",
-		"moduleResolution": "bundler",
+		// "moduleResolution": "bundler",
 		// "baseUrl": "./",
 		// "paths": {},
 		// "rootDirs": [],
@@ -44,15 +44,15 @@
 		// "allowArbitraryExtensions": true,
 		// "noResolve": true,
 
-		"allowJs": true,
-		"checkJs": true,
+		// "allowJs": true,
+		// "checkJs": true,
 		// "maxNodeModuleJsDepth": 1,
 
 		/* Emit */
 		"declaration": true,
 		// "declarationMap": true,
 		// "emitDeclarationOnly": true,
-		"sourceMap": true,
+		// "sourceMap": true,
 		// "inlineSourceMap": true,
 		// "outFile": "./",
 		"outDir": "./build/js/",
@@ -104,7 +104,7 @@
 		// "skipDefaultLibCheck": true,
 		"skipLibCheck": true
 	},
-	"include": ["./src/**/*", "./.svelte-kit/ambient.d.ts"],
+	"include": ["./src/**/*", "app.d.ts", "./.svelte-kit/ambient.d.ts"],
 	"exclude": ["node_modules"]
 	// Path aliases are handled by https://kit.svelte.dev/docs/configuration#alias
 	//

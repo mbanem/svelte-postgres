@@ -3,6 +3,7 @@
 	import type { PageData } from './$types';
 	import { onMount, getContext } from 'svelte';
 	import { page } from '$app/stores'; // get data from main +layout.server.ts if any
+
 	export let data: PageData;
 	let city = 'San Diego';
 	let age = 18;
@@ -18,6 +19,7 @@
 	});
 </script>
 
+<pre style="font-size:11px;">data {JSON.stringify(data, null, 2)}</pre>
 <svelte:head>
 	<title>Box</title>
 </svelte:head>

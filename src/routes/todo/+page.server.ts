@@ -9,10 +9,9 @@ import * as utils from '$lib/utils';
 // instead we should use this +page.server.ts as it
 // has +page in its name and so it has a load function
 // that can deliver data: PageData to +page.svelte
-// as export let data: PageData
-// though +layout.server.ts delivers to +layout.svelte
-// import type { LayoutData } from './$types'
-// where import type { LayoutData } from './$types'
+// via export let data: PageData
+// also +layout.server.ts delivers data to +layout.svelte
+// using import type { LayoutData } from './$types'
 
 // admin should be able to see all uTodos of any user
 // so we have to load all uTodos with user info

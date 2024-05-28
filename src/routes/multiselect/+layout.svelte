@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { LayoutData } from './$types';
-	// +page.server.ts send categories from itd load function
+	// +page.server.ts send categories from its load function
 	// that we can get as data object
 	export let data: LayoutData;
 </script>

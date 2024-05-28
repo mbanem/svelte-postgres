@@ -1,5 +1,11 @@
 import { browser } from '$app/environment';
 
+export const sixHash = () => {
+	const a = (Math.random() * 46656) | 0;
+	const b = (Math.random() * 46656) | 0;
+	return a.toString(36).slice(-3) + b.toString(36).slice(-3);
+};
+
 // change placeholder color to red on required messages
 export const setColor = (color: string) => {
 	if (browser) {
