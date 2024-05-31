@@ -2,6 +2,7 @@
 	export let person: Person;
 	export let city = '';
 	export let userAge: number;
+
 	const decrement = () => {
 		if (person.age > 1) {
 			person.age -= 1;
