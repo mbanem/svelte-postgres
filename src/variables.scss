@@ -13,6 +13,24 @@ $BORDER: 1px solid gray;
 $BORDER-RADIUS: 6px;
 $BORDER-HOVER: yellow;
 
+$color: royalblue;
+$title-color: skyblue;
+$border-color: #bde168;
+
+@mixin on-focus {
+	display: inline-block;
+	font-size: 16px;
+	text-decoration: none;
+	@content;
+}
+@mixin border-small($color: gray, $radius: 5px, $padding: 3px 1rem) {
+	border: 1px solid $color;
+	border-radius: $radius;
+}
+@mixin border-large($color: gray, $radius: 10px, $padding: 1rem 2rem) {
+	border: 1px solid $color;
+	border-radius: $radius;
+}
 // body {
 // 	padding: 0;
 // 	margin: 0;
@@ -93,17 +111,17 @@ a {
 // 	}
 // }
 
-h1 {
-	color: navy;
-}
+// h1 {
+// 	color: navy;
+// }
 
-$font-size: (24px, 22px, 20px, 18px);
-@for $i from 1 through 4 {
-	h#{$i} {
-		font-size: nth($font-size, $i);
-		color: $LINK-COLOR;
-	}
-}
+// $font-size: (24px, 22px, 20px, 18px);
+// @for $i from 1 through 4 {
+// 	h#{$i} {
+// 		font-size: nth($font-size, $i);
+// 		color: $LINK-COLOR;
+// 	}
+// }
 .relative {
 	position: relative;
 

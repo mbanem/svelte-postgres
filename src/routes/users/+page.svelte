@@ -1,31 +1,32 @@
 <script lang="ts">
-	import { page } from '$app/stores';
-	import { onMount, getContext } from 'svelte';
+	import { page } from '$app/stores'
+	import { onMount, getContext } from 'svelte'
 
-	import type { PageData } from './$types';
+	import type { PageData } from './$types'
 
-	export let data: PageData;
+	export let data: PageData
 
-	$: ({ users } = data);
+	$: ({ users } = data)
 	const postDelete = async (id: string) => {
 		// we immediately get a promise
 		const response = await fetch(`/api/delete/[user]x[${id}]`, {
 			method: 'POST',
 			body: id
-		});
+		})
 
 		// and with the promise we have to wait for the result
-		const data = await response.json();
+		const data = await response.json()
 		// console.log(JSON.stringify(data, null, 2));
-	};
+	}
 
-	let mrPath = getContext('mrPath') as SvelteStore<string>;
+	let mrPath = getContext('mrPath') as SvelteStore<string>
 
 	onMount(() => {
 		return () => {
-			mrPath.set($page.url.pathname);
-		};
-	});
+			// @ts-expect-error
+			mrPath.set($page.url.pathname)
+		}
+	})
 </script>
 
 <h1>User List</h1>

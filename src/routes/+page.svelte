@@ -1,14 +1,15 @@
 <script lang="ts">
-	import { page } from '$app/stores';
-	import { onMount, getContext } from 'svelte';
+	import { page } from '$app/stores'
+	import { onMount, getContext } from 'svelte'
 
-	let mrPath = getContext('mrPath') as SvelteStore<string>;
+	let mrPath = getContext('mrPath') as SvelteStore<string>
 
 	onMount(() => {
 		return () => {
-			mrPath.set($page.url.pathname);
-		};
-	});
+			// @ts-expect-error
+			mrPath.set($page.url.pathname)
+		}
+	})
 </script>
 
 <svelte:head>

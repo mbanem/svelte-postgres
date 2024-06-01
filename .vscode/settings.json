@@ -5,7 +5,13 @@
 		"**/.hg": true,
 		"**/CVS": true,
 		"**/.DS_Store": true,
-		"**/Thumbs.db": true
+		"**/Thumbs.db": true,
+		"**/.tgz": true,
+		"README.md": true,
+		"node_modules": true,
+		"pnpm-lock.yaml": true,
+		".svelte-kit": true,
+		"scss.validate": false
 	},
-	"hide-files.files": ["src/routes/login/+page.server.js"]
+	"hide-files.files": ["node_modules", "pnpm-lock.yaml", ".svelte-kit"]
 }

@@ -1,91 +1,82 @@
 <script lang="ts">
-	// export const ssr = false;
-	export let data: App.Locals;
-	import { page } from '$app/stores';
-	import '$styles/app.scss';
-	import { onMount } from 'svelte';
-	// import Nav from '$components/Nav.svelte';
-	// import type { LayoutData } from './$types';
-	import { getContext, setContext } from 'svelte';
-	import { writable } from 'svelte/store';
-	import { setNavBars, getNavBars } from '$utils/store';
-	import NavBar from '$components/NavBar.svelte';
-	// import { applyAction } from '$app/forms';
+	import '$styles/global.scss'
+	import '$styles/app.scss'
+	import { writable } from 'svelte/store'
+	import { getContext, setContext } from 'svelte'
+	import { getNavBars, setNavBars, setNavButtons, getNavButtons } from '$utils/store'
+
+	import NavBar from '$components/NavBar.svelte'
+	import type { LayoutData } from './$types'
+	export let data: LayoutData
+
+	// array of individual button props
+	const navButtonObjects: TNavButtonObject[] = [
+		{ position: '0', title: 'home', condition: 'UNKNOWN' },
+		{ position: '1', title: 'profile', href: '/profile', condition: 'USER' },
+		{ position: '2', title: 'post', condition: 'USER' },
+		{ position: '3', title: 'todo', condition: 'USER' },
+		{ position: '4', title: 'news', condition: 'USER' },
+		{ position: '5', title: 'multiselect', href: '/multiselect', condition: 'USER' }
+	]
+
 	// establish presence of context for this page
-	setNavBars('not set', 0, 0);
-	const navBars = getNavBars();
-	navBars.set([]);
+	setNavBars('not set', 0, 0)
+	const navBars = getNavBars()
 
-	/*not used yet
-	let ButtonObjects1: TButtonObjects = [
-		{ title: 'home', href: '/' },
-		{ title: 'logged-in-only-post', href: '/post', cssRules: '', onHover: '' },
-		{ title: 'logged-in-only-profile', href: '/profile', cssRules: '', onHover: '' },
-		{ title: 'logged-in-only-todo', href: '/todo', cssRules: '', onHover: '' }
-	]
-	let ButtonObjects2: TButtonObjects = [
-		{ title: 'news', href: '/news' },
-		{ title: 'admin-only-admin', href: '/admin' },
-		{ title: 'pavlovci', href: '/about/pavlovci' },
-		{ title: 'notifications', href: '/about/notifications' }
-		{title: 'login'}, href: '/login'},
-		{title: 'register'}, href: '/register'},
-		{title: 'flip'}, href: '/flip'},
-		{title: 'multiselect'}, href: '/multiselect'},
-		{title: 'box'}, href: '/box'},
-		{title: 'communicate'}, href: '/communicate'}
-	]
-	*/
+	let navPath = writable<string>('/')
+	setContext('mrPath', navPath)
+	let mrPath = getContext('mrPath') as SvelteStore<string>
 
-	let ButtonProps: TButtonProps = [
-		'home',
-		'post',
-		'profile',
-		'todo',
-		'admin',
-		'users',
-		'login',
-		'logout',
-		'register',
-		'flip',
-		'multiselect',
-		'box',
-		'communicate'
-	];
+	/*
+	to iterate over ButtonProps as it is an array of PartialRecord<TButtonParam, string>
+	we need outer loop over the array and inner loop over the Record props
+		navButtonProps.forEach(button=> {
+        for (const key in button){
+            console.log(key, button[key as TButtonParam])
+        }
+    })
+*/
 
-	let navPath = writable<string>('/');
-	setContext('mrPath', navPath);
-	let mrPath = getContext('mrPath') as SvelteStore<string>;
+	// import { getContext, setContext } from 'svelte';
+	// import { writable } from 'svelte/store';
 
-	$: role = (data as App.Locals)?.user?.role ?? 'UNDEFINED';
-	onMount(() => {
-		console.log('role', role);
-	});
+	setNavButtons(0, 'className', 0, '/to-nowhere', 'title', 'condition')
+	const navButtons = getNavButtons()
+	navButtons.set([])
+
+	$: ({ locals } = data ?? {}) // data.data.data.locals.user.role
 </script>
 
-<svelte:head>
-	<title>Users</title>
-</svelte:head>
-
-<main>
-	<!-- <Nav {locals} /> -->
-	<NavBar {ButtonProps} {role} />
+<div class="wrapper">
+	<NavBar {navButtonObjects} role={locals?.user?.role ?? 'UNKNOWN'} />
 	<slot />
-</main>
+	<div class="footer">
+		<p>ComRUNNER Software Inc 2024 All rights reserved</p>
+	</div>
+</div>
 
 <style lang="scss">
-	// @import 'https://unpkg.com/@picocss/pico@latest/css/pico.min.css';
-
-	:global(body) {
-		padding: 2rem;
+	.wrapper {
+		margin: 0;
+		padding: 0;
+		width: 100vw;
+		height: 100vh;
+		// cannot help scrolling when selecting button Two or Three
+		overflow-anchor: none;
 	}
-	:global(input, button) {
-		border-radius: 6px;
-	}
 
-	main {
-		width: 98vw;
-		height: 85vh;
-		background-color: #3e3e3e;
+	.footer {
+		position: absolute;
+		text-align: left;
+		margin-left: 1rem;
+		left: 0;
+		top: calc(100vh - 3rem);
+		z-index: 1;
+	}
+	div {
+		font-size: 16px;
+		&:target {
+			background-color: blue;
+		}
 	}
 </style>

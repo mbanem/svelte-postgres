@@ -1,14 +1,14 @@
-import { db } from '$lib/server/db';
-import type { PageServerLoad } from './$types';
-import { error, fail, type RequestEvent } from '@sveltejs/kit';
-import type { Actions } from '@sveltejs/kit';
-import * as utils from '$lib/utils';
+import { db } from '$lib/server/db'
+import type { PageServerLoad } from './$types'
+import { error, fail, type RequestEvent } from '@sveltejs/kit'
+import type { Actions } from '@sveltejs/kit'
+import * as utils from '$lib/utils'
 
 export const load: PageServerLoad = (async ({ locals, cookies }) => {
 	// locals holds the logged in user details
-	let userAuthToken = cookies.get('session') ?? '';
+	let userAuthToken = cookies.get('session') ?? ''
 	if (!userAuthToken) {
-		throw error(400, 'User cookie not found');
+		throw error(400, 'User cookie not found')
 	}
 
 	const users = (await db.user.findMany({
@@ -18,8 +18,8 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
 			lastName: true,
 			role: true
 		}
-	})) as Partial<User>[];
-	let userProfiles = [];
+	})) as Partial<User>[]
+	let userProfiles = []
 	if (locals.user?.role === 'ADMIN') {
 		userProfiles = await db.profile.findMany({
 			select: {
@@ -37,7 +37,7 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
 					}
 				}
 			}
-		});
+		})
 	} else {
 		userProfiles = await db.profile.findMany({
 			where: {
@@ -58,35 +58,35 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
 					}
 				}
 			}
-		});
+		})
 	}
 	return {
 		users,
 		userProfiles
-	};
-}) satisfies PageServerLoad;
-const
+	}
+}) satisfies PageServerLoad
+
 export const actions: Actions = {
 	create: async ({ request }) => {
 		const { bio, authorId } = Object.fromEntries(
 			// @ts-expect-error
 			await request.formData()
 		) as {
-			bio: string;
-			authorId: string;
-		};
-		if (!bio || !authorId) {
-			return fail(400, { bio, message: 'Insufficient data supplied' });
+			bio: string
+			authorId: string
 		}
-		await utils.sleep(2000);
+		if (!bio || !authorId) {
+			return fail(400, { bio, message: 'Insufficient data supplied' })
+		}
+		await utils.sleep(2000)
 		try {
 			const user = await db.user.findUnique({
 				where: {
 					id: authorId
 				}
-			});
+			})
 			if (!user) {
-				return fail(400, { bio, message: 'User not in db' });
+				return fail(400, { bio, message: 'User not in db' })
 			}
 			const result = await db.profile.create({
 				data: {
@@ -98,29 +98,29 @@ export const actions: Actions = {
 				include: {
 					user: true
 				}
-			});
+			})
 		} catch (err) {
-			console.log(err);
+			console.log(err)
 		}
 		return {
 			bio,
 			success: true,
 			message: 'Profile successfully created'
-		};
+		}
 	},
 	update: async ({ request }) => {
 		const { bio, bioId, authorId } = Object.fromEntries(
 			// @ts-expect-error
 			await request.formData()
 		) as {
-			bio: string;
-			bioId: string;
-			authorId: string;
-		};
-		if (bio === '' || authorId === '' || bioId === '') {
-			return fail(400, { bio, bioId, message: 'Insufficient data supplied' });
+			bio: string
+			bioId: string
+			authorId: string
 		}
-		await utils.sleep(2000);
+		if (bio === '' || authorId === '' || bioId === '') {
+			return fail(400, { bio, bioId, message: 'Insufficient data supplied' })
+		}
+		await utils.sleep(2000)
 		try {
 			await db.profile.update({
 				where: {
@@ -129,34 +129,34 @@ export const actions: Actions = {
 				data: {
 					bio
 				}
-			});
+			})
 			return {
 				bio,
 				success: 'Profile updated'
-			};
+			}
 		} catch (err) {
-			return fail(500, { message: 'Internal error occurred' });
+			return fail(500, { message: 'Internal error occurred' })
 		}
 	},
 	delete: async ({ request }) => {
-		const body = await request.formData();
-		const id = body.get('authorId') as string;
+		const body = await request.formData()
+		const id = body.get('authorId') as string
 		try {
 			await db.profile.delete({
 				where: {
 					userId: id
 				}
-			});
+			})
 		} catch (err) {
 			return fail(400, {
 				data: { authorId: id },
 				message: 'internal error occurred'
-			});
+			})
 		}
-		await utils.sleep(2000);
+		await utils.sleep(2000)
 		return {
 			success: true,
 			message: 'Profile successfully deleted'
-		};
+		}
 	}
-} satisfies Actions;
+} satisfies Actions

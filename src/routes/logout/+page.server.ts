@@ -1,15 +1,17 @@
-import { redirect } from '@sveltejs/kit';
-import type { Actions } from './$types';
+import { redirect } from '@sveltejs/kit'
+import type { Actions } from './$types'
 
-import type { PageServerLoad } from './$types';
+// import type { PageServerLoad } from './$types'
 
-export const load: PageServerLoad = (async ({ cookies }) => {
-	cookies.set('session', '', {
-		path: '/',
-		expires: new Date(0)
-	});
-	throw redirect(302, '/');
-}) satisfies PageServerLoad;
+// export const load: PageServerLoad = (async ({ cookies, locals }) => {
+// 	cookies.set('session', '', {
+// 		path: '/',
+// 		expires: new Date(0)
+// 	})
+
+// 	locals.user = { id: '', first_name: '', last_name: '', role: 'UNKNOWN' }
+// 	// throw redirect(302, '/')
+// }) satisfies PageServerLoad
 
 // When we include a default action -- that action could be
 // called from any page in the app providing in has a
@@ -21,11 +23,18 @@ export const load: PageServerLoad = (async ({ cookies }) => {
 // <form method='POST' action='/logout' -- not '?/logout' as
 // that will ask form a sibling +page.server.ts
 export const actions: Actions = {
-	default: ({ cookies }) => {
+	logout: async ({ cookies, locals }) => {
 		cookies.set('session', '', {
 			path: '/',
 			expires: new Date(0)
-		});
-		throw redirect(302, '/login');
+		})
+		// locals.user = {
+		// 	id: '',
+		// 	first_name: '',
+		// 	last_name: '',
+		// 	role: 'UNKNOWN'
+		// }
+		// await fetch('/')
+		throw redirect(302, '/')
 	}
-} satisfies Actions;
+} satisfies Actions
