@@ -65,7 +65,7 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
 		userProfiles
 	};
 }) satisfies PageServerLoad;
-
+const
 export const actions: Actions = {
 	create: async ({ request }) => {
 		const { bio, authorId } = Object.fromEntries(
