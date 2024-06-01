@@ -57,17 +57,6 @@ $border-color: #bde168;
 // 		background-color: gray;
 // 	}
 // }
-input {
-	display: block;
-	width: 80%;
-	margin-bottom: 1rem;
-	height: 2rem;
-	color: black;
-	&::placeholder {
-		color: var(--PLACEHOLDER_COLOR);
-		font-weight: normal;
-	}
-}
 
 // h1 {
 // 	color: $LINK-COLOR;
@@ -122,45 +111,7 @@ a {
 // 		color: $LINK-COLOR;
 // 	}
 // }
-.relative {
-	position: relative;
 
-	.tooltip {
-		position: absolute;
-		top: -3rem;
-		display: block;
-		width: 11rem;
-		font-size: 14px;
-		font-weight: 400;
-		padding: 3px 1rem;
-		border: 1px solid gray;
-		border-radius: 4px;
-		background-color: $BACK-COLOR;
-		text-align: center;
-	}
-	.master {
-		color: yellow;
-		font-size: 14px;
-		font-weight: 400;
-		p {
-			padding: 0;
-			margin: 0;
-		}
-	}
-	// master class has higher specificity than tooltip class, e.g.
-	/* <Tooltip
-				placement="top"
-				type="custom"
-				defaultClass="tooltip"
-				class="master"
-				arrow={false}
-		>
-			flowbite-svelte Tooltip
-		</Tooltip>
-		NOTE: defaultClass holds primary style
-		while master class could be for warning, error,...
-	*/
-}
 pre {
 	color: skyblue;
 	font-family: Times New Roman;

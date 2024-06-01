@@ -111,6 +111,9 @@
 			if (button.ix === undefined) {
 				button.ix = oix()
 			}
+			if (button.title.toLowerCase() == 'home' && button.href === undefined) {
+				button.href = '/'
+			}
 			const className = `${classCategory}${button.ix}`
 			button.className = className.slice(1)
 			let def: string = ''

@@ -1,19 +1,21 @@
-import adapter from '@sveltejs/adapter-auto';
-import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
-import preprocess from 'svelte-preprocess';
-import path from 'path';
+import adapter from '@sveltejs/adapter-auto'
+import { vitePreprocess } from '@sveltejs/vite-plugin-svelte'
+import preprocess from 'svelte-preprocess'
+import path from 'path'
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
 	// Consult https://kit.svelte.dev/docs/integrations#preprocessors
 	// for more information about preprocessors
 	preprocess: [
-		vitePreprocess(),
-		preprocess({
-			scss: {
-				prependData: `@import './src/styles/global.scss';`
-			}
-		})
+		vitePreprocess()
+		// this will write warnings for every unused css class for every <style lang='scss'>
+		// so instead just import global.scss inside /+layout.svelte
+		// preprocess({
+		// 	scss: {
+		// 		prependData: `@import './src/styles/global.scss';`
+		// 	}
+		// })
 	],
 
 	kit: {
@@ -35,6 +37,6 @@ const config = {
 			$images: path.resolve('./src/images')
 		}
 	}
-};
+}
 
-export default config;
+export default config
