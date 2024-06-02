@@ -17,7 +17,7 @@ export const handle: Handle = (async ({ event, resolve }) => {
 			id: '',
 			firstName: '',
 			lastName: '',
-			role: 'UNKNOWN'
+			role: 'VISITOR'
 		}
 		// prohibit access to 'ADMIN', 'USER' allowed pages
 		if ('|fetch|news|store|comments|'.includes(`|${event.url.pathname.slice(1)}|`)) {

@@ -1,76 +1,76 @@
 <script lang="ts">
-	import type { Snapshot } from '../$types'; // .sveltekit/$types
-	import { onMount, getContext } from 'svelte';
-	import type { PageData, ActionData } from './$types';
-	import type { SubmitFunction } from '@sveltejs/kit';
-	import { enhance } from '$app/forms';
-	import { invalidateAll } from '$app/navigation';
-	import { page } from '$app/stores'; // for $age.status code on actions
-	import CircleSpinner from '$lib/components/CircleSpinner.svelte';
-	import * as utils from '$lib/utils';
+	import type { Snapshot } from '../$types' // .sveltekit/$types
+	import { onMount, getContext } from 'svelte'
+	import type { PageData, ActionData } from './$types'
+	import type { SubmitFunction } from '@sveltejs/kit'
+	import { enhance } from '$app/forms'
+	import { invalidateAll } from '$app/navigation'
+	import { page } from '$app/stores' // for $age.status code on actions
+	import CircleSpinner from '$lib/components/CircleSpinner.svelte'
+	import * as utils from '$lib/utils'
 
-	import PageTitleCombo from '$lib/components/PageTitleCombo.svelte';
+	import PageTitleCombo from '$lib/components/PageTitleCombo.svelte'
 	// categories
-	import MultiSelectBox from '$lib/components/MultiSelectBox.svelte';
-	import PostList from '$lib/components/PostList.svelte';
+	import MultiSelectBox from '$lib/components/MultiSelectBox.svelte'
+	import PostList from '$lib/components/PostList.svelte'
 
-	export let data: PageData;
-	export let form: ActionData;
+	export let data: PageData
+	export let form: ActionData
 
-	let message = '';
-	let loading = false;
-	let ignoreFormMessage = false;
-	let selectedUserId = '';
-	let titleIsRequired = '';
-	let contentIsRequired = '';
-	const requiredCategory = 'Please select corresponding categories';
-	let categoryIsRequired = requiredCategory;
+	let message = ''
+	let loading = false
+	let ignoreFormMessage = false
+	let selectedUserId = ''
+	let titleIsRequired = ''
+	let contentIsRequired = ''
+	const requiredCategory = 'Please select corresponding categories'
+	let categoryIsRequired = requiredCategory
 
-	let btnCreate: HTMLButtonElement;
-	let btnDelete: HTMLButtonElement;
-	let btnUpdate: HTMLButtonElement;
-	const authorId = data?.user?.id;
+	let btnCreate: HTMLButtonElement
+	let btnDelete: HTMLButtonElement
+	let btnUpdate: HTMLButtonElement
+	const authorId = data?.user?.id
 
-	let categoryIds: number[] = [];
+	let categoryIds: number[] = []
 
 	$: utils.setColor(
 		form?.message ? (form.message.includes('successfully') ? 'green' : 'red') : 'green'
-	);
+	)
 
 	// keep message displayed for several seconds
 	const clearMessage = () => {
 		setTimeout(() => {
-			message = '';
-			ignoreFormMessage = false;
-			result = '';
-			categoryIsRequired = requiredCategory;
-		}, 2000);
-	};
+			message = ''
+			ignoreFormMessage = false
+			result = ''
+			categoryIsRequired = requiredCategory
+		}, 2000)
+	}
 
 	const clearForm = () => {
-		utils.shallowCopy(initialSnap, snap);
-		snap.authorId = data.locals.user.id;
+		utils.shallowCopy(initialSnap, snap)
+		snap.authorId = data.locals.user.id
 		// const els = ['id', 'title', 'content', 'categoryIds'];
 		// els.forEach((k) => {
 		// 	(document.querySelector(`input[name='${k}']`) as HTMLInputElement).value = '';
 		// });
 		// (document.querySelector(`input[name='published']`) as HTMLInputElement).checked = false;
-		setSelectedOptions([], categoryIsRequired);
-		utils.setColor('green');
-	};
+		setSelectedOptions([], categoryIsRequired)
+		utils.setColor('green')
+	}
 
 	const required = {
 		title: '',
 		content: '',
 		categoryIds: ''
-	};
+	}
 
 	const categoryList = (arr: number[]) => {
 		// @ts-expect-error
-		return arr.map((n) => data.categories[n - 1].name).join(', ');
-	};
+		return arr.map((n) => data.categories[n - 1].name).join(', ')
+	}
 
-	let selectedCategoryIds: () => string;
+	let selectedCategoryIds: () => string
 
 	/*
 		After processing the request (for example, logging the user in by setting a cookie),
@@ -78,84 +78,84 @@
 		the corresponding page and through $page.form app-wide until the next update.
 	*/
 	const enhancePost: SubmitFunction = ({ action, formData }) => {
-		message = '';
-		titleIsRequired = '';
-		ignoreFormMessage = false;
-		contentIsRequired = '';
+		message = ''
+		titleIsRequired = ''
+		ignoreFormMessage = false
+		contentIsRequired = ''
 
 		for (const key of Object.keys(required)) {
 			if (formData.get(key) == '') {
 				switch (key) {
 					case 'title':
-						titleIsRequired = 'Title is required';
-						break;
+						titleIsRequired = 'Title is required'
+						break
 					case 'content':
-						contentIsRequired = 'Content is required';
-						break;
+						contentIsRequired = 'Content is required'
+						break
 					case 'categoryIds':
-						categoryIsRequired = 'Category is required';
-						break;
+						categoryIsRequired = 'Category is required'
+						break
 					default:
-						break;
+						break
 				}
 			}
 		}
-		loading = true; // start spinner animation
+		loading = true // start spinner animation
 		if (action.search === '?/createPost') {
-			utils.setButtonVisible([btnCreate, btnUpdate, btnDelete]);
-			message = 'saving post...';
+			utils.setButtonVisible([btnCreate, btnUpdate, btnDelete])
+			message = 'saving post...'
 		} else if (action.search === '?/deletePost') {
-			message = 'deleting post...';
+			message = 'deleting post...'
 		} else if (action.search === '?/updatePost') {
-			message = 'updating post...';
+			message = 'updating post...'
 		}
 
 		return async ({ update }) => {
-			await update();
-			ignoreFormMessage = true;
+			await update()
+			ignoreFormMessage = true
 
 			if (action.search === '?/createPost') {
-				message = $page.status === 200 ? 'Post created' : 'create failed';
+				message = $page.status === 200 ? 'Post created' : 'create failed'
 			} else if (action.search === '?/deletePost') {
-				message = $page.status === 200 ? 'Post deleted' : 'delete failed';
+				message = $page.status === 200 ? 'Post deleted' : 'delete failed'
 			} else if (action.search === '?/updatePost') {
-				message = $page.status === 200 ? 'Post updated' : 'update failed';
+				message = $page.status === 200 ? 'Post updated' : 'update failed'
 			}
-			clearMessage();
-			invalidateAll();
-			utils.setButtonVisible([btnCreate, btnUpdate, btnDelete]);
-			clearForm();
-			loading = false; // stop spinner animation
-		};
-	};
+			clearMessage()
+			invalidateAll()
+			utils.setButtonVisible([btnCreate, btnUpdate, btnDelete])
+			clearForm()
+			loading = false // stop spinner animation
+		}
+	}
 
-	let boardBlock: HTMLDivElement;
-	let adminSelected: boolean;
+	let boardBlock: HTMLDivElement
+	let adminSelected: boolean
 	const userSelected = () => {
 		// if no admin is selected hide boardBlock if not hidden already
 		if (boardBlock.classList.contains('hidden')) {
 			if (adminSelected) {
-				boardBlock.classList.toggle('hidden');
+				boardBlock.classList.toggle('hidden')
 			}
 		} else {
 			if (!adminSelected) {
-				boardBlock.classList.toggle('hidden');
+				boardBlock.classList.toggle('hidden')
 			}
 		}
-	};
+	}
 
 	onMount(() => {
 		// if (data.postAuthors[0]) {
 		// 	utils.shallowCopy(data.postAuthors[0], snap);
 		// }
-		snap.authorId = authorId as string;
-		boardBlock.classList.toggle('hidden');
-		selectedUserId = data.user.id as string;
-		adminSelected = data.locals.user.role === 'ADMIN';
-	});
+		snap.authorId = authorId as string
+		boardBlock.classList.toggle('hidden')
+		selectedUserId = data.user.id as string
+		adminSelected = data.locals.user.role === 'ADMIN'
+	})
 
 	const postsAuthors = () => {
-		const arr: PAuthor[] = [];
+		const arr: PAuthor[] = []
 
 		data.postAuthors.forEach((post) => {
 			if (selectedUserId === post.authorId) {
@@ -170,7 +170,7 @@
 					lastName,
 					role,
 					author
-				} = post;
+				} = post
 				arr.push({
 					id,
 					title,
@@ -181,61 +181,61 @@
 					firstName: `${firstName}${role === 'ADMIN' ? 'T' : ''}`,
 					lastName,
 					author
-				});
+				})
 			}
-		});
+		})
 
-		return arr;
-	};
+		return arr
+	}
 
-	let setSelectedOptions: (arr: number[] | [], nameList: string) => void;
+	let setSelectedOptions: (arr: number[] | [], nameList: string) => void
 
 	const toUpdatePost = (postId: string) => {
-		const authorPost = data.postAuthors.filter((pa) => pa.id === postId)[0] as PostAuthor;
-		utils.shallowCopy(authorPost, snap);
-		const { published, categoryIds, title, content } = authorPost;
+		const authorPost = data.postAuthors.filter((pa) => pa.id === postId)[0] as PostAuthor
+		utils.shallowCopy(authorPost, snap)
+		const { published, categoryIds, title, content } = authorPost
 		// selectOptions(categoryIds);
 		const els = [
 			// { published: published },
 			{ title: title },
 			{ content: content },
 			{ categoryIds: categoryIds }
-		];
+		]
 
-		utils.setButtonVisible([btnUpdate, btnCreate, btnDelete]);
+		utils.setButtonVisible([btnUpdate, btnCreate, btnDelete])
 		// NOTE: in TypeScript Playground instead of using nested loops as we use below,
 		// the spread operators works, but here does not
 		// for (const [k,v] of Object.entries([...els])) { code here }
 		els.forEach((el) => {
 			for (const [k, v] of Object.entries(el)) {
-				(document.querySelector(`input[name='${k}']`) as HTMLInputElement).value = `${v}`;
+				;(document.querySelector(`input[name='${k}']`) as HTMLInputElement).value = `${v}`
 			}
-		});
-		(document.querySelector(`input[name='published']`) as HTMLInputElement).checked = published;
-		const numArr = utils.csvToNumArr(categoryIds);
-		setSelectedOptions(numArr, categoryList(numArr));
-	};
+		})
+		;(document.querySelector(`input[name='published']`) as HTMLInputElement).checked = published
+		const numArr = utils.csvToNumArr(categoryIds)
+		setSelectedOptions(numArr, categoryList(numArr))
+	}
 
 	const deletePost = (id: string) => {
 		// if (browser) {
-		(document.querySelector("input[name='id']") as HTMLInputElement).value = id;
-		btnDelete.click();
+		;(document.querySelector("input[name='id']") as HTMLInputElement).value = id
+		btnDelete.click()
 		// }
-	};
+	}
 
-	$: ({ postAuthors } = data);
-	$: formMessage = ignoreFormMessage ? '' : form?.message || '';
-	$: result = message || formMessage;
-	$: wrongUser = selectedUserId !== data.locals.user.id;
+	$: ({ postAuthors } = data)
+	$: formMessage = ignoreFormMessage ? '' : form?.message || ''
+	$: result = message || formMessage
+	$: wrongUser = selectedUserId !== data.locals.user.id
 
 	type TSnap = {
-		id: string;
-		authorId: string;
-		categoryIds: string;
-		title: string;
-		content: string;
-		published: boolean;
-	};
+		id: string
+		authorId: string
+		categoryIds: string
+		title: string
+		content: string
+		published: boolean
+	}
 	const initialSnap: TSnap = {
 		id: '',
 		authorId: '',
@@ -243,7 +243,7 @@
 		title: '',
 		content: '',
 		published: false
-	};
+	}
 	let snap: TSnap = {
 		id: '',
 		authorId: '',
@@ -251,28 +251,27 @@
 		title: '',
 		content: '',
 		published: false
-	};
+	}
 	export const snapshot: Snapshot = {
 		capture: () => {
-			return snap;
+			return snap
 		},
 		restore: (value) => {
-			snap = value;
+			snap = value
 		}
-	};
-	let mrPath = getContext('mrPath') as SvelteStore<string>;
+	}
+	let mrPath = getContext('mrPath') as SvelteStore<string>
 
 	onMount(() => {
-		utils.shallowCopy(initialSnap, snap);
-		snap.authorId = data.locals.user.id;
+		utils.shallowCopy(initialSnap, snap)
+		snap.authorId = data.locals.user.id
 		return () => {
 			// @ts-expect-error
-			mrPath.set($page.url.pathname);
-		};
-	});
+			mrPath.set($page.url.pathname)
+		}
+	})
 </script>
 
-<p>published {snap.published}</p>
 <svelte:head>
 	<title>Post</title>
 </svelte:head>
@@ -337,8 +336,8 @@
 				{/if}
 				<button
 					on:click|preventDefault={() => {
-						clearForm();
-						return false;
+						clearForm()
+						return false
 					}}>clear</button
 				>
 			</label>
@@ -353,13 +352,13 @@
 		</div>
 	</div>
 </div>
-<di>
+<div>
 	{#key postAuthors}
 		{#key selectedUserId}
 			<PostList postAuthors={postsAuthors()} {toUpdatePost} {deletePost} />
 		{/key}
 	{/key}
-</di>
+</div>
 
 <style lang="scss">
 	.board {

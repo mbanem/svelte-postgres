@@ -20,34 +20,42 @@
 	]
 	let navButtonObjects2: TNavButtonObject[] = [
 		{ position: 3, title: 'font_size', href: '/font_size' },
-		{ position: 4, title: 'news', href: '/news', condition: 'UNKNOWN' },
-		{ position: 5, title: 'pavlovci', href: '/bars/pavlovci', condition: 'UNKNOWN' },
+		{ position: 4, title: 'news', href: '/news', condition: 'VISITOR' },
+		{ position: 5, title: 'pavlovci', href: '/bars/pavlovci', condition: 'VISITOR' },
 		{
 			position: 6,
 			title: 'notifications',
 			href: '/bars/notifications',
-			condition: 'UNKNOWN'
+			condition: 'VISITOR'
 		},
 		// has to be '/bars/filter' as 'bars/filter' with no forward slash will in deeper
 		// level go to incorrect route
-		{ position: 7, title: 'filter', href: '/bars/filter', condition: 'UNKNOWN' }
+		{ position: 7, title: 'filter', href: '/bars/filter', condition: 'VISITOR' }
 	]
 
 	$: ({ locals } = data)
 </script>
 
-<NavContainer>
-	<NavBar navButtonObjects={navButtonObjects1} role={locals?.user?.role ?? 'UNKNOWN'} />
-	<!-- The css class nav-bar-form, defined in the <NavContainer, a component wrapper for <NavBar,
+<main>
+	<NavContainer>
+		<NavBar navButtonObjects={navButtonObjects1} role={locals?.user?.role ?? 'VISITOR'} />
+		<!-- The css class nav-bar-form, defined in the <NavContainer, a component wrapper for <NavBar,
 		should be wrapped by a <label> in order to make the whole form with a button responsive
 		to the mouse click and for cursor the be of type pointer over the whole structure
 	-->
-	<label>
-		<form class="nav-bar-form" method="POST" action="/logout">
-			<button type="submit">log out</button>
-		</form>
-	</label>
-	<NavBar navButtonObjects={navButtonObjects2} role={locals?.user?.role ?? 'UNKNOWN'} />
-</NavContainer>
+		<label>
+			<form class="nav-bar-form" method="POST" action="/logout">
+				<button type="submit">log out</button>
+			</form>
+		</label>
+		<NavBar navButtonObjects={navButtonObjects2} role={locals?.user?.role ?? 'VISITOR'} />
+	</NavContainer>
+</main>
 <!-- <pre style="font-size:11px;">data {JSON.stringify(data, null, 2)}</pre> -->
 <slot />
+
+<style lang="scss">
+	main {
+		margin-top: 0.5rem;
+	}
+</style>

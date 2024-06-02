@@ -13,11 +13,15 @@
 	]
 </script>
 
-<p>NavBar Page</p>
-
 <div class="wrapper">
 	<h2>The Two NavBars Page</h2>
 	<pre>
-      Following through book Up and Running SvelteKit
+      Following through the book "Up and Running SvelteKit"
   </pre>
 </div>
+
+<style lang="scss">
+	.wrapper {
+		margin: 2rem 0 0 3rem;
+	}
+</style>

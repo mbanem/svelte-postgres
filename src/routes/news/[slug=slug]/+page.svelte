@@ -1,26 +1,29 @@
-<script>
+<script lang="ts">
 	export let data
-	$: ({ users } = data)
-	$: attendees = 'attendee' + users.length === 1 ? 's' : ''
-	$: even = Math.random() > 0.5
-	let ordinal = 1
+	let setUsers = new Set<string>()
+	const usersArr = data.users.map((user) => `${user.firstName} ${user.lastName} -- ${user.role}`)
+	const rnd = (max: number) => {
+		return Math.floor(Math.random() * 1000) % max
+	}
+	const max = usersArr.length
+	let users = new Set<string>()
+	for (let i = 0; i < rnd(3 * max); i++) {
+		users.add(usersArr[rnd(max)] as string)
+	}
 </script>
 
 <div class="body">
 	<h1>Seminar Attendees</h1>
-	{#if users.length === 1}
-		<p>In total {users.length} attendee</p>
+	{#if users.size === 1}
+		<p>In total a single attendee</p>
 	{:else}
-		<p>In total {users.length} attendees</p>
+		<p>In total {users.size} attendees</p>
 	{/if}
 	<ul>
 		{#each users as user, ix}
-			{#if (even && ix % 2 === 0) || (!even && ix % 2 === 1)}
-				<li>
-					{user.firstName}
-					{user.lastName} as {user.role == 'USER' ? 'Visitor' : 'Administrator'}
-				</li>
-			{/if}
+			<li>
+				<span>{user}</span>
+			</li>
 		{/each}
 	</ul>
 	<a class="a-button" href="/news">back</a>
@@ -49,7 +52,13 @@
 		border: 1px solid transparent;
 		border-radius: 4px;
 		&:hover {
-			border-color: yellow;
+			border-color: lightgreen;
 		}
+	}
+	ul li span {
+		color: lightgreen;
+	}
+	p {
+		color: yellow;
 	}
 </style>

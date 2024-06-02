@@ -9,7 +9,7 @@ import type { Actions } from './$types'
 // 		expires: new Date(0)
 // 	})
 
-// 	locals.user = { id: '', first_name: '', last_name: '', role: 'UNKNOWN' }
+// 	locals.user = { id: '', first_name: '', last_name: '', role: 'VISITOR' }
 // 	// throw redirect(302, '/')
 // }) satisfies PageServerLoad
 
@@ -32,7 +32,7 @@ export const actions: Actions = {
 		// 	id: '',
 		// 	first_name: '',
 		// 	last_name: '',
-		// 	role: 'UNKNOWN'
+		// 	role: 'VISITOR'
 		// }
 		// await fetch('/')
 		throw redirect(302, '/')

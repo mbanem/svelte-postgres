@@ -1,7 +1,7 @@
 // See https://kit.svelte.dev/docs/types#app
 // for information about these interfaces
 declare global {
-	type Role = 'USER' | 'ADMIN' | 'UNKNOWN'
+	type Role = 'USER' | 'ADMIN' | 'VISITOR'
 	type TNavBar = {
 		navId: string
 		startIx: number
@@ -14,7 +14,7 @@ declare global {
 		ix: number // for label to point to checkbox
 		href: string // for goto statement
 		title: string // button title
-		condition: string // 'USER', 'ADMIN', 'UNKNOWN'
+		condition: string // 'USER', 'ADMIN', 'VISITOR'
 	}
 	type TXNavButton =
 		| TNavButton
@@ -192,7 +192,7 @@ declare global {
 	enum Role {
 		USER = 'USER',
 		ADMIN = 'ADMIN',
-		UNKNOWN = 'UNKNOWN'
+		VISITOR = 'VISITOR'
 	}
 
 	type Profile = {

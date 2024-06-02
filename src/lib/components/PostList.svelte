@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { Tooltip } from 'flowbite-svelte';
+	import { Tooltip } from 'flowbite-svelte'
 
-	export let postAuthors: PAuthor[];
-	export let deletePost: (id: string) => void;
-	export let toUpdatePost: (id: string) => void;
+	export let postAuthors: PAuthor[]
+	export let deletePost: (id: string) => void
+	export let toUpdatePost: (id: string) => void
 </script>
 
 <!-- <pre style="font-size:11px;">postAuthors {JSON.stringify(postAuthors, null, 2)}</pre> -->
@@ -91,13 +91,17 @@
 	}
 	.name {
 		position: sticky;
-		top: -2px;
+		top: -5px;
 		font-style: italic;
 		color: yellow;
 		font-size: 16px;
 		margin-bottom: 8px;
-		padding: 2px 1rem 0 1rem;
-		background-color: #3e3e3e; /*  $BACK-COLOR; */
+		height: 1.6rem;
+		padding: 4px 1rem 0 1rem;
+		background-color: black; // #3e3e3e;
+		opacity: 1;
+		z-index: 5;
+		/*  $BACK-COLOR; */
 		.count {
 			font-size: 12px;
 			margin-left: 1.5rem;

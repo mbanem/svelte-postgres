@@ -1,31 +1,31 @@
 <script lang="ts">
 	// https://svelte.dev/repl/ba7f569af4a44553b201a9efd8dc6ec2?version=4.2.14
-	import { page } from '$app/stores';
-	import { onMount, getContext } from 'svelte';
-	import Child from './Child.svelte';
-	let resizeChild: (msg: string) => void;
-	let randomNumber: () => number;
+	import { page } from '$app/stores'
+	import { onMount, getContext } from 'svelte'
+	import Child from './Child.svelte'
+	let resizeChild: (msg: string) => void
+	let randomNumber: () => number
 
 	const greeting = (msg: string) => {
-		g.innerText = msg;
-	};
+		g.innerText = msg
+	}
 	const onResize = (msg: string) => {
-		resizeChild(msg);
-	};
-	let rand: HTMLParagraphElement;
+		resizeChild(msg)
+	}
+	let rand: HTMLParagraphElement
 	const callRandom = () => {
-		rand.innerText = 'from child random: ' + String(randomNumber());
-	};
-	let p: HTMLParagraphElement;
-	let g: HTMLParagraphElement;
-	let mrPath = getContext('mrPath') as SvelteStore<string>;
+		rand.innerText = 'from child random: ' + String(randomNumber())
+	}
+	let p: HTMLParagraphElement
+	let g: HTMLParagraphElement
+	let mrPath = getContext('mrPath') as SvelteStore<string>
 
 	onMount(() => {
 		return () => {
 			// @ts-expect-error
-			mrPath.set($page.url.pathname);
-		};
-	});
+			mrPath.set($page.url.pathname)
+		}
+	})
 </script>
 
 <svelte:head>
@@ -37,32 +37,38 @@
 	with a message 'OK' displayed when user resize window
 -->
 <svelte:window on:resize={() => onResize('Window resized')} />
-<!-- resize is exported from child component and
+<main>
+	<!-- resize is exported from child component and
 		we bind child resize to parent variable
 		resizeChild, which we can call from parent
 		<Child bind:resize={to parent component}/>
 	-->
-<button on:click={() => onResize('Hello Filip')} class="resize">parent resize button</button>
-<br />
-<Child bind:resize={resizeChild} bind:getRandomNumber={randomNumber} callParent={greeting} />
-<p bind:this={g} class="info">waiting for greeting from child....</p>
-<p bind:this={p} class="info">App react on window resize</p>
-<hr style="width:35vw;margin-left:0;" />
-<!-- for parent to call child function do not use bind
+	<button on:click={() => onResize('Hello Filip')} class="resize">parent resize button</button>
+	<br />
+	<Child bind:resize={resizeChild} bind:getRandomNumber={randomNumber} callParent={greeting} />
+	<p bind:this={g} class="info">waiting for greeting from child....</p>
+	<p bind:this={p} class="info">App react on window resize</p>
+	<hr style="width:35vw;margin-left:0;" />
+	<!-- for parent to call child function do not use bind
 	as bind is used for child to call parent function
 -->
 
-<pre class="width:35vw;">clicking on resize or resizing the window itself will
+	<pre class="width:35vw;">clicking on resize or resizing the window itself will
 render here 'Hello Filip' or 'Window resized' respectively</pre>
-<hr style="width:35vw;margin-left:0;" />
+	<hr style="width:35vw;margin-left:0;" />
 
-<div class="random-container">
-	<p>call child function for random number</p>
-	<p bind:this={rand}>render here the random number</p>
-	<button on:click={callRandom}>parent child random button</button>
-</div>
+	<div class="random-container">
+		<p>call child function for random number</p>
+		<p bind:this={rand}>render here the random number</p>
+		<button on:click={callRandom}>parent child random button</button>
+	</div>
+</main>
 
 <style lang="scss">
+	main {
+		margin-top: 3rem;
+		margin-left: calc(80vw - 50%);
+	}
 	.resize {
 		color: skyblue;
 	}

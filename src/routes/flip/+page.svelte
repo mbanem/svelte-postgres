@@ -1,20 +1,20 @@
 <script lang="ts">
-	import { page } from '$app/stores';
-	import { onMount, getContext } from 'svelte';
-	import { tick } from 'svelte';
-	import { gsap } from 'gsap';
-	import Flip from 'gsap/dist/Flip';
-	import { error } from '@sveltejs/kit';
+	import { page } from '$app/stores'
+	import { onMount, getContext } from 'svelte'
+	import { tick } from 'svelte'
+	import { gsap } from 'gsap'
+	import Flip from 'gsap/dist/Flip'
+	import { error } from '@sveltejs/kit'
 
-	gsap.registerPlugin(Flip);
+	gsap.registerPlugin(Flip)
 
-	type Layout = 'stack' | 'grid';
-	let layout: Layout = 'stack';
+	type Layout = 'stack' | 'grid'
+	let layout: Layout = 'stack'
 
 	const flip = async () => {
-		const state = Flip.getState('.circle');
-		layout = layout === 'grid' ? 'stack' : 'grid';
-		await tick();
+		const state = Flip.getState('.circle')
+		layout = layout === 'grid' ? 'stack' : 'grid'
+		await tick()
 
 		Flip.from(state, {
 			duration: 0.8, // sec
@@ -23,20 +23,20 @@
 			stagger: -0.1,
 			spin: true,
 			ease: 'ease-out'
-		});
-	};
+		})
+	}
 	const makeError = () => {
-		throw error(420, 'Enhance your calm');
-	};
+		throw error(420, 'Enhance your calm')
+	}
 
-	let mrPath = getContext('mrPath') as SvelteStore<string>;
+	let mrPath = getContext('mrPath') as SvelteStore<string>
 
 	onMount(() => {
 		return () => {
 			// @ts-expect-error
-			mrPath.set($page.url.pathname);
-		};
-	});
+			mrPath.set($page.url.pathname)
+		}
+	})
 </script>
 
 <svelte:head>
@@ -60,16 +60,20 @@
 		{/each}
 	</div>
 </div>
-
-<pre>We cause error on purpose in order to show Custom Error Page
+<section>
+	<pre>We cause error on purpose in order to show Custom Error Page
 by submitting form with POST method to fake URL
 </pre>
-<form method="POST" action="?/nowhere">
-	<input type="hidden" value="make an error" />
-	<button type="submit">make error</button>
-</form>
+	<form method="POST" action="?/nowhere">
+		<input type="hidden" value="make an error" />
+		<button type="submit">make error</button>
+	</form>
+</section>
 
 <style lang="scss">
+	section {
+		margin-left: 4rem;
+	}
 	h3 {
 		position: absolute;
 		top: 20%;

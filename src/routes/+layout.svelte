@@ -11,7 +11,7 @@
 
 	// array of individual button props
 	const navButtonObjects: TNavButtonObject[] = [
-		{ position: '0', title: 'home', condition: 'UNKNOWN' },
+		{ position: '0', title: 'home', condition: 'VISITOR' },
 		{ position: '1', title: 'profile', href: '/profile', condition: 'USER' },
 		{ position: '2', title: 'post', condition: 'USER' },
 		{ position: '3', title: 'todo', condition: 'USER' },
@@ -19,11 +19,11 @@
 		{ position: '5', title: 'multiselect', href: '/multiselect', condition: 'USER' },
 		{ position: '6', title: 'users', href: '/users', condition: 'ADMIN' },
 		{ position: '7', title: 'admin', href: '/admin', condition: 'ADMIN' },
-		{ position: '8', title: 'flip', condition: 'UNKNOWN' },
-		{ position: '9', title: 'crossfade', condition: 'UNKNOWN' },
-		{ position: '10', title: 'communicate', condition: 'UNKNOWN' },
-		{ position: '11', title: 'parent_child', condition: 'UNKNOWN' },
-		{ position: '1t', title: 'bars', condition: 'UNKNOWN' }
+		{ position: '8', title: 'flip', condition: 'VISITOR' },
+		{ position: '9', title: 'crossfade', condition: 'VISITOR' },
+		{ position: '10', title: 'communicate', condition: 'VISITOR' },
+		{ position: '11', title: 'parent_child', condition: 'VISITOR' },
+		{ position: '1t', title: 'bars', condition: 'VISITOR' }
 	]
 
 	// establish presence of context for this page
@@ -55,7 +55,7 @@
 </script>
 
 <div class="wrapper">
-	<NavBar {navButtonObjects} role={locals?.user?.role ?? 'UNKNOWN'} />
+	<NavBar {navButtonObjects} role={locals?.user?.role ?? 'VISITOR'} />
 	<slot />
 	<div class="footer">
 		<p>ComRUNNER Software Inc 2024 All rights reserved</p>

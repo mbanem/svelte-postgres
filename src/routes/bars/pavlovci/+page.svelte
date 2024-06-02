@@ -7,9 +7,9 @@
 			title: 'NOTIFICATIONS',
 			href: '/bars/notifications',
 			cssRules: 'width:10rem;',
-			condition: 'UNKNOWN'
+			condition: 'VISITOR'
 		},
-		{ position: 1, title: 'PAVLOVCI', href: '/bars/pavlovci/village', condition: 'UNKNOWN' }
+		{ position: 1, title: 'PAVLOVCI', href: '/bars/pavlovci/village', condition: 'VISITOR' }
 	]
 </script>
 

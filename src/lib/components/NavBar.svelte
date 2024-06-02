@@ -8,7 +8,7 @@
 	import { selectItems } from '$lib/utils'
 
 	export let navButtonObjects: TXNavButtonObject[] = []
-	export let role: string = 'UNKNOWN' //Role = Role.UNKNOWN
+	export let role: string = 'VISITOR' //Role = Role.VISITOR
 	// nav bars are named by route.id + -Objects and are used
 	// to hold indices for buttons inside a nav bar so we have
 	// function for indices oix  where indices are bound for label
@@ -175,18 +175,18 @@
 			return !'|login|logout|'.includes(`|${btn.title.toLowerCase()}|`)
 		})
 		// set login,register or logout buttons
-		if (role === 'UNKNOWN') {
+		if (role === 'VISITOR') {
 			navButtonObjects.push({
 				position: '50',
 				title: 'login',
 				href: '/login',
-				condition: 'UNKNOWN'
+				condition: 'VISITOR'
 			})
 			navButtonObjects.push({
 				position: '51',
 				title: 'register',
 				href: '/register',
-				condition: 'UNKNOWN'
+				condition: 'VISITOR'
 			})
 		} else {
 			// USER includes ADMIN
@@ -204,7 +204,7 @@
 
 <nav class="nav" on:click={toggleActive} aria-hidden={true}>
 	{#each getButtonObjects(role) as button}
-		{#if button.condition === 'UNKNOWN' || button.condition === role || role === 'ADMIN'}
+		{#if button.condition === 'VISITOR' || button.condition === role || role === 'ADMIN'}
 			<label for={`cb${button.ix}`}>
 				<input type="checkbox" id={`cb${button.ix}`} class="hidden" />
 				<div
@@ -239,10 +239,10 @@
 		background-color: rgb(5, 5, 153);
 		color: lightgreen;
 		border-radius: 5px;
-		padding: 2px 0.5rem;
+		padding: 1px 0.5rem;
 		border: 1px solid transparent;
 		text-align: center;
-		min-width: 6rem;
+		min-width: 3rem;
 		height: 1.5rem;
 		font-size: 20px;
 		cursor: pointer;
