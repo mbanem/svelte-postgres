@@ -14,7 +14,7 @@ declare global {
 		ix: number // for label to point to checkbox
 		href: string // for goto statement
 		title: string // button title
-		condition: string // admin-only-, logged-in-only-
+		condition: string // 'USER', 'ADMIN', 'UNKNOWN'
 	}
 	type TXNavButton =
 		| TNavButton

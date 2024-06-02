@@ -1,17 +1,17 @@
 <script lang="ts">
-	export let person: Person;
-	export let city = '';
-	export let userAge: number;
+	export let person: Person
+	export let city = ''
+	export let userAge: number
 
 	const decrement = () => {
 		if (person.age > 1) {
-			person.age -= 1;
+			person.age -= 1
 		}
-	};
+	}
 </script>
 
 <div class="container">
-	<p>This is child block</p>
+	<p style="color:skyblue;">This is the child block</p>
 	<input type="text" placeholder="put the name here" bind:value={person.name} />
 	<br />
 	<label for="age">Person age</label>
@@ -36,7 +36,12 @@
 <style lang="scss">
 	.container {
 		padding: 0 1rem;
-		border: 1px solid gray;
+		border: 1px solid blue;
 		border-radius: 6px;
+		width: 80vw;
+	}
+	p {
+		margin: 0;
+		padding: 8px 0;
 	}
 </style>

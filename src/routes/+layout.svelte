@@ -16,7 +16,14 @@
 		{ position: '2', title: 'post', condition: 'USER' },
 		{ position: '3', title: 'todo', condition: 'USER' },
 		{ position: '4', title: 'news', condition: 'USER' },
-		{ position: '5', title: 'multiselect', href: '/multiselect', condition: 'USER' }
+		{ position: '5', title: 'multiselect', href: '/multiselect', condition: 'USER' },
+		{ position: '6', title: 'users', href: '/users', condition: 'ADMIN' },
+		{ position: '7', title: 'admin', href: '/admin', condition: 'ADMIN' },
+		{ position: '8', title: 'flip', condition: 'UNKNOWN' },
+		{ position: '9', title: 'crossfade', condition: 'UNKNOWN' },
+		{ position: '10', title: 'communicate', condition: 'UNKNOWN' },
+		{ position: '11', title: 'parent_child', condition: 'UNKNOWN' },
+		{ position: '1t', title: 'bars', condition: 'UNKNOWN' }
 	]
 
 	// establish presence of context for this page

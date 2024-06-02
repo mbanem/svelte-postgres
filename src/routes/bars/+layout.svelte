@@ -1,0 +1,53 @@
+<script lang="ts">
+	import { browser } from '$app/environment'
+	import type { LayoutData } from './$types'
+	import NavBar from '$components/NavBar.svelte'
+	import NavContainer from '$components/NavContainer.svelte'
+
+	export let data: LayoutData
+
+	let navButtonObjects1: TNavButtonObject[] = [
+		{ position: 0, title: 'home', href: '/' },
+		{ position: 1, title: 'login', href: '/login' },
+		{
+			position: 2,
+			title: 'todo',
+			href: '/todo',
+			cssRules: '',
+			onHover: '',
+			condition: 'USER'
+		}
+	]
+	let navButtonObjects2: TNavButtonObject[] = [
+		{ position: 3, title: 'font_size', href: '/font_size' },
+		{ position: 4, title: 'news', href: '/news', condition: 'UNKNOWN' },
+		{ position: 5, title: 'pavlovci', href: '/bars/pavlovci', condition: 'UNKNOWN' },
+		{
+			position: 6,
+			title: 'notifications',
+			href: '/bars/notifications',
+			condition: 'UNKNOWN'
+		},
+		// has to be '/bars/filter' as 'bars/filter' with no forward slash will in deeper
+		// level go to incorrect route
+		{ position: 7, title: 'filter', href: '/bars/filter', condition: 'UNKNOWN' }
+	]
+
+	$: ({ locals } = data)
+</script>
+
+<NavContainer>
+	<NavBar navButtonObjects={navButtonObjects1} role={locals?.user?.role ?? 'UNKNOWN'} />
+	<!-- The css class nav-bar-form, defined in the <NavContainer, a component wrapper for <NavBar,
+		should be wrapped by a <label> in order to make the whole form with a button responsive
+		to the mouse click and for cursor the be of type pointer over the whole structure
+	-->
+	<label>
+		<form class="nav-bar-form" method="POST" action="/logout">
+			<button type="submit">log out</button>
+		</form>
+	</label>
+	<NavBar navButtonObjects={navButtonObjects2} role={locals?.user?.role ?? 'UNKNOWN'} />
+</NavContainer>
+<!-- <pre style="font-size:11px;">data {JSON.stringify(data, null, 2)}</pre> -->
+<slot />

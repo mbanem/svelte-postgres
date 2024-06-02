@@ -1,3 +1,10 @@
-export function load() {
-	return { user: 'Filip Isakovic' };
-}
+import { db } from '$server/db'
+
+import type { PageServerLoad } from './$types'
+
+export const load = (async ({}) => {
+	const users = await db.user.findMany()
+	return {
+		users
+	}
+}) satisfies PageServerLoad

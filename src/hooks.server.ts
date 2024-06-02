@@ -19,7 +19,7 @@ export const handle: Handle = (async ({ event, resolve }) => {
 			lastName: '',
 			role: 'UNKNOWN'
 		}
-		// prohibit access to admin-only and logged-in-only allowed pages
+		// prohibit access to 'ADMIN', 'USER' allowed pages
 		if ('|fetch|news|store|comments|'.includes(`|${event.url.pathname.slice(1)}|`)) {
 			throw redirect(303, '/login')
 		}

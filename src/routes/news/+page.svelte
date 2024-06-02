@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { base } from '$app/paths'
-	import type { NewsArticle, NewsArticles, TNotification } from '$types/common'
+	import type { NewsArticle, NewsArticles, TNotification } from '$lib/types/common'
 
 	// root +layout.ts loaded notifications {count:number, items[]}
 	// and when called news +page.server.ts loaded articles so we
@@ -23,20 +23,24 @@
 				<!-- <p>slug {slug}</p> -->
 				<a href="{base}/news/{slug}">{title}</a>
 				<p class="content">{content}</p>
-				<p class="content">add "/{slug}" to base URL in address to open the news</p>
+				<p class="content-add">add "/{slug}" to base URL in address to open the news</p>
 			</li>
 		{/each}
 	</ul>
 </div>
 
 <style lang="scss">
-	.content {
+	.content,
+	.content-add {
 		color: lightgreen;
 		font-size: 22px;
 		padding: 0;
 		margin: 4px 0 8px 1rem;
 		width: 50vw;
 		margin-bottom: 1.5rem;
+	}
+	.content-add {
+		color: skyblue;
 	}
 	a {
 		font-style: italic;

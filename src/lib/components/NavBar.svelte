@@ -5,6 +5,7 @@
 	import { goto } from '$app/navigation'
 	import { getNavBars, getNavButtons } from '$utils/store'
 	import Error from '$routes/+error.svelte'
+	import { selectItems } from '$lib/utils'
 
 	export let navButtonObjects: TXNavButtonObject[] = []
 	export let role: string = 'UNKNOWN' //Role = Role.UNKNOWN
@@ -175,16 +176,21 @@
 		})
 		// set login,register or logout buttons
 		if (role === 'UNKNOWN') {
-			navButtonObjects.push({ position: '6', title: 'login', href: '/login', condition: 'UNKNOWN' })
 			navButtonObjects.push({
-				position: '7',
+				position: '50',
+				title: 'login',
+				href: '/login',
+				condition: 'UNKNOWN'
+			})
+			navButtonObjects.push({
+				position: '51',
 				title: 'register',
 				href: '/register',
 				condition: 'UNKNOWN'
 			})
 		} else {
 			// USER includes ADMIN
-			navButtonObjects.push({ position: '6', title: 'logout', href: '/logout', condition: 'USER' })
+			navButtonObjects.push({ position: '50', title: 'logout', href: '/logout', condition: 'USER' })
 		}
 	}
 	// return an array that contains objects
@@ -207,6 +213,7 @@
 					aria-hidden={true}
 				>
 					{button.title}
+					<!-- {role.slice(0, 2)} -->
 					<!--{button.condition.slice(0, 2)}-->
 				</div>
 			</label>
