@@ -23,7 +23,8 @@
 		{ position: '9', title: 'crossfade', condition: 'VISITOR' },
 		{ position: '10', title: 'communicate', condition: 'VISITOR' },
 		{ position: '11', title: 'parent_child', condition: 'VISITOR' },
-		{ position: '1t', title: 'bars', condition: 'VISITOR' }
+		{ position: '12', title: 'bars', condition: 'VISITOR' },
+		{ position: '13', title: 'caterpillar', condition: 'VISITOR' }
 	]
 
 	// establish presence of context for this page

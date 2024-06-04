@@ -1,5 +1,5 @@
-import { sveltekit } from '@sveltejs/kit/vite';
-import { UserConfig } from 'vite';
+import { sveltekit } from '@sveltejs/kit/vite'
+import { UserConfig } from 'vite'
 
 const config: UserConfig = {
 	plugins: [sveltekit()],
@@ -10,6 +10,6 @@ const config: UserConfig = {
 			}
 		}
 	}
-};
+}
 
-export default config;
+export default config

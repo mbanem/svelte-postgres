@@ -34,7 +34,23 @@ h2 {
 	letter-spacing: 0.1em;
 	text-shadow: 5px 5px 5px $border-color;
 }
-
+@mixin caterpillar-item($bgcolor) {
+	background-color: $bgcolor;
+	color: white;
+	border-radius: 5px;
+	border: 1px solid gray;
+	display: inline-block;
+	line-height: 50px;
+	text-align: center;
+	width: 50px;
+	&:hover {
+		color: yellow;
+		border-color: lightgreen;
+	}
+	&:target {
+		background-color: blue;
+	}
+}
 // a:any-link {
 // 	color: var(--LINK-COLOR);
 // 	text-decoration: none;
