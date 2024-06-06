@@ -7,30 +7,30 @@
 	export let data: LayoutData
 
 	let navButtonObjects1: TNavButtonObject[] = [
-		{ position: 0, title: 'home', href: '/' },
-		{ position: 1, title: 'login', href: '/login' },
-		{
-			position: 2,
-			title: 'todo',
-			href: '/todo',
-			cssRules: '',
-			onHover: '',
-			condition: 'USER'
-		}
+		{ position: 1, title: 'font_size', href: '/font_size' }
+		// { position: 0, title: 'home', href: '/' },
+		// { position: 1, title: 'login', href: '/login' },
+		// {
+		// 	position: 2,
+		// 	title: 'todo',
+		// 	href: '/todo',
+		// 	cssRules: '',
+		// 	onHover: '',
+		// 	condition: 'USER'
+		// }
 	]
 	let navButtonObjects2: TNavButtonObject[] = [
-		{ position: 3, title: 'font_size', href: '/font_size' },
-		{ position: 4, title: 'news', href: '/news', condition: 'VISITOR' },
-		{ position: 5, title: 'pavlovci', href: '/bars/pavlovci', condition: 'VISITOR' },
+		// { position: 4, title: 'news', href: '/news', condition: 'VISITOR' },
+		{ position: 2, title: 'pavlovci', href: '/bars/pavlovci', condition: 'VISITOR' },
 		{
-			position: 6,
+			position: 3,
 			title: 'notifications',
 			href: '/bars/notifications',
 			condition: 'VISITOR'
 		},
 		// has to be '/bars/filter' as 'bars/filter' with no forward slash will in deeper
 		// level go to incorrect route
-		{ position: 7, title: 'filter', href: '/bars/filter', condition: 'VISITOR' }
+		{ position: 4, title: 'filter', href: '/bars/filter', condition: 'VISITOR' }
 	]
 
 	$: ({ locals } = data)
@@ -44,8 +44,8 @@
 		to the mouse click and for cursor the be of type pointer over the whole structure
 	-->
 		<label>
-			<form class="nav-bar-form" method="POST" action="/logout">
-				<button type="submit">log out</button>
+			<form class="nav-bar-form" method="POST" action="?/caterpillar">
+				<button type="submit">caterpillar</button>
 			</form>
 		</label>
 		<NavBar navButtonObjects={navButtonObjects2} role={locals?.user?.role ?? 'VISITOR'} />

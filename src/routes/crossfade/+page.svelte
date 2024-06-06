@@ -90,7 +90,9 @@
 		</div>
 	</div>
 
-	<p style="margin:5rem 0 0 5rem;">Button is flying... {showTooltip}</p>
+	<p style="margin:5rem 0 0 5rem;">
+		Button is flying... <span style="color:yellow;font-size:18px;">{showTooltip}</span>
+	</p>
 </main>
 
 <style lang="scss">

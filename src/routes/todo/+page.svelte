@@ -1,146 +1,146 @@
 <script lang="ts">
-	import type { Snapshot } from './$types';
-	import type { PageData, ActionData } from './$types';
-	import type { SubmitFunction } from '@sveltejs/kit';
-	import { enhance } from '$app/forms';
-	import { invalidateAll } from '$app/navigation';
-	import { page } from '$app/stores'; // for $age.status code on actions
-	import CircleSpinner from '$lib/components/CircleSpinner.svelte';
-	import { Tooltip } from 'flowbite-svelte';
-	import { setColor, setButtonVisible } from '$lib/utils';
+	import type { Snapshot } from './$types'
+	import type { PageData, ActionData } from './$types'
+	import type { SubmitFunction } from '@sveltejs/kit'
+	import { enhance } from '$app/forms'
+	import { invalidateAll } from '$app/navigation'
+	import { page } from '$app/stores' // for $age.status code on actions
+	import CircleSpinner from '$lib/components/CircleSpinner.svelte'
+	import { Tooltip } from 'flowbite-svelte'
+	import { setColor, setButtonVisible } from '$lib/utils'
 
-	import PageTitleCombo from '$lib/components/PageTitleCombo.svelte';
-	import TodoList from '$lib/components/TodoList.svelte';
-	import { onMount, getContext, setContext } from 'svelte';
-	import type { Writable } from 'svelte/store';
-	import * as utils from '$lib/utils';
+	import PageTitleCombo from '$lib/components/PageTitleCombo.svelte'
+	import TodoList from '$lib/components/TodoList.svelte'
+	import { onMount, getContext, setContext } from 'svelte'
+	import type { Writable } from 'svelte/store'
+	import * as utils from '$lib/utils'
 
-	export let data: PageData; // from +page.server.ts load function
-	export let form: ActionData; // form?.messages from action methods in +page.server.ts
+	export let data: PageData // from +page.server.ts load function
+	export let form: ActionData // form?.messages from action methods in +page.server.ts
 
-	const prevPath: Writable<String> = getContext('previousPath');
+	const prevPath: Writable<String> = getContext('previousPath')
 	const beforeUnload = () => {
-		prevPath.set($page.url.pathname);
-	};
-	let loading: boolean;
-	let message = '';
+		prevPath.set($page.url.pathname)
+	}
+	let loading: boolean
+	let message = ''
 	// form?.message cannot be cleared by code but could be ignored when necessary
-	let ignoreFormMessage = false;
+	let ignoreFormMessage = false
 
-	$: setColor(form?.message ? (form.message.includes('successfully') ? 'green' : 'red') : 'green');
+	$: setColor(form?.message ? (form.message.includes('successfully') ? 'green' : 'red') : 'green')
 
 	// keep message displayed for several seconds
 	const clearMessage = () => {
 		setTimeout(() => {
-			message = '';
-			ignoreFormMessage = false;
-			result = '';
-		}, 2000);
-		setButtonVisible([btnCreate, btnUpdate]);
-	};
+			message = ''
+			ignoreFormMessage = false
+			result = ''
+		}, 2000)
+		setButtonVisible([btnCreate, btnUpdate])
+	}
 
 	// if form is filled with  data for update, but user chose other action, we
 	// clear the form input elements
 	const clearForm = () => {
-		setButtonVisible([btnCreate, btnUpdate]);
-		(document.querySelector("input[name='title']") as HTMLInputElement).value = '';
-		(document.querySelector("input[name='content']") as HTMLInputElement).value = '';
-		(document.querySelector("input[type='number']") as HTMLInputElement).value = '0';
-		titleIsRequired = contentIsRequired = '';
-		setColor('green');
-	};
+		setButtonVisible([btnCreate, btnUpdate])
+		;(document.querySelector("input[name='title']") as HTMLInputElement).value = ''
+		;(document.querySelector("input[name='content']") as HTMLInputElement).value = ''
+		;(document.querySelector("input[type='number']") as HTMLInputElement).value = '0'
+		titleIsRequired = contentIsRequired = ''
+		setColor('green')
+	}
 
-	let titleIsRequired = '';
-	let contentIsRequired = '';
+	let titleIsRequired = ''
+	let contentIsRequired = ''
 
 	// get params action for URL and formData to check on required fields
 	const enhanceTodo: SubmitFunction = ({ action, formData }) => {
-		titleIsRequired = '';
-		contentIsRequired = '';
-		ignoreFormMessage = false;
+		titleIsRequired = ''
+		contentIsRequired = ''
+		ignoreFormMessage = false
 		if (formData.get('title') === '') {
-			titleIsRequired = 'Title is required field';
+			titleIsRequired = 'Title is required field'
 		}
 		if (formData.get('content') === '') {
-			contentIsRequired = 'Content is required field';
+			contentIsRequired = 'Content is required field'
 		}
 
-		if (titleIsRequired || contentIsRequired) return;
+		if (titleIsRequired || contentIsRequired) return
 
 		// turn on spinner before form submit
-		loading = true;
+		loading = true
 		// show the intent of the action that follows
-		message = action.search === '?/addTodo' ? 'creating todo...' : 'updating todo...';
+		message = action.search === '?/addTodo' ? 'creating todo...' : 'updating todo...'
 
 		return async ({ update }) => {
-			await update();
+			await update()
 			if (action.search === '?/addTodo') {
-				message = $page.status === 200 ? 'todo created' : 'create failed';
+				message = $page.status === 200 ? 'todo created' : 'create failed'
 			} else if (action.search === '?/updateTodo') {
-				message = $page.status === 200 ? 'todo updated' : 'update failed';
+				message = $page.status === 200 ? 'todo updated' : 'update failed'
 			}
-			invalidateAll();
-			ignoreFormMessage = true;
-			loading = false; // turn the spinner off
-			setButtonVisible([btnCreate, btnUpdate]);
-		};
-	};
+			invalidateAll()
+			ignoreFormMessage = true
+			loading = false // turn the spinner off
+			setButtonVisible([btnCreate, btnUpdate])
+		}
+	}
 
 	const toggleCompleted = async (id: string) => {
-		loading = true;
+		loading = true
 		// if form fields are prepared for update but user
 		// select different action we clear the form fields
-		clearForm();
+		clearForm()
 		// instead of easier action in +page.server.ts we demonstrate
 		// here endpoint HTML remote communication via fetch
 		const response = await fetch(`/todo?id=${id}`, {
 			method: 'PATCH',
 			body: id
-		});
-		const data = await response.json();
-		loading = false;
+		})
+		const data = await response.json()
+		loading = false
 		// setting message will dynamically set result, which in turn will show message
 		// for several seconds and then clear it out
-		message = data.toggled ? 'toggled successfully' : data.message ?? 'toggle failed';
+		message = data.toggled ? 'toggled successfully' : data.message ?? 'toggle failed'
 
 		if (data.toggled) {
 			uTodos = (uTodos as UTodos).map((todo) => {
 				if (todo.todoId === id) {
-					todo.completed = !todo.completed;
+					todo.completed = !todo.completed
 				}
-				return todo;
-			});
+				return todo
+			})
 		}
-	};
+	}
 
 	const deleteTodo = async (id: string) => {
-		loading = true;
-		message = 'deleting todo...';
-		clearForm();
+		loading = true
+		message = 'deleting todo...'
+		clearForm()
 		const response = await fetch(`/todo?id=${id}`, {
 			method: 'DELETE',
 			body: id
-		});
-		const result = await response.json();
-		loading = false;
+		})
+		const result = await response.json()
+		loading = false
 		// setting message will dynamically set result, which in turn will show message
 		// for several seconds and then clear it out
-		message = result.deleted ? 'deleted successfully' : 'delete failed';
+		message = result.deleted ? 'deleted successfully' : 'delete failed'
 		if (result.deleted) {
-			uTodos = uTodos.filter((uTodo: UTodo) => uTodo.todoId !== id);
+			uTodos = uTodos.filter((uTodo: UTodo) => uTodo.todoId !== id)
 		}
-	};
+	}
 
-	let todoIdEl: HTMLInputElement;
+	let todoIdEl: HTMLInputElement
 	const prepareDataForEdit = (todoId: string) => {
-		const uTodo = data.uTodos.filter((uTodo) => uTodo.todoId === todoId)[0] as UTodo;
+		const uTodo = data.uTodos.filter((uTodo) => uTodo.todoId === todoId)[0] as UTodo
 		// prevent ADMIN to update others todos
-		selectedUserId = uTodo.id as string;
-		snap.id = uTodo.todoId;
-		snap.authorId = uTodo.id;
-		snap.title = uTodo.title;
-		snap.content = uTodo.content;
-		snap.priority = Number(uTodo.priority);
+		selectedUserId = uTodo.id as string
+		snap.id = uTodo.todoId
+		snap.authorId = uTodo.id
+		snap.title = uTodo.title
+		snap.content = uTodo.content
+		snap.priority = Number(uTodo.priority)
 		// todoIdEl.value = uTodo.todoId as string;
 		// (document.querySelector("input[name='userId']") as HTMLInputElement).value = uTodo.id as string;
 		// (document.querySelector("input[name='title']") as HTMLInputElement).value =
@@ -150,29 +150,29 @@
 		// (document.querySelector("input[name='priority']") as HTMLInputElement).value = String(
 		// 	uTodo.priority
 		// );
-		setButtonVisible([btnUpdate, btnCreate]);
-	};
+		setButtonVisible([btnUpdate, btnCreate])
+	}
 
 	// updatePrepared say data is copied into the form elements
 	// and should be cleared if action other than click on the
 	// update button is taken
-	let updatePrepared = false;
-	let btnCreate: HTMLButtonElement;
-	let btnUpdate: HTMLButtonElement;
-	let theForm: HTMLFormElement;
+	let updatePrepared = false
+	let btnCreate: HTMLButtonElement
+	let btnUpdate: HTMLButtonElement
+	let theForm: HTMLFormElement
 	const prepareUpdate = async (todoId: string) => {
-		prepareDataForEdit(todoId);
-		updatePrepared = true;
-	};
+		prepareDataForEdit(todoId)
+		updatePrepared = true
+	}
 
-	$: formMessage = ignoreFormMessage ? '' : form?.message ?? '';
+	$: formMessage = ignoreFormMessage ? '' : form?.message ?? ''
 	// setting result will call showMessage and this one will setTimeout
 	// to clear the message after several seconds
-	$: result = message || formMessage;
-	$: ({ uTodos, user } = data);
+	$: result = message || formMessage
+	$: ({ uTodos, user } = data)
 
-	let selectedUserId = '';
-	let authorId = data?.user?.id;
+	let selectedUserId = ''
+	let authorId = data?.user?.id
 
 	let snap: TodoFormData = {
 		id: '',
@@ -180,16 +180,16 @@
 		title: '',
 		content: '',
 		priority: 0
-	};
+	}
 	export const snapshot: Snapshot<TodoFormData> = {
 		capture: () => {
-			return snap;
+			return snap
 		},
 		restore: (value) => {
-			snap = value;
+			snap = value
 		}
-	};
-	let mrPath = getContext('mrPath') as SvelteStore<string>;
+	}
+	let mrPath = getContext('mrPath') as SvelteStore<string>
 
 	// const todoUserToSnap = (tUser: UTodo, snap: TodoFormData) => {
 	// 	snap.id = tUser.todoId;
@@ -200,15 +200,15 @@
 	// };
 	onMount(() => {
 		if (selectedUserId !== data.locals.user.id) {
-			return;
+			return
 		}
-		const tUser = utils.selectItems<UTodo>('id', selectedUserId, data.uTodos);
-		snap.authorId = selectedUserId;
+		const tUser = utils.selectRecordItems<UTodo>('id', selectedUserId, data.uTodos)
+		snap.authorId = selectedUserId
 		return () => {
 			// @ts-expect-error
-			mrPath.set($page.url.pathname);
-		};
-	});
+			mrPath.set($page.url.pathname)
+		}
+	})
 </script>
 
 <svelte:window on:beforeunload={beforeUnload} />

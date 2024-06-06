@@ -5,7 +5,7 @@
 	import { goto } from '$app/navigation'
 	import { getNavBars, getNavButtons } from '$utils/store'
 	import Error from '$routes/+error.svelte'
-	import { selectItems } from '$lib/utils'
+	import { selectRecordItems } from '$lib/utils'
 
 	export let navButtonObjects: TXNavButtonObject[] = []
 	export let role: string = 'VISITOR' //Role = Role.VISITOR
@@ -170,6 +170,7 @@
 	// /+layout.svelte should define navigation buttons but it does not receive
 	// user role on login or logout so navigation is defined here instead
 	const addLogButton = (role: string) => {
+		if ($page.route.id?.startsWith('/bars')) return
 		// clear previous login or logout button
 		navButtonObjects = navButtonObjects.filter((btn) => {
 			return !'|login|logout|'.includes(`|${btn.title.toLowerCase()}|`)

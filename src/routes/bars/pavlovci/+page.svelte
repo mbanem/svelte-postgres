@@ -2,14 +2,14 @@
 	import NavBar from '$components/NavBar.svelte'
 	import { page } from '$app/stores'
 	const navButtonObjects: TXNavButtonObject[] = [
-		{
-			position: 0,
-			title: 'NOTIFICATIONS',
-			href: '/bars/notifications',
-			cssRules: 'width:10rem;',
-			condition: 'VISITOR'
-		},
-		{ position: 1, title: 'PAVLOVCI', href: '/bars/pavlovci/village', condition: 'VISITOR' }
+		// {
+		// 	position: 0,
+		// 	title: 'NOTIFICATIONS',
+		// 	href: '/bars/notifications',
+		// 	cssRules: 'width:10rem;',
+		// 	condition: 'VISITOR'
+		// },
+		{ position: 0, title: 'PAVLOVCI', href: '/bars/pavlovci/village', condition: 'VISITOR' }
 	]
 </script>
 
