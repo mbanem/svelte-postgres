@@ -101,9 +101,9 @@ const isKeyOf = <T extends Object>(key: keyof T, obj: T): key is keyof T => {
 	return key in obj
 }
 
-const _shallowCopy = <S, T extends Object>(source: S, target: T): T => {
+const _shallowCopy = <S extends Object, T extends S>(source: S, target: T): T => {
 	for (const k of Object.keys(target)) {
-		if (isKeyOf<S>(k as keyof T, target)) {
+		if (isKeyOf<S>(k as keyof S, target)) {
 			// @ts-expect-error
 			target[k] = source[k as keyof T]
 		}

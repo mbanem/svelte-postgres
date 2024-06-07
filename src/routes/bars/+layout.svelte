@@ -44,14 +44,18 @@
 		to the mouse click and for cursor the be of type pointer over the whole structure
 	-->
 		<label>
-			<form class="nav-bar-form" method="POST" action="?/caterpillar">
-				<button type="submit">caterpillar</button>
+			<form class="nav-bar-form" method="POST" action="/?/register">
+				<button type="submit">register</button>
 			</form>
 		</label>
 		<NavBar navButtonObjects={navButtonObjects2} role={locals?.user?.role ?? 'VISITOR'} />
 	</NavContainer>
 </main>
 <!-- <pre style="font-size:11px;">data {JSON.stringify(data, null, 2)}</pre> -->
+<pre>
+		Register button is here to show using a hidden form
+		with the submit button inside the navigation bar
+</pre>
 <slot />
 
 <style lang="scss">

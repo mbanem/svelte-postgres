@@ -1,5 +1,6 @@
 <script lang="ts">
 	import gsap from 'gsap'
+	import { onMount } from 'svelte'
 	import { ScrollTrigger } from 'gsap/ScrollTrigger'
 	gsap.registerPlugin(ScrollTrigger)
 
@@ -35,32 +36,91 @@
 			animation(`.${cn}`)
 		})
 	}
+
+	// stagger block
+	let boxes: NodeListOf<HTMLDivElement>
+	const animateOut = () => {
+		gsap.to('.boxS', {
+			duration: 0.5,
+			opacity: 0,
+			y: -300,
+			stagger: 0.1,
+			ease: 'back.in'
+		})
+		// backButton.classList.toggle('hidden')
+	}
+	let backButton: HTMLButtonElement
+	const animateBack = () => {
+		// backButton.classList.toggle('hidden')
+		gsap.to('.boxS', {
+			duration: 0.5,
+			opacity: 1,
+			y: 300,
+			stagger: 0.1,
+			ease: 'back.in'
+		})
+	}
+	onMount(() => {
+		boxes = document.querySelectorAll('.boxS')
+		// animateBack()
+	})
 </script>
 
-<div class="buttons">
-	<p>Animation starts when square come in the view -- when it becomes visible:</p>
-	<button on:click={animateAll}>animate all</button>
-	<p>Animate square and scroll to make it visible to trigger the animation</p>
-	<br />
-	{#each Object.keys(params) as cn}
-		<button on:click={() => animation(`.${cn}`)}>{cn}</button>
-		<!-- <button on:click={() => animation('.b')}>b</button>
-	<button on:click={() => animation('.c')}>c</button>
-	<button on:click={() => animation('.d')}>d</button> -->
-	{/each}
-</div>
-
+<!-- === BEGIN squares in separate pages ====
+    so we have to scroll and bring them
+    into view in order to trigger the animation
+-->
 <div class="container">
-	{#each Object.keys(params) as cn}
-		<div class={`box ${cn}`} on:click={animate} aria-hidden={true}>{cn.toUpperCase()}</div>
-	{/each}
-	<!-- <div class="box b" on:click={animate} aria-hidden={true}>b</div>
-	<div class="box c" on:click={animate} aria-hidden={true}>c</div>
-	<div class="box d" on:click={animate} aria-hidden={true}>d</div> -->
+	<div class="buttons">
+		<p>Animation starts when square come in the view -- when it becomes visible:</p>
+		<button on:click={animateAll}>animate all</button>
+		<p>Animate square and scroll to make it visible to trigger the animation</p>
+		<br />
+		<!-- individual buttons on the left in grid to animate a,b,c or d -->
+		{#each Object.keys(params) as cn}
+			<button on:click={() => animation(`.${cn}`)}>{cn}</button>
+		{/each}
+		<!-- A.Back.C and D squares that do animations -->
+		{#each Object.keys(params) as cn}
+			<div class={`box ${cn}`} on:click={animate} aria-hidden={true}>{cn.toUpperCase()}</div>
+		{/each}
+	</div>
+	<div class="wrapper" on:click={animateOut} aria-hidden={true}>
+		<h3>Click a box to transition out</h3>
+		<button bind:this={backButton} on:click={animateBack}>animate back</button>
+		<div class="boxS green">Green</div>
+		<div class="boxS purple">Purple</div>
+		<div class="boxS orange">Orange</div>
+		<div class="boxS tomato">Tomato</div>
+		<div class="boxS rebeccapurple">RebeccaPurple</div>
+	</div>
 </div>
 
 <style lang="scss">
 	@use 'sass:list';
+
+	// as is ti used for class names we keep colors as strings
+	$cls: green, purple, orange, tomato, rebeccapurple;
+	.boxS {
+		color: white;
+		width: 5rem;
+		height: 5rem;
+		border: 3px solid gray;
+		border-radius: 6px;
+		margin-left: 3rem;
+		text-align: center;
+		line-height: 5rem;
+	}
+	@for $j from 1 through 5 {
+		.#{'' + list.nth($cls,$j)} {
+			// @extend .boxS;
+			background-color: list.nth($cls, $j);
+		}
+	}
+	.hidden {
+		display: none;
+	}
+	// basic class for A,B,C and D squares for the left side of grid for animations
 	.e {
 		width: 6rem;
 		height: 6rem;
@@ -69,41 +129,52 @@
 		line-height: 6rem;
 		border: 4px solid gray;
 		border-radius: 1rem;
+		margin: 1rem 0 70vh 2rem;
 	}
 	$colors: navy, brown, darkgreen, tomato;
-	$class: '.a', '.b', '.c', '.d';
+	$class-name: '.a', '.b', '.c', '.d';
 	@for $i from 1 through 4 {
-		#{list.nth($class,$i)} {
+		#{list.nth($class-name,$i)} {
 			@extend .e;
 			background-color: list.nth($colors, $i);
 			color: white;
+			@if $class-name != 'a' {
+				grid-column: span 2;
+			}
 		}
 	}
 	p {
 		color: lightgreen;
 	}
-	// .b {
-	// 	background-color: navy;
-	// 	color: white
-	// }
-	// .c {
-	// 	background-color: darkgreen;
-	// 	color: white;
-	// }
-	// .d {
-	// 	background-color: tomato;
-	// 	color: black;
-	// 	margin-bottom: 3rem;
-	// }
 	.container {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		margin-top: 1rem;
+		width: 80vw;
+	}
+	.wrapper {
 		display: flex;
 		flex-direction: column;
-		gap: 90vh;
+		gap: 5px;
 		margin-left: 8rem;
+		border: 1px solid gray;
+		border-radius: 1rem;
+		width: 100%;
+		height: 85vh;
+		padding-left: 1rem;
 	}
+	// .stagger-block {
+	// 	border: 1px solid gray;
+	// 	border-radius: 1rem;
+	// 	width: 40vw;
+	// }
 	.buttons {
 		display: block;
-		margin: 1rem 0 1rem 4rem;
+		border: 1px solid gray;
+		border-radius: 1rem;
+		width: 100%;
+		height: 85vh;
+		// margin: 1rem 0 1rem 4rem;
 		button:nth-child(1) {
 			display: block;
 			margin: 8px 0;

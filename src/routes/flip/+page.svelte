@@ -45,29 +45,27 @@
 
 <!-- <svelte:window on:click={flip} /> -->
 <main>
-	<div>
-		<h3 class="click-info">Click on a circle to FLIP</h3>
-		<div class="container">
-			<div
-				data-layout={layout}
-				on:click={flip}
-				on:keydown={flip}
-				role="button"
-				tabindex="0"
-				aria-label="press a key to flip"
-			>
-				{#each { length: 9 } as circle, id}
-					<img class="circle" src="/assets/P{id}-100x100.jpg" alt="" />
-				{/each}
-			</div>
+	<h3 class="click-info">Click on a circle to FLIP</h3>
+	<div class="container">
+		<div
+			data-layout={layout}
+			on:click={flip}
+			on:keydown={flip}
+			role="button"
+			tabindex="0"
+			aria-label="press a key to flip"
+		>
+			{#each { length: 9 } as circle, id}
+				<img class="circle" src="/assets/P{id}-100x100.jpg" alt="" />
+			{/each}
 		</div>
-		<div class="slider">
-			<div class="item item-5">5</div>
-			<div class="item item-4">4</div>
-			<div class="item item-3">3</div>
-			<div class="item item-2">2</div>
-			<div class="item item-1">1</div>
-		</div>
+	</div>
+	<div class="slider">
+		<div class="item item-5">5</div>
+		<div class="item item-4">4</div>
+		<div class="item item-3">3</div>
+		<div class="item item-2">2</div>
+		<div class="item item-1">1</div>
 	</div>
 </main>
 <section>
@@ -81,6 +79,24 @@
 </section>
 
 <style lang="scss">
+	@use 'sass:list';
+	$colors: 'green', 'orange', 'purple', 'navy', 'tomato';
+	.item-base {
+		width: 4rem;
+		height: 4rem;
+		color: white;
+		font-size: 25px;
+		text-align: center;
+		line-height: 4rem;
+		border: 4px solid gray;
+		border-radius: 8px;
+	}
+	@for $i from 1 through 5 {
+		.item-#{$i} {
+			@extend .item-base;
+			background-color: list.nth($colors, $i);
+		}
+	}
 	main {
 		display: grid;
 		grid-template-columns: 1fr 1fr;
