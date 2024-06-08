@@ -2,6 +2,7 @@
 	import gsap from 'gsap'
 	import { onMount } from 'svelte'
 	import { ScrollTrigger } from 'gsap/ScrollTrigger'
+	import { capitalize } from '$utils/helpers'
 	gsap.registerPlugin(ScrollTrigger)
 
 	let position = 0
@@ -37,6 +38,13 @@
 		})
 	}
 
+	/*
+		To “tween” simply means to move between two values over a stretch of time,
+		applying some effect to start and end-points. Like all things in programming
+		you provide meaning to the value by using it for something.
+		All tweening does is to move between A and B using a special formula.
+	*/
+
 	// stagger block
 	let boxes: NodeListOf<HTMLDivElement>
 	const animateOut = () => {
@@ -47,11 +55,11 @@
 			stagger: 0.1,
 			ease: 'back.in'
 		})
-		// backButton.classList.toggle('hidden')
+		backButton.classList.toggle('hidden')
 	}
 	let backButton: HTMLButtonElement
 	const animateBack = () => {
-		// backButton.classList.toggle('hidden')
+		backButton.classList.toggle('hidden')
 		gsap.to('.boxS', {
 			duration: 0.5,
 			opacity: 1,
@@ -87,12 +95,10 @@
 	</div>
 	<div class="wrapper" on:click={animateOut} aria-hidden={true}>
 		<h3>Click a box to transition out</h3>
-		<button bind:this={backButton} on:click={animateBack}>animate back</button>
-		<div class="boxS green">Green</div>
-		<div class="boxS purple">Purple</div>
-		<div class="boxS orange">Orange</div>
-		<div class="boxS tomato">Tomato</div>
-		<div class="boxS rebeccapurple">RebeccaPurple</div>
+		<button bind:this={backButton} on:click={animateBack} class="hidden">animate back</button>
+		{#each ['green', 'purple', 'orange', 'tomato', 'rebeccapurple'] as colorName}
+			<div class="boxS {colorName}">{capitalize(colorName)}</div>
+		{/each}
 	</div>
 </div>
 
@@ -107,7 +113,7 @@
 		height: 5rem;
 		border: 3px solid gray;
 		border-radius: 6px;
-		margin-left: 3rem;
+		margin-left: 1rem;
 		text-align: center;
 		line-height: 5rem;
 	}
@@ -161,7 +167,7 @@
 		border-radius: 1rem;
 		width: 100%;
 		height: 85vh;
-		padding-left: 1rem;
+		padding-left: 4rem;
 	}
 	// .stagger-block {
 	// 	border: 1px solid gray;

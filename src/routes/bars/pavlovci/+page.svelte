@@ -9,7 +9,8 @@
 		// 	cssRules: 'width:10rem;',
 		// 	condition: 'VISITOR'
 		// },
-		{ position: 0, title: 'PAVLOVCI', href: '/bars/pavlovci/village', condition: 'VISITOR' }
+		{ position: 0, title: 'PAVLOVCI', href: '/bars/pavlovci/village', condition: 'VISITOR' },
+		{ position: 1, title: 'GSAP', href: '/bars/pavlovci/gsap', condition: 'VISITOR' }
 	]
 </script>
 
