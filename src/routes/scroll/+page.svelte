@@ -1,6 +1,6 @@
 <script lang="ts">
-	import gsap from 'gsap'
 	import { onMount } from 'svelte'
+	import gsap from 'gsap'
 	import { ScrollTrigger } from 'gsap/ScrollTrigger'
 	import { capitalize } from '$utils/helpers'
 	gsap.registerPlugin(ScrollTrigger)
@@ -44,34 +44,29 @@
 		you provide meaning to the value by using it for something.
 		All tweening does is to move between A and B using a special formula.
 	*/
+	let timeline: gsap.core.Timeline
 
 	// stagger block
-	let boxes: NodeListOf<HTMLDivElement>
 	const animateOut = () => {
-		gsap.to('.boxS', {
-			duration: 0.5,
-			opacity: 0,
-			y: -300,
-			stagger: 0.1,
-			ease: 'back.in'
-		})
-		backButton.classList.toggle('hidden')
-	}
-	let backButton: HTMLButtonElement
-	const animateBack = () => {
-		backButton.classList.toggle('hidden')
-		gsap.to('.boxS', {
-			duration: 0.5,
-			opacity: 1,
-			y: 300,
-			stagger: 0.1,
-			ease: 'back.in'
-		})
+		timeline
+			.to('.boxS', {
+				opacity: 0,
+				y: -300,
+				stagger: 0.3,
+				ease: 'back.in'
+			})
+			.to('.button', {
+				opacity: 1,
+				rotation: 360,
+				ease: 'back.in'
+			})
 	}
 	onMount(() => {
-		boxes = document.querySelectorAll('.boxS')
-		// animateBack()
+		timeline = gsap.timeline({ defaults: { duration: 1 } })
 	})
+	const reverse = () => {
+		timeline.reverse()
+	}
 </script>
 
 <!-- === BEGIN squares in separate pages ====
@@ -95,7 +90,7 @@
 	</div>
 	<div class="wrapper" on:click={animateOut} aria-hidden={true}>
 		<h3>Click a box to transition out</h3>
-		<button bind:this={backButton} on:click={animateBack} class="hidden">animate back</button>
+		<button id="rev" on:click={reverse} class="button">animate back</button>
 		{#each ['green', 'purple', 'orange', 'tomato', 'rebeccapurple'] as colorName}
 			<div class="boxS {colorName}">{capitalize(colorName)}</div>
 		{/each}
@@ -116,6 +111,7 @@
 		margin-left: 1rem;
 		text-align: center;
 		line-height: 5rem;
+		cursor: pointer;
 	}
 	@for $j from 1 through 5 {
 		.#{'' + list.nth($cls,$j)} {
@@ -123,9 +119,10 @@
 			background-color: list.nth($cls, $j);
 		}
 	}
-	.hidden {
-		display: none;
+	.button {
+		opacity: 0;
 	}
+
 	// basic class for A,B,C and D squares for the left side of grid for animations
 	.e {
 		width: 6rem;

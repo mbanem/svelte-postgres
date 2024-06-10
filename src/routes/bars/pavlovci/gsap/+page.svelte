@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { Timeline } from 'flowbite-svelte'
 	import { gsap } from 'gsap'
 	import { onMount } from 'svelte'
 
@@ -38,7 +37,6 @@
 			.fromTo(
 				'.button',
 				{
-					duration: 2,
 					opacity: 0,
 					scale: 0,
 					rotation: 720,
@@ -103,6 +101,7 @@
 		// flex: 0 0 2rem;
 		font-size: 20px;
 		border: 2px solid yellow;
+		// opacity: 0;
 	}
 	.sidebar {
 		align-self: stretch;
