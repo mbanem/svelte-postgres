@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { onMount } from 'svelte'
+	// import { onMount } from 'svelte'
 	import gsap from 'gsap'
 	import { ScrollTrigger } from 'gsap/ScrollTrigger'
-	import { capitalize } from '$utils/helpers'
+	import { capitalize, setButtonVisible } from '$utils/helpers'
 	gsap.registerPlugin(ScrollTrigger)
 
 	let position = 0
@@ -47,7 +47,19 @@
 	let timeline: gsap.core.Timeline
 
 	// stagger block
+	// NOTE: creating timeline i  onMount after timeline.reverse()
+	// leave timeline unresponsive, so we create it over and over
+	// inside animateOut. As it is in <button on:click scope it can
+	// accept the reverse() call
+
+	// toggle hidden is crucial for allowing the reverse button to function
 	const animateOut = () => {
+		setTimeout(() => {
+			document.querySelector('.button')?.classList.toggle('hidden')
+		}, 2500)
+		timeline = gsap.timeline({
+			defaults: { duration: 1 }
+		})
 		timeline
 			.to('.boxS', {
 				opacity: 0,
@@ -55,17 +67,17 @@
 				stagger: 0.3,
 				ease: 'back.in'
 			})
-			.to('.button', {
-				opacity: 1,
-				rotation: 360,
-				ease: 'back.in'
-			})
-	}
-	onMount(() => {
-		timeline = gsap.timeline({ defaults: { duration: 1 } })
-	})
-	const reverse = () => {
-		timeline.reverse()
+			.fromTo(
+				'.button',
+				{
+					opacity: 0,
+					rotation: 360,
+					ease: 'back.in'
+				},
+				{
+					opacity: 1
+				}
+			)
 	}
 </script>
 
@@ -90,7 +102,7 @@
 	</div>
 	<div class="wrapper" on:click={animateOut} aria-hidden={true}>
 		<h3>Click a box to transition out</h3>
-		<button id="rev" on:click={reverse} class="button">animate back</button>
+		<button on:click={() => timeline.reverse()} class="button hidden">animate</button>
 		{#each ['green', 'purple', 'orange', 'tomato', 'rebeccapurple'] as colorName}
 			<div class="boxS {colorName}">{capitalize(colorName)}</div>
 		{/each}
@@ -100,6 +112,9 @@
 <style lang="scss">
 	@use 'sass:list';
 
+	.hidden {
+		display: none;
+	}
 	// as is ti used for class names we keep colors as strings
 	$cls: green, purple, orange, tomato, rebeccapurple;
 	.boxS {
