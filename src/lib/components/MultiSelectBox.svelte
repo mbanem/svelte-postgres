@@ -1,65 +1,67 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import * as utils from '$lib/utils';
-	export let categories: Category[];
-	export let selectedCategoryIds;
-	const pleaseSelect = 'Please select corresponding categories';
-	export let categoryIsRequired = pleaseSelect;
+	import { onMount } from 'svelte'
+	import * as utils from '$lib/utils'
+	export let categories: Category[]
+	export let selectedCategoryIds
+	const pleaseSelect = 'Please select corresponding categories'
+	export let categoryIsRequired = pleaseSelect
 
-	let selectedOptions: HTMLParagraphElement;
+	let selectedOptions: HTMLParagraphElement
 	// cannot be const as the setSelectedOptions rebuilds them via new Set()
-	let selectedIds = new Set<string>();
-	let selectedNames = new Set<string>();
+	let selectedIds = new Set<string>()
+	let selectedNames = new Set<string>()
 
 	export const setSelectedOptions = (arr: number[], selOptions: string) => {
-		selectedIds = new Set(arr.map((n) => String(n)));
-		selectedNames = new Set(selOptions.split(','));
+		selectedIds = new Set(arr.map((n) => String(n)))
+		selectedNames = new Set(selOptions.split(','))
 		if (arr.length === 0) {
-			selectedOptions.innerText = categoryIsRequired;
-			utils.setTextColor('--MESSAGE-COLOR', 'lightgreen');
+			selectedOptions.innerText = categoryIsRequired
+			utils.setTextColor('--MESSAGE-COLOR', 'lightgreen')
 		} else {
-			selectedOptions.innerText = selOptions;
-			utils.setTextColor('--MESSAGE-COLOR', 'yellow');
+			selectedOptions.innerText = selOptions
+			utils.setTextColor('--MESSAGE-COLOR', 'yellow')
 		}
 		categories = categories.map((cat) => {
-			return { id: cat.id, name: cat.name, selected: arr.includes(cat.id) };
-		});
-	};
+			return { id: cat.id, name: cat.name, selected: arr.includes(cat.id) }
+		})
+	}
 
 	const idFromName = (name: string) => {
 		for (let i = 0; i < categories.length; i++) {
 			// @ts-expect-error
 			if (categories[i].name === name) {
 				// @ts-expect-error
-				return categories[i].id;
+				return categories[i].id
 			}
 		}
-	};
+	}
 	const onClick = (event: MouseEvent) => {
-		const btn = event.target as HTMLButtonElement;
-		const name = btn.innerText as string;
-		const id = String(idFromName(name));
+		const btn = event.target as HTMLButtonElement
+		const name = btn.innerText as string
+		const id = String(idFromName(name))
 		const add = () => {
-			selectedIds.add(id);
-			selectedNames.add(name);
-			btn.style.color = 'tomato';
-		};
+			selectedIds.add(id)
+			selectedNames.add(name)
+			btn.style.color = 'tomato'
+		}
 		const remove = () => {
-			selectedIds.delete(id);
-			selectedNames.delete(name);
-			btn.style.color = 'white';
-		};
-
-		selectedIds.has(id) ? remove() : add();
-		selectedCategoryIds = [...selectedIds].join(',');
+			selectedIds.delete(id)
+			selectedNames.delete(name)
+			btn.style.color = 'white'
+		}
+		if (selectedOptions.innerText === pleaseSelect) {
+			selectedNames = new Set<string>()
+		}
+		selectedIds.has(id) ? remove() : add()
+		selectedCategoryIds = [...selectedIds].join(',')
 		// we place CSV string in selectedOptions HTML paragraph element
 		selectedOptions.innerText =
-			selectedNames.size > 0 ? [...selectedNames].join(', ') : categoryIsRequired;
-	};
+			selectedNames.size > 0 ? [...selectedNames].join(', ') : categoryIsRequired
+	}
 
-	onMount(() => {});
+	onMount(() => {})
 
-	$: color = categoryIsRequired === 'Category is required' ? 'red' : 'skyblue';
+	$: color = categoryIsRequired === 'Category is required' ? 'red' : 'skyblue'
 </script>
 
 <!-- <pre style="font-size:11px;">data {JSON.stringify(categories, null, 2)}</pre> -->

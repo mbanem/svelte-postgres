@@ -83,13 +83,13 @@ declare global {
 		id: string
 		firstName: string
 		lastName: string
-		role: Role
+		role: string
 	}
-	type PartialUser = {
+	type UserPartial = {
 		id: string
 		firstName: string
 		lastName: string
-		role: Role
+		role: string
 	}
 
 	type Category = {
@@ -121,7 +121,7 @@ declare global {
 		published: boolean
 		firstName: string
 		lastName: string
-		role: Role
+		role: string
 	}
 	type UserProfile = Profile & PartialUser
 	// type Categories = Category[];
@@ -130,7 +130,7 @@ declare global {
 		id: string
 		firstName: string
 		lastName: string
-		role: Role
+		role: string
 		todoId: string
 		title: string
 		content: string
@@ -151,7 +151,7 @@ declare global {
 	type Bio = {
 		id: string
 		bio: string
-		user: Partial<User>
+		user: UserPartial
 	}
 	type Session = {
 		userAuthToken: string
@@ -184,7 +184,7 @@ declare global {
 		email: string
 		passwordHash: string
 		userAuthToken: string
-		role: Role
+		role: string
 		createdAt: Date
 		updatedAt?: Date
 	}

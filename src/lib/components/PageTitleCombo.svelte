@@ -1,35 +1,35 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount } from 'svelte'
 
-	export let PageName: string;
-	export let user: Partial<User> | null;
-	export let users: Partial<User>[] | [];
-	export let amendTrueFalseUserId = false; // selectBox value userId is prefixed with T=ADMIN, F=USER
-	export let selectedUserId: string;
-	export let result: string = '';
-	export let message: string = '';
-	export let ignoreFormMessage: boolean = false;
+	export let PageName: string
+	export let user: UserPartial
+	export let users: UserPartial[] | []
+	export let amendTrueFalseUserId = false // selectBox value userId is prefixed with T=ADMIN, F=USER
+	export let selectedUserId: string
+	export let result: string = ''
+	export let message: string = ''
+	export let ignoreFormMessage: boolean = false
 
-	let msgEl: HTMLSpanElement;
+	let msgEl: HTMLSpanElement
 	const clearMessage = () => {
 		setTimeout(() => {
-			message = '';
-			result = '';
-			ignoreFormMessage = true;
+			message = ''
+			result = ''
+			ignoreFormMessage = true
 			if (msgEl) {
-				msgEl.innerText = '';
+				msgEl.innerText = ''
 			}
-		}, 2000);
-	};
+		}, 2000)
+	}
 	const showResult = () => {
-		clearMessage();
-		return result;
-	};
-	let selectBox: HTMLSelectElement;
+		clearMessage()
+		return result
+	}
+	let selectBox: HTMLSelectElement
 	onMount(() => {
-		const t = amendTrueFalseUserId ? (user.role === 'ADMIN' ? '-T' : '-F') : '';
-		selectedUserId = `${user.id}${t}`;
-	});
+		const t = amendTrueFalseUserId ? (user.role === 'ADMIN' ? '-T' : '-F') : ''
+		selectedUserId = `${user.id}${t}`
+	})
 </script>
 
 <!-- <pre style="font-size:11px;">selectedUserId {JSON.stringify(selectedUserId, null, 2)}</pre> -->

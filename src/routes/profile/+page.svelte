@@ -48,7 +48,7 @@
 	let btnDelete: HTMLButtonElement;
 	let iconDelete: HTMLSpanElement;
 
-	$: setColor(form?.message ? (form.message.includes('successfully') ? 'green' : 'red') : 'green');
+	$: setColor(form?.message ? (form.message.includes('successfully') ? 'lightgreen' : 'red') : 'lightgreen');
 
 	// keep message displayed for several seconds
 	const clearMessage = () => {

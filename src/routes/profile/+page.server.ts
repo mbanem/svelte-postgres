@@ -18,7 +18,7 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
 			lastName: true,
 			role: true
 		}
-	})) as Partial<User>[]
+	})) as UserPartial[]
 	let userProfiles = []
 	if (locals.user?.role === 'ADMIN') {
 		userProfiles = await db.profile.findMany({
@@ -117,6 +117,7 @@ export const actions: Actions = {
 			bioId: string
 			authorId: string
 		}
+		console.log(bio, bioId, authorId)
 		if (bio === '' || authorId === '' || bioId === '') {
 			return fail(400, { bio, bioId, message: 'Insufficient data supplied' })
 		}
@@ -124,7 +125,8 @@ export const actions: Actions = {
 		try {
 			await db.profile.update({
 				where: {
-					id: bioId
+					id: bioId,
+					userId: authorId
 				},
 				data: {
 					bio

@@ -88,9 +88,6 @@ CREATE UNIQUE INDEX "users_first_name_last_name_email_key" ON "users"("first_nam
 CREATE UNIQUE INDEX "profile_user_id_key" ON "profile"("user_id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "todo_user_id_key" ON "todo"("user_id");
-
--- CreateIndex
 CREATE UNIQUE INDEX "_CategoryToPost_AB_unique" ON "_CategoryToPost"("A", "B");
 
 -- CreateIndex

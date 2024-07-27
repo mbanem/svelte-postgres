@@ -1,4 +1,5 @@
 <script lang="ts">
+	// @ts-check
 	import type { Snapshot } from '../$types' // .sveltekit/$types
 	import { onMount, getContext } from 'svelte'
 	import type { PageData, ActionData } from './$types'
@@ -34,7 +35,7 @@
 	let categoryIds: number[] = []
 
 	$: utils.setColor(
-		form?.message ? (form.message.includes('successfully') ? 'green' : 'red') : 'green'
+		form?.message ? (form.message.includes('successfully') ? 'lightgreen' : 'red') : 'lightgreen'
 	)
 
 	// keep message displayed for several seconds
@@ -55,8 +56,8 @@
 		// 	(document.querySelector(`input[name='${k}']`) as HTMLInputElement).value = '';
 		// });
 		// (document.querySelector(`input[name='published']`) as HTMLInputElement).checked = false;
-		setSelectedOptions([], categoryIsRequired)
-		utils.setColor('green')
+		setSelectedOptions([], requiredCategory)
+		utils.setColor('lightgreen')
 	}
 
 	const required = {
@@ -124,6 +125,7 @@
 			clearMessage()
 			invalidateAll()
 			utils.setButtonVisible([btnCreate, btnUpdate, btnDelete])
+			debugger
 			clearForm()
 			loading = false // stop spinner animation
 		}
@@ -184,7 +186,6 @@
 				})
 			}
 		})
-
 		return arr
 	}
 
@@ -193,13 +194,13 @@
 	const toUpdatePost = (postId: string) => {
 		const authorPost = data.postAuthors.filter((pa) => pa.id === postId)[0] as PostAuthor
 		utils.shallowCopy(authorPost, snap)
-		const { published, categoryIds, title, content } = authorPost
+		const { title, content, published, categoryIds } = authorPost //as PostAuthor
 		// selectOptions(categoryIds);
 		const els = [
 			// { published: published },
-			{ title: title },
-			{ content: content },
-			{ categoryIds: categoryIds }
+			{ title },
+			{ content },
+			{ categoryIds }
 		]
 
 		utils.setButtonVisible([btnUpdate, btnCreate, btnDelete])
@@ -265,6 +266,7 @@
 	onMount(() => {
 		utils.shallowCopy(initialSnap, snap)
 		snap.authorId = data.locals.user.id
+		setSelectedOptions([], categoryIsRequired)
 		return () => {
 			// @ts-expect-error
 			mrPath.set($page.url.pathname)
@@ -275,7 +277,7 @@
 <svelte:head>
 	<title>Post</title>
 </svelte:head>
-<!-- <pre style="font-size:11px;">postAuthors {JSON.stringify(postAuthors, null, 2)}</pre> -->
+<pre style="font-size:11px;">postAuthors {JSON.stringify(postAuthors, null, 2)}</pre>
 <!-- amendTrueFalseUserId = {true} forced selectBox value userId to be prefixed with T=ADMIN, F=USER -->
 <PageTitleCombo
 	bind:result

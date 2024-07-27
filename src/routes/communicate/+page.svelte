@@ -4,7 +4,7 @@
 	import { onMount, getContext } from 'svelte'
 	import Child from './Child.svelte'
 	let resizeChild: (msg: string) => void
-	let randomNumber: () => number
+	let getRandomNumber: () => number
 
 	const greeting = (msg: string) => {
 		g.innerText = msg
@@ -14,7 +14,7 @@
 	}
 	let rand: HTMLParagraphElement
 	const callRandom = () => {
-		rand.innerText = 'from child random: ' + String(randomNumber())
+		rand.innerText = 'from child random: ' + String(getRandomNumber())
 	}
 	let p: HTMLParagraphElement
 	let g: HTMLParagraphElement
@@ -45,7 +45,7 @@
 	-->
 	<button on:click={() => onResize('Hello Filip')} class="resize">parent resize button</button>
 	<br />
-	<Child bind:resize={resizeChild} bind:getRandomNumber={randomNumber} callParent={greeting} />
+	<Child bind:resize={resizeChild} bind:getRandomNumber callParent={greeting} />
 	<p bind:this={g} class="info">waiting for greeting from child....</p>
 	<p bind:this={p} class="info">App react on window resize</p>
 	<hr style="width:35vw;margin-left:0;" />

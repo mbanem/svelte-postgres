@@ -31,7 +31,7 @@
 
 	// unable to handle other events just on:outroend={handleEnd}
 	const handleEnd = () => {
-		// console.log('Transition ended!');
+		console.log('Transition ended!')
 		loading = !loading
 		showTooltip = false
 	}
@@ -97,7 +97,7 @@
 
 <style lang="scss">
 	main {
-		margin-top: 3rem;
+		margin-top: 2rem;
 		margin-left: 5rem;
 	}
 	.tooltip-wrapper {
@@ -130,7 +130,7 @@
 		border: 1px solid gray;
 		border-radius: 10px;
 		padding: 1rem;
-		top: 50vh;
+		top: 60vh;
 		left: 20vw;
 	}
 	.main {
@@ -141,6 +141,7 @@
 		border: 1px solid gray;
 		border-radius: 5px;
 		padding: 3px 1rem;
+		margin-top: 1rem;
 		cursor: pointer;
 		&:hover {
 			color: yellow;
@@ -149,12 +150,18 @@
 			color: lightgreen;
 			border: 4px solid lightgreen;
 		}
+		label {
+			border: none;
+			margin: 0;
+			padding: 0;
+		}
 	}
 	.a {
 		position: absolute;
 		top: 2rem;
 		left: 2rem;
 		border: 4px solid yellow;
+		display: none;
 	}
 	.b {
 		position: absolute;

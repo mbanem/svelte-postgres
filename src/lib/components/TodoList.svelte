@@ -1,23 +1,24 @@
 <script lang="ts">
-	import { send, receive } from '$utils/transitions';
-	import { Tooltip } from 'flowbite-svelte';
+	import { send, receive } from '$utils/transitions'
+	import { Tooltip } from 'flowbite-svelte'
 
-	export let id: string = '';
-	export let selectedUserId: string;
-	export let uTodos: UTodos;
-	export let completed = false;
-	export let toggleCompleted: (id: string) => void;
-	export let deleteTodo: (id: string) => void;
-	export let prepareUpdate: (todoId: string) => void;
+	export let id: string = ''
+	export let selectedUserId: string
+	export let uTodos: UTodos
+	export let completed = false
+	export let toggleCompleted: (id: string) => void
+	export let deleteTodo: (id: string) => void
+	export let prepareUpdate: (todoId: string) => void
 
-	const permission = 'owner only permission';
-	const handleStart = () => {};
+	const permission = 'owner only permission'
+	const handleStart = () => {}
 
-	const handleEnd = () => {};
+	const handleEnd = () => {}
 </script>
 
 <ul class="todos">
 	{#each uTodos.filter((uTodo) => uTodo.completed === completed) as uTodo (uTodo.todoId)}
+		<!-- tuSu -- todo of selected user -->
 		{@const tuSu = uTodo.id === selectedUserId}
 		<li
 			class:uncompleted={!completed}
@@ -32,7 +33,7 @@
 					class={tuSu ? 'ok-hover' : 'no-hover'}
 					checked={uTodo.completed}
 					on:click|preventDefault={() => {
-						tuSu && toggleCompleted(uTodo.todoId);
+						tuSu && toggleCompleted(uTodo.todoId)
 					}}
 				/>
 				<div class="tooltip-wrapper">
@@ -54,7 +55,7 @@
 					<button
 						class={tuSu ? 'ok-hover' : 'no-hover'}
 						on:click={() => {
-							tuSu && deleteTodo(uTodo.todoId);
+							tuSu && deleteTodo(uTodo.todoId)
 						}}
 						aria-label="Delete Todo"
 					>
@@ -79,7 +80,7 @@
 					<button
 						class={tuSu ? 'ok-hover' : 'no-hover'}
 						on:click={() => {
-							tuSu && prepareUpdate(uTodo.todoId);
+							tuSu && prepareUpdate(uTodo.todoId)
 						}}
 						aria-label="Update Todo"
 					>

@@ -2,7 +2,7 @@
 	// import { onMount } from 'svelte'
 	import gsap from 'gsap'
 	import { ScrollTrigger } from 'gsap/ScrollTrigger'
-	import { capitalize, setButtonVisible } from '$utils/helpers'
+	import { capitalize } from '$utils/helpers'
 	gsap.registerPlugin(ScrollTrigger)
 
 	let position = 0
@@ -53,10 +53,20 @@
 	// accept the reverse() call
 
 	// toggle hidden is crucial for allowing the reverse button to function
+	// timeline.reverse() also calls animateOut but clicking on button title
+	// timeline is left stuck, probably getting incorrect event, so we use x
+	// to call ourselves timeline-reverse() every second time no mater if
+	// button or button title is clicked
+	let x = false
 	const animateOut = () => {
 		setTimeout(() => {
 			document.querySelector('.button')?.classList.toggle('hidden')
 		}, 2500)
+		if (x) {
+			x = !x
+			return timeline.reverse()
+		}
+		x = !x
 		timeline = gsap.timeline({
 			defaults: { duration: 1 }
 		})
@@ -115,7 +125,6 @@
 	.hidden {
 		display: none;
 	}
-	// as is ti used for class names we keep colors as strings
 	$cls: green, purple, orange, tomato, rebeccapurple;
 	.boxS {
 		color: white;

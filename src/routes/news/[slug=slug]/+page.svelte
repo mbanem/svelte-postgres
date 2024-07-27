@@ -12,6 +12,7 @@
 	}
 </script>
 
+<!-- <pre style="font-size:11px;">data {JSON.stringify(data, null, 2)}</pre> -->
 <div class="body">
 	<h1>Seminar Attendees</h1>
 	{#if users.size === 1}

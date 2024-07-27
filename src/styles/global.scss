@@ -198,11 +198,10 @@ html {
 	text-transform: capitalize;
 	$lh: #{2.8 - (strip-unit($fs) * 0.00625 + 1.3)};
 
+	line-hight: $lh;
 	@if unit($fs) ==1ch {
 		$lh: $lh / 2;
 	}
-
-	line-hight: $lh;
 }
 section ul[style^='margin'] li.list-item {
 	@for $i from 1 through 4 {
@@ -213,11 +212,10 @@ section ul[style^='margin'] li.list-item {
 		// @include capitalize(16px);
 		// change color for marker and then for li text
 		&:nth-child(#{$i}) {
+			color: hsl($marker-starting-hue + $i * $hue-variation, 70%, 50%);
 			&::marker {
 				color: hsl($marker-starting-hue + $i * $hue-variation, 70%, 50%);
 			}
-
-			color: hsl($marker-starting-hue + $i * $hue-variation, 70%, 50%);
 		}
 	}
 

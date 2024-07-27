@@ -6,6 +6,11 @@ export const sixHash = () => {
 	return a.toString(36).slice(-3) + b.toString(36).slice(-3)
 }
 
+// short id
+export const id = () => {
+	return (Math.random() * 10 ** 8).toString(36).replace(/\./g, '')
+}
+
 // change placeholder color to red on required messages
 export const setColor = (color: string) => {
 	if (browser) {
@@ -73,6 +78,8 @@ export const setTextColor = (varName: string, color: string) => {
 // define iterable number using object prototype and generator
 // function* to assign it to the Number iterator
 // @ts-expect-error
+// use as sequence iterator
+// 			[...10].forEach(n => console.log(n))
 Number.prototype[Symbol.iterator] = function* () {
 	// @ts-expect-error
 	for (let i = 0; i < this; i++) {

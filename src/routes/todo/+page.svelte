@@ -27,7 +27,9 @@
 	// form?.message cannot be cleared by code but could be ignored when necessary
 	let ignoreFormMessage = false
 
-	$: setColor(form?.message ? (form.message.includes('successfully') ? 'green' : 'red') : 'green')
+	$: setColor(
+		form?.message ? (form.message.includes('successfully') ? 'lightgreen' : 'red') : 'lightgreen'
+	)
 
 	// keep message displayed for several seconds
 	const clearMessage = () => {
@@ -39,6 +41,9 @@
 		setButtonVisible([btnCreate, btnUpdate])
 	}
 
+	let titleIsRequired = ''
+	let contentIsRequired = ''
+
 	// if form is filled with  data for update, but user chose other action, we
 	// clear the form input elements
 	const clearForm = () => {
@@ -47,11 +52,8 @@
 		;(document.querySelector("input[name='content']") as HTMLInputElement).value = ''
 		;(document.querySelector("input[type='number']") as HTMLInputElement).value = '0'
 		titleIsRequired = contentIsRequired = ''
-		setColor('green')
+		setColor('lightgreen')
 	}
-
-	let titleIsRequired = ''
-	let contentIsRequired = ''
 
 	// get params action for URL and formData to check on required fields
 	const enhanceTodo: SubmitFunction = ({ action, formData }) => {
@@ -212,7 +214,8 @@
 </script>
 
 <svelte:window on:beforeunload={beforeUnload} />
-
+<!-- locals.user and user are the same -->
+<!-- <pre>local {data.locals.user.id} user {user.id}</pre> -->
 <svelte:head>
 	<title>Todo</title>
 </svelte:head>
@@ -229,6 +232,7 @@
 	user={data.user}
 	users={data.users}
 />
+
 <div class="board">
 	<form bind:this={theForm} method="POST" action="?/addTodo" use:enhance={enhanceTodo}>
 		<div class="two-inputs">
@@ -298,6 +302,7 @@
 			{deleteTodo}
 		/>
 	</div>
+	<!--  data.locals.user.id and user.id are the same-->
 	<div class="right-column">
 		<h3>completed</h3>
 		<TodoList
