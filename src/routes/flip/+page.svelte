@@ -1,35 +1,37 @@
 <script lang="ts">
-	import { page } from '$app/stores';
-	import { onMount } from 'svelte';
+	import { page } from '$app/stores'
+	import { onMount } from 'svelte'
 	// import { onMount, getContext } from 'svelte';
-	import { tick } from 'svelte';
-	import { gsap } from 'gsap';
-	import Flip from 'gsap/dist/Flip';
-	import { crossfade } from 'svelte/transition';
-	import { error } from '@sveltejs/kit';
-	import { capitalize, setMrPath } from '$utils';
+	import { tick } from 'svelte'
+	import { gsap } from 'gsap'
+	import Flip from 'gsap/dist/Flip'
+	import { crossfade } from 'svelte/transition'
+	import { error } from '@sveltejs/kit'
+	import * as utils from '$utils'
+	import { capitalize, setMrPath } from '$utils'
 
-	const colors = ['red', 'orange', 'green', 'purple'];
-	gsap.registerPlugin(Flip);
+	const colors = ['red', 'orange', 'green', 'purple']
+	gsap.registerPlugin(Flip)
 
-	let start = $state<boolean>(true);
+	let start = $state<boolean>(true)
 	let [send, receive] = crossfade({
 		duration: 2000
-	});
+	})
 	const handleEndA = () => {
-		console.log('handleEnd A');
-	};
+		console.log('handleEnd A')
+	}
 	const handleEndB = () => {
-		console.log('handleEnd B');
-	};
-	type Layout = 'stack' | 'grid';
-	// NOTE: $state<Layout> is necessary for flip to work
-	let layout = $state<Layout>('stack');
+		console.log('handleEnd B')
+	}
+	type Layout = 'stack' | 'grid'
+	// NOTE: in route 'flip' layout is not defined by rune $state and works OK
+	// but here layout = $state<Layout> is necessary for flip to work
+	let layout = $state<Layout>('stack')
 
 	const flip = async () => {
-		const state = Flip.getState('.circle');
-		layout = layout === 'grid' ? 'stack' : 'grid';
-		await tick();
+		const state = Flip.getState('.circle', { props: 'borderRadius' })
+		layout = layout === 'grid' ? 'stack' : 'grid'
+		await tick()
 
 		Flip.from(state, {
 			duration: 0.8,
@@ -39,19 +41,19 @@
 			spin: true,
 			ease: 'ease-out',
 			delay: 0.5
-		});
-	};
+		})
+	}
 
 	const makeError = () => {
-		throw error(420, 'Enhance your calm');
-	};
+		throw error(420, 'Enhance your calm')
+	}
 
 	// let mrPath = getContext('mrPath') as SvelteStore<string>;
 
-	let boxTimeline = gsap.core.Timeline;
+	let boxTimeline = gsap.core.Timeline
 	const boxPlay = (node: string) => {
-		let boxTimeline = gsap.timeline();
-		const duration = 1;
+		let boxTimeline = gsap.timeline()
+		const duration = 1
 
 		boxTimeline
 			.from(node, {
@@ -68,21 +70,21 @@
 					ease: 'bounce.out'
 				},
 				`-=${duration * 0.75}`
-			);
-	};
+			)
+	}
 	onMount(() => {
-		boxPlay('.box1');
+		boxPlay('.box1')
 		return () => {
-			setMrPath($page.url.pathname);
-		};
-	});
+			setMrPath($page.url.pathname)
+		}
+	})
 
-	let visible = $state<boolean>(true);
-	let cb_state = $derived(visible ? 'Hide the box' : 'Turn the box visible');
+	let visible = $state<boolean>(true)
+	let cb_state = $derived(visible ? 'Hide the box' : 'Turn the box visible')
 
 	const tweenMe = (node: HTMLElement) => {
-		let tl = gsap.timeline();
-		const duration = 1;
+		let tl = gsap.timeline()
+		const duration = 1
 
 		tl.from(node, {
 			duration,
@@ -97,19 +99,19 @@
 				ease: 'bounce.out'
 			},
 			`-=${duration * 0.75}`
-		);
+		)
 
 		return {
 			/* GSAP's duration is in seconds. Svelte's is in milliseconds */
 			duration: tl.totalDuration() * 1000,
 			tick: (t: number) => {
-				tl.progress(t);
+				tl.progress(t)
 			}
-		};
-	};
+		}
+	}
 
 	// ------------- squares 1-5 to animateOut and restore back ---------------
-	let timeline: gsap.core.Timeline;
+	let timeline: gsap.core.Timeline
 
 	// stagger block
 	// NOTE: creating timeline i  onMount after timeline.reverse()
@@ -122,21 +124,21 @@
 	// timeline is left stuck, probably getting incorrect event, so we use x
 	// to call ourselves timeline-reverse() every second time no mater if
 	// button or button title is clicked
-	let x = false;
+	let x = false
 	const animateOut = () => {
 		setTimeout(() => {
-			document.querySelector('.button')?.classList.toggle('hidden');
-		}, 2500);
+			document.querySelector('.button')?.classList.toggle('hidden')
+		}, 2500)
 
 		if (x) {
-			x = !x;
-			return timeline.reverse();
+			x = !x
+			return timeline.reverse()
 		}
-		x = !x;
+		x = !x
 
 		timeline = gsap.timeline({
 			defaults: { duration: 1 }
-		});
+		})
 		timeline
 			.to('.boxS', {
 				opacity: 0,
@@ -154,13 +156,13 @@
 				{
 					opacity: 1
 				}
-			);
-	};
+			)
+	}
 	onMount(() => {
 		return () => {
-			setMrPath($page.url.pathname);
-		};
-	});
+			utils.setMrPath($page.url.pathname)
+		}
+	})
 </script>
 
 <svelte:head>
@@ -171,6 +173,9 @@
 <!-- three column grid -->
 <main>
 	<h3 class="click-info">Click on a circle to FLIP</h3>
+	<div class="label-abs">
+		<div data-label={layout}>click on an image to rearrange them</div>
+	</div>
 	<div class="container">
 		<div
 			data-layout={layout}
@@ -188,7 +193,7 @@
 	<div class="slider" onclick={animateOut} aria-hidden={true}>
 		<h3 class="transition-info">Click a box to transition out</h3>
 		<div class="button-wrapper">
-			<button onclick={() => timeline.reverse()} class="button hidden">animate</button>
+			<button onclick={() => timeline.reverse()} class="button hidden">reverse</button>
 		</div>
 		{#each ['green', 'purple', 'orange', 'tomato', 'rebeccapurple'] as colorName}
 			<div class="boxS {colorName}">{capitalize(colorName)}</div>
@@ -205,8 +210,8 @@
 					class="box2"
 					transition:tweenMe
 					onclick={() => {
-						visible = !visible;
-						start = !start;
+						visible = !visible
+						start = !start
 					}}
 					aria-hidden={true}
 				>
@@ -307,6 +312,7 @@
 			border-color: yellow;
 		}
 	}
+
 	.tween-block {
 		display: grid;
 		grid-template-columns: 1fr 1fr 1fr;
@@ -427,5 +433,27 @@
 	[data-layout='grid'] {
 		display: grid;
 		grid-template-columns: repeat(3, 1fr);
+	}
+	.label-abs {
+		position: absolute;
+		display: flex;
+		top: 10rem;
+		left: 17%;
+		margin-bottom: 5px;
+		color: lightgreen;
+		transition-delay: 3s;
+	}
+	[data-label='grid'] {
+		// position: absolute;
+		// top: 5rem;
+		// width: 15rem;
+		transform: translate(0, -3.8rem);
+		transition-delay: 2s;
+		transition: transform 3s;
+	}
+	[data-label='stack'] {
+		transform: translate(0, 3rem);
+		transition-delay: 4s;
+		transition: transform 3s;
 	}
 </style>

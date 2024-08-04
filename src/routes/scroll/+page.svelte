@@ -2,7 +2,8 @@
 	// import { onMount } from 'svelte'
 	import gsap from 'gsap'
 	import { ScrollTrigger } from 'gsap/ScrollTrigger'
-	import { capitalize } from '$utils/helpers'
+	import { capitalize } from '$utils/helpers.svelte'
+
 	gsap.registerPlugin(ScrollTrigger)
 
 	let position = 0
@@ -112,7 +113,7 @@
 	</div>
 	<div class="wrapper" on:click={animateOut} aria-hidden={true}>
 		<h3>Click a box to transition out</h3>
-		<button on:click={() => timeline.reverse()} class="button hidden">animate</button>
+		<button on:click={() => timeline.reverse()} class="button hidden">reverse</button>
 		{#each ['green', 'purple', 'orange', 'tomato', 'rebeccapurple'] as colorName}
 			<div class="boxS {colorName}">{capitalize(colorName)}</div>
 		{/each}

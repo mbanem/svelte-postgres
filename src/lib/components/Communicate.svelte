@@ -1,9 +1,13 @@
 <script lang="ts">
-	export let person: Person
-	export let city = ''
-	export let userAge: number
+	type ARGS = {
+		person: Person
+		city: string
+		userAge: number
+	}
+	let { person = $bindable(), city = '', userAge }: ARGS = $props()
 
-	const decrement = () => {
+	const decrement = (event: MouseEvent) => {
+		event.stopPropagation()
 		if (person.age > 1) {
 			person.age -= 1
 		}
@@ -29,8 +33,8 @@
 	<br />
 	as in here
 	<span style="color:skyblue">Person {person.name} age {person.age} city {person.city}</span>
-	<button on:click|self={() => (person.age += 1)}>increment age</button>
-	<button on:click|self={decrement}>decrement age</button>
+	<button onclick={() => (person.age += 1)}>increment age</button>
+	<button onclick={decrement}>decrement age</button>
 </div>
 
 <style lang="scss">

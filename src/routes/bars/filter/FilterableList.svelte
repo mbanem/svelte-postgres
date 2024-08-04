@@ -1,11 +1,15 @@
-<script>
-	export let data
-	export let field
+<script lang="ts">
+	type ARGS = {
+		data: { hex: string; name: string }
+		field: string
+	}
+	let { data, field }: ARGS = $props()
 
-	let search = ''
+	let search = $state('')
 
-	$: regex = search ? new RegExp(search, 'i') : null
-	$: matches = (item) => (regex ? regex.test(item[field]) : true)
+	let regex = $derived(search ? new RegExp(search, 'i') : null)
+	//	item
+	const matches = (item) => (regex ? regex.test(item[field]) : true)
 </script>
 
 <div class="list">

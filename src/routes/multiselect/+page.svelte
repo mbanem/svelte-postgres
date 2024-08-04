@@ -1,76 +1,76 @@
 <script lang="ts">
-	import { page } from '$app/stores';
-	import { onMount, getContext } from 'svelte';
-	import type { PageData } from './$types';
-	import SelectBox from '$lib/components/MultiSelectBox.svelte';
+	import { page } from '$app/stores'
+	import { onMount, getContext } from 'svelte'
+	import type { PageData } from './$types'
+	import SelectBox from '$lib/components/MultiSelectBox.svelte'
+	import * as utils from '$utils'
 
-	export let data: PageData;
+	export let data: PageData
 
-	let selectBox: HTMLSelectElement;
-	let selectedOptions: HTMLParagraphElement;
-	let selectedOptionsLi: HTMLParagraphElement;
-	let selected: string[] = [];
-	let selectedLi: string[] = [];
+	let selectBox: HTMLSelectElement
+	let selectedOptions: HTMLParagraphElement
+	let selectedOptionsLi: HTMLParagraphElement
+	let selected: string[] = []
+	let selectedLi: string[] = []
 
 	const liClick = (event: MouseEvent | KeyboardEvent) => {
-		const para = event.target as HTMLParagraphElement;
-		const cat = para.innerText;
+		const para = event.target as HTMLParagraphElement
+		const cat = para.innerText
 		const addCat = (cat: string) => {
-			selectedLi.push(cat);
-			para.style.color = 'tomato';
+			selectedLi.push(cat)
+			para.style.color = 'tomato'
 			// para.classList.add('tomato');	// does not work
-		};
+		}
 		const removeCat = (cat: string) => {
-			selectedLi = selectedLi.filter((s) => s !== cat);
-			para.style.color = 'white';
+			selectedLi = selectedLi.filter((s) => s !== cat)
+			para.style.color = 'white'
 			// para.classList.remove('tomato');	// does not work
-		};
+		}
 		if (selectedLi.includes(cat)) {
-			removeCat(cat);
+			removeCat(cat)
 		} else {
-			addCat(cat);
+			addCat(cat)
 		}
-		selectedOptionsLi.innerText =
-			selectedLi.length > 0 ? selectedLi.join(', ') : 'Nothing selected';
-	};
+		selectedOptionsLi.innerText = selectedLi.length > 0 ? selectedLi.join(', ') : 'Nothing selected'
+	}
 	const onClick = (event: MouseEvent | KeyboardEvent) => {
-		const className = 'option-background';
+		const className = 'option-background'
 		const select = (opt: HTMLOptionElement) => {
-			selected.push(opt.value); // opt.value is text
-		};
+			selected.push(opt.value) // opt.value is text
+		}
 		const unselect = (opt: HTMLOptionElement) => {
-			selected = selected.filter((v) => v !== opt.value);
-		};
-		const opt = event.target as HTMLOptionElement;
+			selected = selected.filter((v) => v !== opt.value)
+		}
+		const opt = event.target as HTMLOptionElement
 		if (opt.classList.contains(className)) {
-			unselect(opt);
+			unselect(opt)
 		} else {
-			select(opt);
+			select(opt)
 		}
 
-		selectedOptions.innerText = selected.length > 0 ? selected.join(', ') : 'Nothing selected';
-	};
+		selectedOptions.innerText = selected.length > 0 ? selected.join(', ') : 'Nothing selected'
+	}
 	onMount(() => {
-		let options = '';
+		let options = ''
 		data.categories.forEach((opt) => {
-			options += '<option value="' + opt.name + '">' + opt.name + '</option>';
-		});
-		selectBox.innerHTML = options;
-	});
+			options += '<option value="' + opt.name + '">' + opt.name + '</option>'
+		})
+		selectBox.innerHTML = options
+	})
 	type Category = {
-		id: number | string;
-		name: string;
-	};
+		id: number | string
+		name: string
+	}
 
-	let mrPath = getContext('mrPath') as SvelteStore<string>;
+	let mrPath = getContext('mrPath') as SvelteStore<string>
 
 	onMount(() => {
 		return () => {
-			// @ts-expect-error
-			mrPath.set($page.url.pathname);
-		};
-	});
-	let selectedCategoryIds = '';
+			utils.setMrPath($page.url.pathname)
+		}
+	})
+	let selectedCategoryIds = ''
+	let categoryIsRequired = ''
 </script>
 
 <svelte:head>
@@ -80,7 +80,7 @@
 <h2>Multi Select Page</h2>
 <!-- <pre style="font-size:11px;">data {JSON.stringify(data, null, 2)}</pre> -->
 
-<SelectBox categories={data.categories} {selectedCategoryIds} />
+<SelectBox categories={data.categories} {categoryIsRequired} {selectedCategoryIds} />
 
 <slot {selectedOptions}>
 	<pre>

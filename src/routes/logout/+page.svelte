@@ -1,10 +1,14 @@
 <script lang="ts">
 	import { enhance } from '$app/forms'
 	import { onMount } from 'svelte'
-
+	import { page } from '$app/stores' // for $age.status code on actions
+	import * as utils from '$utils'
 	let btn: HTMLButtonElement
 	onMount(() => {
 		btn.click()
+		return () => {
+			utils.setMrPath($page.url.pathname)
+		}
 	})
 </script>
 

@@ -1,10 +1,19 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
-	import * as utils from '$lib/utils'
-	export let categories: Category[]
-	export let selectedCategoryIds
+	import * as utils from '$utils'
 	const pleaseSelect = 'Please select corresponding categories'
-	export let categoryIsRequired = pleaseSelect
+	type ARGS = {
+		categories: { id: number; name: string; selected?: boolean }[]
+		selectedCategoryIds: string // CSV string
+		categoryIsRequired: string
+	}
+	let {
+		categories,
+		selectedCategoryIds = $bindable(),
+		categoryIsRequired = $bindable()
+	}: ARGS = $props()
+
+	import { page } from '$app/stores' // for $age.status code on actions
 
 	let selectedOptions: HTMLParagraphElement
 	// cannot be const as the setSelectedOptions rebuilds them via new Set()
@@ -36,6 +45,7 @@
 		}
 	}
 	const onClick = (event: MouseEvent) => {
+		event.preventDefault()
 		const btn = event.target as HTMLButtonElement
 		const name = btn.innerText as string
 		const id = String(idFromName(name))
@@ -59,9 +69,16 @@
 			selectedNames.size > 0 ? [...selectedNames].join(', ') : categoryIsRequired
 	}
 
-	onMount(() => {})
+	onMount(() => {
+		return () => {
+			utils.setMrPath($page.url.pathname)
+		}
+	})
 
-	$: color = categoryIsRequired === 'Category is required' ? 'red' : 'skyblue'
+	// color is a colorName as string
+	// let color = $derived(() => {
+	// 	categoryIsRequired === 'Category is required' ? 'red' : 'skyblue'
+	// })
 </script>
 
 <!-- <pre style="font-size:11px;">data {JSON.stringify(categories, null, 2)}</pre> -->
@@ -73,7 +90,7 @@
 	{#key categories}
 		{#each categories as category}
 			<li>
-				<button on:click|preventDefault={onClick} class:selected={category.selected}>
+				<button onclick={onClick} class:selected={category.selected}>
 					{category.name}
 				</button>
 			</li>

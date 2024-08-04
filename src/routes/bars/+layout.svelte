@@ -3,8 +3,15 @@
 	import type { LayoutData } from './$types'
 	import NavBar from '$components/NavBar.svelte'
 	import NavContainer from '$components/NavContainer.svelte'
+	import type { TNotification } from '$lib/types/common'
+	import type { Snippet } from 'svelte'
 
-	export let data: LayoutData
+	type ARGS = {
+		locals: App.Locals
+		notifications: TNotification
+		children: Snippet<[]>
+	}
+	let { locals, notifications, children }: ARGS = $props()
 
 	let navButtonObjects1: TNavButtonObject[] = [
 		{ position: 1, title: 'font_size', href: '/font_size' }
@@ -32,8 +39,6 @@
 		// level go to incorrect route
 		{ position: 4, title: 'filter', href: '/bars/filter', condition: 'VISITOR' }
 	]
-
-	$: ({ locals } = data)
 </script>
 
 <main>
@@ -56,7 +61,7 @@
 		Register button is here to show using a hidden form
 		with the submit button inside the navigation bar
 </pre>
-<slot />
+{@render children()}
 
 <style lang="scss">
 	main {

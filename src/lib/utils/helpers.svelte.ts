@@ -6,6 +6,16 @@ export const sixHash = () => {
 	return a.toString(36).slice(-3) + b.toString(36).slice(-3)
 }
 
+let mrPath = $state<string>('/')
+
+export const setMrPath = (path: string) => {
+	mrPath = path
+}
+
+export const getMrPath = () => {
+	return mrPath as string
+}
+
 // short id
 export const id = () => {
 	return (Math.random() * 10 ** 8).toString(36).replace(/\./g, '')

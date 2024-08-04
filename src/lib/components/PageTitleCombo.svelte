@@ -1,14 +1,26 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
 
-	export let PageName: string
-	export let user: UserPartial
-	export let users: UserPartial[] | []
-	export let amendTrueFalseUserId = false // selectBox value userId is prefixed with T=ADMIN, F=USER
-	export let selectedUserId: string
-	export let result: string = ''
-	export let message: string = ''
-	export let ignoreFormMessage: boolean = false
+	type ARGS = {
+		PageName: string
+		user: UserPartial
+		users: UserPartial[] | []
+		amendTrueFalseUserId: boolean
+		selectedUserId: string
+		result: string
+		message: string
+		ignoreFormMessage: boolean
+	}
+	let {
+		PageName,
+		result = $bindable(),
+		message = $bindable(),
+		ignoreFormMessage = $bindable(),
+		selectedUserId = $bindable(),
+		amendTrueFalseUserId,
+		user,
+		users
+	}: ARGS = $props()
 
 	let msgEl: HTMLSpanElement
 	const clearMessage = () => {

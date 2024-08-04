@@ -1,7 +1,10 @@
 <script lang="ts">
-	export let color = `black`;
-	export let duration = `1.5s`;
-	export let size = `1em`;
+	type ARGS = {
+		color: string
+		duration?: string
+		size?: string
+	}
+	let { color = `black`, duration = `1.5s`, size = `1em` }: ARGS = $props()
 </script>
 
 <!-- border-color for every side top right bottom left -->
@@ -11,7 +14,7 @@
 	style="--duration: {duration}"
 	style:width={size}
 	style:height={size}
-/>
+></div>
 
 <style>
 	div {

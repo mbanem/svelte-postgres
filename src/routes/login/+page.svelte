@@ -1,34 +1,34 @@
 <script lang="ts">
-	import type { Snapshot } from '../$types';
-	import { enhance } from '$app/forms';
-	import { page } from '$app/stores';
-	import { onMount, getContext } from 'svelte';
-	import type { ActionData } from './$types';
+	import type { Snapshot } from '../$types'
+	import { enhance } from '$app/forms'
+	import { page } from '$app/stores'
+	import { onMount, getContext } from 'svelte'
+	import type { ActionData } from './$types'
+	import * as utils from '$utils'
 
-	export let form: ActionData;
-	$: data = form?.data;
+	export let form: ActionData
+	$: data = form?.data
 
 	let snap = {
 		firstName: '',
 		lastName: '',
 		email: ''
-	};
+	}
 	export const snapshot: Snapshot = {
 		capture: () => {
-			return snap;
+			return snap
 		},
 		restore: (value) => {
-			snap = value;
+			snap = value
 		}
-	};
-	let mrPath = getContext('mrPath') as SvelteStore<string>;
+	}
+	let mrPath = getContext('mrPath') as SvelteStore<string>
 
 	onMount(() => {
 		return () => {
-			// @ts-expect-error
-			mrPath.set($page.url.pathname);
-		};
-	});
+			utils.setMrPath($page.url.pathname)
+		}
+	})
 </script>
 
 <svelte:head>

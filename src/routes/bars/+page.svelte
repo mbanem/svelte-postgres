@@ -1,4 +1,8 @@
 <script lang="ts">
+	import * as utils from '$utils'
+	import { page } from '$app/stores' // for $age.status code on actions
+
+	import { onMount } from 'svelte'
 	type TButtons = { title: string; href: string; cssRules?: string; onHover?: string }[]
 	type TProps = Array<Array<string>>
 	// import NavBar from '$lib/components/NavBar.svelte'
@@ -11,6 +15,11 @@
 		['home', '/#home', 'color:yellow;', 'border: 1px solid blue;'],
 		['comments', '/comments', '', 'border: 1px solid yellow;']
 	]
+	onMount(() => {
+		return () => {
+			utils.setMrPath($page.url.pathname)
+		}
+	})
 </script>
 
 <div class="wrapper">

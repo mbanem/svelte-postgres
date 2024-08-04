@@ -1,6 +1,9 @@
 <script lang="ts">
-	export let paths: string[];
-	export let prevPath: string;
+	type ARGS = {
+		paths: string[]
+		prevPath: string
+	}
+	let {paths,prevPath}:ARGS = $props()
 	// import { goto } from '$app/navigation';
 	import { goto } from '$app/navigation';
 	import * as utils from '$lib/utils';

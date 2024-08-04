@@ -1,16 +1,15 @@
 <script lang="ts">
 	import { onMount, getContext } from 'svelte'
-	import { page } from '$app/stores'
+	import { page } from '$app/stores' // for $age.status code on actions
+	import * as utils from '$utils'
 
 	import type { PageData } from './$types'
 
-	export let data: PageData
+	let { data } = $props()
 
-	let mrPath = getContext('mrPath')
 	onMount(() => {
 		return () => {
-			// @ts-expect-error
-			mrPath.set($page.url.pathname)
+			utils.setMrPath($page.url.pathname)
 		}
 	})
 </script>

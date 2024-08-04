@@ -2,30 +2,31 @@
 	import '$styles/global.scss'
 	import '$styles/app.scss'
 	import { writable } from 'svelte/store'
-	import { getContext, setContext } from 'svelte'
+	import { getContext, setContext, type Snippet } from 'svelte'
 	import { getNavBars, setNavBars, setNavButtons, getNavButtons } from '$utils/store'
 
 	import NavBar from '$components/NavBar.svelte'
 	import type { LayoutData } from './$types'
-	export let data: LayoutData
+	let { data, children }: { data: LayoutData; children: Snippet } = $props()
 
 	// array of individual button props
 	const navButtonObjects: TNavButtonObject[] = [
 		{ position: '0', title: 'home', condition: 'VISITOR' },
-		{ position: '1', title: 'profile', href: '/profile', condition: 'USER' },
-		{ position: '2', title: 'post', condition: 'USER' },
-		{ position: '3', title: 'todo', condition: 'USER' },
-		{ position: '4', title: 'news', condition: 'USER' },
-		{ position: '5', title: 'multiselect', href: '/multiselect', condition: 'USER' },
-		{ position: '6', title: 'users', href: '/users', condition: 'ADMIN' },
-		{ position: '7', title: 'admin', href: '/admin', condition: 'ADMIN' },
-		{ position: '8', title: 'flip', condition: 'VISITOR' },
-		{ position: '9', title: 'crossfade', condition: 'VISITOR' },
-		{ position: '10', title: 'communicate', condition: 'VISITOR' },
-		{ position: '11', title: 'Parent Child', href: '/parent_child', condition: 'VISITOR' },
-		{ position: '12', title: 'bars', condition: 'VISITOR' },
-		{ position: '13', title: 'caterpillar', condition: 'VISITOR' },
-		{ position: '14', title: 'scroll', condition: 'VISITOR' }
+		{ position: '5', title: 'profile', href: '/profile', condition: 'USER' },
+		{ position: '10', title: 'post', condition: 'USER' },
+		{ position: '15', title: 'todo', condition: 'USER' },
+		{ position: '20', title: 'news', condition: 'USER' },
+		{ position: '21', title: 'derived', condition: 'USER' },
+		{ position: '25', title: 'multiselect', href: '/multiselect', condition: 'USER' },
+		{ position: '30', title: 'users', href: '/users', condition: 'ADMIN' },
+		{ position: '36', title: 'admin', href: '/admin', condition: 'ADMIN' },
+		{ position: '40', title: 'flip', condition: 'VISITOR' },
+		{ position: '45', title: 'crossfade', condition: 'VISITOR' },
+		{ position: '50', title: 'communicate', condition: 'VISITOR' },
+		{ position: '55', title: 'Parent Child', href: '/parent_child', condition: 'VISITOR' },
+		{ position: '60', title: 'bars', condition: 'VISITOR' },
+		{ position: '65', title: 'caterpillar', condition: 'VISITOR' },
+		{ position: '70', title: 'scroll', condition: 'VISITOR' }
 	]
 
 	// establish presence of context for this page
@@ -34,7 +35,7 @@
 
 	let navPath = writable<string>('/')
 	setContext('mrPath', navPath)
-	let mrPath = getContext('mrPath') as SvelteStore<string>
+	// let mrPath = getContext('mrPath') as SvelteStore<string>
 
 	/*
 	to iterate over ButtonProps as it is an array of PartialRecord<TButtonParam, string>
@@ -53,12 +54,12 @@
 	const navButtons = getNavButtons()
 	navButtons.set([])
 
-	$: ({ locals } = data ?? {}) // data.data.data.locals.user.role
+	let locals = $derived(data?.locals ?? {}) // data.data.data.locals.user.role
 </script>
 
 <div class="wrapper">
 	<NavBar {navButtonObjects} role={locals?.user?.role ?? 'VISITOR'} />
-	<slot />
+	{@render children()}
 	<div class="footer">
 		<p>ComRUNNER Software Inc 2024 All rights reserved</p>
 	</div>
@@ -79,7 +80,7 @@
 		text-align: left;
 		margin-left: 1rem;
 		left: 0;
-		top: calc(100vh - 3rem);
+		top: calc(100vh + 3rem);
 		z-index: 1;
 	}
 	div {

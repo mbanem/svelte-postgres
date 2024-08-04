@@ -5,7 +5,9 @@
 	import { crossfade } from 'svelte/transition'
 	import { cubicInOut } from 'svelte/easing'
 	import { flip } from 'svelte/animate'
-
+	import { onMount } from 'svelte'
+	import { page } from '$app/stores' // for $age.status code on actions
+	import * as utils from '$utils'
 	// dirty function to quickly generate some keys
 	const randomId = () => {
 		return (Math.random() + 1).toString(36).slice(2, 5)
@@ -97,6 +99,12 @@
 				opacity: 0;
 			`
 			}
+		}
+	})
+
+	onMount(() => {
+		return () => {
+			utils.setMrPath($page.url.pathname)
 		}
 	})
 </script>

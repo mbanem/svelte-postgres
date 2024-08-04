@@ -7,8 +7,11 @@
 	import Error from '$routes/+error.svelte'
 	import { selectRecordItems } from '$lib/utils'
 
-	export let navButtonObjects: TXNavButtonObject[] = []
-	export let role: string = 'VISITOR' //Role = Role.VISITOR
+	type ARGS = {
+		navButtonObjects: TXNavButtonObject[]
+		role: string
+	}
+	let { navButtonObjects = [], role = 'VISITOR' }: ARGS = $props()
 	// nav bars are named by route.id + -Objects and are used
 	// to hold indices for buttons inside a nav bar so we have
 	// function for indices oix  where indices are bound for label
@@ -178,20 +181,25 @@
 		// set login,register or logout buttons
 		if (role === 'VISITOR') {
 			navButtonObjects.push({
-				position: '50',
+				position: '100',
 				title: 'login',
 				href: '/login',
 				condition: 'VISITOR'
 			})
 			navButtonObjects.push({
-				position: '51',
+				position: '101',
 				title: 'register',
 				href: '/register',
 				condition: 'VISITOR'
 			})
 		} else {
 			// USER includes ADMIN
-			navButtonObjects.push({ position: '50', title: 'logout', href: '/logout', condition: 'USER' })
+			navButtonObjects.push({
+				position: '100',
+				title: 'logout',
+				href: '/logout',
+				condition: 'USER'
+			})
 		}
 	}
 	// return an array that contains objects
@@ -203,14 +211,14 @@
 	}
 </script>
 
-<nav class="nav" on:click={toggleActive} aria-hidden={true}>
+<nav class="nav" onclick={toggleActive} aria-hidden={true}>
 	{#each getButtonObjects(role) as button}
 		{#if button.condition === 'VISITOR' || button.condition === role || role === 'ADMIN'}
 			<label for={`cb${button.ix}`}>
 				<input type="checkbox" id={`cb${button.ix}`} class="hidden" />
 				<div
 					class={button.className}
-					on:click={() => goto(button.href ?? `/${button.title}`)}
+					onclick={() => goto(button.href ?? `/${button.title}`)}
 					aria-hidden={true}
 				>
 					{button.title}

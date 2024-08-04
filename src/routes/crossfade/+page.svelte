@@ -4,7 +4,7 @@
 	import { crossfade } from 'svelte/transition'
 	import CircleSpinner from '$lib/components/CircleSpinner.svelte'
 	import { Tooltip } from 'flowbite-svelte'
-
+	import * as utils from '$utils'
 	let showTooltip = false
 
 	let user = {
@@ -48,8 +48,7 @@
 
 	onMount(() => {
 		return () => {
-			// @ts-expect-error
-			mrPath.set($page.url.pathname)
+			utils.setMrPath($page.url.pathname)
 		}
 	})
 </script>

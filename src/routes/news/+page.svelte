@@ -1,5 +1,8 @@
 <script lang="ts">
 	import { base } from '$app/paths'
+	import { page } from '$app/stores' // for $age.status code on actions
+	import * as utils from '$utils'
+	import { onMount } from 'svelte'
 	import type { NewsArticle, NewsArticles, TNotification } from '$lib/types/common'
 
 	// root +layout.ts loaded notifications {count:number, items[]}
@@ -13,6 +16,11 @@
 		data: NewsArticles
 	}
 	const articles = data.data as NewsArticles
+	onMount(() => {
+		return () => {
+			utils.setMrPath($page.url.pathname)
+		}
+	})
 </script>
 
 <div class="">

@@ -1,9 +1,12 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
-	import { gsap } from 'gsap'
 	import { tick } from 'svelte'
 	import { Flip } from 'gsap/dist/Flip'
 	import { fly } from 'svelte/transition'
+	import { page } from '$app/stores' // for $age.status code on actions
+	import * as utils from '$utils'
+
+	import { gsap } from 'gsap'
 	gsap.registerPlugin(Flip)
 
 	/* You must build the app first pnpm run build in order to really
@@ -16,13 +19,19 @@
     NOTE: all the code should be run inside onMount as the page is
     render twice ssr and csr and ssr is halting the code
   */
+	type Layout = 'stack' | 'grid'
+
+	// NOTE: in caterpillar the layout must be defined as
+	// $state<Layout>('stack') is ==n order to work,
+	// but here it works as a plain variable
+	let layout: Layout = 'stack'
 
 	async function flip() {
 		// get initial state
 		const state = Flip.getState('.circle', { props: 'borderRadius' })
-		// change layout
+		// change the layout
 		layout === 'grid' ? (layout = 'stack') : (layout = 'grid')
-		// wait for changes to DOM
+		// wait for changes to sink to DOM
 		await tick()
 
 		// flip
@@ -35,10 +44,6 @@
 			ease: 'power1.easeOut'
 		})
 	}
-
-	type Layout = 'stack' | 'grid'
-
-	let layout: Layout = 'stack'
 
 	// instantiate iterator by assignment
 	const n6 = 6
@@ -108,6 +113,9 @@
 		slider2 = document.querySelector('.slider2') as HTMLDivElement
 		slider1.addEventListener('click', sliderOnClick)
 		slider2.addEventListener('click', sliderOnClick)
+		return () => {
+			utils.setMrPath($page.url.pathname)
+		}
 	})
 </script>
 

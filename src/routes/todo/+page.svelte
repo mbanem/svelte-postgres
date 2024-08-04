@@ -103,7 +103,7 @@
 		loading = false
 		// setting message will dynamically set result, which in turn will show message
 		// for several seconds and then clear it out
-		message = data.toggled ? 'toggled successfully' : data.message ?? 'toggle failed'
+		message = data.toggled ? 'toggled successfully' : (data.message ?? 'toggle failed')
 
 		if (data.toggled) {
 			uTodos = (uTodos as UTodos).map((todo) => {
@@ -167,7 +167,7 @@
 		updatePrepared = true
 	}
 
-	$: formMessage = ignoreFormMessage ? '' : form?.message ?? ''
+	$: formMessage = ignoreFormMessage ? '' : (form?.message ?? '')
 	// setting result will call showMessage and this one will setTimeout
 	// to clear the message after several seconds
 	$: result = message || formMessage
@@ -228,6 +228,7 @@
 	bind:message
 	bind:ignoreFormMessage
 	bind:selectedUserId
+	amendTrueFalseUserId={false}
 	PageName="Todo"
 	user={data.user}
 	users={data.users}
@@ -302,7 +303,11 @@
 			{deleteTodo}
 		/>
 	</div>
-	<!--  data.locals.user.id and user.id are the same-->
+	<!--  data.locals.user.id and user.id are the same
+		selectedUserId is bound so parent can update it
+		and in component TodoList is set as = $bindable()
+		so is updatable by component as well
+	-->
 	<div class="right-column">
 		<h3>completed</h3>
 		<TodoList

@@ -1,9 +1,12 @@
 <script lang="ts">
 	import { Tooltip } from 'flowbite-svelte'
 
-	export let postAuthors: PAuthor[]
-	export let deletePost: (id: string) => void
-	export let toUpdatePost: (id: string) => void
+	type ARGS = {
+		postAuthors: PAuthor[]
+		deletePost: (id: string) => void
+		toUpdatePost: (id: string) => void
+	}
+	let { postAuthors, deletePost, toUpdatePost }: ARGS = $props()
 </script>
 
 <!-- <pre style="font-size:11px;">postAuthors {JSON.stringify(postAuthors, null, 2)}</pre> -->
@@ -20,8 +23,8 @@
 					<div class="title">
 						<p>{title}</p>
 						{#if author}
-							<p on:click={() => deletePost(id)} class="highlight" aria-hidden={true}>❌</p>
-							<p on:click={() => toUpdatePost(id)} class="highlight" aria-hidden={true}>📝</p>
+							<p onclick={() => deletePost(id)} class="highlight" aria-hidden={true}>❌</p>
+							<p onclick={() => toUpdatePost(id)} class="highlight" aria-hidden={true}>📝</p>
 						{/if}
 					</div>
 					<div class="tooltip-wrapper">

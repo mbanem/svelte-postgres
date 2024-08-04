@@ -1,22 +1,27 @@
 <script lang="ts">
-	import Communicate from '$lib/components/Communicate.svelte'
-	import { onMount, getContext } from 'svelte'
+	import Communicate from '$components/Communicate.svelte'
+	import { onMount } from 'svelte'
 	import { page } from '$app/stores' // get data from main +layout.server.ts if any
 	import type { PageData } from './$types'
+	import * as utils from '$utils'
+	type Person = {
+		name: string
+		age: number
+		city: string
+	}
 
-	export let data: PageData
+	let { data } = $props()
 
 	let city = 'San Diego'
 	let age = 18
-	let person = { name: 'Mr. Filip Isakovic', age: 18, city: 'San Diego' }
-	$: nameUpper = person.name.toUpperCase()
+	let person = $state<Person>({ name: 'Mr. Filip Isakovic', age: 18, city: 'San Diego' })
+	let nameUpper = $derived(person.name.toUpperCase())
 
-	let mrPath = getContext('mrPath') as SvelteStore<string>
+	// let mrPath = getContext('mrPath') as SvelteStore<string>
 
 	onMount(() => {
 		return () => {
-			// @ts-expect-error
-			mrPath.set($page.url.pathname)
+			utils.setMrPath($page.url.pathname)
 		}
 	})
 </script>
@@ -69,7 +74,7 @@
 		padding-left: 1rem;
 		width: 81vw;
 	}
-	p {
+	getContext p {
 		margin: 0;
 		padding: 6px 0 0 0;
 	}

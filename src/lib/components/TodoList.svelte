@@ -2,13 +2,24 @@
 	import { send, receive } from '$utils/transitions'
 	import { Tooltip } from 'flowbite-svelte'
 
-	export let id: string = ''
-	export let selectedUserId: string
-	export let uTodos: UTodos
-	export let completed = false
-	export let toggleCompleted: (id: string) => void
-	export let deleteTodo: (id: string) => void
-	export let prepareUpdate: (todoId: string) => void
+	type ARGS = {
+		id: string
+		selectedUserId: string
+		uTodos: UTodos
+		completed: boolean
+		toggleCompleted: (id: string) => void
+		deleteTodo: (id: string) => void
+		prepareUpdate: (todoId: string) => void
+	}
+	let {
+		id,
+		selectedUserId = $bindable(),
+		uTodos,
+		completed,
+		toggleCompleted,
+		deleteTodo,
+		prepareUpdate
+	}: ARGS = $props()
 
 	const permission = 'owner only permission'
 	const handleStart = () => {}
@@ -32,7 +43,7 @@
 					type="checkbox"
 					class={tuSu ? 'ok-hover' : 'no-hover'}
 					checked={uTodo.completed}
-					on:click|preventDefault={() => {
+					onclick={() => {
 						tuSu && toggleCompleted(uTodo.todoId)
 					}}
 				/>
