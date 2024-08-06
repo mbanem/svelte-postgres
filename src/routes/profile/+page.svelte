@@ -12,6 +12,7 @@
 	import * as utils from '$lib/utils'
 
 	import PageTitleCombo from '$lib/components/PageTitleCombo.svelte'
+
 	type ARGS = {
 		data: PageData
 		form: ActionData
@@ -46,7 +47,6 @@
 	let success = ''
 	let loading = $state<boolean>(false)
 	// let snap.authorId = '';
-	let selectedUserWithBio = $state<UserWithBio>()
 
 	let btnCreate: HTMLButtonElement
 	let btnUpdate: HTMLButtonElement
@@ -64,7 +64,7 @@
 		setTimeout(() => {
 			ignoreFormMessage = false
 			result = ''
-			selectedUserWithBio = getUserWithBio(snap.authorId) as UserWithBio
+			// selectedUserWithBio = getUserWithBio(snap.authorId) as UserWithBio
 		}, 2000)
 	}
 
@@ -73,6 +73,7 @@
 		;(document.querySelector("textarea[name='bio']") as HTMLTextAreaElement).value = ''
 		setButtonVisible([btnCreate, btnUpdate])
 		// change bioId only when snap.authorId changes
+		// selectedUserWithBio = getUserWithBio(snap.authorId) as UserWithBio
 	}
 	const enhanceProfile: SubmitFunction = ({ action, formData }) => {
 		if (wrongUser) {
@@ -139,6 +140,8 @@
 		// utils.shallowCopy(initialSnap, snap);
 	}
 
+	// let selectedUserWithBio = $state<UserWithBio>()
+
 	let bioTextArea: HTMLTextAreaElement
 	let bioUpdateAllowed = false
 	const canBeUpdated = (event: MouseEvent) => {
@@ -160,7 +163,7 @@
 		// iconDelete.classList.toggle('hidden');
 	}
 
-	// $: selectedUserWithBio = getUserWithBio(snap.authorId) as UserWithBio;
+	let selectedUserWithBio = $derived(getUserWithBio(snap.authorId) as UserWithBio)
 	let formMessage = ignoreFormMessage ? '' : form?.message || ''
 	let result = $state<string>(formMessage)
 	let wrongUser = $derived(snap.authorId !== data.locals.user.id)
@@ -199,33 +202,49 @@
 					userId: 'authorId'
 				})
 				// snap_bio = data.userProfiles[0].bio as string;
-				snap.authorId = data.userProfiles[0].userId
-				selectedUserWithBio = getUserWithBio(snap.authorId) as UserWithBio
-				console.log('selectedUserWithBio', selectedUserWithBio)
+				// snap.authorId = data.userProfiles[0].userId
+				// selectedUserWithBio = getUserWithBio(snap.authorId) as UserWithBio
 			}
 		}
-		// snap.authorId = data.locals.user.id;
+		snap.authorId = data.locals.user.id
 		adminSelected = data.locals.user.role === 'ADMIN'
 		selectedUserName = `${data.locals.user.firstName} ${data.locals.user.lastName}`
+		// selectedUserWithBio = getUserWithBio(data.locals.user.id) as UserWithBio
+
 		return () => {
 			utils.setMrPath($page.url.pathname)
 		}
 	})
 </script>
 
-{#key snap.authorId}
-	<p>wrongUser {wrongUser}</p>
-{/key}
-<!-- <pre>
-	snap.authorId {snap.authorId}
-	{data.locals.user.id}
-	{snap.authorId !== data.locals.user.id}
-</pre>
-<pre style="font-size:11px;">selectedUserWithBio {JSON.stringify(
-		selectedUserWithBio,
-		null,
-		2
-	)}</pre> -->
+<p>wrongUser {wrongUser}</p>
+
+<!-- <pre style="font-size:14px;">selectedUserWithBio-Page {JSON.stringify(selectedUserWithBio, null, 2)}
+	</pre> -->
+{#snippet tooltipBio(userWithBio)}
+	<Tooltip placement="top" defaultClass="tooltip-profile" class="master-profile" arrow={false}>
+		<p>
+			created on <span class="prop-value">
+				{userWithBio.createdAt.toLocaleDateString()}
+			</span>
+		</p>
+		<p>
+			updated on <span class="prop-value">
+				{userWithBio.updatedAt.toLocaleDateString()}
+			</span>
+		</p>
+	</Tooltip>
+{/snippet}
+{#snippet deleteIcon()}
+	<Tooltip placement="top" defaultClass="tt-profile" class="m-profile" arrow={false}>
+		<p>Delete the profile</p>
+	</Tooltip>
+{/snippet}
+{#snippet ownerOnly()}
+	<Tooltip placement="top" defaultClass="tt-profile" class="m-profile" arrow={false}>
+		<p>Owner only permission</p>
+	</Tooltip>
+{/snippet}
 <svelte:head>
 	<title>Profile</title>
 </svelte:head>
@@ -239,7 +258,6 @@
 	users={data.users}
 	amendTrueFalseUserId={true}
 />
-<!-- <pre style="font-size:11px;">snap {JSON.stringify(snap, null, 2)}</pre> -->
 
 <div class="container">
 	<div class="left-column">
@@ -282,10 +300,16 @@
 	</div>
 	{#if selectedUserWithBio}
 		<div class="right-column">
-			<p>{selectedUserWithBio.user.firstName} {selectedUserWithBio.user.lastName}</p>
+			<!-- <p>{selectedUserWithBio.user.firstName} {selectedUserWithBio.user.lastName}</p> -->
 			<div class="relative">
 				<!-- see NOTE above for data-user-id -->
-				{#if !wrongUser}
+				{#if wrongUser}
+					<p>{selectedUserWithBio.bio ?? ''}</p>
+					{@render tooltipBio(selectedUserWithBio)}
+
+					<span class="delete-icon">X</span>
+					{@render ownerOnly()}
+				{:else}
 					<p
 						class="bio"
 						onclick={canBeUpdated}
@@ -293,41 +317,17 @@
 						aria-hidden={true}
 					>
 						{selectedUserWithBio.bio ?? ''}
-						<span
-							bind:this={iconDelete}
-							onclick={() => {
-								btnDelete.click()
-							}}
-							aria-hidden={true}>❌</span
-						>
 					</p>
-				{:else}
-					{selectedUserWithBio.bio ?? ''}
+					{@render tooltipBio(selectedUserWithBio)}
 					<span
 						bind:this={iconDelete}
 						onclick={() => {
 							btnDelete.click()
 						}}
-						aria-hidden={true}>❌</span
+						aria-hidden={true}><span class="delete-icon">X</span></span
 					>
+					{@render deleteIcon()}
 				{/if}
-				<Tooltip
-					placement="top"
-					defaultClass="tooltip-profile"
-					class="master-profile"
-					arrow={false}
-				>
-					<p>
-						created on <span class="prop-value"
-							>{selectedUserWithBio.createdAt.toLocaleDateString()}</span
-						>
-					</p>
-					<p>
-						updated on <span class="prop-value"
-							>{selectedUserWithBio.updatedAt.toLocaleDateString()}</span
-						>
-					</p>
-				</Tooltip>
 			</div>
 		</div>
 	{:else}
@@ -339,7 +339,8 @@
 	.relative {
 		position: relative;
 	}
-	:global(.tooltip-profile) {
+	:global(.tooltip-profile),
+	:global(.tt-profile) {
 		position: absolute;
 		left: calc(100% - 14rem) !important;
 		display: inline-block;
@@ -348,8 +349,12 @@
 		font-weight: 400;
 		padding: 3px 1rem;
 		text-align: center;
+		border: 1px solid gray;
+		border-radius: 5px;
+		background-color: #3e3e3e;
 	}
-	:global(.master-profile) {
+	:global(.master-profile),
+	:global(.m-profile) {
 		color: skyblue;
 		font-size: 14px;
 		font-weight: 400;
@@ -364,6 +369,10 @@
 				color: yellow;
 			}
 		}
+	}
+	:global(.tt-profile),
+	:global(.m-profile) {
+		left: calc(100% - 17rem) !important;
 	}
 	.container {
 		display: grid;
@@ -430,5 +439,15 @@
 	}
 	button {
 		width: 5rem;
+	}
+	.delete-icon {
+		padding: 1px 8px 0 8px;
+		outline: 1px solid tomato;
+		border-radius: 4px;
+		background-color: rgb(44, 111, 115);
+		color: tomato;
+		font-size: 20px;
+		line-height: 22px;
+		font-weight: 800;
 	}
 </style>

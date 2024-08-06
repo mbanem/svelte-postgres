@@ -21,6 +21,7 @@
 	}: ARGS = $props()
 
 	let msgEl: HTMLSpanElement
+	let selectBox: HTMLSelectElement
 	const clearMessage = () => {
 		setTimeout(() => {
 			result = ''
@@ -34,19 +35,28 @@
 		clearMessage()
 		return result
 	}
-	let selectBox: HTMLSelectElement
+	let userName = $derived.by(() => {
+		let user = users.filter((u) => u.id === selectedUserId)[0] as UserPartial
+		if (user) {
+			return `${user?.firstName} ${user?.lastName}`
+		}
+	})
+	// $effect(() => {
+	// 	selectBox.value = selectedUserId.slice(0, -2)
+	// })
 	onMount(() => {
 		const t = amendTrueFalseUserId ? (user.role === 'ADMIN' ? '-T' : '-F') : ''
 		selectedUserId = `${user.id}${t}`
+		selectBox.value = selectedUserId.slice(0, -2)
 	})
 </script>
 
-<!-- <pre style="font-size:11px;">selectedUserId {JSON.stringify(selectedUserId, null, 2)}</pre> -->
+<!-- <pre style="font-size:16px;">selectedUserId-T/-F {JSON.stringify(selectedUserId, null, 2)}</pre> -->
 <h1>
 	{PageName} Page
 	{#if user?.role === 'ADMIN'}
 		<select bind:this={selectBox} bind:value={selectedUserId}>
-			<option value="" selected>Select {PageName} Author</option>
+			<!-- <option value="x" selected={true}>Select an Author</option> -->
 			{#each users as the_user}
 				<option value={the_user.id}>
 					{the_user.firstName}
@@ -55,7 +65,7 @@
 			{/each}
 		</select>
 	{/if}
-	<span class="user-name">{user?.firstName} {user?.lastName}</span>
+	<span class="user-name">{userName}</span>
 	{#key result}
 		{#if result !== ''}
 			<span bind:this={msgEl} class="message">{showResult()}</span>
