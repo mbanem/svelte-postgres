@@ -15,8 +15,11 @@
 	import type { Writable } from 'svelte/store'
 	import * as utils from '$lib/utils'
 
-	export let data: PageData // from +page.server.ts load function
-	export let form: ActionData // form?.messages from action methods in +page.server.ts
+	type ARGS = {
+		data: PageData
+		form: ActionData
+	}
+	let { data, form }: ARGS = $props()
 
 	const prevPath: Writable<String> = getContext('previousPath')
 	const beforeUnload = () => {
@@ -27,9 +30,11 @@
 	// form?.message cannot be cleared by code but could be ignored when necessary
 	let ignoreFormMessage = false
 
-	$: setColor(
-		form?.message ? (form.message.includes('successfully') ? 'lightgreen' : 'red') : 'lightgreen'
-	)
+	$effect(() => {
+		setColor(
+			form?.message ? (form.message.includes('successfully') ? 'lightgreen' : 'red') : 'lightgreen'
+		)
+	})
 
 	// keep message displayed for several seconds
 	const clearMessage = () => {
@@ -167,11 +172,11 @@
 		updatePrepared = true
 	}
 
-	$: formMessage = ignoreFormMessage ? '' : (form?.message ?? '')
+	let formMessage = $derived(ignoreFormMessage ? '' : (form?.message ?? ''))
 	// setting result will call showMessage and this one will setTimeout
 	// to clear the message after several seconds
-	$: result = message || formMessage
-	$: ({ uTodos, user } = data)
+	let result = $derived(message || formMessage)
+	let { uTodos, user } = data
 
 	let selectedUserId = ''
 	let authorId = data?.user?.id
@@ -368,14 +373,14 @@
 			.two-inputs {
 				display: flex;
 				display: inline-block;
-				[type='number'] {
-					width: 7.35rem;
-					padding-left: 2px;
-				}
 				font-size: 1.1em;
 				grid-column: 1/3;
 				width: calc(100% - 5rem);
 				padding-left: 1rem;
+				[type='number'] {
+					width: 7.35rem;
+					padding-left: 2px;
+				}
 				input {
 					display: inline-block;
 					&::placeholder {

@@ -8,13 +8,11 @@
 		amendTrueFalseUserId: boolean
 		selectedUserId: string
 		result: string
-		message: string
 		ignoreFormMessage: boolean
 	}
 	let {
 		PageName,
 		result = $bindable(),
-		message = $bindable(),
 		ignoreFormMessage = $bindable(),
 		selectedUserId = $bindable(),
 		amendTrueFalseUserId,
@@ -25,7 +23,6 @@
 	let msgEl: HTMLSpanElement
 	const clearMessage = () => {
 		setTimeout(() => {
-			message = ''
 			result = ''
 			ignoreFormMessage = true
 			if (msgEl) {

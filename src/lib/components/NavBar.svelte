@@ -1,24 +1,15 @@
 <script lang="ts">
-	import { base } from '$app/paths'
 	import { browser } from '$app/environment'
 	import { page } from '$app/stores'
 	import { goto } from '$app/navigation'
-	import { getNavBars, getNavButtons } from '$utils/store'
-	import Error from '$routes/+error.svelte'
 	import { selectRecordItems } from '$lib/utils'
+	import { navBars, navButtons } from '$utils/helpers.svelte'
 
-	type ARGS = {
-		navButtonObjects: TXNavButtonObject[]
-		role: string
-	}
-	let { navButtonObjects = [], role = 'VISITOR' }: ARGS = $props()
-	// nav bars are named by route.id + -Objects and are used
-	// to hold indices for buttons inside a nav bar so we have
-	// function for indices oix  where indices are bound for label
-	// to receive click events and to a hidden checkbox that has
-	// impact via css :checked property on button style even if hidden
-	const navBars = getNavBars() // returns store context
-	const navButtonsStore = getNavButtons()
+	type ARGS = { navButtonObjects: TXNavButtonObject[]; role: string }
+	// export let navButtonObjects: TXNavButtonObject[] = [];
+	// export let role: string = 'VISITOR'; //Role = Role.VISITOR
+	let { navButtonObjects = $bindable(), role }: ARGS = $props()
+	// }: { navButtonObjects: TXNavButtonObject[]; role: string } = $props();
 
 	// variables for defining css class categories and class ids
 	// part of class name to be created based on the page route id
@@ -52,29 +43,29 @@
 		// for every button so every new navBar should continue with last
 		// id incremented by 1, so we need max id of navBars
 		let maxId = 0
-		if ($navBars && $navBars.length > 0) {
-			for (i = 0; i < $navBars.length; i++) {
-				if (maxId < $navBars[i].Ix) {
-					maxId = $navBars[i].Ix + 1
+		if (navBars && navBars.length > 0) {
+			for (i = 0; i < navBars.length; i++) {
+				if (maxId < navBars[i].Ix) {
+					maxId = navBars[i].Ix + 1
 				}
-				if ($navBars[i].navId === navCategory) {
-					navBarsItem = $navBars[i] as TNavBar
+				if (navBars[i].navId === navCategory) {
+					navBarsItem = navBars[i] as TNavBar
 					if (navButtonObjects[0]?.position === 0) {
 						navBarsItem.Ix = navBarsItem.startIx
 					}
-					return $navBars[i] as TNavBar
+					return navBars[i] as TNavBar
 				}
 			}
 		}
 		// this is the first time calling for this route.id so create one
-		$navBars.push({ navId: navCategory, startIx: maxId, Ix: maxId, activeEl: undefined })
-		navBarsItem = $navBars[i === -1 ? 0 : i] as TNavBar
+		navBars.push({ navId: navCategory, startIx: maxId, Ix: maxId, activeEl: undefined })
+		navBarsItem = navBars[i === -1 ? 0 : i] as TNavBar
 	}
 	// ----------------------------------------------------------------
 
 	// --------- flag and style the active button
 	const clearActiveEl = () => {
-		$navBars.forEach((nb: TNavBar) => {
+		navBars.forEach((nb: TNavBar) => {
 			if (nb && nb.activeEl) {
 				nb.activeEl.checked = false
 				nb.activeEl = undefined // TODO: why undefined?
@@ -111,7 +102,7 @@
 	const fromButtonObjects = () => {
 		getNavBarItemOfName()
 		// nav bar contains objects defined via list of TNavButtonObjects
-		navButtonObjects.forEach((button) => {
+		navButtonObjects.forEach((button: TXNavButtonObject) => {
 			if (button.ix === undefined) {
 				button.ix = oix()
 			}
@@ -158,62 +149,53 @@
 		return cssClassDef
 	}
 
-	let navButtons: TNavButtons = []
 	// if a button item with a given name exists we replace it as its content
 	// or condition could change e.g. by login or logout
 	export const getNavButtonItemIndex = (className: string): number => {
-		for (let i = 0; i < $navButtonsStore.length; i++) {
-			if ($navButtonsStore[i].className === className) {
+		for (let i = 0; i < navButtons.length; i++) {
+			if (navButtons[i].className === className) {
 				return i
 			}
 		}
 		return -1
 	}
-
-	// /+layout.svelte should define navigation buttons but it does not receive
-	// user role on login or logout so navigation is defined here instead
-	const addLogButton = (role: string) => {
-		if ($page.route.id?.startsWith('/bars')) return
-		// clear previous login or logout button
-		navButtonObjects = navButtonObjects.filter((btn) => {
-			return !'|login|logout|'.includes(`|${btn.title.toLowerCase()}|`)
-		})
-		// set login,register or logout buttons
-		if (role === 'VISITOR') {
-			navButtonObjects.push({
-				position: '100',
-				title: 'login',
-				href: '/login',
-				condition: 'VISITOR'
-			})
-			navButtonObjects.push({
-				position: '101',
-				title: 'register',
-				href: '/register',
-				condition: 'VISITOR'
-			})
-		} else {
-			// USER includes ADMIN
-			navButtonObjects.push({
-				position: '100',
-				title: 'logout',
-				href: '/logout',
-				condition: 'USER'
-			})
-		}
+	/** titles are enclosed in pipe chars e.g. |login|logout|*/
+	const removeByTitle = (titles: string, buttons: TXNavButtonObject[]) => {
+		return buttons.filter((btn) => !'|login|logout|'.includes(`|${btn.title.toLowerCase()}|`))
 	}
+
 	// return an array that contains objects
-	const getButtonObjects = (role: string): TXNavButtonObject[] => {
-		addLogButton(role)
+	const getButtonObjects = (): TXNavButtonObject[] => {
+		// console.log('getButtonObjects', role);
+		// addLogButton(role);
 		fromButtonObjects() // create button objects
-		navButtonObjects.sort((a, b) => Number(a.position) - Number(b.position))
+		// navButtonObjects.sort((a, b) => Number(a.position) - Number(b.position));
 		return navButtonObjects
+	}
+
+	const isButtonAllowed = (button: TXNavButtonObject) => {
+		const condition = button.condition?.toUpperCase()
+		const title = button.title.toUpperCase()
+		if (title == 'LOGIN' && role !== 'VISITOR') {
+			return false
+		}
+		let x = 1
+		if (role === 'VISITOR') {
+			return button.title !== 'LOGOUT' && role === condition
+		}
+		// ADMIN any condition is allowed for ADMIN but not LOGIN as no need for logged in ADMIN
+		if (role === 'ADMIN') {
+			return button.title !== 'LOGIN'
+		}
+		// USER just do not allow ADMIN privileges and LOGIN is not needed for legged in USER
+		return condition !== 'ADMIN' && title !== 'LOGIN'
 	}
 </script>
 
+<!-- <pre>navBar role {role}</pre> -->
 <nav class="nav" onclick={toggleActive} aria-hidden={true}>
-	{#each getButtonObjects(role) as button}
-		{#if button.condition === 'VISITOR' || button.condition === role || role === 'ADMIN'}
+	{#each getButtonObjects() as button}
+		{#if isButtonAllowed(button)}
 			<label for={`cb${button.ix}`}>
 				<input type="checkbox" id={`cb${button.ix}`} class="hidden" />
 				<div
@@ -222,16 +204,24 @@
 					aria-hidden={true}
 				>
 					{button.title}
-					<!-- {role.slice(0, 2)} -->
-					<!--{button.condition.slice(0, 2)}-->
 				</div>
 			</label>
-			<!-- {:else}
-			<p>{button.title}-{button?.condition}</p> -->
+		{:else}
+			<label for={`cb${button.ix}`} class="hidden">
+				<input type="checkbox" id={`cb${button.ix}`} class="hidden" />
+				<div
+					class={button.className}
+					onclick={() => goto(button.href ?? `/${button.title}`)}
+					aria-hidden={true}
+				>
+					{button.title}
+				</div>
+			</label>
 		{/if}
 	{/each}
 </nav>
 
+<!-- svelte-ignore css_unused_selector -->
 <style lang="scss">
 	.hidden {
 		display: none;
@@ -243,7 +233,7 @@
 		gap: 6px;
 	}
 	.nav div {
-		// @extend .navbar-button;
+		/* @extend .navbar-button;*/
 		display: inline-block;
 		background-color: rgb(5, 5, 153);
 		color: lightgreen;

@@ -15,13 +15,17 @@
 	import MultiSelectBox from '$lib/components/MultiSelectBox.svelte'
 	import PostList from '$lib/components/PostList.svelte'
 
-	export let data: PageData
-	export let form: ActionData
+	type ARGS = {
+		data: PageData
+		form: ActionData
+	}
+	let { data, form }: ARGS = $props()
 
+	let { postAuthors } = data
 	let message = ''
-	let loading = false
-	let ignoreFormMessage = false
-	let selectedUserId = ''
+	let loading = $state<boolean>(false)
+	let ignoreFormMessage = $state<boolean>(false)
+	let selectedUserId = $state<string>('')
 	let titleIsRequired = ''
 	let contentIsRequired = ''
 	const requiredCategory = 'Please select corresponding categories'
@@ -33,10 +37,12 @@
 	const authorId = data?.user?.id
 
 	let categoryIds: number[] = []
-
-	$: utils.setColor(
-		form?.message ? (form.message.includes('successfully') ? 'lightgreen' : 'red') : 'lightgreen'
-	)
+	let multiSelectComponent: MultiSelectBox
+	$effect(() => {
+		utils.setColor(
+			form?.message ? (form.message.includes('successfully') ? 'lightgreen' : 'red') : 'lightgreen'
+		)
+	})
 
 	// keep message displayed for several seconds
 	const clearMessage = () => {
@@ -48,7 +54,8 @@
 		}, 2000)
 	}
 
-	const clearForm = () => {
+	const clearForm = (event?: MouseEvent) => {
+		event?.preventDefault()
 		utils.shallowCopy(initialSnap, snap)
 		snap.authorId = data.locals.user.id
 		// const els = ['id', 'title', 'content', 'categoryIds'];
@@ -56,7 +63,7 @@
 		// 	(document.querySelector(`input[name='${k}']`) as HTMLInputElement).value = '';
 		// });
 		// (document.querySelector(`input[name='published']`) as HTMLInputElement).checked = false;
-		setSelectedOptions([], requiredCategory)
+		multiSelectComponent.setSelectedOptions([], requiredCategory)
 		utils.setColor('lightgreen')
 	}
 
@@ -79,7 +86,7 @@
 		the corresponding page and through $page.form app-wide until the next update.
 	*/
 	const enhancePost: SubmitFunction = ({ action, formData }) => {
-		message = ''
+		result = ''
 		titleIsRequired = ''
 		ignoreFormMessage = false
 		contentIsRequired = ''
@@ -104,11 +111,11 @@
 		loading = true // start spinner animation
 		if (action.search === '?/createPost') {
 			utils.setButtonVisible([btnCreate, btnUpdate, btnDelete])
-			message = 'saving post...'
+			result = 'saving post...'
 		} else if (action.search === '?/deletePost') {
-			message = 'deleting post...'
+			result = 'deleting post...'
 		} else if (action.search === '?/updatePost') {
-			message = 'updating post...'
+			result = 'updating post...'
 		}
 
 		return async ({ update }) => {
@@ -116,16 +123,15 @@
 			ignoreFormMessage = true
 
 			if (action.search === '?/createPost') {
-				message = $page.status === 200 ? 'Post created' : 'create failed'
+				result = $page.status === 200 ? 'Post created' : 'create failed'
 			} else if (action.search === '?/deletePost') {
-				message = $page.status === 200 ? 'Post deleted' : 'delete failed'
+				result = $page.status === 200 ? 'Post deleted' : 'delete failed'
 			} else if (action.search === '?/updatePost') {
-				message = $page.status === 200 ? 'Post updated' : 'update failed'
+				result = $page.status === 200 ? 'Post updated' : 'update failed'
 			}
 			clearMessage()
 			invalidateAll()
 			utils.setButtonVisible([btnCreate, btnUpdate, btnDelete])
-			debugger
 			clearForm()
 			loading = false // stop spinner animation
 		}
@@ -214,7 +220,7 @@
 		})
 		;(document.querySelector(`input[name='published']`) as HTMLInputElement).checked = published
 		const numArr = utils.csvToNumArr(categoryIds)
-		setSelectedOptions(numArr, categoryList(numArr))
+		multiSelectComponent.setSelectedOptions(numArr, categoryList(numArr))
 	}
 
 	const deletePost = (id: string) => {
@@ -224,10 +230,9 @@
 		// }
 	}
 
-	$: ({ postAuthors } = data)
-	$: formMessage = ignoreFormMessage ? '' : form?.message || ''
-	$: result = message || formMessage
-	$: wrongUser = selectedUserId !== data.locals.user.id
+	let formMessage = ignoreFormMessage ? '' : form?.message || ''
+	let result = $state<string>(message || formMessage)
+	let wrongUser = $derived(selectedUserId !== data.locals.user.id)
 
 	type TSnap = {
 		id: string
@@ -245,14 +250,16 @@
 		content: '',
 		published: false
 	}
-	let snap: TSnap = {
+	// NOTE: without $state for snap, whose properties are bound to form input elements
+	// we could not get data to create post action in +page.server.ts
+	let snap = $state<TSnap>({
 		id: '',
 		authorId: '',
 		categoryIds: '',
 		title: '',
 		content: '',
 		published: false
-	}
+	})
 	export const snapshot: Snapshot = {
 		capture: () => {
 			return snap
@@ -261,15 +268,13 @@
 			snap = value
 		}
 	}
-	let mrPath = getContext('mrPath') as SvelteStore<string>
 
 	onMount(() => {
 		utils.shallowCopy(initialSnap, snap)
 		snap.authorId = data.locals.user.id
-		setSelectedOptions([], categoryIsRequired)
+		multiSelectComponent.setSelectedOptions([], categoryIsRequired)
 		return () => {
-			// @ts-expect-error
-			mrPath.set($page.url.pathname)
+			utils.setMrPath($page.url.pathname)
 		}
 	})
 </script>
@@ -277,12 +282,11 @@
 <svelte:head>
 	<title>Post</title>
 </svelte:head>
-<pre style="font-size:11px;">postAuthors {JSON.stringify(postAuthors, null, 2)}</pre>
+<!-- <pre style="font-size:13px;">categoryIds {JSON.stringify(snap, null, 2)}</pre> -->
 <!-- amendTrueFalseUserId = {true} forced selectBox value userId to be prefixed with T=ADMIN, F=USER -->
 <PageTitleCombo
 	PageName="Post"
 	bind:result
-	bind:message
 	bind:ignoreFormMessage
 	bind:selectedUserId
 	amendTrueFalseUserId={true}
@@ -291,7 +295,7 @@
 />
 
 <div bind:this={boardBlock} class="board hidden">
-	<div>
+	<div style="position:relative;">
 		<form method="POST" action="?/createPost" use:enhance={enhancePost}>
 			<input type="hidden" name="id" bind:value={snap.id} />
 			<input type="hidden" name="authorId" bind:value={snap.authorId} />
@@ -336,19 +340,22 @@
 						update
 					</button>
 				{/if}
-				<button
-					on:click|preventDefault={() => {
-						clearForm()
-						return false
-					}}>clear</button
-				>
 			</label>
 		</form>
+		<button
+			class="clear-button"
+			onclick={() => {
+				clearForm()
+				return false
+			}}
+		>
+			clear
+		</button>
 		<div class="multi-select-container">
 			<MultiSelectBox
 				categories={data.categories}
 				bind:categoryIsRequired
-				bind:setSelectedOptions
+				bind:this={multiSelectComponent}
 				bind:selectedCategoryIds={snap.categoryIds}
 			/>
 		</div>
@@ -403,6 +410,14 @@
 
 	.button {
 		position: relative;
+	}
+	/* move the clear button out of the form to avoid submit action but
+		set it adjacent to create/update button using the absolute position
+	*/
+	.clear-button {
+		position: absolute;
+		top: 5.3rem;
+		left: 18rem;
 	}
 	.hidden {
 		display: none;

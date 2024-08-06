@@ -111,6 +111,7 @@ export const actions: Actions = {
 		) as InputData //{
 
 		const { title, content, published, categoryIds, authorId } = input_data
+		console.log({ title, content, published, categoryIds, authorId })
 		if (title === '' || content === '' || categoryIds === '' || authorId === '') {
 			return fail(400, {
 				data: { title, content, published, categoryIds, authorId },

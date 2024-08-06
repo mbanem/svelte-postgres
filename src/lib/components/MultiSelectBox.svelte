@@ -1,7 +1,10 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
 	import * as utils from '$utils'
+	import { page } from '$app/stores' // for $age.status code on actions
+
 	const pleaseSelect = 'Please select corresponding categories'
+	const requiredCategory = 'category is required'
 	type ARGS = {
 		categories: { id: number; name: string; selected?: boolean }[]
 		selectedCategoryIds: string // CSV string
@@ -12,8 +15,6 @@
 		selectedCategoryIds = $bindable(),
 		categoryIsRequired = $bindable()
 	}: ARGS = $props()
-
-	import { page } from '$app/stores' // for $age.status code on actions
 
 	let selectedOptions: HTMLParagraphElement
 	// cannot be const as the setSelectedOptions rebuilds them via new Set()
@@ -49,6 +50,14 @@
 		const btn = event.target as HTMLButtonElement
 		const name = btn.innerText as string
 		const id = String(idFromName(name))
+
+		if (
+			selectedOptions.innerText === pleaseSelect ||
+			selectedOptions.innerText === requiredCategory
+		) {
+			selectedNames = new Set<string>()
+		}
+
 		const add = () => {
 			selectedIds.add(id)
 			selectedNames.add(name)
@@ -58,9 +67,6 @@
 			selectedIds.delete(id)
 			selectedNames.delete(name)
 			btn.style.color = 'white'
-		}
-		if (selectedOptions.innerText === pleaseSelect) {
-			selectedNames = new Set<string>()
 		}
 		selectedIds.has(id) ? remove() : add()
 		selectedCategoryIds = [...selectedIds].join(',')

@@ -1,186 +1,192 @@
 <script lang="ts">
-	import type { Snapshot } from '../$types';
-	import { onMount, getContext } from 'svelte';
-	import type { PageData, ActionData } from './$types';
-	import type { SubmitFunction } from '@sveltejs/kit';
-	import { enhance } from '$app/forms';
-	import { invalidateAll } from '$app/navigation';
-	import { page } from '$app/stores'; // for $age.status code on actions
-	import CircleSpinner from '$lib/components/CircleSpinner.svelte';
-	import { setColor, setButtonVisible } from '$lib/utils';
-	import { Checkbox, P, Tooltip } from 'flowbite-svelte';
-	import * as utils from '$lib/utils';
+	import type { Snapshot } from '../$types'
+	import { onMount } from 'svelte'
+	import type { PageData, ActionData } from './$types'
+	import type { SubmitFunction } from '@sveltejs/kit'
+	import { enhance } from '$app/forms'
+	import { invalidateAll } from '$app/navigation'
+	import { page } from '$app/stores' // for $age.status code on actions
+	import CircleSpinner from '$lib/components/CircleSpinner.svelte'
+	import { setColor, setButtonVisible } from '$lib/utils'
+	import { Tooltip } from 'flowbite-svelte'
+	import * as utils from '$lib/utils'
 
-	import PageTitleCombo from '$lib/components/PageTitleCombo.svelte';
-
-	export let data: PageData;
-	export let form: ActionData;
+	import PageTitleCombo from '$lib/components/PageTitleCombo.svelte'
+	type ARGS = {
+		data: PageData
+		form: ActionData
+	}
+	let { data, form }: ARGS = $props()
 
 	type UserWithBio = {
-		id: string;
-		bio: string;
-		createdAt: Date;
-		updatedAt: Date;
-		user: User;
-	};
-
+		id: string
+		bio: string
+		createdAt: Date
+		updatedAt: Date
+		user: User
+	}
+	type Snap = {
+		bioId: string
+		bio: string
+		authorId: string
+	}
 	const initialSnap = {
 		bioId: '',
 		bio: '',
 		authorId: ''
-	};
-	let snap = {
+	}
+	let snap = $state<Snap>({
 		bioId: '',
 		bio: '',
 		authorId: ''
-	};
-	let message = '';
-	let bioIsRequired = '';
+	})
+	let bioIsRequired = ''
 	// form?.message cannot be cleared by code but could be ignored when required
-	let ignoreFormMessage = false;
-	let success = '';
-	let loading = false;
+	let ignoreFormMessage = false
+	let success = ''
+	let loading = $state<boolean>(false)
 	// let snap.authorId = '';
-	let selectedUserWithBio: UserWithBio;
+	let selectedUserWithBio = $state<UserWithBio>()
 
-	let btnCreate: HTMLButtonElement;
-	let btnUpdate: HTMLButtonElement;
-	let btnDelete: HTMLButtonElement;
-	let iconDelete: HTMLSpanElement;
+	let btnCreate: HTMLButtonElement
+	let btnUpdate: HTMLButtonElement
+	let btnDelete: HTMLButtonElement
+	let iconDelete: HTMLSpanElement
 
-	$: setColor(form?.message ? (form.message.includes('successfully') ? 'lightgreen' : 'red') : 'lightgreen');
+	$effect(() =>
+		setColor(
+			form?.message ? (form.message.includes('successfully') ? 'lightgreen' : 'red') : 'lightgreen'
+		)
+	)
 
 	// keep message displayed for several seconds
 	const clearMessage = () => {
 		setTimeout(() => {
-			message = '';
-			ignoreFormMessage = false;
-			result = '';
-			selectedUserWithBio = getUserWithBio(snap.authorId) as UserWithBio;
-		}, 2000);
-	};
+			ignoreFormMessage = false
+			result = ''
+			selectedUserWithBio = getUserWithBio(snap.authorId) as UserWithBio
+		}, 2000)
+	}
 
 	const clearForm = () => {
 		// bioTextArea.value =''	// using querySelector on attribute name and value
-		(document.querySelector("textarea[name='bio']") as HTMLTextAreaElement).value = '';
-		setButtonVisible([btnCreate, btnUpdate]);
+		;(document.querySelector("textarea[name='bio']") as HTMLTextAreaElement).value = ''
+		setButtonVisible([btnCreate, btnUpdate])
 		// change bioId only when snap.authorId changes
-	};
+	}
 	const enhanceProfile: SubmitFunction = ({ action, formData }) => {
 		if (wrongUser) {
-			return;
+			return
 		}
-		message = '';
-		bioIsRequired = '';
-		ignoreFormMessage = false;
-		let bio = formData.get('bio');
+		result = ''
+		bioIsRequired = ''
+		ignoreFormMessage = false
+		let bio = formData.get('bio')
 		if (bio === '') {
-			bioIsRequired = 'Biography is required field';
-			return;
+			bioIsRequired = 'Biography is required field'
+			return
 		}
-		loading = true; // start spinner animation
-		message =
+		loading = true // start spinner animation
+		result =
 			action.search === '?/create'
 				? 'creating profile...'
 				: action.search === '?/update'
 					? 'updating profile...'
-					: 'deleting profile...';
+					: 'deleting profile...'
 		return async ({ update }) => {
-			await update();
-			ignoreFormMessage = true;
+			await update()
+			ignoreFormMessage = true
 
 			if (action.search === '?/create') {
-				message = $page.status === 200 ? 'Profile created' : 'create failed';
+				result = $page.status === 200 ? 'Profile created' : 'create failed'
 			} else if (action.search === '?/delete') {
-				message = $page.status === 200 ? 'Profile deleted' : 'delete failed';
+				result = $page.status === 200 ? 'Profile deleted' : 'delete failed'
 			} else if (action.search === '?/update') {
-				message = $page.status === 200 ? 'Profile updated' : 'update failed';
+				result = $page.status === 200 ? 'Profile updated' : 'update failed'
 			} else if (action.search === '?/delete') {
-				message = $page.status === 200 ? 'Profile deleted' : 'delete failed';
-				iconDelete.classList.toggle('hidden');
-				setButtonVisible([btnCreate, btnUpdate]);
+				result = $page.status === 200 ? 'Profile deleted' : 'delete failed'
+				iconDelete.classList.toggle('hidden')
+				setButtonVisible([btnCreate, btnUpdate])
 			}
-			invalidateAll();
-			loading = false; // stop spinner animation
-			clearForm();
-			clearMessage();
-		};
-	};
-	let adminSelected: boolean;
-	let selectedUserName: string;
+			invalidateAll()
+			loading = false // stop spinner animation
+			clearForm()
+			clearMessage()
+		}
+	}
+	let adminSelected: boolean
+	let selectedUserName: string
 
 	const getUserWithBio = (id: string): UserWithBio | undefined => {
 		if (bioTextArea) {
-			bioTextArea.value = '';
+			bioTextArea.value = ''
 		}
 
 		try {
 			for (let i = 0; i < data.userProfiles.length; i++) {
 				if (data.userProfiles[i]?.user?.id === id) {
-					// @ts-expect-error
-					const { id, bio, createdAt, updatedAt, user } = data.userProfiles[i] as UserProfile;
-					snap.bioId = id;
+					const { id, bio, createdAt, updatedAt, user } = data.userProfiles[i] as UserProfile
+					snap.bioId = id
 					// snap.bio = bio as string;
-					snap.authorId = user.id;
-					return { id, bio, createdAt, updatedAt, user } as UserWithBio;
+					snap.authorId = user.id
+					return { id, bio, createdAt, updatedAt, user } as UserWithBio
 				}
 			}
 			// no profile for selected user, but they could create one so set authorId
 		} catch (err) {
-			console.log(err);
+			console.log(err)
 		}
 		// utils.shallowCopy(initialSnap, snap);
-	};
+	}
 
-	let bioTextArea: HTMLTextAreaElement;
-	let bioUpdateAllowed = false;
+	let bioTextArea: HTMLTextAreaElement
+	let bioUpdateAllowed = false
 	const canBeUpdated = (event: MouseEvent) => {
 		// if (wrongUser) {
 		// 	bioTextArea.value = '';
 		// 	return;
 		// }
-		bioUpdateAllowed = true;
-		const divEl = event.currentTarget as HTMLDivElement;
-		if (data.locals.user.id !== divEl.dataset.userId) return;
+		bioUpdateAllowed = true
+		const divEl = event.currentTarget as HTMLDivElement
+		if (data.locals.user.id !== divEl.dataset.userId) return
 		// instead of taking id easier way as selectedUserWithBio?.user.id
 		// we use here data attribute data-user-id as divEl.dataset.userId -- a string
 
 		// NOTE: in order to say divEl.dataset.userId HTML name must be data-user-id
 		// as DOMStringMap capitalize every occurrence of dash user-new-id --> userNewId
 		// console.log('user.id', user.id, 'dataset.userId', divEl.dataset.userId);
-		bioTextArea.value = selectedUserWithBio?.bio;
-		setButtonVisible([btnUpdate, btnCreate]);
+		bioTextArea.value = selectedUserWithBio?.bio as string
+		setButtonVisible([btnUpdate, btnCreate])
 		// iconDelete.classList.toggle('hidden');
-	};
-
-	let wrongUser: boolean = false;
-	$: ({ userProfiles } = data);
-	// $: selectedUserWithBio = getUserWithBio(snap.authorId) as UserWithBio;
-	$: formMessage = ignoreFormMessage ? '' : form?.message || '';
-	$: result = message || formMessage;
-	$: snap.bio = snap_bio;
-	$: wrongUser = snap.authorId !== data.locals.user.id;
-	$: if (selectedUserWithBio?.id) {
-		setButtonVisible([btnUpdate, btnCreate]);
 	}
+
+	// $: selectedUserWithBio = getUserWithBio(snap.authorId) as UserWithBio;
+	let formMessage = ignoreFormMessage ? '' : form?.message || ''
+	let result = $state<string>(formMessage)
+	let wrongUser = $derived(snap.authorId !== data.locals.user.id)
+	$effect(() => {
+		snap.bio = snap_bio
+		if (selectedUserWithBio?.id) {
+			setButtonVisible([btnUpdate, btnCreate])
+		}
+	})
 	export const snapshot: Snapshot = {
 		capture: () => {
-			return snap;
+			return snap
 		},
 		restore: (value) => {
 			if (value.authorId !== data.locals.user.id) {
-				utils.shallowCopy(initialSnap, snap);
+				utils.shallowCopy(initialSnap, snap)
 			} else {
-				snap = value;
+				snap = value
 			}
 		}
-	};
-	let mrPath = getContext('mrPath') as SvelteStore<string>;
+	}
 
 	// NOTE: binding sna.bio to TextArea element clears complete snap when
 	// any character is entered, though there is no event listener attached to
 	// so we bind dummy snap_bio and dynamically update snap.bio from it
-	let snap_bio = '';
+	let snap_bio = $state<string>('')
 
 	onMount(() => {
 		// utils.shallowCopy(initialSnap, snap);
@@ -191,20 +197,20 @@
 					id: 'bioId',
 					bio: 'bio',
 					userId: 'authorId'
-				});
+				})
 				// snap_bio = data.userProfiles[0].bio as string;
-				snap.authorId = data.userProfiles[0].userId;
-				selectedUserWithBio = getUserWithBio(snap.authorId) as UserWithBio;
+				snap.authorId = data.userProfiles[0].userId
+				selectedUserWithBio = getUserWithBio(snap.authorId) as UserWithBio
+				console.log('selectedUserWithBio', selectedUserWithBio)
 			}
 		}
 		// snap.authorId = data.locals.user.id;
-		adminSelected = data.locals.user.role === 'ADMIN';
-		selectedUserName = `${data.locals.user.firstName} ${data.locals.user.lastName}`;
+		adminSelected = data.locals.user.role === 'ADMIN'
+		selectedUserName = `${data.locals.user.firstName} ${data.locals.user.lastName}`
 		return () => {
-			// @ts-expect-error
-			mrPath.set($page.url.pathname);
-		};
-	});
+			utils.setMrPath($page.url.pathname)
+		}
+	})
 </script>
 
 {#key snap.authorId}
@@ -226,12 +232,12 @@
 
 <PageTitleCombo
 	bind:result
-	bind:message
 	bind:ignoreFormMessage
 	bind:selectedUserId={snap.authorId}
 	PageName="Profile"
 	user={data.locals.user}
 	users={data.users}
+	amendTrueFalseUserId={true}
 />
 <!-- <pre style="font-size:11px;">snap {JSON.stringify(snap, null, 2)}</pre> -->
 
@@ -248,7 +254,7 @@
 					cols={35}
 					name="bio"
 					bind:value={snap_bio}
-				/>
+				></textarea>
 				<input type="hidden" name="authorId" bind:value={snap.authorId} />
 				<input type="hidden" name="bioId" bind:value={snap.bioId} />
 
@@ -266,14 +272,10 @@
 							{/if}
 							update
 						</button>
-						<button
-							bind:this={btnDelete}
-							type="submit"
-							formaction="?/delete"
-							class="button hidden"
-						/>
+						<button bind:this={btnDelete} type="submit" formaction="?/delete" class="button hidden"
+						></button>
 					{/if}
-					<button on:click={clearForm}>clear</button>
+					<button onclick={clearForm}>clear</button>
 				</p>
 			</form>
 		</div>
@@ -286,15 +288,15 @@
 				{#if !wrongUser}
 					<p
 						class="bio"
-						on:click={canBeUpdated}
+						onclick={canBeUpdated}
 						data-user-id={selectedUserWithBio.user.id}
 						aria-hidden={true}
 					>
 						{selectedUserWithBio.bio ?? ''}
 						<span
 							bind:this={iconDelete}
-							on:click={() => {
-								btnDelete.click();
+							onclick={() => {
+								btnDelete.click()
 							}}
 							aria-hidden={true}>❌</span
 						>
@@ -303,8 +305,8 @@
 					{selectedUserWithBio.bio ?? ''}
 					<span
 						bind:this={iconDelete}
-						on:click={() => {
-							btnDelete.click();
+						onclick={() => {
+							btnDelete.click()
 						}}
 						aria-hidden={true}>❌</span
 					>

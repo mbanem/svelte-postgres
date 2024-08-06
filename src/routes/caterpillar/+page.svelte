@@ -185,7 +185,7 @@
 		position: absolute;
 		display: flex;
 		top: 6px;
-		left: 9%;
+		left: 2rem;
 		margin-bottom: 5px;
 		color: lightgreen;
 		transition-delay: 3s;

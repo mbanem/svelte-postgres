@@ -80,7 +80,7 @@
 	})
 
 	let visible = $state<boolean>(true)
-	let cb_state = $derived(visible ? 'Hide the box' : 'Turn the box visible')
+	// let cb_state = $derived(visible ? 'Hide the box' : 'Turn the box visible')
 
 	const tweenMe = (node: HTMLElement) => {
 		let tl = gsap.timeline()
@@ -269,6 +269,7 @@
 		padding: 3px 1rem;
 		margin-top: 1rem;
 		width: 30rem;
+		user-select: none;
 		cursor: pointer;
 		&:hover {
 			border-color: yellow;
@@ -362,6 +363,7 @@
 		line-height: 110px;
 		border-radius: 6px;
 		margin: 1rem 0 0 4rem;
+		user-select: none;
 		cursor: pointer;
 	}
 
@@ -375,6 +377,7 @@
 		margin-left: 1rem;
 		text-align: center;
 		line-height: 5rem;
+		user-select: none;
 		cursor: pointer;
 	}
 	@for $j from 1 through 5 {
@@ -395,12 +398,14 @@
 		font-weight: 300;
 		color: lightgreen;
 		text-align: center;
+		user-select: none;
 	}
 	.click-info {
 		position: absolute;
 		top: -4rem;
 		left: 42vw;
 		font-weight: 300;
+		user-select: none;
 		color: lightgreen;
 	}
 	section {
@@ -426,19 +431,22 @@
 	[data-layout='stack'] {
 		display: flex;
 		gap: -0.5rem;
+		user-select: none;
 	}
 	[data-layout='stack'] .circle:not(:first-child) {
 		margin-left: -40px;
+		user-select: none;
 	}
 	[data-layout='grid'] {
 		display: grid;
 		grid-template-columns: repeat(3, 1fr);
+		user-select: none;
 	}
 	.label-abs {
 		position: absolute;
 		display: flex;
 		top: 10rem;
-		left: 17%;
+		left: 17.2rem;
 		margin-bottom: 5px;
 		color: lightgreen;
 		transition-delay: 3s;
@@ -450,10 +458,12 @@
 		transform: translate(0, -3.8rem);
 		transition-delay: 2s;
 		transition: transform 3s;
+		user-select: none;
 	}
 	[data-label='stack'] {
 		transform: translate(0, 3rem);
 		transition-delay: 4s;
 		transition: transform 3s;
+		user-select: none;
 	}
 </style>

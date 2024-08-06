@@ -16,7 +16,7 @@ export const load: PageServerLoad = (async ({ cookies, locals }) => {
 	}
 	console.log('logout/+page.server.ts load', 'VISITOR')
 	// await fetch('/')
-	throw redirect(302, '/')
+	// throw redirect(302, '/')
 }) satisfies PageServerLoad
 
 // When we include a default action -- that action could be
