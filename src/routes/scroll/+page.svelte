@@ -1,10 +1,64 @@
 <script lang="ts">
-	// import { onMount } from 'svelte'
-	import gsap from 'gsap'
+	import { tick } from 'svelte'
 	import { ScrollTrigger } from 'gsap/ScrollTrigger'
 	import { capitalize } from '$utils/helpers.svelte'
 
+	import gsap from 'gsap'
 	gsap.registerPlugin(ScrollTrigger)
+
+	// -------------------------------------------------------------------
+	let div: HTMLDivElement
+	let messages = $state([
+		'Filip Isakovic',
+		'Matia Isakovic',
+		'Marko Milutinovic',
+		'Mia Milutinovic',
+		'Ljubomir Isakovic',
+		'Tanja Milutinovic',
+		'Ljuban Milutinovic'
+	])
+	let names = [
+		'Snezana Milutinovic',
+		'Bojana Kotur',
+		'Nikola Kotur',
+		'Dragana Kotur',
+		'Zeljko Kotur'
+	]
+	let ix = 0
+	let message = ''
+	const inputBoxAddName = (event: KeyboardEvent) => {
+		if (event.key !== 'Enter' || messages.includes(message)) return
+		messages.push(message)
+	}
+	const addName = (event: MouseEvent | KeyboardEvent) => {
+		if (event instanceof KeyboardEvent) {
+			if (event.key !== 'Enter') return
+			messages.push(message)
+		} else if (ix < names.length) {
+			messages.push(names[ix++] as string)
+		}
+
+		if (div.offsetHeight + div.scrollTop > div.getBoundingClientRect().height - 20) {
+			tick().then(() => {
+				div.scrollTo(0, div.scrollHeight)
+			})
+		}
+	}
+	let info: HTMLDivElement
+	const run = () => {
+		info.innerHTML += `<p>when running in component, $effect.tracking is  ${$effect.tracking()}</p>`
+	}
+	$effect(() => {
+		info.innerHTML += `<p>when running in effect, $effect.tracking is  ${$effect.tracking()}</p>`
+	})
+
+	// events are now properties of elements
+	let count = $state(0)
+
+	const onclick = () => {
+		count++
+	}
+	// ----------------------------------------------------------------
 
 	let position = 0
 	// keep a sing for rotational direction1:clockwise, -1:counterclockwise
@@ -50,7 +104,7 @@
 	// stagger block
 	// NOTE: creating timeline i  onMount after timeline.reverse()
 	// leave timeline unresponsive, so we create it over and over
-	// inside animateOut. As it is in <button on:click scope it can
+	// inside animateOut. As it is in <button onclick scope it can
 	// accept the reverse() call
 
 	// toggle hidden is crucial for allowing the reverse button to function
@@ -99,30 +153,123 @@
 <div class="container">
 	<div class="buttons">
 		<p>Animation starts when square come in the view -- when it becomes visible:</p>
-		<button on:click={animateAll}>animate all</button>
+		<button onclick={animateAll}>animate all</button>
 		<p>Animate square and scroll to make it visible to trigger the animation</p>
 		<br />
-		<!-- individual buttons on the left in grid to animate a,b,c or d -->
+
 		{#each Object.keys(params) as cn}
-			<button on:click={() => animation(`.${cn}`)}>{cn}</button>
+			<button onclick={() => animation(`.${cn}`)}>{cn}</button>
 		{/each}
-		<!-- A.Back.C and D squares that do animations -->
+
 		{#each Object.keys(params) as cn}
-			<div class={`box ${cn}`} on:click={animate} aria-hidden={true}>{cn.toUpperCase()}</div>
+			<div class={`box ${cn}`} onclick={animate} aria-hidden={true}>{cn.toUpperCase()}</div>
 		{/each}
 	</div>
-	<div class="wrapper" on:click={animateOut} aria-hidden={true}>
-		<h3>Click a box to transition out</h3>
-		<button on:click={() => timeline.reverse()} class="button hidden">reverse</button>
+
+	<div class="main">
+		<pre style="margin-left:-3rem;">
+				$effect.pre does not work on adding messages to the div element
+				so we can use scrollTo inside the addName method instead
+			</pre>
+		<p>Enter a name to the input below and press Enter to add it t the list</p>
+		<input type="text" bind:value={message} onkeydown={addName} placeholder="Enter a message" />
+		<button onclick={addName}>add name</button>
+
+		<div bind:this={div} class="message-container">
+			{#key messages}
+				{#each messages as message}
+					<p>{message}</p>
+				{/each}
+			{/key}
+		</div>
+
+		<!-- tracking where script is running -->
+		<hr />
+		<pre>NOTE: $effect.tracking will be renamed into $effect,trucking</pre>
+		<p>when script is running in template, $effect.tracking is {$effect.tracking()}</p>
+		<button onclick={run}>run the script</button>
+		<div bind:this={info} class="info">Tracking where script is running</div>
+
+		<hr />
+
+		<!--  events are now properties of elements -->
+		<pre>Events are now properties of elements</pre>
+		<div {onclick} aria-hidden={true} class="div-button">
+			clicks: {count}
+		</div>
+	</div>
+
+	<div class="wrapper" onclick={animateOut} aria-hidden={true}>
+		<p class="caption">Click a box to transition out</p>
+		<div class="button-wrapper">
+			<button onclick={() => timeline.reverse()} class="button hidden">reverse</button>
+		</div>
 		{#each ['green', 'purple', 'orange', 'tomato', 'rebeccapurple'] as colorName}
-			<div class="boxS {colorName}">{capitalize(colorName)}</div>
+			<div class="boxS {colorName}"><br /><br />{capitalize(colorName)}</div>
 		{/each}
 	</div>
 </div>
 
 <style lang="scss">
 	@use 'sass:list';
-
+	.main {
+		margin: 1rem;
+		border: 1px solid gray;
+		border-radius: 5px;
+		padding: 6px 1rem;
+	}
+	.div-button {
+		width: 6rem;
+		padding: 6px 1rem;
+		border: 1px solid gray;
+		border-radius: 5px;
+		color: white;
+		background-color: navy;
+		user-select: none;
+		text-align: center;
+		cursor: pointer;
+		&:hover {
+			border-color: yellow;
+			color: yellow;
+		}
+	}
+	.button-wrapper {
+		display: inline-block;
+		background: transparent;
+		border-radius: 5px;
+		z-index: 2;
+		&:hover {
+			color: yellow;
+			border: 1px solid yellow;
+		}
+	}
+	.message-container {
+		width: 16rem;
+		height: 4rem;
+		border: 1px solid gray;
+		border-radius: 4px;
+		overflow-y: auto;
+		padding: 0.5rem;
+	}
+	p {
+		margin: 0;
+		padding: 0;
+	}
+	.caption {
+		font-size: 16px;
+		margin: 2rem 0 2rem -2rem;
+		color: lightgreen;
+		text-align: center;
+	}
+	.info {
+		width: 23rem;
+		height: 6rem;
+		border: 1px solid gray;
+		border-radius: 5px;
+		margin-top: 1rem;
+		padding: 5px;
+		overflow-y: auto;
+	}
 	.hidden {
 		display: none;
 	}
@@ -140,8 +287,10 @@
 	}
 	@for $j from 1 through 5 {
 		.#{'' + list.nth($cls,$j)} {
-			// @extend .boxS;
+			@extend .boxS;
 			background-color: list.nth($cls, $j);
+			word-break: break-word;
+			line-height: 14px;
 		}
 	}
 	.button {
@@ -176,36 +325,35 @@
 	}
 	.container {
 		display: grid;
-		grid-template-columns: 1fr 1fr;
+		grid-template-columns: 2fr 2fr 1fr;
 		margin-top: 1rem;
 		width: 80vw;
 	}
 	.wrapper {
 		display: flex;
 		flex-direction: column;
+		align-items: center;
 		gap: 5px;
 		margin-left: 8rem;
 		border: 1px solid gray;
 		border-radius: 1rem;
 		width: 100%;
 		height: 85vh;
-		padding-left: 4rem;
 	}
-	// .stagger-block {
-	// 	border: 1px solid gray;
-	// 	border-radius: 1rem;
-	// 	width: 40vw;
-	// }
+
 	.buttons {
 		display: block;
 		border: 1px solid gray;
 		border-radius: 1rem;
-		width: 100%;
+		padding: 2rem 0 1rem 1rem;
+		width: 90%;
 		height: 85vh;
-		// margin: 1rem 0 1rem 4rem;
 		button:nth-child(1) {
 			display: block;
 			margin: 8px 0;
+		}
+		p {
+			margin: 1rem 0 0.5rem 0;
 		}
 	}
 </style>

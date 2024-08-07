@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
 	import RandomCanvas from '$lib/components/RandomCanvas.svelte'
-	import { getContext } from 'svelte'
 	import { page } from '$app/stores' // for $age.status code on actions
 	import * as utils from '$utils'
 
@@ -64,10 +63,10 @@
 	const setColor = () => {
 		// const ctx = canvas.getContext('2d');
 		const cbc = hexColors()
-		color = cbc[0]
-		backColor = cbc[1]
+		color = cbc[0] as string
+		backColor = cbc[1] as string
 		ctx?.fillText('COLOR', canvas.width / 2, canvas.height / 2)
-		ctx2.font = getFontSize(canvas2.width, ctx2, true) as string
+		ctx2.font = getFontSize(ctx2Text, canvas2.width, ctx2, true) as string
 	}
 
 	/* ------------------ $effect with async -----------------
@@ -176,7 +175,7 @@
 
 <br />
 <a href="/">Home</a>
-<a href="/canvas">Canvas</a>
+<a href="/chip">Chip</a>
 
 <div class="absolute">
 	<div class="row">

@@ -1,28 +1,28 @@
 <script lang="ts">
-	import { onMount, tick } from 'svelte';
+	import { onMount, tick } from 'svelte'
 
-	let color = $state('#ff3e00');
-	let backColor = $state('#a08090');
-	let lblColor: HTMLInputElement;
+	let color = $state('#ff3e00')
+	let backColor = $state('#a08090')
+	let lblColor: HTMLInputElement
 
-	let canvas1: HTMLCanvasElement;
-	let canvas2: HTMLCanvasElement;
-	let ctx1: CanvasRenderingContext2D;
-	let ctx2: CanvasRenderingContext2D;
-	let size1 = $state<number>(150);
-	let size2 = $state<number>(150);
-	let ctx2Text = 'Canvas Two';
+	let canvas1: HTMLCanvasElement
+	let canvas2: HTMLCanvasElement
+	let ctx1: CanvasRenderingContext2D
+	let ctx2: CanvasRenderingContext2D
+	let size1 = $state<number>(150)
+	let size2 = $state<number>(150)
+	let ctx2Text = 'Canvas Two'
 
 	const hexColors = () => {
-		let c = '#';
-		let bc = '#';
-		[0, 1, 2].forEach((n) => {
-			const v = Math.floor((Math.random() * 1000) % 255);
-			c = c + ('0' + v.toString(16)).slice(-2);
-			bc = bc + ('0' + (255 - v).toString(16)).slice(-2);
-		});
-		return [c, bc];
-	};
+		let c = '#'
+		let bc = '#'
+		;[0, 1, 2].forEach((n) => {
+			const v = Math.floor((Math.random() * 1000) % 255)
+			c = c + ('0' + v.toString(16)).slice(-2)
+			bc = bc + ('0' + (255 - v).toString(16)).slice(-2)
+		})
+		return [c, bc]
+	}
 
 	const getFontSize = (
 		txt: string,
@@ -30,39 +30,39 @@
 		ctx: CanvasRenderingContext2D,
 		px: boolean = false
 	) => {
-		let work = true;
-		let fontSize = 300; //= '48px serif';
+		let work = true
+		let fontSize = 300 //= '48px serif';
 		while (work) {
-			ctx.font = `${fontSize}px serif`;
+			ctx.font = `${fontSize}px serif`
 			if (ctx.measureText(txt).width > maxWidth) {
-				fontSize -= 1;
+				fontSize -= 1
 			} else {
-				work = false;
+				work = false
 			}
 		}
-		return px ? (`${fontSize}px serif` as string) : (fontSize as number);
-	};
+		return px ? (`${fontSize}px serif` as string) : (fontSize as number)
+	}
 
 	const setColor = async () => {
-		size1 = 50 + Math.floor((Math.random() * 1000) % 150);
-		size2 = 50 + Math.floor((Math.random() * 1000) % 150);
-		let cbc = hexColors();
-		color = cbc[0] as string;
-		backColor = cbc[1] as string;
-		ctx1.fillStyle = 'lightgreen';
-		ctx1.font = getFontSize(String(size1), canvas1.width, ctx1, true) as string; //'20px serif';
-		let mt = ctx1.measureText(String(size1));
-		let h = mt.actualBoundingBoxAscent + mt.actualBoundingBoxDescent;
-		ctx1.fillText(String(size1), 0, canvas1.height / 2);
+		size1 = 50 + Math.floor((Math.random() * 1000) % 150)
+		size2 = 50 + Math.floor((Math.random() * 1000) % 150)
+		let cbc = hexColors()
+		color = cbc[0] as string
+		backColor = cbc[1] as string
+		ctx1.fillStyle = 'lightgreen'
+		ctx1.font = getFontSize(String(size1), canvas1.width, ctx1, true) as string //'20px serif';
+		let mt = ctx1.measureText(String(size1))
+		let h = mt.actualBoundingBoxAscent + mt.actualBoundingBoxDescent
+		ctx1.fillText(String(size1), 0, canvas1.height / 2)
 
-		ctx2.font = getFontSize(ctx2Text, canvas2.width, ctx2, true) as string;
-		mt = ctx2.measureText(ctx2Text);
-		h = mt.actualBoundingBoxAscent + mt.actualBoundingBoxDescent;
-		ctx2.fillText(ctx2Text, 0, canvas2.height / 2);
-		await tick();
-		await render(canvas1, ctx1, size1, String(size1));
-		await render(canvas2, ctx2, size2, ctx2Text);
-	};
+		ctx2.font = getFontSize(ctx2Text, canvas2.width, ctx2, true) as string
+		mt = ctx2.measureText(ctx2Text)
+		h = mt.actualBoundingBoxAscent + mt.actualBoundingBoxDescent
+		ctx2.fillText(ctx2Text, 0, canvas2.height / 2)
+		await tick()
+		await render(canvas1, ctx1, size1, String(size1))
+		await render(canvas2, ctx2, size2, ctx2Text)
+	}
 
 	const render = async (
 		canvas: HTMLCanvasElement,
@@ -70,54 +70,55 @@
 		size: number,
 		text: string
 	) => {
-		if (!(canvas && ctx)) return;
-		let cbc = hexColors();
-		color = cbc[0] as string;
-		backColor = cbc[1] as string;
-		ctx.fillStyle = backColor;
-		ctx.fillRect(0, 0, size, size);
-		await tick();
-		lblColor.style.backgroundColor = backColor;
+		if (!(canvas && ctx)) return
+		let cbc = hexColors()
+		color = cbc[0] as string
+		backColor = cbc[1] as string
+		ctx.fillStyle = backColor
+		ctx.fillRect(0, 0, size, size)
+		await tick()
+		lblColor.style.backgroundColor = backColor
 
 		// render text after filling background to get on top
-		ctx.fillStyle = color;
-		ctx.font = getFontSize(text, canvas.width, ctx, true) as string;
+		ctx.fillStyle = color
+		ctx.font = getFontSize(text, canvas.width, ctx, true) as string
 
-		const mt = ctx.measureText(text);
-		const h = mt.actualBoundingBoxAscent + mt.actualBoundingBoxDescent;
-		const delta = typeof Number(text) === 'number' ? h / 2 : -h / 2;
+		const mt = ctx.measureText(text)
+		const h = mt.actualBoundingBoxAscent + mt.actualBoundingBoxDescent
+		const delta = typeof Number(text) === 'number' ? h / 2 : -h / 2
 
-		ctx.fillText(text, 0, canvas.height / 2 + delta);
-	};
+		ctx.fillText(text, 0, canvas.height / 2 + delta)
+	}
 
 	$effect(() => {
-		if (!canvas1) return;
-		const text = String(size1);
-		ctx1 = canvas1.getContext('2d') as CanvasRenderingContext2D;
+		if (!canvas1) return
+		const text = String(size1)
+		ctx1 = canvas1.getContext('2d') as CanvasRenderingContext2D
 
 		// fillStyle is applied to everything then follow, text and/or background
 		// to make text and background of different colors set fillStyle before
 		// fillText for text and set fillStyle again for fillRect for background
 		//		set fillStyle for text and fillText, then
 		//		set fileStyle again for background and fillRect
-		ctx1.fillStyle = backColor;
-		ctx1.fillRect(0, 0, size1, size1);
-		ctx1.font = getFontSize(text, canvas1.width, ctx1, true) as string;
+		ctx1.fillStyle = backColor
+		ctx1.fillRect(0, 0, size1, size1)
+		ctx1.font = getFontSize(text, canvas1.width, ctx1, true) as string
 
-		const mt = ctx1.measureText(text);
-		const h = mt.actualBoundingBoxAscent + mt.actualBoundingBoxDescent;
+		const mt = ctx1.measureText(text)
+		const h = mt.actualBoundingBoxAscent + mt.actualBoundingBoxDescent
 
-		ctx1.fillStyle = color;
-		ctx1.fillText(text, 0, canvas1.height / 2 + h / 2);
-	});
+		ctx1.fillStyle = color
+		ctx1.fillText(text, 0, canvas1.height / 2 + h / 2)
+	})
 
 	onMount(async () => {
-		ctx1 = canvas1.getContext('2d') as CanvasRenderingContext2D;
-		ctx2 = canvas2.getContext('2d') as CanvasRenderingContext2D;
-		await setColor();
-	});
+		ctx1 = canvas1.getContext('2d') as CanvasRenderingContext2D
+		ctx2 = canvas2.getContext('2d') as CanvasRenderingContext2D
+		await setColor()
+	})
 </script>
 
+<p>This is a RandomCanvas component</p>
 <div class="controls">
 	<label class="color-dialog-box">
 		Resize the first box on the right

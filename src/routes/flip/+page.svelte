@@ -449,7 +449,13 @@
 		left: 17.2rem;
 		margin-bottom: 5px;
 		color: lightgreen;
-		transition-delay: 3s;
+		transition-delay: 6s;
+	}
+	[data-label='stack'] {
+		transform: translate(0, 3rem);
+		transition-delay: 6s;
+		transition: transform 3s;
+		user-select: none;
 	}
 	[data-label='grid'] {
 		// position: absolute;
@@ -457,12 +463,6 @@
 		// width: 15rem;
 		transform: translate(0, -3.8rem);
 		transition-delay: 2s;
-		transition: transform 3s;
-		user-select: none;
-	}
-	[data-label='stack'] {
-		transform: translate(0, 3rem);
-		transition-delay: 4s;
 		transition: transform 3s;
 		user-select: none;
 	}
