@@ -12,6 +12,8 @@
 		{ color: 'Purple', title: 'Render', href: '/render' },
 		{ color: 'LightGreen', title: 'Bars', href: '/bars' },
 		{ color: 'Pink', title: 'Bindable', href: '/bindable' },
+		{ color: 'SkyBlue', title: 'Communicate', href: '/communicate' },
+		{ color: 'ForestGreen', title: 'ContactCard', href: '/contact' },
 		{ color: 'Yellow', title: 'Flip', href: '/flip' }
 	]
 
