@@ -1,8 +1,8 @@
 <script lang="ts">
-	import Chip from '$lib/components/Chip.svelte';
+	import NavButton from '$lib/components/NavButton.svelte'
 	const turn = () => {
-		console.log('turn');
-	};
+		console.log('turn')
+	}
 	const items = [
 		{ color: 'Pink', title: 'Home', href: '/' },
 		{ color: 'Blue', title: 'Derived', href: '/derived' },
@@ -10,36 +10,38 @@
 		{ color: 'Tomato', title: 'Caterpillar', href: '/caterpillar' },
 		{ color: 'Green', title: 'Balloon', href: '/balloon' },
 		{ color: 'Purple', title: 'Render', href: '/render' },
+		{ color: 'LightGreen', title: 'Bars', href: '/bars' },
+		{ color: 'Pink', title: 'Bindable', href: '/bindable' },
 		{ color: 'Yellow', title: 'Flip', href: '/flip' }
-	];
+	]
 
 	// using $effect
-	import { tick } from 'svelte';
-	let inputBox: HTMLInputElement;
-	let div: HTMLDivElement;
-	let messages = $state<string[]>([]);
+	import { tick } from 'svelte'
+	let inputBox: HTMLInputElement
+	let div: HTMLDivElement
+	let messages = $state<string[]>([])
 
 	$effect.pre(() => {
-		if (!div) return; // not yet mounted
+		if (!div) return // not yet mountedChip
 		// reference `messages` array length so that this code re-runs whenever it changes
-		messages.length;
+		messages.length
 		// autoscroll when new messages are added
 		if (div.offsetHeight + div.scrollTop > div.scrollHeight - 20) {
 			tick().then(() => {
-				div?.scrollTo(0, div.scrollHeight);
-			});
+				div?.scrollTo(0, div.scrollHeight)
+			})
 		}
-	});
+	})
 
 	const change = (event: KeyboardEvent) => {
-		const char = event.key;
+		const char = event.key
 		// console.log(char)
-		if (event.key !== 'Enter') return;
+		if (event.key !== 'Enter') return
 		if (event.target) {
-			messages.push(inputBox.value as string);
-			inputBox.value = '';
+			messages.push(inputBox.value as string)
+			inputBox.value = ''
 		}
-	};
+	}
 </script>
 
 <pre>Using $effect based on messages.length to render
@@ -47,7 +49,7 @@
 </pre>
 <input
 	type="text"
-	placeholder="Enter item for the list"
+	placeholder="Enter item for the list and press Enter key"
 	size="20"
 	class="input-box"
 	bind:this={inputBox}
@@ -73,10 +75,10 @@
 	<p>This is the snippet content</p>
 {/snippet}
 {@render snippetName()}
-<!-- <Chip label="home" title="Home" href="/" {snippetName}></Chip> -->
+<!-- <NavButton label="home" title="Home" href="/" {snippetName}></NavButton> -->
 {#each items as item}
 	<p onclick={turn} aria-hidden={true}>
-		<Chip colorName={item.color ?? 'Red'} title={item.title} href={item.href}>
+		<NavButton colorName={item.color ?? 'Red'} title={item.title} href={item.href}>
 			{#snippet media()}
 				{#if item.color}
 					{@render icon(`${item.color}`)}
@@ -84,20 +86,20 @@
 					{@render icon()}
 				{/if}
 			{/snippet}
-		</Chip>
+		</NavButton>
 	</p>
 {/each}
 
-<Chip title="Svelte" href="/button">
+<NavButton title="Svelte" href="/button">
 	{#snippet media()}
 		{@render profile()}
 	{/snippet}
-</Chip>
-<Chip title="Vue" href="/counter">
+</NavButton>
+<NavButton title="Vue" href="/counter">
 	{#snippet media()}
 		{@render profile('https://upload.wikimedia.org/wikipedia/commons/9/95/Vue.js_Logo_2.svg')}
 	{/snippet}
-</Chip>
+</NavButton>
 
 <!-- using $effect -->
 <style>

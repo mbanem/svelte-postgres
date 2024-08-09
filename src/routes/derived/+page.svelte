@@ -175,7 +175,7 @@
 
 <br />
 <a href="/">Home</a>
-<a href="/chip">Chip</a>
+<a href="/navbar">Navbar</a>
 
 <div class="absolute">
 	<div class="row">

@@ -20,6 +20,10 @@
 		users
 	}: ARGS = $props()
 
+	if (users.length === 0) {
+		users[0] = user as UserPartial
+	}
+
 	let msgEl: HTMLSpanElement
 	let selectBox: HTMLSelectElement
 	const clearMessage = () => {
@@ -36,9 +40,11 @@
 		return result
 	}
 	let userName = $derived.by(() => {
-		let user = users.filter((u) => u.id === selectedUserId)[0] as UserPartial
-		if (user) {
-			return `${user?.firstName} ${user?.lastName}`
+		let aUser = users.filter((u) => u.id === selectedUserId)[0] as UserPartial
+		if (aUser) {
+			return `${aUser?.firstName} ${aUser?.lastName}`
+		} else {
+			return `${user.firstName} ${user.lastName}`
 		}
 	})
 	// $effect(() => {
@@ -47,7 +53,8 @@
 	onMount(() => {
 		const t = amendTrueFalseUserId ? (user.role === 'ADMIN' ? '-T' : '-F') : ''
 		selectedUserId = `${user.id}${t}`
-		selectBox.value = selectedUserId.slice(0, -2)
+		console.log(selectedUserId)
+		selectBox.value = selectedUserId //.slice(0, -2)
 	})
 </script>
 

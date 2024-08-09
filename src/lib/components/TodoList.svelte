@@ -35,8 +35,6 @@
 			class:uncompleted={!completed}
 			in:send={{ key: uTodo.todoId }}
 			out:receive={{ key: uTodo.todoId }}
-			on:introstart={handleEnd}
-			on:outroend={handleStart}
 		>
 			<label>
 				<input
@@ -65,7 +63,7 @@
 				<div class="tooltip-wrapper">
 					<button
 						class={tuSu ? 'ok-hover' : 'no-hover'}
-						on:click={() => {
+						onclick={() => {
 							tuSu && deleteTodo(uTodo.todoId)
 						}}
 						aria-label="Delete Todo"
@@ -90,7 +88,7 @@
 				<div class="tooltip-wrapper">
 					<button
 						class={tuSu ? 'ok-hover' : 'no-hover'}
-						on:click={() => {
+						onclick={() => {
 							tuSu && prepareUpdate(uTodo.todoId)
 						}}
 						aria-label="Update Todo"

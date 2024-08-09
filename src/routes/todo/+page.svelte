@@ -11,7 +11,7 @@
 
 	import PageTitleCombo from '$lib/components/PageTitleCombo.svelte'
 	import TodoList from '$lib/components/TodoList.svelte'
-	import { onMount, getContext, setContext } from 'svelte'
+	import { onMount } from 'svelte'
 	import type { Writable } from 'svelte/store'
 	import * as utils from '$lib/utils'
 
@@ -21,33 +21,43 @@
 	}
 	let { data, form }: ARGS = $props()
 
-	const prevPath: Writable<String> = getContext('previousPath')
-	const beforeUnload = () => {
-		prevPath.set($page.url.pathname)
-	}
-	let loading: boolean
-	let message = ''
+	let { uTodos, users } = data
+
+	let selectedUserId = ''
+	let loading = $state<boolean>(false)
 	// form?.message cannot be cleared by code but could be ignored when necessary
 	let ignoreFormMessage = false
+	let result = ''
+	let titleIsRequired = ''
+	let contentIsRequired = ''
+	let updatePrepared = false
+	let btnCreate: HTMLButtonElement
+	let btnUpdate: HTMLButtonElement
+	let theForm: HTMLFormElement
 
+	// result = data.toggled ? 'toggled successfully' : (data.message ?? 'toggle failed')
 	$effect(() => {
 		setColor(
 			form?.message ? (form.message.includes('successfully') ? 'lightgreen' : 'red') : 'lightgreen'
 		)
 	})
 
+	let snap = $state<TodoFormData>({
+		id: '',
+		authorId: '',
+		title: '',
+		content: '',
+		priority: 0
+	})
+
 	// keep message displayed for several seconds
 	const clearMessage = () => {
 		setTimeout(() => {
-			message = ''
 			ignoreFormMessage = false
 			result = ''
 		}, 2000)
 		setButtonVisible([btnCreate, btnUpdate])
 	}
-
-	let titleIsRequired = ''
-	let contentIsRequired = ''
 
 	// if form is filled with  data for update, but user chose other action, we
 	// clear the form input elements
@@ -77,14 +87,14 @@
 		// turn on spinner before form submit
 		loading = true
 		// show the intent of the action that follows
-		message = action.search === '?/addTodo' ? 'creating todo...' : 'updating todo...'
+		result = action.search === '?/addTodo' ? 'creating todo...' : 'updating todo...'
 
 		return async ({ update }) => {
 			await update()
 			if (action.search === '?/addTodo') {
-				message = $page.status === 200 ? 'todo created' : 'create failed'
+				result = $page.status === 200 ? 'todo created' : 'create failed'
 			} else if (action.search === '?/updateTodo') {
-				message = $page.status === 200 ? 'todo updated' : 'update failed'
+				result = $page.status === 200 ? 'todo updated' : 'update failed'
 			}
 			invalidateAll()
 			ignoreFormMessage = true
@@ -108,7 +118,6 @@
 		loading = false
 		// setting message will dynamically set result, which in turn will show message
 		// for several seconds and then clear it out
-		message = data.toggled ? 'toggled successfully' : (data.message ?? 'toggle failed')
 
 		if (data.toggled) {
 			uTodos = (uTodos as UTodos).map((todo) => {
@@ -122,18 +131,18 @@
 
 	const deleteTodo = async (id: string) => {
 		loading = true
-		message = 'deleting todo...'
+		result = 'deleting todo...'
 		clearForm()
 		const response = await fetch(`/todo?id=${id}`, {
 			method: 'DELETE',
 			body: id
 		})
-		const result = await response.json()
+		result = await response.json()
 		loading = false
-		// setting message will dynamically set result, which in turn will show message
+		// setting result will dynamically set result, which in turn will show result
 		// for several seconds and then clear it out
-		message = result.deleted ? 'deleted successfully' : 'delete failed'
-		if (result.deleted) {
+		result = form?.success ? 'deleted successfully' : 'delete failed'
+		if (form?.success) {
 			uTodos = uTodos.filter((uTodo: UTodo) => uTodo.todoId !== id)
 		}
 	}
@@ -163,10 +172,7 @@
 	// updatePrepared say data is copied into the form elements
 	// and should be cleared if action other than click on the
 	// update button is taken
-	let updatePrepared = false
-	let btnCreate: HTMLButtonElement
-	let btnUpdate: HTMLButtonElement
-	let theForm: HTMLFormElement
+
 	const prepareUpdate = async (todoId: string) => {
 		prepareDataForEdit(todoId)
 		updatePrepared = true
@@ -175,19 +181,10 @@
 	let formMessage = $derived(ignoreFormMessage ? '' : (form?.message ?? ''))
 	// setting result will call showMessage and this one will setTimeout
 	// to clear the message after several seconds
-	let result = $derived(message || formMessage)
-	let { uTodos, user } = data
+	// let result = $derived(message || formMessage)
 
-	let selectedUserId = ''
-	let authorId = data?.user?.id
+	let authorId = data.locals.user.id
 
-	let snap: TodoFormData = {
-		id: '',
-		authorId: '',
-		title: '',
-		content: '',
-		priority: 0
-	}
 	export const snapshot: Snapshot<TodoFormData> = {
 		capture: () => {
 			return snap
@@ -196,7 +193,6 @@
 			snap = value
 		}
 	}
-	let mrPath = getContext('mrPath') as SvelteStore<string>
 
 	// const todoUserToSnap = (tUser: UTodo, snap: TodoFormData) => {
 	// 	snap.id = tUser.todoId;
@@ -207,35 +203,34 @@
 	// };
 	onMount(() => {
 		if (selectedUserId !== data.locals.user.id) {
+			console.log('ids do not match')
 			return
 		}
 		const tUser = utils.selectRecordItems<UTodo>('id', selectedUserId, data.uTodos)
 		snap.authorId = selectedUserId
+		setButtonVisible([btnCreate, btnUpdate])
 		return () => {
-			// @ts-expect-error
-			mrPath.set($page.url.pathname)
+			utils.setMrPath($page.url.pathname)
 		}
 	})
 </script>
 
-<svelte:window on:beforeunload={beforeUnload} />
+<!-- <svelte:window on:beforeunload={beforeUnload} /> -->
 <!-- locals.user and user are the same -->
 <!-- <pre>local {data.locals.user.id} user {user.id}</pre> -->
 <svelte:head>
 	<title>Todo</title>
 </svelte:head>
 
-<!-- <pre style="font-size:11px;">authorId {authorId}</pre> -->
-<!-- <pre style="font-size:11px;">data {JSON.stringify({ selectedUserId, authorId }, null, 2)}</pre> -->
+<pre style="font-size:14px;">data {JSON.stringify(uTodos, null, 2)}</pre>
 
 <PageTitleCombo
 	bind:result
-	bind:message
 	bind:ignoreFormMessage
 	bind:selectedUserId
 	amendTrueFalseUserId={false}
 	PageName="Todo"
-	user={data.user}
+	user={data.locals.user}
 	users={data.users}
 />
 
@@ -292,7 +287,7 @@
 						<p>owner only permission</p>
 					</Tooltip>
 				{/if}
-				<button on:click|preventDefault={clearForm}>clear form</button>
+				<button onclick={clearForm}>clear form</button>
 			</div>
 		</div>
 	</form>

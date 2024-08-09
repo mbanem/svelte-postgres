@@ -257,7 +257,7 @@
 	}
 	.caption {
 		font-size: 16px;
-		margin: 2rem 0 2rem -2rem;
+		margin: 2rem 0;
 		color: lightgreen;
 		text-align: center;
 	}
@@ -325,7 +325,7 @@
 	}
 	.container {
 		display: grid;
-		grid-template-columns: 2fr 2fr 1fr;
+		grid-template-columns: 2.5fr 2fr 0.8fr;
 		margin-top: 1rem;
 		width: 80vw;
 	}

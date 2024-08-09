@@ -14,7 +14,6 @@ const navButtonObjects = [
 	{ position: '21', title: 'post', condition: 'USER' },
 	{ position: '25', title: 'scroll', condition: 'VISITOR' },
 	{ position: '30', title: 'flip', condition: 'USER' },
-	{ position: '31', title: 'chip', condition: 'VISITOR' },
 	{ position: '32', title: 'snippet', condition: 'VISITOR' },
 	{ position: '33', title: 'render', condition: 'VISITOR' },
 	{ position: '35', title: 'balloon', href: '/balloon', condition: 'USER' },
@@ -22,6 +21,7 @@ const navButtonObjects = [
 	{ position: '45', title: 'caterpillar', condition: 'ADMIN' },
 	{ position: '46', title: 'opposites', href: '/opposite-lists', condition: 'ADMIN' },
 	{ position: '46', title: 'crossfade', condition: 'VISITOR' },
+	{ position: '47', title: 'navbar', condition: 'VISITOR' },
 	{ position: '50', title: 'login', condition: 'VISITOR' },
 	{ position: '50', title: 'logout', condition: 'USER' },
 	{ position: '51', title: 'register', condition: 'VISITOR' }

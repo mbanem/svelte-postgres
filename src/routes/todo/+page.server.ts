@@ -30,6 +30,7 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
 	if (!userAuthToken) {
 		throw error(400, 'User cookie not found')
 	}
+
 	const user = (await db.user.findUnique({
 		where: {
 			userAuthToken: cookies.get('session')
@@ -41,9 +42,11 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
 			role: true
 		}
 	})) as UserPartial
+
 	if (!user) {
 		throw error(400, 'User not found')
 	}
+
 	if (locals.user?.role === 'ADMIN') {
 		uTodos = (await db.$queryRaw`select
 				u.id,
@@ -95,7 +98,7 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
 		await db.$queryRaw`select distinct t.user_id as "id", u.first_name as "firstName",u.last_name as "lastName", u.role from todo t join users u on u.id = t.user_id`
 	return {
 		uTodos, // as UTodos is important for TypeScript
-		user,
+		// user,		// user is in locals that is sent from root/+layout.server.ts
 		users
 	}
 }) satisfies PageServerLoad
