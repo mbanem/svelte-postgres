@@ -53,7 +53,6 @@
 	onMount(() => {
 		const t = amendTrueFalseUserId ? (user.role === 'ADMIN' ? '-T' : '-F') : ''
 		selectedUserId = `${user.id}${t}`
-		console.log(selectedUserId)
 		selectBox.value = selectedUserId //.slice(0, -2)
 	})
 </script>

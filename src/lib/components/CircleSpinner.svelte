@@ -3,8 +3,9 @@
 		color: string
 		duration?: string
 		size?: string
+		top?: string
 	}
-	let { color = `black`, duration = `1.5s`, size = `1em` }: ARGS = $props()
+	let { color = `black`, duration = `1.5s`, size = `1em`, top = `20%` }: ARGS = $props()
 </script>
 
 <!-- border-color for every side top right bottom left -->
@@ -14,6 +15,7 @@
 	style="--duration: {duration}"
 	style:width={size}
 	style:height={size}
+	style:top
 ></div>
 
 <style>
@@ -26,8 +28,8 @@
 		border-radius: 50%;
 		animation: var(--duration) infinite rotate;
 		position: absolute;
-		top: 20%;
 		left: 0;
+		top: 4px;
 		color: black;
 	}
 	@keyframes rotate {

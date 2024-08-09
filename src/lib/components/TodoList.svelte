@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { send, receive } from '$utils/transitions'
+	import { flip } from 'svelte/animate'
 	import { Tooltip } from 'flowbite-svelte'
 
 	type ARGS = {
@@ -25,6 +26,22 @@
 	const handleStart = () => {}
 
 	const handleEnd = () => {}
+
+	const move = (item: string, from: string[], to: string[]) => {
+		to.push(item)
+		return [from.filter((i) => i !== item), to]
+	}
+
+	const moveLeft = (item: string) => {
+		// @ts-expect-error
+		;[right, left] = move(item, right, left)
+	}
+
+	const moveRight = (item: string) => {
+		// @ts-expect-error
+		;[left, right] = move(item, left, right)
+		console
+	}
 </script>
 
 <ul class="todos">
@@ -33,6 +50,7 @@
 		{@const tuSu = uTodo.id === selectedUserId}
 		<li
 			class:uncompleted={!completed}
+			animate:flip
 			in:send={{ key: uTodo.todoId }}
 			out:receive={{ key: uTodo.todoId }}
 		>

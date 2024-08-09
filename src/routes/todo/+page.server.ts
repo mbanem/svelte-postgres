@@ -116,12 +116,11 @@ type InputData = {
 // which is more cumbersome
 export const actions: Actions = {
 	addTodo: async ({ request }) => {
-		console.log('addTodo XXX')
 		const input_data = Object.fromEntries(
 			// @ts-expect-error
 			await request.formData()
 		) as InputData
-		console.log(JSON.stringify(input_data, null, 2))
+		console.log('addTodo', JSON.stringify(input_data, null, 2))
 		input_data.priority = Number(input_data.priority)
 		const { userId, title, content, priority } = input_data
 		if (title === '' || content === '' || userId === '') {
@@ -191,7 +190,9 @@ export const actions: Actions = {
 				}
 			})
 			await utils.sleep(2000)
+
 			return {
+				todos: { id: 'some id', title: 'some title', content: 'some content' },
 				success: true,
 				message: 'Todo successfully updated'
 			}
@@ -203,11 +204,8 @@ export const actions: Actions = {
 		}
 	},
 	deleteTodo: async ({ request }) => {
-		const body = Object.fromEntries(
-			// @ts-expect-error
-			await request.formData()
-		)
-		const id = body.get('id')
+		const body = await request.formData()
+		const id = body.get('id') as string
 
 		if (id === '') {
 			return fail(400, {

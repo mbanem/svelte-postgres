@@ -17,6 +17,9 @@
 		data: PageData
 		form: ActionData
 	}
+
+	// data is refresh when form is submitted but let part = $store<TPart>(data.part) is not
+	// se note at the top part of todo/+page.svelte for details
 	let { data, form }: ARGS = $props()
 
 	type UserWithBio = {
@@ -75,7 +78,7 @@
 		// change bioId only when snap.authorId changes
 		// selectedUserWithBio = getUserWithBio(snap.authorId) as UserWithBio
 	}
-	const enhanceProfile: SubmitFunction = ({ action, formData }) => {
+	const enhanceProfile: SubmitFunction = async ({ action, formData }) => {
 		if (wrongUser) {
 			return
 		}
@@ -109,7 +112,7 @@
 				iconDelete.classList.toggle('hidden')
 				setButtonVisible([btnCreate, btnUpdate])
 			}
-			invalidateAll()
+			// await invalidateAll()
 			loading = false // stop spinner animation
 			clearForm()
 			clearMessage()
@@ -250,13 +253,13 @@
 </svelte:head>
 
 <PageTitleCombo
+	PageName="Profile"
 	bind:result
 	bind:ignoreFormMessage
 	bind:selectedUserId={snap.authorId}
-	PageName="Profile"
+	amendTrueFalseUserId={true}
 	user={data.locals.user}
 	users={data.users}
-	amendTrueFalseUserId={true}
 />
 
 <div class="container">

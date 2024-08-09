@@ -1,24 +1,26 @@
 <script lang="ts">
-	import { flip } from 'svelte/animate';
-	import { crossfade } from 'svelte/transition';
-	const [send, receive] = crossfade({});
+	import { flip } from 'svelte/animate'
+	import { crossfade } from 'svelte/transition'
+	const [send, receive] = crossfade({})
 
-	let left = ['red', 'orange', 'green', 'purple'];
-	let right = ['yellow', 'blue'];
+	let left = ['red', 'orange', 'green', 'purple']
+	let right = ['yellow', 'blue']
 
 	const move = (item: string, from: string[], to: string[]) => {
-		to.push(item);
-		return [from.filter((i) => i !== item), to];
-	};
+		to.push(item)
+		return [from.filter((i) => i !== item), to]
+	}
 
 	const moveLeft = (item: string) => {
-		[right, left] = move(item, right, left);
-	};
+		// @ts-expect-error
+		;[right, left] = move(item, right, left)
+	}
 
 	const moveRight = (item: string) => {
-		[left, right] = move(item, left, right);
-		console;
-	};
+		// @ts-expect-error
+		;[left, right] = move(item, left, right)
+		console
+	}
 </script>
 
 <main class="main-class">

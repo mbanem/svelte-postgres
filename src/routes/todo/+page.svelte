@@ -12,7 +12,6 @@
 	import PageTitleCombo from '$lib/components/PageTitleCombo.svelte'
 	import TodoList from '$lib/components/TodoList.svelte'
 	import { onMount } from 'svelte'
-	import type { Writable } from 'svelte/store'
 	import * as utils from '$lib/utils'
 
 	type ARGS = {
@@ -20,22 +19,27 @@
 		form: ActionData
 	}
 	let { data, form }: ARGS = $props()
+	let { users } = data
 
-	let { uTodos, users } = data
-
-	let selectedUserId = ''
+	// NOTE: When the page updates uTodos = $state<UTodos>() is not refreshed but data.uTodos are refreshed.
+	// In order to have uTodos refreshed we need two steps: let uTodos = $state<UTodos>() like a definition
+	// and $effect that get uTodos from refreshed data prop
+	let uTodos = $state<UTodos>()
+	$effect(() => {
+		uTodos = data.uTodos
+	})
+	let selectedUserId = data.locals.user.id
 	let loading = $state<boolean>(false)
 	// form?.message cannot be cleared by code but could be ignored when necessary
 	let ignoreFormMessage = false
-	let result = ''
 	let titleIsRequired = ''
 	let contentIsRequired = ''
 	let updatePrepared = false
 	let btnCreate: HTMLButtonElement
 	let btnUpdate: HTMLButtonElement
+	let btnDelete: HTMLButtonElement
 	let theForm: HTMLFormElement
 
-	// result = data.toggled ? 'toggled successfully' : (data.message ?? 'toggle failed')
 	$effect(() => {
 		setColor(
 			form?.message ? (form.message.includes('successfully') ? 'lightgreen' : 'red') : 'lightgreen'
@@ -70,19 +74,35 @@
 		setColor('lightgreen')
 	}
 
+	// on update todo we do not load todos again but we have to change
+	// uTodos list with the updated todo
+	const updateTodos = (formData: FormData) => {
+		uTodos = uTodos.map((t) => {
+			if (t.todoId === formData.get('id')) {
+				t.title = formData.get('title') as string
+				t.content = formData.get('content') as string
+				t.priority = Number(formData.get('priority'))
+			}
+			return t
+		})
+	}
+
 	// get params action for URL and formData to check on required fields
-	const enhanceTodo: SubmitFunction = ({ action, formData }) => {
+	const enhanceTodo: SubmitFunction = async ({ action, formData }) => {
 		titleIsRequired = ''
 		contentIsRequired = ''
 		ignoreFormMessage = false
-		if (formData.get('title') === '') {
-			titleIsRequired = 'Title is required field'
-		}
-		if (formData.get('content') === '') {
-			contentIsRequired = 'Content is required field'
-		}
 
-		if (titleIsRequired || contentIsRequired) return
+		if (action.search !== '?/deleteTodo') {
+			if (formData.get('title') === '') {
+				titleIsRequired = 'Title is required field'
+			}
+			if (formData.get('content') === '') {
+				contentIsRequired = 'Content is required field'
+			}
+
+			if (titleIsRequired || contentIsRequired) return
+		}
 
 		// turn on spinner before form submit
 		loading = true
@@ -95,11 +115,16 @@
 				result = $page.status === 200 ? 'todo created' : 'create failed'
 			} else if (action.search === '?/updateTodo') {
 				result = $page.status === 200 ? 'todo updated' : 'update failed'
+				// updateTodos(formData)
+			} else if (action.search === '?/deleteTodo') {
+				result = $page.status === 200 ? 'todo deleted' : 'delete failed'
+				// updateTodos(formData)
 			}
-			invalidateAll()
-			ignoreFormMessage = true
+			await invalidateAll()
 			loading = false // turn the spinner off
+			ignoreFormMessage = true
 			setButtonVisible([btnCreate, btnUpdate])
+			clearMessage()
 		}
 	}
 
@@ -130,21 +155,25 @@
 	}
 
 	const deleteTodo = async (id: string) => {
-		loading = true
-		result = 'deleting todo...'
-		clearForm()
-		const response = await fetch(`/todo?id=${id}`, {
-			method: 'DELETE',
-			body: id
-		})
-		result = await response.json()
-		loading = false
-		// setting result will dynamically set result, which in turn will show result
-		// for several seconds and then clear it out
-		result = form?.success ? 'deleted successfully' : 'delete failed'
-		if (form?.success) {
-			uTodos = uTodos.filter((uTodo: UTodo) => uTodo.todoId !== id)
-		}
+		console.log('deleteTodo', id)
+		// snap.id = id
+		todoIdEl.value = id
+		btnDelete.click()
+		// loading = true
+		// result = 'deleting todo...'
+		// clearForm()
+		// const response = await fetch(`/todo?id=${id}`, {
+		// 	method: 'DELETE',
+		// 	body: id
+		// })
+		// result = await response.json()
+		// loading = false
+		// // setting result will dynamically set result, which in turn will show result
+		// // for several seconds and then clear it out
+		// result = form?.success ? 'deleted successfully' : 'delete failed'
+		// if (form?.success) {
+		// 	uTodos = uTodos.filter((uTodo: UTodo) => uTodo.todoId !== id)
+		// }
 	}
 
 	let todoIdEl: HTMLInputElement
@@ -178,12 +207,13 @@
 		updatePrepared = true
 	}
 
-	let formMessage = $derived(ignoreFormMessage ? '' : (form?.message ?? ''))
+	let formMessage = ignoreFormMessage ? '' : form?.message || ''
+	let result = $state<string>(formMessage)
 	// setting result will call showMessage and this one will setTimeout
 	// to clear the message after several seconds
 	// let result = $derived(message || formMessage)
 
-	let authorId = data.locals.user.id
+	let authorId = $state<string>(data.locals.user.id)
 
 	export const snapshot: Snapshot<TodoFormData> = {
 		capture: () => {
@@ -208,6 +238,7 @@
 		}
 		const tUser = utils.selectRecordItems<UTodo>('id', selectedUserId, data.uTodos)
 		snap.authorId = selectedUserId
+		authorId = selectedUserId
 		setButtonVisible([btnCreate, btnUpdate])
 		return () => {
 			utils.setMrPath($page.url.pathname)
@@ -215,21 +246,18 @@
 	})
 </script>
 
-<!-- <svelte:window on:beforeunload={beforeUnload} /> -->
-<!-- locals.user and user are the same -->
-<!-- <pre>local {data.locals.user.id} user {user.id}</pre> -->
 <svelte:head>
 	<title>Todo</title>
 </svelte:head>
 
-<pre style="font-size:14px;">data {JSON.stringify(uTodos, null, 2)}</pre>
+<!-- <pre style="font-size:14px;">uTodos {JSON.stringify(uTodos, null, 2)}</pre> -->
 
 <PageTitleCombo
+	PageName="Todo"
 	bind:result
 	bind:ignoreFormMessage
 	bind:selectedUserId
 	amendTrueFalseUserId={false}
-	PageName="Todo"
 	user={data.locals.user}
 	users={data.users}
 />
@@ -260,7 +288,7 @@
 			<div class="buttons-relative">
 				<button bind:this={btnCreate} type="submit">
 					{#if loading}
-						<CircleSpinner color="skyblue" />
+						<CircleSpinner color="skyblue" top="50%" />
 					{/if}
 					create
 				</button>
@@ -273,10 +301,12 @@
 					class="hidden"
 				>
 					{#if loading}
-						<CircleSpinner color="skyblue" />
+						<CircleSpinner color="skyblue" top="50%" />
 					{/if}
 					update
 				</button>
+				<button bind:this={btnDelete} type="submit" formaction="?/deleteTodo" class="button hidden"
+				></button>
 				{#if selectedUserId !== authorId}
 					<Tooltip
 						placement="top"
@@ -294,7 +324,7 @@
 	<div class="left-column">
 		<h3>todo</h3>
 		<TodoList
-			{uTodos}
+			uTodos={data.uTodos}
 			completed={false}
 			id={data.locals.user.id}
 			bind:selectedUserId
@@ -311,9 +341,9 @@
 	<div class="right-column">
 		<h3>completed</h3>
 		<TodoList
-			{uTodos}
+			uTodos={data.uTodos}
 			completed={true}
-			id={user.id}
+			id={data.locals.user.id}
 			bind:selectedUserId
 			{toggleCompleted}
 			{prepareUpdate}
