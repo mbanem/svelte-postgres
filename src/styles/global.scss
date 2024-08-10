@@ -1,11 +1,11 @@
 @use 'sass:math';
-@import url('https://fonts.googleapis.com/css2?family=Roboto+Serif:opsz,wght@8..144,300;8..144,400&display=swap');
+//@import url('https://fonts.googleapis.com/css2?family=Roboto+Serif:opsz,wght@8..144,300;8..144,400&display=swap');
 $base-font-size: 16px;
 $base-font_size: 16;
 
 :root {
 	// font-size: root-font-size-function("100vw");
-	background-color: #1d1d1d;
+	background-color: #3e3e3e;
 	color: #fff;
 	$font-size: 48px;
 	--font-size: 24px;
@@ -22,7 +22,6 @@ h2 {
 	width: 100vw;
 	text-align: center;
 }
-
 
 .page-title {
 	color: $title-color;

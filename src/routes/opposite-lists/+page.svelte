@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { flip } from 'svelte/animate'
 	import { crossfade } from 'svelte/transition'
-	const [send, receive] = crossfade({})
+	const [send, receive] = crossfade({ duration: 1000 })
 
 	let left = ['red', 'orange', 'green', 'purple']
 	let right = ['yellow', 'blue']
@@ -29,10 +29,10 @@
 		<div class="list">
 			{#each left as item (item)}
 				<button
-					animate:flip
+					animate:flip={{ duration: 2000 }}
 					in:receive={{ key: item }}
 					out:send={{ key: item }}
-					on:click={() => moveRight(item)}
+					onclick={() => moveRight(item)}
 					style:background-color={item}
 					style:color={item === 'yellow' ? 'black' : 'white'}
 					style="font-weight:700;"
@@ -45,10 +45,10 @@
 		<div class="list">
 			{#each right as item (item)}
 				<button
-					animate:flip
+					animate:flip={{ duration: 2000 }}
 					in:receive={{ key: item }}
 					out:send={{ key: item }}
-					on:click={() => moveLeft(item)}
+					onclick={() => moveLeft(item)}
 					style:background-color={item}
 					style:color={item === 'yellow' ? 'black' : 'white'}
 					style:opacity={0.5}

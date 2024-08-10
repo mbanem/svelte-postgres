@@ -2,6 +2,25 @@
 	import { tick } from 'svelte'
 	import { ScrollTrigger } from 'gsap/ScrollTrigger'
 	import { capitalize } from '$utils/helpers.svelte'
+	import { flip } from 'svelte/animate'
+	import { fade } from 'svelte/transition'
+
+	let max_range = 5
+	let startInt = $state(0)
+	let delta = $state(3)
+	let digits = $derived(
+		Array(5)
+			.fill(null)
+			.map((_, i) => i + startInt)
+	)
+	let delay_fade = $derived(delta === max_range ? 0 : 1000)
+	let dd_animate = $derived(delta === max_range ? 0 : 500)
+	const scrollToTheRight = () => {
+		startInt = startInt + delta
+	}
+	const scrollToTheLeft = () => {
+		startInt = startInt - delta
+	}
 
 	import gsap from 'gsap'
 	gsap.registerPlugin(ScrollTrigger)
@@ -152,6 +171,26 @@
 -->
 <div class="container">
 	<div class="buttons">
+		<!-- scroll array elements left and right -->
+		<p>
+			Scroll array elements by &nbsp;
+			<input bind:value={delta} type="number" min="1" max={max_range} />
+			&nbsp; element{delta === 1 ? '' : 's'}
+		</p>
+		<div id="wrapper">
+			{#each digits as digit (digit)}
+				<div
+					class="display-element"
+					animate:flip={{ delay: dd_animate, duration: 1000 }}
+					in:fade={{ delay: delay_fade, duration: 1000 }}
+					out:fade={{ duration: 0 }}
+				>
+					{digit}
+				</div>
+			{/each}
+		</div>
+		<button class="scroll-button" onclick={scrollToTheLeft}>scroll to the left</button>
+		<button class="scroll-button" onclick={scrollToTheRight}>scroll to the right</button>
 		<p>Animation starts when square come in the view -- when it becomes visible:</p>
 		<button onclick={animateAll}>animate all</button>
 		<p>Animate square and scroll to make it visible to trigger the animation</p>
@@ -167,7 +206,7 @@
 	</div>
 
 	<div class="main">
-		<pre style="margin-left:-3rem;">
+		<pre style="margin-left:- class='scroll-button' rem;">
 				$effect.pre does not work on adding messages to the div element
 				so we can use scrollTo inside the addName method instead
 			</pre>
@@ -355,5 +394,27 @@
 		p {
 			margin: 1rem 0 0.5rem 0;
 		}
+	}
+	/* scroll array elements left and right */
+	/* NOTE this is class for id='wrapper' while there are class='wrapper's as well*/
+	#wrapper {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-around;
+		gap: 2rem;
+		color: yellow;
+		width: 20.1rem;
+		margin-bottom: 1rem;
+	}
+	.display-element {
+		display: inline-block;
+		// margin: 0 0 1rem 1.4rem;
+	}
+	.scroll-button {
+		width: 10rem;
+	}
+	[type='number'] {
+		display: inline-block;
+		width: 3rem;
 	}
 </style>

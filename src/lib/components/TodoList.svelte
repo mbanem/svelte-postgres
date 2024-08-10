@@ -3,11 +3,18 @@
 	import { flip } from 'svelte/animate'
 	import { Tooltip } from 'flowbite-svelte'
 
+	type TSnippet = {
+		id: string
+		selectedUserId: string
+		toggleCompleted: (id: string) => void
+		prepareUpdate: (id: string) => void
+		deleteTodo: (id: string) => void
+	}
+
 	type ARGS = {
 		id: string
 		selectedUserId: string
 		uTodos: UTodos
-		completed: boolean
 		toggleCompleted: (id: string) => void
 		deleteTodo: (id: string) => void
 		prepareUpdate: (todoId: string) => void
@@ -16,120 +23,173 @@
 		id,
 		selectedUserId = $bindable(),
 		uTodos,
-		completed,
 		toggleCompleted,
 		deleteTodo,
 		prepareUpdate
 	}: ARGS = $props()
 
 	const permission = 'owner only permission'
-	const handleStart = () => {}
 
-	const handleEnd = () => {}
+	// for Flip we need two areas, usually le3ft and right, for flipping between
+	// so we make left anf right from uTodos based on completed left=false, right=true
+	let left = $state<UTodos>()
+	let right = $state<UTodos>()
+	$effect(() => {
+		left = uTodos.filter((t) => t.completed === false) as UTodos
+		right = uTodos.filter((t) => t.completed === true) as UTodos
+	})
 
 	const move = (item: string, from: string[], to: string[]) => {
 		to.push(item)
 		return [from.filter((i) => i !== item), to]
 	}
 
-	const moveLeft = (item: string) => {
+	const moveLeft = (item: UTodo) => {
 		// @ts-expect-error
 		;[right, left] = move(item, right, left)
 	}
 
-	const moveRight = (item: string) => {
+	const moveRight = (item: UTodo) => {
 		// @ts-expect-error
 		;[left, right] = move(item, left, right)
 		console
 	}
+
+	const td = {
+		id,
+		selectedUserId,
+		toggleCompleted,
+		prepareUpdate,
+		deleteTodo
+	}
 </script>
 
-<ul class="todos">
-	{#each uTodos.filter((uTodo) => uTodo.completed === completed) as uTodo (uTodo.todoId)}
-		<!-- tuSu -- todo of selected user -->
-		{@const tuSu = uTodo.id === selectedUserId}
-		<li
-			class:uncompleted={!completed}
-			animate:flip
-			in:send={{ key: uTodo.todoId }}
-			out:receive={{ key: uTodo.todoId }}
-		>
-			<label>
-				<input
-					type="checkbox"
-					class={tuSu ? 'ok-hover' : 'no-hover'}
-					checked={uTodo.completed}
-					onclick={() => {
-						tuSu && toggleCompleted(uTodo.todoId)
-					}}
-				/>
-				<div class="tooltip-wrapper">
-					<span class:blue={uTodo.id === id}>{uTodo.title}</span>
-					<Tooltip placement="top" defaultClass="tooltip-todo" class="master-todo" arrow={false}>
-						<p>priority</p>
-						<p>{uTodo.priority}</p>
-						<p>created on</p>
-						<p class="prop-value">{uTodo.createdAt.toLocaleDateString()}</p>
-						<p>updated on</p>
-						<p class="prop-value">{uTodo.updatedAt?.toLocaleDateString()}</p>
-						<p>content:</p>
-						<p class="prop-value">{uTodo.content}</p>
-						<p>owner:</p>
-						<p class="prop-value">{uTodo.firstName} {uTodo.lastName}</p>
-					</Tooltip>
-				</div>
-				<div class="tooltip-wrapper">
-					<button
+<!-- <pre style="font-size:11px;">uTodos {JSON.stringify(uTodos, null, 2)}</pre> -->
+{#snippet todos(ts: TSnippet, todos: UTodos, completed: boolean)}
+	<div>
+		{#if completed}
+			<p class="caption">Completed</p>
+		{:else}
+			<p class="caption">Not Completed</p>
+		{/if}
+		{#each todos as todo (todo)}
+			<!-- tuSu -- todo of selected user -->
+			{@const tuSu = todo.id === selectedUserId}
+			<li
+				class:uncompleted={!todo.completed}
+				animate:flip={{ delay: 500, duration: 1000 }}
+				in:send={{ key: todo.todoId }}
+				out:receive={{ key: todo.todoId }}
+			>
+				<label>
+					<input
+						in:receive={{ key: todo.todoId }}
+						out:send={{ key: todo.todoId }}
+						type="checkbox"
 						class={tuSu ? 'ok-hover' : 'no-hover'}
+						checked={todo.completed}
 						onclick={() => {
-							tuSu && deleteTodo(uTodo.todoId)
+							tuSu && ts.toggleCompleted(todo.todoId)
+							completed ? moveLeft(todo) : moveRight(todo)
 						}}
-						aria-label="Delete Todo"
-					>
-						{#if tuSu}
-							❌
+					/>
+					<div class="tooltip-wrapper">
+						<span class:blue={todo.id === id} class="list-item">{todo.title}</span>
+						<p>{todo.content}</p>
+						<Tooltip placement="top" defaultClass="tooltip-todo" class="master-todo" arrow={false}>
+							<p>priority</p>
+							<p>{todo.priority}</p>
+							<p>created on</p>
+							<p class="prop-value">{todo.createdAt.toLocaleDateString()}</p>
+							<p>updated on</p>
+							<p class="prop-value">{todo.updatedAt?.toLocaleDateString()}</p>
+							<p>content:</p>
+							<p class="prop-value">{todo.content}</p>
+							<p>owner:</p>
+							<p class="prop-value">{todo.firstName} {todo.lastName}</p>
+						</Tooltip>
+					</div>
+					<div class="tooltip-wrapper">
+						<button
+							class={tuSu ? 'ok-hover' : 'no-hover'}
+							onclick={() => {
+								tuSu && ts.deleteTodo(todo.todoId)
+							}}
+							aria-label="Delete Todo"
+						>
+							{#if tuSu}
+								❌
+							{:else}
+								🍀
+							{/if}
+						</button>
+						{#if !tuSu}
+							<Tooltip
+								placement="top"
+								defaultClass="tooltip-todo-update"
+								class="master-todo"
+								arrow={false}
+							>
+								<p>{permission}</p>
+								caption
+							</Tooltip>
 						{:else}
-							🍀
+							<Tooltip
+								placement="top"
+								defaultClass="tooltip-todo-delete"
+								class="master-todo"
+								arrow={false}
+							>
+								<p>Delete ToDo</p>
+							</Tooltip>
 						{/if}
-					</button>
-					{#if !tuSu}
-						<Tooltip
-							placement="top"
-							defaultClass="tooltip-todo-update"
-							class="master-todo"
-							arrow={false}
+					</div>
+					<div class="tooltip-wrapper">
+						<button
+							class={tuSu ? 'ok-hover' : 'no-hover'}
+							onclick={() => {
+								tuSu && ts.prepareUpdate(todo.todoId)
+							}}
+							aria-label="Update Todo"
 						>
-							<p>{permission}</p>
-						</Tooltip>
-					{/if}
-				</div>
-				<div class="tooltip-wrapper">
-					<button
-						class={tuSu ? 'ok-hover' : 'no-hover'}
-						onclick={() => {
-							tuSu && prepareUpdate(uTodo.todoId)
-						}}
-						aria-label="Update Todo"
-					>
-						📝</button
-					>
-					{#if !tuSu}
-						<Tooltip
-							placement="top"
-							defaultClass="tooltip-todo-update"
-							class="master-todo"
-							arrow={false}
+							📝</button
 						>
-							<p>{permission}</p>
-						</Tooltip>
-					{/if}
-				</div>
-			</label>
-		</li>
-	{/each}
-</ul>
+						{#if !tuSu}
+							<Tooltip
+								placement="top"
+								defaultClass="tooltip-todo-update"
+								class="master-todo"
+								arrow={false}
+							>
+								<p>{permission}</p>
+							</Tooltip>
+						{:else}
+							<Tooltip
+								placement="top"
+								defaultClass="tooltip-todo-update"
+								class="master-todo"
+								arrow={false}
+							>
+								<p>Prepare for update</p>
+							</Tooltip>
+						{/if}
+					</div>
+				</label>
+			</li>
+		{/each}
+	</div>
+{/snippet}
+
+<div class="container">
+	{@render todos(td, left as UTodos, false)}
+	{@render todos(td, right as UTodos, true)}
+</div>
 
 <style lang="scss">
+	.container {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+	}
 	.tooltip-wrapper {
 		position: relative;
 		p {
@@ -143,12 +203,31 @@
 				color: yellow;
 			}
 		}
+		.tooltip-todo {
+			position: absolute;
+			left: 25rem !important;
+			top: -5rem !important;
+		}
+		&:hover {
+			cursor: pointer;
+		}
 	}
-
+	.caption {
+		border-bottom: 1px solid gray;
+		width: 90%;
+	}
+	.list-item {
+		padding: 2px 6px;
+		border: 1px solid transparent;
+		&:hover {
+			border-color: yellow;
+			border-radius: 6px;
+		}
+	}
 	:global(.tooltip-todo) {
 		position: absolute;
-		left: 7rem !important;
-		top: -2rem !important;
+		left: 12rem !important;
+		top: -5rem !important;
 		display: grid;
 		grid-template-columns: 6rem 30rem;
 		justify-content: flex-start;
@@ -165,17 +244,27 @@
 			color: yellow;
 		}
 	}
-	:global(.tooltip-todo-update) {
+	:global(.tooltip-todo-update),
+	:global(.tooltip-todo-delete) {
 		position: absolute;
 		left: -2rem !important;
 		top: -2rem !important;
-		width: 11rem !important;
-		color: pink !important;
-		border: 1px solid pink;
+		width: 6rem !important;
+		color: yellow !important;
+		border: 1px solid yellow;
+		background-color: $BACK-COLOR;
 		border-radius: 6px;
+		padding: 4px 1rem;
+		text-align: center;
 	}
+	:global(.tooltip-todo-update) {
+		width: 9rem !important;
+	}
+
 	:global(.master-todo) {
-		// top: -0.5rem !important;
+		position: absolute;
+		top: -4rem !important;
+		left: 8rem;
 		font-size: 14px;
 		font-weight: 400;
 	}

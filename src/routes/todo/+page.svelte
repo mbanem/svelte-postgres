@@ -10,7 +10,7 @@
 	import { setColor, setButtonVisible } from '$lib/utils'
 
 	import PageTitleCombo from '$lib/components/PageTitleCombo.svelte'
-	import TodoList from '$lib/components/TodoList.svelte'
+	import TodoLists from './TodoLists.svelte'
 	import { onMount } from 'svelte'
 	import * as utils from '$lib/utils'
 
@@ -77,14 +77,16 @@
 	// on update todo we do not load todos again but we have to change
 	// uTodos list with the updated todo
 	const updateTodos = (formData: FormData) => {
-		uTodos = uTodos.map((t) => {
-			if (t.todoId === formData.get('id')) {
-				t.title = formData.get('title') as string
-				t.content = formData.get('content') as string
-				t.priority = Number(formData.get('priority'))
-			}
-			return t
-		})
+		if (uTodos) {
+			uTodos = uTodos.map((t) => {
+				if (t.todoId === formData.get('id')) {
+					t.title = formData.get('title') as string
+					t.content = formData.get('content') as string
+					t.priority = Number(formData.get('priority'))
+				}
+				return t
+			}) as UTodos
+		}
 	}
 
 	// get params action for URL and formData to check on required fields
@@ -321,34 +323,16 @@
 			</div>
 		</div>
 	</form>
-	<div class="left-column">
-		<h3>todo</h3>
-		<TodoList
-			uTodos={data.uTodos}
+	<div class="two-columns">
+		<TodoLists
+			id={data.locals.user.id}
+			uTodosProp={data.uTodos}
 			completed={false}
-			id={data.locals.user.id}
 			bind:selectedUserId
 			{toggleCompleted}
 			{prepareUpdate}
 			{deleteTodo}
-		/>
-	</div>
-	<!--  data.locals.user.id and user.id are the same
-		selectedUserId is bound so parent can update it
-		and in component TodoList is set as = $bindable()
-		so is updatable by component as well
-	-->
-	<div class="right-column">
-		<h3>completed</h3>
-		<TodoList
-			uTodos={data.uTodos}
-			completed={true}
-			id={data.locals.user.id}
-			bind:selectedUserId
-			{toggleCompleted}
-			{prepareUpdate}
-			{deleteTodo}
-		/>
+		></TodoLists>
 	</div>
 </div>
 
@@ -388,6 +372,9 @@
 			flex-direction: column;
 			width: 100%;
 			margin-top: 1rem;
+		}
+		.two-columns {
+			grid-column: span 2;
 		}
 
 		:nth-child(1) {
