@@ -64,8 +64,19 @@
 	}
 </script>
 
-<!-- <p>selectedUserId {selectedUserId}</p> -->
-<!-- <pre style="font-size:11px;">uTodos {JSON.stringify(uTodos, null, 2)}</pre> -->
+<!-- Looks like you cannot change some markup conditionally -->
+{#snippet tooltip(tf: boolean, title: string)}
+	{#if !tf}
+		<Tooltip placement="top" defaultClass="tooltip-todo-false" class="master-todo" arrow={false}>
+			<p>owner only permission</p>
+		</Tooltip>
+	{:else}
+		<Tooltip placement="top" defaultClass="tooltip-todo-delete" class="master-todo" arrow={false}>
+			<p>{title}</p>
+		</Tooltip>
+	{/if}
+{/snippet}
+
 {#snippet todos(ts: TSnippet, todos: UTodos, completed: boolean)}
 	<div>
 		{#if completed}
@@ -107,7 +118,7 @@
 							<p>updated on</p>
 							<p class="prop-value">{todo.updatedAt?.toLocaleString()}</p>
 							<p>owner: {tuSu}</p>
-							<!-- NOTE: Tooltip accepts conditional style setting but not class -->
+							<!-- NOTE: Tooltip accepts style setting but not class -->
 							<p style={`margin-bottom:8px; color:${tuSu ? 'skyblue' : 'pink'}`}>
 								{todo.firstName}
 								{todo.lastName}
@@ -128,25 +139,7 @@
 								🍀
 							{/if}
 						</button>
-						{#if !tuSu}
-							<Tooltip
-								placement="top"
-								defaultClass="tooltip-todo-update"
-								class="master-todo"
-								arrow={false}
-							>
-								<p>{permission}</p>
-							</Tooltip>
-						{:else}
-							<Tooltip
-								placement="top"
-								defaultClass="tooltip-todo-delete"
-								class="master-todo"
-								arrow={false}
-							>
-								<p>Delete ToDo</p>
-							</Tooltip>
-						{/if}
+						{@render tooltip(tuSu, 'Delete ToDo')}
 					</div>
 					<div class="tooltip-wrapper">
 						<button
@@ -158,25 +151,7 @@
 						>
 							📝</button
 						>
-						{#if !tuSu}
-							<Tooltip
-								placement="top"
-								defaultClass="tooltip-todo-update"
-								class="master-todo"
-								arrow={false}
-							>
-								<p>{permission}</p>
-							</Tooltip>
-						{:else}
-							<Tooltip
-								placement="top"
-								defaultClass="tooltip-todo-update"
-								class="master-todo"
-								arrow={false}
-							>
-								<p>Prepare for update</p>
-							</Tooltip>
-						{/if}
+						{@render tooltip(tuSu, 'Prepare for update')}
 					</div>
 				</label>
 			</li>
@@ -252,7 +227,8 @@
 		}
 	}
 	:global(.tooltip-todo-update),
-	:global(.tooltip-todo-delete) {
+	:global(.tooltip-todo-delete),
+	:global(.tooltip-todo-false) {
 		position: absolute;
 		left: -2rem !important;
 		top: -2rem !important;
@@ -267,7 +243,10 @@
 	:global(.tooltip-todo-update) {
 		width: 9rem !important;
 	}
-
+	:global(.tooltip-todo-false) {
+		color: pink !important;
+		border-color: pink;
+	}
 	:global(.master-todo) {
 		position: absolute;
 		top: -4rem !important;
