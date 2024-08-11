@@ -14,6 +14,12 @@
 	import { onMount } from 'svelte'
 	import * as utils from '$lib/utils'
 
+	type SelectedUser = {
+		id: string
+		firstName: string
+		lastName: string
+		role: string
+	}
 	type ARGS = {
 		data: PageData
 		form: ActionData
@@ -28,7 +34,7 @@
 	$effect(() => {
 		uTodos = data.uTodos
 	})
-	let selectedUserId = data.locals.user.id
+	let selectedUserId = $state<string>(data.locals.user.id)
 	let loading = $state<boolean>(false)
 	// form?.message cannot be cleared by code but could be ignored when necessary
 	let ignoreFormMessage = false
@@ -211,8 +217,11 @@
 	// update button is taken
 
 	const prepareUpdate = async (todoId: string) => {
+		console.log('prepareUpdate', todoId)
 		prepareDataForEdit(todoId)
 		updatePrepared = true
+		// hide create button and show the update one
+		setButtonVisible([btnUpdate, btnCreate])
 	}
 
 	let formMessage = ignoreFormMessage ? '' : form?.message || ''
@@ -308,11 +317,21 @@
 					type="submit"
 					class="hidden"
 				>
-					{#if loading}
-						<CircleSpinner color="skyblue" top="50%" />
-					{/if}
 					update
 				</button>
+				{#if selectedUserId !== authorId}
+					<Tooltip
+						placement="top"
+						defaultClass="tooltip-update-false"
+						class="master-todo"
+						arrow={false}
+					>
+						<p>owner only permission</p>
+					</Tooltip>
+				{/if}
+				{#if loading}
+					<CircleSpinner color="skyblue" top="50%" />
+				{/if}
 				<button bind:this={btnDelete} type="submit" formaction="?/deleteTodo" class="button hidden"
 				></button>
 				{#if selectedUserId !== authorId}
@@ -332,6 +351,7 @@
 	<div class="two-columns">
 		<TodoLists
 			id={data.locals.user.id}
+			role={data.locals.user.role}
 			uTodosProp={data.uTodos}
 			bind:selectedUserId
 			{toggleCompleted}
@@ -342,7 +362,8 @@
 </div>
 
 <style lang="scss">
-	:global(.tooltip-update-button) {
+	:global(.tooltip-update-button),
+	:global(.tooltip-update-false) {
 		position: absolute;
 		left: 8rem !important;
 		top: 1.1rem !important;
@@ -355,6 +376,10 @@
 		background-color: $BACK-COLOR;
 		border: 1px solid gray;
 		border-radius: 6px;
+	}
+	:global(.tooltip-update-false) {
+		color: pink !important;
+		border-color: pink;
 	}
 	.board {
 		display: grid;

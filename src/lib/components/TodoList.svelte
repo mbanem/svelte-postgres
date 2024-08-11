@@ -29,7 +29,14 @@
 	}: ARGS = $props()
 
 	const permission = 'owner only permission'
-
+	const getSelectedRole = () => {
+		return (uTodos.filter((t) => t.id === selectedUserId)[0] as UTodo).role
+	}
+	const listTodos = () => {
+		return uTodos.filter((t) => {
+			return getSelectedRole() === 'ADMIN' ? true : t.id === selectedUserId ? true : false
+		})
+	}
 	// for Flip we need two areas, usually le3ft and right, for flipping between
 	// so we make left anf right from uTodos based on completed left=false, right=true
 	// let left = $state<UTodos>([])
@@ -64,6 +71,7 @@
 	}
 </script>
 
+<pre style="font-size:11px;">selectedUserId {JSON.stringify(selectedUserId, null, 2)}</pre>
 <!-- Looks like you cannot change some markup conditionally -->
 {#snippet tooltip(tf: boolean, title: string)}
 	{#if !tf}
@@ -160,8 +168,8 @@
 {/snippet}
 
 <div class="container">
-	{@render todos(td, uTodos.filter((t) => t.completed === false) as UTodos, false)}
-	{@render todos(td, uTodos.filter((t) => t.completed === true) as UTodos, true)}
+	{@render todos(td, listTodos().filter((t) => t.completed === false) as UTodos, false)}
+	{@render todos(td, listTodos().filter((t) => t.completed === true) as UTodos, true)}
 </div>
 
 <style lang="scss">

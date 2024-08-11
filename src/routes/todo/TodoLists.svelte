@@ -4,9 +4,16 @@
 	import { Tooltip } from 'flowbite-svelte'
 	import TodoList from '$components/TodoList.svelte'
 
+	type SelectedUser = {
+		id: string
+		firstName: string
+		lastName: string
+		role: string
+	}
 	type ARGS = {
 		id: string
 		selectedUserId: string
+		role: string
 		uTodosProp: UTodos
 		toggleCompleted: (id: string) => void
 		deleteTodo: (id: string) => void
@@ -15,6 +22,7 @@
 	let {
 		id,
 		selectedUserId = $bindable(),
+		role,
 		uTodosProp,
 		toggleCompleted,
 		deleteTodo,

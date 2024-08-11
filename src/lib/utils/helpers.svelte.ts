@@ -190,6 +190,7 @@ export const setButtonVisible = (buttons: HTMLButtonElement[]) => {
 export const resetButtons = (buttons: HTMLButtonElement[]) => {
 	try {
 		buttons.forEach((btn) => {
+			btn.classList.remove('hidden')
 			btn.classList.add('hidden')
 		})
 	} catch {}
