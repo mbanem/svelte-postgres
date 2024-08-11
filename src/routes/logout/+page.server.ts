@@ -28,20 +28,20 @@ export const load: PageServerLoad = (async ({ cookies, locals }) => {
 // route named according the action for it
 // <form method='POST' action='/logout' -- not '?/logout' as
 // that will ask form a sibling +page.server.ts
-// export const actions: Actions = {
-// 	logout: async ({ cookies, locals }) => {
-// 		cookies.set('session', '', {
-// 			path: '/',
-// 			expires: new Date(0)
-// 		})
-// 		locals.user = {
-// 			id: '',
-// 			firstName: '',
-// 			lastName: '',
-// 			role: 'VISITOR'
-// 		}
-// 		console.log('logout', 'VISITOR')
-// 		// await fetch('/')
-// 		throw redirect(302, '/')
-// 	}
-// } satisfies Actions
+export const actions: Actions = {
+	logout: async ({ cookies, locals }) => {
+		cookies.set('session', '', {
+			path: '/',
+			expires: new Date(0)
+		})
+		locals.user = {
+			id: '',
+			firstName: '',
+			lastName: '',
+			role: 'VISITOR'
+		}
+		console.log('logout', 'VISITOR')
+		// await fetch('/')
+		throw redirect(302, '/')
+	}
+} satisfies Actions
