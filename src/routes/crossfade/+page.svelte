@@ -41,8 +41,8 @@
 		loading = !loading
 		showTooltip = true
 	}
-	let createdAt = new Date('2/18/2006').toLocaleDateString()
-	let updatedAt = new Date('8/22/2007').toLocaleDateString()
+	let createdAt = new Date('2/18/2006').toLocaleString()
+	let updatedAt = new Date('8/22/2007').toLocaleString()
 
 	let mrPath = getContext('mrPath') as SvelteStore<string>
 
@@ -83,8 +83,8 @@
 		<div class="tooltip-wrapper">
 			<p class="tooltip-base">Post content is here having a tooltip</p>
 			<Tooltip placement="top" defaultClass="local-tooltip" class="local-master" arrow={false}>
-				<p>created on {createdAt}</p>
-				<p>updated on {updatedAt}</p>
+				<p>created at <span class="tooltip-value">{createdAt.toLocaleString()}</span></p>
+				<p>updated at <span class="tooltip-value">{createdAt.toLocaleString()}</span></p>
 			</Tooltip>
 		</div>
 	</div>
@@ -103,15 +103,20 @@
 		position: relative;
 	}
 
+	.tooltip-value {
+		color: yellow;
+	}
 	:global(.local-tooltip) {
 		position: absolute;
-		top: -1rem;
-		left: 0;
+		top: -2rem !important;
+		left: 5rem;
 		display: inline-block;
 		font-size: 14px;
 		font-weight: 400;
 		padding: 3px 1rem;
 		text-align: center;
+		border: 1px solid gray;
+		border-radius: 8px;
 	}
 	:global(.local-master) {
 		color: lightgreen;

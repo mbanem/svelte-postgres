@@ -252,7 +252,7 @@
 	<title>Todo</title>
 </svelte:head>
 
-<!-- <pre style="font-size:14px;">uTodos {JSON.stringify(uTodos, null, 2)}</pre> -->
+<!-- <pre style="font-size:14px;">selectedUserId {JSON.stringify(selectedUserId, null, 2)}</pre> -->
 
 <PageTitleCombo
 	PageName="Todo"
@@ -327,7 +327,6 @@
 		<TodoLists
 			id={data.locals.user.id}
 			uTodosProp={data.uTodos}
-			completed={false}
 			bind:selectedUserId
 			{toggleCompleted}
 			{prepareUpdate}

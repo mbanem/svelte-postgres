@@ -224,16 +224,16 @@
 
 <!-- <pre style="font-size:14px;">selectedUserWithBio-Page {JSON.stringify(selectedUserWithBio, null, 2)}
 	</pre> -->
-{#snippet tooltipBio(userWithBio)}
+{#snippet tooltipBio(userWithBio: UserWithBio)}
 	<Tooltip placement="top" defaultClass="tooltip-profile" class="master-profile" arrow={false}>
 		<p>
 			created on <span class="prop-value">
-				{userWithBio.createdAt.toLocaleDateString()}
+				{userWithBio.createdAt.toLocaleString()}
 			</span>
 		</p>
 		<p>
 			updated on <span class="prop-value">
-				{userWithBio.updatedAt.toLocaleDateString()}
+				{userWithBio.updatedAt.toLocaleString()}
 			</span>
 		</p>
 	</Tooltip>

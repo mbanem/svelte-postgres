@@ -32,14 +32,14 @@
 
 	// for Flip we need two areas, usually le3ft and right, for flipping between
 	// so we make left anf right from uTodos based on completed left=false, right=true
-	let left = $state<UTodos>()
-	let right = $state<UTodos>()
-	$effect(() => {
-		left = uTodos.filter((t) => t.completed === false) as UTodos
-		right = uTodos.filter((t) => t.completed === true) as UTodos
-	})
+	// let left = $state<UTodos>([])
+	// let right = $state<UTodos>([])
+	// $effect(() => {
+	// 	left = uTodos.filter((t) => t.completed === false) as UTodos
+	// 	right = uTodos.filter((t) => t.completed === true) as UTodos
+	// })
 
-	const move = (item: string, from: string[], to: string[]) => {
+	const move = (item: UTodo, from: UTodo[], to: UTodo[]) => {
 		to.push(item)
 		return [from.filter((i) => i !== item), to]
 	}
@@ -64,6 +64,7 @@
 	}
 </script>
 
+<!-- <p>selectedUserId {selectedUserId}</p> -->
 <!-- <pre style="font-size:11px;">uTodos {JSON.stringify(uTodos, null, 2)}</pre> -->
 {#snippet todos(ts: TSnippet, todos: UTodos, completed: boolean)}
 	<div>
@@ -94,19 +95,23 @@
 						}}
 					/>
 					<div class="tooltip-wrapper">
-						<span class:blue={todo.id === id} class="list-item">{todo.title}</span>
-						<p>{todo.content}</p>
+						<p class={`${todo.id === id ? 'blue' : 'gray'}`}>
+							{todo.title}
+						</p>
+						{todo.content}
 						<Tooltip placement="top" defaultClass="tooltip-todo" class="master-todo" arrow={false}>
 							<p>priority</p>
 							<p>{todo.priority}</p>
 							<p>created on</p>
-							<p class="prop-value">{todo.createdAt.toLocaleDateString()}</p>
+							<p class="prop-value">{todo.createdAt.toLocaleString()}</p>
 							<p>updated on</p>
-							<p class="prop-value">{todo.updatedAt?.toLocaleDateString()}</p>
-							<p>content:</p>
-							<p class="prop-value">{todo.content}</p>
-							<p>owner:</p>
-							<p class="prop-value">{todo.firstName} {todo.lastName}</p>
+							<p class="prop-value">{todo.updatedAt?.toLocaleString()}</p>
+							<p>owner: {tuSu}</p>
+							<!-- NOTE: Tooltip accepts conditional style setting but not class -->
+							<p style={`margin-bottom:8px; color:${tuSu ? 'skyblue' : 'pink'}`}>
+								{todo.firstName}
+								{todo.lastName}
+							</p>
 						</Tooltip>
 					</div>
 					<div class="tooltip-wrapper">
@@ -131,7 +136,6 @@
 								arrow={false}
 							>
 								<p>{permission}</p>
-								caption
 							</Tooltip>
 						{:else}
 							<Tooltip
@@ -181,8 +185,8 @@
 {/snippet}
 
 <div class="container">
-	{@render todos(td, left as UTodos, false)}
-	{@render todos(td, right as UTodos, true)}
+	{@render todos(td, uTodos.filter((t) => t.completed === false) as UTodos, false)}
+	{@render todos(td, uTodos.filter((t) => t.completed === true) as UTodos, true)}
 </div>
 
 <style lang="scss">
@@ -200,6 +204,7 @@
 			padding: 0 0 0 5px;
 			margin: 0;
 			.prop-value {
+				margin-bottom: 8px;
 				color: yellow;
 			}
 		}
@@ -207,6 +212,8 @@
 			position: absolute;
 			left: 25rem !important;
 			top: -5rem !important;
+			background-color: black !important;
+			opacity: 1 !important;
 		}
 		&:hover {
 			cursor: pointer;
@@ -231,7 +238,7 @@
 		display: grid;
 		grid-template-columns: 6rem 30rem;
 		justify-content: flex-start;
-		width: 40rem !important;
+		width: 18rem !important;
 		color: skyblue !important;
 		font-size: 14px;
 		font-weight: 400;
@@ -270,6 +277,11 @@
 	}
 	.blue {
 		color: skyblue;
+		margin-bottom: 6px !important;
+	}
+	.gray {
+		color: lightgray;
+		margin-bottom: 6px !important;
 	}
 	.todos {
 		margin-left: 1rem;
@@ -323,5 +335,9 @@
 			color: yellow;
 			opacity: 1;
 		}
+	}
+	.prop-red {
+		margin-bottom: 8px;
+		color: red;
 	}
 </style>

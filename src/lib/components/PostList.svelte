@@ -35,9 +35,9 @@
 							class="local-master"
 							arrow={false}
 						>
-							<p>published <span class="prop-value">{published ? 'yes' : 'not yet'}</span></p>
-							<p>created on <span class="prop-value">{createdAt.toLocaleDateString()}</span></p>
-							<p>updated on <span class="prop-value">{updatedAt.toLocaleDateString()}</span></p>
+							<p>published <span class="prop-value">{published ? 'YES' : 'Not Yet'}</span></p>
+							<p>created at <span class="prop-value">{createdAt.toLocaleString()}</span></p>
+							<p>updated at <span class="prop-value">{updatedAt.toLocaleString()}</span></p>
 						</Tooltip>
 					</div>
 				</li>
@@ -51,12 +51,21 @@
 <style lang="scss">
 	.tooltip-wrapper {
 		position: relative;
+		.content {
+			margin-left: -1rem;
+			color: yellow;
+		}
+		p {
+			width: 18rem;
+		}
 	}
 
 	:global(.local-tooltip) {
 		position: absolute;
-		left: calc(50% - 14rem) !important;
-		// top: -3rem !important;
+		color: lightgreen;
+		top: -1.5rem !important;
+		left: calc(100% - 20rem) !important;
+		display: inline-block;
 		display: inline-block;
 		font-size: 14px;
 		font-weight: 400;
@@ -64,23 +73,20 @@
 		border: 1px solid gray;
 		border-radius: 4px;
 		text-align: left;
+		.prop-value {
+			color: yellow;
+		}
 	}
 	:global(.local-master) {
-		top: -2.2rem !important;
-		margin-left: calc(75% - 14rem) !important;
-		color: skyblue;
-		font-size: 14px;
-		font-weight: 400;
+		/* master is for all tooltips but defaultClass sets CSS rules locally*/
 		p {
 			display: flex;
 			justify-content: space-between;
 			align-content: flex-start;
 			gap: 0.5rem;
+			/** cannot me moved to defaultClass as the default here will change padding and margin*/
 			padding: 0;
 			margin: 0;
-			.prop-value {
-				color: yellow;
-			}
 		}
 	}
 	.post-container {
@@ -119,13 +125,12 @@
 		display: flex;
 		align-items: baseline;
 		gap: 1rem;
-		font-size: 12px;
-		/* display: flex; */
-		/* flex-direction: column; */
+		font-size: 14px !important;
 		padding: 0;
 		margin: 0;
 		p {
-			margin: 0;
+			font-size: 17px !important;
+			margin: 0 0 5px 0;
 			padding: 0;
 		}
 	}

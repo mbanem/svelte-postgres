@@ -7,7 +7,6 @@
 	type ARGS = {
 		id: string
 		selectedUserId: string
-		completed: boolean
 		uTodosProp: UTodos
 		toggleCompleted: (id: string) => void
 		deleteTodo: (id: string) => void
@@ -16,7 +15,6 @@
 	let {
 		id,
 		selectedUserId = $bindable(),
-		completed,
 		uTodosProp,
 		toggleCompleted,
 		deleteTodo,
@@ -48,6 +46,8 @@
 
 <TodoList {id} {uTodos} bind:selectedUserId {toggleCompleted} {prepareUpdate} {deleteTodo}
 ></TodoList>
+
+<!-- <pre style="font-size:11px;">TodoLists.svelte uTodos {JSON.stringify(uTodos, null, 2)}</pre> -->
 
 <style lang="scss">
 	// :global(.tooltip-todo) {

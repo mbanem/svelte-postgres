@@ -87,15 +87,20 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
 	}
 	const getUser = (id: string) => {
 		for (let i = 0; i < uTodos.length; i++) {
-			// @ts-expect-error
-			if (id === uTodos[i].id) {
+			if (id === uTodos[i]?.id) {
 				return uTodos[i]
 			}
 		}
 	}
 
-	const users: UserPartial[] =
-		await db.$queryRaw`select distinct t.user_id as "id", u.first_name as "firstName",u.last_name as "lastName", u.role from todo t join users u on u.id = t.user_id`
+	const users: UserPartial[] = await db.$queryRaw`
+		select distinct t.user_id as "id",
+										u.first_name as "firstName",
+										u.last_name as "lastName",
+										u.role from todo t
+											join users u on u.id = t.user_id`
+
+	// console.log(uTodos, users)
 	return {
 		uTodos, // as UTodos is important for TypeScript
 		// user,		// user is in locals that is sent from root/+layout.server.ts
