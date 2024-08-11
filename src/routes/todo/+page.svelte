@@ -91,6 +91,7 @@
 
 	// get params action for URL and formData to check on required fields
 	const enhanceTodo: SubmitFunction = async ({ action, formData }) => {
+		console.log('action.search')
 		titleIsRequired = ''
 		contentIsRequired = ''
 		ignoreFormMessage = false
@@ -109,7 +110,12 @@
 		// turn on spinner before form submit
 		loading = true
 		// show the intent of the action that follows
-		result = action.search === '?/addTodo' ? 'creating todo...' : 'updating todo...'
+		result =
+			action.search === '?/addTodo'
+				? 'creating todo...'
+				: action.search === '?/updateTodo'
+					? 'updating todo...'
+					: 'deleting todo...'
 
 		return async ({ update }) => {
 			await update()

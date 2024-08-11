@@ -209,6 +209,7 @@ export const actions: Actions = {
 		}
 	},
 	deleteTodo: async ({ request }) => {
+		console.log('deleteTodo')
 		const body = await request.formData()
 		const id = body.get('id') as string
 

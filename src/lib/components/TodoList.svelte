@@ -77,7 +77,7 @@
 	{/if}
 {/snippet}
 
-{#snippet todos(ts: TSnippet, todos: UTodos, completed: boolean)}
+{#snippet todos(td: TSnippet, todos: UTodos, completed: boolean)}
 	<div>
 		{#if completed}
 			<p class="caption">Completed</p>
@@ -101,7 +101,7 @@
 						class={tuSu ? 'ok-hover' : 'no-hover'}
 						checked={todo.completed}
 						onclick={() => {
-							tuSu && ts.toggleCompleted(todo.todoId)
+							tuSu && td.toggleCompleted(todo.todoId)
 							completed ? moveLeft(todo) : moveRight(todo)
 						}}
 					/>
@@ -129,7 +129,7 @@
 						<button
 							class={tuSu ? 'ok-hover' : 'no-hover'}
 							onclick={() => {
-								tuSu && ts.deleteTodo(todo.todoId)
+								tuSu && td.deleteTodo(todo.todoId)
 							}}
 							aria-label="Delete Todo"
 						>
@@ -145,7 +145,7 @@
 						<button
 							class={tuSu ? 'ok-hover' : 'no-hover'}
 							onclick={() => {
-								tuSu && ts.prepareUpdate(todo.todoId)
+								tuSu && td.prepareUpdate(todo.todoId)
 							}}
 							aria-label="Update Todo"
 						>
