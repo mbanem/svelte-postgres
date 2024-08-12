@@ -40,7 +40,7 @@
 	let multiSelectComponent: MultiSelectBox
 	$effect(() => {
 		utils.setColor(
-			form?.message ? (form.message.includes('successfully') ? 'lightgreen' : 'red') : 'lightgreen'
+			form?.message ? (form.message.includes('successfully') ? 'lightgreen' : 'pink') : 'lightgreen'
 		)
 	})
 
@@ -360,19 +360,22 @@
 			/>
 		</div>
 	</div>
-</div>
-<div>
-	{#key postAuthors}
-		{#key selectedUserId}
-			<PostList postAuthors={postsAuthors()} {toUpdatePost} {deletePost} />
+
+	<div>
+		{#key postAuthors}
+			{#key selectedUserId}
+				<PostList postAuthors={postsAuthors()} {toUpdatePost} {deletePost} />
+			{/key}
 		{/key}
-	{/key}
+	</div>
 </div>
 
 <style lang="scss">
 	.board {
-		min-width: 36em;
-		width: 70vw;
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		min-width: 60rem;
+		width: 90vw;
 		gap: 2px;
 		padding: 0 1rem 1rem 1rem;
 		margin-left: 1rem;
@@ -416,10 +419,19 @@
 	*/
 	.clear-button {
 		position: absolute;
-		top: 5.3rem;
+		top: 6.75rem;
 		left: 18rem;
 	}
 	.hidden {
 		display: none;
+	}
+	[type='text'] {
+		background-color: #3e3e3e;
+		font-size: 18px;
+		height: 2rem;
+		padding-left: 1rem;
+		&:focus {
+			background-color: #e3e3e3;
+		}
 	}
 </style>

@@ -61,7 +61,7 @@
 		const add = () => {
 			selectedIds.add(id)
 			selectedNames.add(name)
-			btn.style.color = 'tomato'
+			btn.style.color = 'lightgreen'
 		}
 		const remove = () => {
 			selectedIds.delete(id)
@@ -92,7 +92,7 @@
 <p bind:this={selectedOptions} class="selected-cats">
 	{pleaseSelect}
 </p>
-<ul>
+<ul class="category-list">
 	{#key categories}
 		{#each categories as category}
 			<li>
@@ -116,6 +116,9 @@
 		color: var(--MESSAGE-COLOR);
 		font-weight: 300;
 		font-family: Arial, sans-serif;
+	}
+	.category-list {
+		margin: 8px 0 0 3rem;
 	}
 	ul {
 		list-style: none;
@@ -142,7 +145,7 @@
 		}
 	}
 	.selected {
-		color: tomato;
+		color: lightgreen;
 		width: 100%;
 	}
 

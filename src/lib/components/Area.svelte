@@ -1,17 +1,17 @@
 <script lang="ts">
-	import { globalVolume } from '$lib/utils/counter.svelte';
+	import { globalVolume } from '$lib/utils/counter.svelte'
 	// Svelte 5 introduces the $derived and $effect runes, which instead determine the dependencies
 	// of their expressions when they are evaluated, not like $: when they are compiled:
-	type WH_PH = { width: number; height: number; pHeight: number };
-	let { width, height, pHeight }: WH_PH = $props(); // instead of `export let`
+	type WH_PH = { width: number; height: number; pHeight: number }
+	let { width, height, pHeight }: WH_PH = $props() // instead of `export let`
 
-	const area = $derived(width * height);
+	const area = $derived(width * height)
 	// const volume:number = $derived(area * pHeight);
 	// let volume = $state(0);
 	$effect(() => {
-		globalVolume.volume = area * pHeight;
-	});
-	let numbers = $state([1, 2, 3]);
+		globalVolume.volume = area * pHeight
+	})
+	let numbers = $state([1, 2, 3])
 </script>
 
 <div class="page">
@@ -53,7 +53,7 @@
 		font-weight: 700;
 		color: yellow;
 	}
-	button {
-		display: inline-block;
-	}
+	// button {
+	// 	display: inline-block;
+	// }
 </style>

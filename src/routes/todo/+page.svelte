@@ -11,7 +11,7 @@
 
 	import PageTitleCombo from '$lib/components/PageTitleCombo.svelte'
 	import TodoLists from './TodoLists.svelte'
-	import { onMount } from 'svelte'
+	import { onMount, tick } from 'svelte'
 	import * as utils from '$lib/utils'
 
 	type SelectedUser = {
@@ -48,7 +48,7 @@
 
 	$effect(() => {
 		setColor(
-			form?.message ? (form.message.includes('successfully') ? 'lightgreen' : 'red') : 'lightgreen'
+			form?.message ? (form.message.includes('successfully') ? 'lightgreen' : 'pink') : 'lightgreen'
 		)
 	})
 
@@ -71,12 +71,15 @@
 
 	// if form is filled with  data for update, but user chose other action, we
 	// clear the form input elements
-	const clearForm = () => {
+	const clearForm = async () => {
 		setButtonVisible([btnCreate, btnUpdate])
 		;(document.querySelector("input[name='title']") as HTMLInputElement).value = ''
 		;(document.querySelector("input[name='content']") as HTMLInputElement).value = ''
 		;(document.querySelector("input[type='number']") as HTMLInputElement).value = '0'
 		titleIsRequired = contentIsRequired = ''
+		setColor('lightgreen')
+
+		await tick()
 		setColor('lightgreen')
 	}
 
@@ -266,9 +269,6 @@
 <svelte:head>
 	<title>Todo</title>
 </svelte:head>
-
-<!-- <pre style="font-size:14px;">selectedUserId {JSON.stringify(selectedUserId, null, 2)}</pre> -->
-
 <PageTitleCombo
 	PageName="Todo"
 	bind:result
@@ -391,11 +391,7 @@
 		border: 1px solid gray;
 		border-radius: 8px;
 		margin-left: 1rem;
-		input {
-			display: inline-block;
-			font-size: 18px;
-			padding-left: 0.5rem;
-		}
+
 		.left-column,
 		.right-column {
 			display: flex;

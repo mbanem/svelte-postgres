@@ -59,19 +59,19 @@
 
 <main>
 	<h1>Crossfade Page</h1>
-	<div class="main" on:click={toggleStartAndLoading} aria-hidden={true}>
+	<div class="main" onclick={toggleStartAndLoading} aria-hidden={true}>
 		{#if start}
-			<div class="a" in:send={{ key: 'x' }} out:receive={{ key: 'x' }} on:outroend={handleEnd}>
+			<div class="a" in:send={{ key: 'x' }} out:receive={{ key: 'x' }} onoutroend={handleEnd}>
 				click me
 			</div>
 		{:else}
-			<div class="b" in:send={{ key: 'x' }} out:receive={{ key: 'x' }} on:outroend={handleEnd}>
+			<div class="b" in:send={{ key: 'x' }} out:receive={{ key: 'x' }} onoutroend={handleEnd}>
 				once more
 			</div>
 		{/if}
 	</div>
 	<div style="position:relative">
-		<button on:click={toggleLoading} style="text-align:center;">
+		<button onclick={toggleLoading} style="text-align:center;">
 			{#if loading}
 				<CircleSpinner color="skyblue" />
 			{/if}

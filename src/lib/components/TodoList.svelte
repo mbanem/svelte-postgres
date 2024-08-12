@@ -108,13 +108,14 @@
 						type="checkbox"
 						class={tuSu ? 'ok-hover' : 'no-hover'}
 						checked={todo.completed}
+						disabled={!tuSu}
 						onclick={() => {
 							tuSu && td.toggleCompleted(todo.todoId)
 							completed ? moveLeft(todo) : moveRight(todo)
 						}}
 					/>
 					<div class="tooltip-wrapper">
-						<p class={`${todo.id === id ? 'blue' : 'gray'}`}>
+						<p class={`${todo.id === id ? 'blue' : 'gray'} ${tuSu ? 'ok-hover' : 'no-hover'}`}>
 							{todo.title}
 						</p>
 						{todo.content}

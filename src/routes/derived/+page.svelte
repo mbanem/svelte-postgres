@@ -194,7 +194,7 @@
 	</div>
 </div>
 <div class="main">
-	<input bind:value />
+	<input type="text" bind:value />
 	<pre>value {facade.value}</pre>
 
 	<pre>
@@ -315,5 +315,8 @@
 			color: yellow;
 			border-color: yellow;
 		}
+	}
+	[type='text'] {
+		width: 30rem;
 	}
 </style>

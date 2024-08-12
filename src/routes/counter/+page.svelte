@@ -1,17 +1,38 @@
 <script lang="ts">
-	import { createCounter, getGlobalCounter } from '$lib/utils/counter.svelte';
-	import Area from '$components/Area.svelte';
-	const counter = createCounter();
+	import { onMount } from 'svelte'
+	import { createCounter, getGlobalCounter } from '$lib/utils/counter.svelte'
+	import Area from '$components/Area.svelte'
+	const counter = createCounter()
 
 	// Outside .svelte components, runes can only be used in .svelte.js and .svelte.ts modules.
-	const gCounter = getGlobalCounter();
+	const gCounter = getGlobalCounter()
 
 	// Area props
-	let width = $state(12);
-	let height = $state(13);
-	let pHeight = $state(10);
+	let width = $state(12)
+	let height = $state(13)
+	let pHeight = $state(10)
 
-	let frozen = $state.frozen([100, 101, 102]);
+	let frozen = $state.frozen([])
+	let appended = $state<number[]>([])
+
+	const appendToFrozen = () => {
+		const num = Math.round(Math.random() * 100)
+		appended.push(num)
+		setTimeout(() => {
+			// @ts-expect-error
+			frozen = [...frozen, num]
+		}, 0)
+	}
+	const removeFromToFrozen = () => {
+		setTimeout(() => {
+			frozen = frozen.filter((f, ix) => ix < frozen.length - 1)
+		})
+		appended.pop()
+	}
+	onMount(() => {
+		// @ts-expect-error
+		;[...5].forEach((n) => appendToFrozen())
+	})
 </script>
 
 <div class="wrapper">
@@ -40,10 +61,17 @@
 	</div>
 
 	<pre>
-	let numbers = $state.frozen([100, 101, 102]) could only be reassigned/replaced
-	so wwe use numbers = [...numbers, new+item]
-	{frozen.reduce((a, b) => a + b, 0)}
+	We define frozen = $state.frozen([100, 101, 102]) that could only be reassigned/replaced
+	completely, say this way: frozen = [...frozen, new+item]
+	We can use reduce on frozen like
+		&lcub;frozen.reduce((a, b) =&gt; a + b, 0)&rcub; should give 303=100+101+103
+
+	For instance &lcub;(frozen = [300, 400, 500]).reduce((a, b) =&gt; a + b, 0)&rcub;
+	gives total 	<span class="highlighted-number">{frozen.reduce((a, b) => a + b, 0)}</span>
+	appended 	<span class="highlighted-array">{appended.join(', ')}</span>
 	</pre>
+	<button data-append onclick={appendToFrozen}>append to frozen</button>
+	<button data-prepend onclick={removeFromToFrozen}>remove last from frozen</button>
 </div>
 
 <!-- svelte-ignore css_unused_selector -->
@@ -76,5 +104,17 @@
 		display: grid;
 		width: 13.5rem;
 		grid-template-columns: 10rem 3rem;
+	}
+	.highlighted-number {
+		font-size: 28px;
+		color: yellow;
+	}
+	.highlighted-array {
+		font-size: 20px;
+		color: pink;
+	}
+	[data-append],
+	[data-prepend] {
+		width: 12rem;
 	}
 </style>

@@ -14,7 +14,7 @@
 	<ul>
 		{#if postAuthors[0]}
 			<p class="name">
-				{postAuthors[0].firstName.slice(0, -1)}
+				{postAuthors[0].firstName}
 				{postAuthors[0].lastName}
 				<span class="count">{postAuthors.length} post{postAuthors.length === 1 ? '' : 's'}</span>
 			</p>
@@ -56,7 +56,7 @@
 			color: yellow;
 		}
 		p {
-			width: 18rem;
+			width: 95%;
 		}
 	}
 
@@ -64,7 +64,7 @@
 		position: absolute;
 		color: lightgreen;
 		top: -1.5rem !important;
-		left: calc(100% - 20rem) !important;
+		left: calc(100% - 35rem) !important;
 		display: inline-block;
 		display: inline-block;
 		font-size: 14px;
@@ -91,7 +91,7 @@
 	}
 	.post-container {
 		overflow-y: auto;
-		width: 70vw;
+		width: 55vw;
 		min-width: 36em;
 		height: 15rem;
 		border: 1px solid gray;
@@ -102,7 +102,7 @@
 		position: sticky;
 		top: -5px;
 		font-style: italic;
-		color: yellow;
+		color: lightgreen;
 		font-size: 16px;
 		margin-bottom: 8px;
 		height: 1.6rem;
@@ -120,6 +120,7 @@
 		list-style: none;
 		margin: 0.6rem 0 0 0;
 		padding: 0 5px 0 0;
+		margin-bottom: 1rem;
 	}
 	.title {
 		display: flex;
@@ -132,6 +133,7 @@
 			font-size: 17px !important;
 			margin: 0 0 5px 0;
 			padding: 0;
+			width: 95%;
 		}
 	}
 	.highlight:hover {
@@ -140,8 +142,10 @@
 	}
 	.content {
 		display: inline-block;
-		font-size: 16px;
-		font-family: Verdana, sans-serif;
+		font-size: 20px;
+		// font-family: Verdana, sans-serif;
+		font-family: 'Times New Roman', Times, serif;
+		font-weight: 300;
 		padding: 0 1rem;
 		margin: 0;
 	}

@@ -3,7 +3,7 @@
 	import { page } from '$app/stores'
 	import { onMount, getContext } from 'svelte'
 	import { enhance } from '$app/forms'
-	import { setColor } from '$lib/utils'
+	import * as utils  from '$utils'
 	import type { SubmitFunction } from '@sveltejs/kit'
 	import type { ActionData } from './$types'
 
@@ -28,10 +28,13 @@
 		message = action.search === '?/register' ? 'registering account...' : 'updating account...'
 	}
 	let result: string
-	$: setColor(
-		form?.message ? (form.message.includes('successfully') ? 'lightgreen' : 'red') : 'lightgreen'
-	)
-	$: message = form?.message || ''
+	let message:string
+	$effect(() => {
+		utils.setColor(
+		form?.message ? (form.message.includes('successfully') ? 'lightgreen' : 'pink') : 'lightgreen')
+		message = form?.message || ''
+	}
+)
 
 	let snap = {
 		firstName: '',

@@ -1,8 +1,8 @@
 <script>
-	let { cls, style, caption, children } = $props();
+	let { cls, caption2, children } = $props()
 </script>
 
-<div class={cls} {style} onclick={console.log('clicked')} aria-hidden={true}>
-	{caption ?? 'Child'}
+<div class={cls} onclick={console.log('clicked')} aria-hidden={true}>
+	{caption2 ?? 'Child'}
 	{@render children()}
 </div>

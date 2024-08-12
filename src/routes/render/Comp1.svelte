@@ -1,6 +1,6 @@
 <!-- just markup without TypeScript using $$props -->
 <div class={$$props.cls} onclick={console.log('clicked')} aria-hidden={true}>
-	{$$props.caption ?? 'Child'}
+	{$$props.caption1 ?? 'Child'}
 	<slot></slot>
 </div>
 <!-- <script>

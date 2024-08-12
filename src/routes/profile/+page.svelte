@@ -58,7 +58,7 @@
 
 	$effect(() =>
 		setColor(
-			form?.message ? (form.message.includes('successfully') ? 'lightgreen' : 'red') : 'lightgreen'
+			form?.message ? (form.message.includes('successfully') ? 'lightgreen' : 'pink') : 'lightgreen'
 		)
 	)
 
@@ -245,7 +245,7 @@
 {/snippet}
 {#snippet ownerOnly()}
 	<Tooltip placement="top" defaultClass="tt-profile" class="m-profile" arrow={false}>
-		<p>Owner only permission</p>
+		<p class="pink">Owner only permission</p>
 	</Tooltip>
 {/snippet}
 <svelte:head>
@@ -270,7 +270,7 @@
 				<textarea
 					bind:this={bioTextArea}
 					class="text-area"
-					placeholder={bioIsRequired ?? 'Place bio here'}
+					placeholder="Place bio here"
 					rows={5}
 					cols={35}
 					name="bio"
@@ -301,6 +301,7 @@
 			</form>
 		</div>
 	</div>
+
 	{#if selectedUserWithBio}
 		<div class="right-column">
 			<!-- <p>{selectedUserWithBio.user.firstName} {selectedUserWithBio.user.lastName}</p> -->
@@ -327,7 +328,7 @@
 						onclick={() => {
 							btnDelete.click()
 						}}
-						aria-hidden={true}><span class="delete-icon">X</span></span
+						aria-hidden={true}><span class="delete-icon" class:pink={wrongUser}>X</span></span
 					>
 					{@render deleteIcon()}
 				{/if}
@@ -341,6 +342,9 @@
 <style lang="scss">
 	.relative {
 		position: relative;
+		p {
+			cursor: default;
+		}
 	}
 	:global(.tooltip-profile),
 	:global(.tt-profile) {
@@ -442,6 +446,7 @@
 	}
 	button {
 		width: 5rem;
+		cursor: pointer;
 	}
 	.delete-icon {
 		padding: 1px 8px 0 8px;
@@ -452,5 +457,17 @@
 		font-size: 20px;
 		line-height: 22px;
 		font-weight: 800;
+		cursor: pointer;
+	}
+	.pink {
+		color: pink !important;
+		border-color: pink !important;
+	}
+	[name='bio'] {
+		background-color: #3e3e3e;
+		font-size: 18px;
+		&:focus {
+			background-color: #e3e3e3;
+		}
 	}
 </style>

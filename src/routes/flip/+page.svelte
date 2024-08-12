@@ -75,7 +75,7 @@
 	onMount(() => {
 		boxPlay('.box1')
 		return () => {
-			setMrPath($page.url.pathname)
+			utils.setMrPath($page.url.pathname)
 		}
 	})
 
