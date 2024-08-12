@@ -91,7 +91,7 @@ and appends it to the yellow colored list
 	<select
 		bind:this={selectBox}
 		class="select"
-		on:click|preventDefault={onClick}
+		onclick|preventDefault={onClick}
 		on:keypress|preventDefault={onClick}
 		aria-hidden={true}
 		name="categories"
@@ -110,7 +110,7 @@ and appends it to the yellow colored list
 <ul>
 	{#each data.categories as category}
 		<li>
-			<p on:click|preventDefault={liClick} aria-hidden={true}>
+			<p onclick|preventDefault={liClick} aria-hidden={true}>
 				{category.name}
 			</p>
 		</li>

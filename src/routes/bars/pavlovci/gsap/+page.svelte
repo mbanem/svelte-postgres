@@ -65,7 +65,7 @@
 	</div>
 	<div class="content">
 		<div class="sidebar left"></div>
-		<button class="button" on:click={() => timeline.reverse()}>Reverse</button>
+		<button class="button" onclick={() => timeline.reverse()}>Reverse</button>
 		<div class="sidebar right"></div>
 	</div>
 	<div class="footer"></div>

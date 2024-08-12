@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { page } from '$app/stores'
-	import * as utils from '$utils'
 	import { onMount } from 'svelte'
-	export let callParent: (name: string) => void
+	import * as utils from '$utils'
 
+	export let callParent: (name: string) => void
 	export const getRandomNumber = () => {
 		return Math.floor(Math.random() * 1000000)
 	}
@@ -13,6 +13,7 @@
 	export const resize = (msg: string) => {
 		pElement.innerText = pElement.innerText === txt ? msg : txt
 	}
+
 	let pElement: HTMLParagraphElement
 	let txt =
 		'waiting for parent to trigger greeting from child via resize button or to resize window....'
@@ -33,7 +34,7 @@
 	})
 </script>
 
-<button on:click={() => callParent(getMessage())}>child button to call parent</button>
+<button onclick={() => callParent(getMessage())}>child button to call parent</button>
 <p class="info" bind:this={pElement}>{txt}</p>
 
 <style lang="scss">

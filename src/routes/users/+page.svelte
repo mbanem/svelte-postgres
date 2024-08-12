@@ -35,7 +35,7 @@
 	{#if users}
 		{#each users as { id, firstName, lastName, email }}
 			<li class="post-list">
-				<button on:click={() => postDelete(id)} type="button">❌</button>
+				<button onclick={() => postDelete(id)} type="button">❌</button>
 				<a href="/user?id={id}">{firstName} {lastName}</a>
 			</li>
 		{/each}

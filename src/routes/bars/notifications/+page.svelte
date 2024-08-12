@@ -18,7 +18,7 @@
 			{/each}
 			<a href="{base}/"><div class="button">home</div></a>
 			{#if browser}
-				<div class="button" on:click={() => history.back()} aria-hidden={true}>go back</div>
+				<div class="button" onclick={() => history.back()} aria-hidden={true}>go back</div>
 			{/if}
 		</ul>
 	</div>
