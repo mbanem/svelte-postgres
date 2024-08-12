@@ -25,7 +25,7 @@
 	}
 	const removeFromToFrozen = () => {
 		setTimeout(() => {
-			frozen = frozen.filter((f, ix) => ix < frozen.length - 1)
+			frozen = frozen.filter((_, ix) => ix < frozen.length - 1)
 		})
 		appended.pop()
 	}
