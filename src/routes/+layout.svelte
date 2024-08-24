@@ -1,5 +1,4 @@
 <script lang="ts">
-	// import '$styles/global.scss';
 	import '$styles/app.scss'
 	import { navBars, navPath, navButtons } from '$utils/helpers.svelte.js'
 	import { getNavButtons } from '$lib/utils/navButtons.svelte'

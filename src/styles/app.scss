@@ -1,3 +1,229 @@
+@import './mixins.scss';
+
+🥇root {
+	$font-size: 16px;
+	--PLACEHOLDER_COLOR: lightgreen;
+}
+
+$TEXT-COLOR: white;
+$TEXT-HOVER: yellow;
+$BACK-COLOR: #3e3e3e;
+$LINK-COLOR: white;
+$LINK-HOVER: yellow;
+$LINK-ACTIVE: lightgreen;
+$BORDER: 1px solid gray;
+$MESSAGE-COLOR: lightgreen;
+$BORDER-RADIUS: 5px;
+$BORDER-HOVER-COLOR: yellow;
+
+$color: royalblue;
+$title-color: skyblue;
+$border-color: #bde168;
+
+$TEXT-COLOR: white;
+$BACK-COLOR: #3e3e3e;
+$LINK-COLOR: white;
+$LINK-HOVER: yellow;
+$LINK-ACTIVE: lightgreen;
+$BORDER: 1px solid gray;
+$BORDER-RADIUS: 6px;
+$BORDER-HOVER: yellow;
+html {
+	font-family: 'Times New Roman', Times, serif;
+	// font-size: 16psx;
+}
+h2 {
+	color: $color;
+	font-family: 'Times New Roman', Times, serif;
+	font-weight: 600;
+	font-style: italic;
+	width: 100vw;
+	text-align: center;
+}
+.page-title {
+	color: $title-color;
+	font-family: 'Times New Roman', Times, serif;
+	font-size: 30px;
+	font-weight: 400;
+	font-style: italic;
+	width: 100vw;
+	text-align: center;
+	letter-spacing: 0.1em;
+	text-shadow: 5px 5px 5px $border-color;
+}
+.button {
+	border: 2px solid transparent;
+	border-radius: 5px;
+	color: lightgreen;
+	background-color: navy !important;
+	cursor: pointer;
+	user-select: none;
+	&:hover {
+		border-color: lightgreen;
+	}
+}
+.button-sm {
+	@extend .button;
+	padding: 2px 6px;
+	width: 4px;
+	height: 1.2rem;
+}
+.button-md {
+	@extend .button;
+	padding: 2px 6px;
+	width: 6rem;
+	padding: 5px 1rem;
+}
+.button-lg {
+	@extend .button;
+	padding: 2px 6px;
+	width: 8rem;
+	font-size: 18px;
+	padding: 5px 1rem;
+}
+.button-xl {
+	@extend .button;
+	padding: 2px 6px;
+	width: 12rem;
+	font-size: 18px;
+	padding: 5px 1rem;
+}
+.button-xxl {
+	@extend .button;
+	padding: 2px 6px;
+	width: 18rem;
+	font-size: 18px;
+	padding: 5px 1rem;
+}
+
+@mixin button() {
+	display: inline-block;
+	font-size: 16px;
+	text-decoration: none;
+	// @mixin input-text($width: 5rem) {
+	// 	width: $width;
+	// }
+	border-radius: 5px;
+	border: 1px solid gray;
+	display: inline-block;
+	padding: 3px 2px;
+	text-align: center;
+	width: $width;
+	&:hover {
+		color: yellow;
+		border-color: lightgreen;
+	}
+	&:target {
+		background-color: blue;
+	}
+}
+@mixin capitalize($fs: 1rem) {
+	// $fs: to-unit(unit($fs), $fs);
+	font-size: $fs;
+	text-transform: capitalize;
+	$lh: #{2.8 - (strip-unit($fs) * 0.00625 + 1.3)};
+
+	@if unit($fs) ==1ch {
+		$lh: $lh / 2;
+	}
+
+	line-hight: $lh;
+}
+.navbar-button {
+	display: inline-block;
+	background-color: rgb(5, 5, 153);
+	color: lightgreen;
+	border-radius: 5px;
+	padding: 2px 0.5rem;
+	border: 2px solid transparent;
+	text-align: center;
+	min-width: 6rem;
+	height: 1.5rem;
+	font-size: 20px;
+	cursor: pointer;
+	user-select: none;
+	user-select: none;
+	outline: none;
+	margin: 0 4px;
+	text-transform: uppercase;
+	&:hover {
+		color: yellow;
+		border-color: lightgreen;
+	}
+}
+:global(pre) {
+	font-size: 20px;
+	margin: 1rem 0 0 1rem;
+	color: skyblue;
+}
+
+input [type='number'] {
+	width: 4rem;
+	height: 2rem;
+	font-size: 18px;
+	padding: 4px;
+}
+
+section ul[style^='margin'] li.list-item {
+	@for $i from 1 through 4 {
+		// font-size: var(--font-size);
+		$marker-starting-hue: 0deg;
+		$hue-variation: 35;
+
+		// @include capitalize(16px);
+		// change color for marker and then for li text
+		&:nth-child(#{$i}) {
+			color: hsl($marker-starting-hue + $i * $hue-variation, 70%, 50%);
+			&::marker {
+				color: hsl($marker-starting-hue + $i * $hue-variation, 70%, 50%);
+			}
+		}
+	}
+
+	&:hover {
+		opacity: 0.8;
+	}
+
+	h2 {
+		color: royalblue;
+		margin: 2rem auto;
+		width: 30rem;
+		font-family: 'Times New Roman', Times, serif;
+		font-weight: 400;
+		text-align: center;
+	}
+}
+[type='number'] {
+	color: black;
+	background-color: white;
+	font-size: 18px;
+	padding: 0;
+	text-align: center;
+	width: 3.5rem;
+	border-radius: 4px;
+}
+@function string($input) {
+	@return str($input);
+}
+
+@function number($input) {
+	@return num($input);
+}
+@function root-font-size-function($viewport) {
+	$size: calc(14px + 3 * ((#{$viewport} - 320px) / 680));
+	@return $size;
+}
+/// Remove the unit of a length
+/// @param {Number} $number - Number to remove unit from
+/// @return {Number} - Unitless number
+@function strip-unit($number) {
+	@if type-of($number) == 'number' and not unitless($number) {
+		@return math.div($number, ($number * 0 + 1));
+	}
+
+	@return $number;
+}
+/*
 body {
 	padding: 0;
 	margin: 0;
@@ -5,36 +231,6 @@ body {
 	color: $TEXT-COLOR;
 	position: relative;
 }
-
-.hover {
-	color: $TEXT-HOVER;
-	border-color: $BORDER-HOVER-COLOR;
-	cursor: pointer;
-}
-
-/* while defining a[title] using href */
-@mixin highlight($color: lightgreen, $cursor: pointer) {
-	color: $color;
-	border-color: $color;
-	cursor: $cursor;
-}
-
-inline-block {
-	display: inline-block;
-	inline-size: auto;
-	font-size: 20px;
-	border: $BORDER;
-	border-radius: $BORDER-RADIUS;
-	color: $LINK-COLOR;
-	margin: 0 0 0.5rem 0.5rem;
-	padding: 6px 1rem;
-	text-wrap: nowrap;
-	&:hover {
-		@include highlight();
-	}
-}
-.button,
-.line_button,
 button {
 	width: 8rem;
 	border: 1px solid gray;
@@ -43,7 +239,6 @@ button {
 	font-size: 16px;
 	color: $TEXT-COLOR;
 	background-color: $BACK-COLOR;
-	cursor: pointer;
 	&:hover {
 		color: yellow;
 		border: 1px solid white;
@@ -55,47 +250,10 @@ button {
 		background-color: gray;
 	}
 }
-.line_button {
-	display: inline-block;
-}
-cr-button {
-	@include cr-button;
-}
-[type='text'],
-[type='number'] {
-	display: block;
-	width: 80%;
-	padding-left: 1rem;
-	margin-bottom: 1rem;
-	height: 2rem;
-	color: black;
-	background-color: #3e3e3e;
-	border: none;
-	outline: 1px solid gray;
-	border-radius: 8px;
-	&:focus {
-		background-color: #3e3e3e;
-	}
-	&::placeholder {
-		color: var(--PLACEHOLDER_COLOR);
-		font-weight: normal;
-	}
-}
-
-[type='number'] {
-	color: black;
-	background-color: white;
-	font-size: 18px;
-	padding: 0;
-	text-align: center;
-	width: 3.5rem;
-	border-radius: 4px;
-}
 
 h1 {
 	color: $LINK-COLOR;
 }
-
 a {
 	color: $LINK-COLOR;
 	text-decoration: none;
@@ -105,80 +263,34 @@ a {
 	&:hover,
 	&:focus-visible {
 		color: $LINK-HOVER;
-	}
+	}left
 	&:active {
 		color: $LINK-ACTIVE;
 	}
 }
-
-@mixin block($block-type: inline-block) {
-	display: $block-type;
+a-block {
+	display: inline-block;
 	width: 4rem;
 	border: $BORDER;
 	border-radius: 2px;
 	color: $LINK-COLOR;
 	margin-left: 0.5rem;
 }
-
 nav a:any-link {
 	@extend a;
-	@include block();
+	@extend a-block;
 }
 a-button {
 	@extend a;
-	@include block(block);
+	@extend a-block;
 	border: 1px solid gray;
 	padding: 4px 1rem;
 }
-// $font-size: (24px, 22px, 20px, 18px);
-// @for $i from 1 through 4 {
-// 	h#{$i} {
-// 		font-size: nth($font-size, $i);
-// 	}
-// }
+*/
 
-// h1 {
-// 	color: navy;
-// }
-
-// $font-size: (24px, 22px, 20px, 18px);
-// @for $i from 1 through 4 {
-// 	h#{$i} {
-// 		font-size: nth($font-size, $i);
-// 		color: $LINK-COLOR;
-// 	}
-// }
-
-// body {
-// 	padding: 0;
-// 	margin: 0;
-// 	background-color: $BACK-COLOR;
-// 	color: $TEXT-COLOR;
-// 	position: relative;
-// }
-// button {
-// 	width: 8rem;
-// 	border: 1px solid gray;
-// 	border-radius: 5px;
-// 	padding: 5px 5px;
-// 	font-size: 16px;
-// 	color: $TEXT-COLOR;
-// 	background-color: $BACK-COLOR;
-// 	&:hover {
-// 		color: yellow;
-// 		border: 1px solid white;
-// 	}
-// 	&:active {
-// 		border: 1px solid yellow;
-// 	}
-// 	&:disabled {
-// 		background-color: gray;
-// 	}
-// }
-
-// h1 {
-// 	color: $LINK-COLOR;
-// }
+h1 {
+	color: lightgreen;
+}
 
 pre {
 	color: skyblue;
@@ -186,39 +298,118 @@ pre {
 	font-size: 14px;
 }
 
-nav a:any-link {
-	@extend a;
-	@include block;
+body {
+	padding: 0;
+	margin: 0;
+	background-color: #3e3e3e; /*$BACK-COLOR;*/
+	color: $TEXT-COLOR;
+	position: relative;
+}
+button {
+	width: 8rem;
+	border: 1px solid gray;
+	border-radius: 5px;
+	padding: 5px 5px;
+	font-size: 16px;
+	color: $TEXT-COLOR;
+	background-color: #3e3e3e; /*$BACK-COLOR;*/
+	&:hover {
+		color: yellow;
+		border: 1px solid white;
+		cursor: pointer;
+	}
+	&:active {
+		border: 1px solid yellow;
+	}
+	&:disabled {
+		background-color: gray;
+	}
+}
+// input {
+// 	display: block;
+// 	width: 80%;
+// 	margin-bottom: 1rem;
+// 	height: 2rem;
+// 	color: black;
+// 	&::placeholder {
+// 		color: var(--PLACEHOLDER_COLOR);
+// 		font-weight: normal;
+// 	}
+// }
+h1 {
+	color: $LINK-COLOR;
+}
+
+a {
+	color: $LINK-COLOR;
+	text-decoration: none;
+	text-align: center;
+	user-select: none;
+	cursor: pointer;
+	&:hover,
+	&:focus-visible {
+		color: $LINK-HOVER;
+	}
+	&:active {
+		color: $LINK-ACTIVE;
+	}
+}
+a-block {
+	display: inline-block;
+	inline-size: auto;
+	border: $BORDER;
+	border-radius: 2px;
+	color: $LINK-COLOR;
+	padding: 8px 1rem;
+	margin-left: 0.5rem;
 }
 a-button {
 	@extend a;
-	@extend inline-block;
-	border: 1px solid gray;
+	@extend a-block;
+	// border: 1px solid gray;
 	padding: 4px 1rem;
+	&:hover {
+		@include highlight();
+	}
 }
 
-$font-size: (24px, 22px, 20px, 18px);
-@for $i from 1 through 4 {
-	h#{$i} {
-		font-size: nth($font-size, $i);
-	}
+/* end of defining a-button */
+
+nav a:any-link {
+	@extend a;
+	@extend a-block;
 }
 
 h1 {
 	color: navy;
 }
 
-$font-size: (24px, 22px, 20px, 18px);
-@for $i from 1 through 4 {
-	h#{$i} {
-		font-size: nth($font-size, $i);
-		color: $LINK-COLOR;
-	}
-}
 .relative {
 	position: relative;
 
-	// master class has higher specificity than tooltip class, e.g.
+	.tooltip {
+		position: absolute;
+		top: -3rem;
+		display: block;
+		width: 11rem;
+		font-size: 14px;
+		font-weight: 400;
+		padding: 3px 1rem;
+		border: 1px solid gray;
+		border-radius: 4px;
+		background-color: #3e3e3e; /*$BACK-COLOR;*/
+		text-align: center;
+	}
+	.master {
+		color: yellow;
+		font-size: 14px;
+		font-weight: 400;
+		p {
+			padding: 0;
+			margin: 0;
+		}
+	}
+	/* master class has higher specificity than tooltip class, e.g. */
 	/* <Tooltip
 				placement="top"
 				type="custom"
@@ -232,8 +423,95 @@ $font-size: (24px, 22px, 20px, 18px);
 		while master class could be for warning, error,...
 	*/
 }
-pre {
-	color: skyblue;
-	font-family: Times New Roman;
-	font-size: 14px;
+// Conversion function
+// prettier-ignore
+@function to-unit($unit, $input) {
+	// Test against valid CSS units. should get 0 followed by unit e.g. 0rem, 0px
+	$to-unit: map-get(
+		(
+			px: 0px,
+			pt: 0pt,
+			pc: 0pc,
+			in: 0in,
+			mm: 0mm,
+			cm: 0cm,
+			q: 0Q,
+			// absolute length
+			em: 0em,
+			rem: 0rem,
+			ch: 0ch,
+			ex: 0ex,
+			// relative length - font based
+			vw: 0vw,
+			vh: 0vh,
+			vmin: 0vmin,
+			vmax: 0vmax,
+			// relative length - viewport based
+			deg: 0deg,
+			turn: 0turn,
+			grad: 0grad,
+			rad: 0rad,
+			// angle
+			s: 0s,
+			ms: 0ms,
+			// time
+			hz: 0Hz,
+			khz: 0kHz,
+			// frequency
+			dpi: 0dpi,
+			dpcm: 0dpcm,
+			dppx: 0dppx,
+			// resolution
+			pct: 0%,
+			percent: 0%,
+			num: 0,
+			number: 0 // percent or number
+		),
+		$unit
+	);
+
+	// Incomparable units are caught in conversion none of specified is found
+	@if not $to-unit {
+		@error 'Could not convert to `#{$unit}` – must be a valid CSS unit';
+		@return null;
+	}
+
+	// Number/incomparable conversion
+	@if index(num number ex ch vw vh vmin vmax, $unit) {
+		$value: num($input);
+	}
+
+	// EM/REM conversion using px as base
+	@if index(em rem, unit($input)) {
+		$input: floor(strip-unit($input)) * $base-font_size * 1px; // * $base-font-size / 1px;
+	} @else if index(em rem, $unit) and not unitless($input) {
+		$input: floor(strip-unit($input)) * $base-font_size * 1px;
+	}
+
+	// Bug fix – resolution units seems to be flipped
+	@if index(dpi dpcm dppx, $unit) {
+		$units: (
+			dppx: 0dppx,
+			dpcm: 0dpcm,
+			dpi: 0dpi
+		);
+		$input-unit: map-get($units, unit($input));
+		$input: if(1dppx < 95dpi, num($input-unit + (num($input) + $to-unit)), $input);
+	}
+
+	@return $input;
+}
+$font-size: (24px, 22px, 20px, 18px);
+$f: 1;
+$e: 4;
+@for $i from $f through $e {
+	h#{$i} {
+		font-size: nth($font-size, $i);
+	}
+}
+// check mark for visited links
+$content: '\2713' + ' ';
+
+a:visited:before {
+	content: '#{$content}';
 }

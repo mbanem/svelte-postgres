@@ -1,0 +1,105 @@
+@mixin input-text($width: 5rem, $border-radius: 4px) {
+	width: $width;
+
+	display: block;
+	padding-left: 1rem;
+	margin-bottom: 1rem;
+	height: 2rem;
+	color: #e3e3e3;
+	font-size: 20px;
+	background-color: #4e4e4e;
+	border: none;
+	outline: 1px solid gray;
+	border-radius: $border-radius;
+	&:focus {
+		color: rgb(231, 231, 42);
+		background-color: #6e6e6e;
+	}
+	&::placeholder {
+		color: lightgreen;
+		font-weight: normal;
+	}
+}
+
+@mixin caterpillar-item($bgcolor) {
+	background-color: $bgcolor;
+	color: white;
+	border-radius: 5px;
+	border: 1px solid gray;
+	display: inline-block;
+	line-height: 50px;
+	text-align: center;
+	width: 50px;
+	&:hover {
+		color: yellow;
+		border-color: lightgreen;
+	}
+	&:target {
+		background-color: blue;
+	}
+}
+@mixin on-focus {
+	display: inline-block;
+	font-size: 16px;
+	text-decoration: none;
+	@content;
+}
+@mixin border-small($color: gray, $radius: 5px, $padding: 3px 1rem) {
+	border: 1px solid $color;
+	border-radius: $radius;
+}
+@mixin border-large($color: gray, $radius: 10px, $padding: 1rem 2rem) {
+	border: 1px solid $color;
+	border-radius: $radius;
+}
+@mixin cr-button($color: white, $background-color: navy) {
+	@extend inline-block;
+	color: $color;
+	background-color: $background-color;
+}
+@mixin caterpillar-item($bgcolor) {
+	background-color: $bgcolor;
+	color: white;
+	border-radius: 5px;
+	border: 1px solid gray;
+	display: inline-block;
+	line-height: 50px;
+	text-align: center;
+	width: 50px;
+	&:hover {
+		color: yellow;
+		border-color: lightgreen;
+	}
+	&:target {
+		background-color: blue;
+	}
+}
+
+@mixin on-focus {
+	display: inline-block;
+	font-size: 16px;
+	text-decoration: none;
+	@content;
+}
+@mixin border($w: 1, $r: 5) {
+	border: $w * 1px solid gray;
+	border-radius: $r * 1px;
+}
+@mixin border-sm($color: gray, $radius: 5px, $padding: 3px 1rem) {
+	border: 1px solid $color;
+	border-radius: $radius;
+}
+@mixin border-md($color: gray, $radius: 10px, $padding: 6px 1.5rem) {
+	border: 1px solid $color;
+	border-radius: $radius;
+}
+@mixin border-lg($color: gray, $radius: 10px, $padding: 1rem 2rem) {
+	border: 1px solid $color;
+	border-radius: $radius;
+}
+/* while defining a[title] using href */
+@mixin highlight($color: lightgreen, $cursor: pointer) {
+	color: $color;
+	border-color: $color;
+	cursor: $cursor;
+}
