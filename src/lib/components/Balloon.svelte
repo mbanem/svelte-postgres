@@ -1,12 +1,12 @@
 <script lang="ts">
 	type ARGS = {
-		size: number;
-		power: number;
-		inflate: (n: number) => void;
-		deflate: (n: number) => void;
-	};
+		size: number
+		power: number
+		inflate: (n: number) => void
+		deflate: (n: number) => void
+	}
 
-	let { inflate, deflate, size = $bindable(), power = $bindable() }: ARGS = $props();
+	let { inflate, deflate, size = $bindable(), power = $bindable() }: ARGS = $props()
 </script>
 
 <div class="wrapper">
@@ -23,6 +23,5 @@
 <style lang="scss">
 	.wrapper {
 		padding: 1rem;
-		/* @include border();*/
 	}
 </style>

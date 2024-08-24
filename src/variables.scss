@@ -5,13 +5,14 @@
 	--MESSAGE-COLOR: lightgreen;
 }
 $TEXT-COLOR: white;
+$TEXT-HOVER: yellow;
 $BACK-COLOR: #3e3e3e;
 $LINK-COLOR: white;
 $LINK-HOVER: yellow;
 $LINK-ACTIVE: lightgreen;
 $BORDER: 1px solid gray;
-$BORDER-RADIUS: 6px;
-$BORDER-HOVER: yellow;
+$BORDER-RADIUS: 5px;
+$BORDER-HOVER-COLOR: yellow;
 
 $color: royalblue;
 $title-color: skyblue;
@@ -23,11 +24,20 @@ $border-color: #bde168;
 	text-decoration: none;
 	@content;
 }
-@mixin border-small($color: gray, $radius: 5px, $padding: 3px 1rem) {
+@mixin border-sm($color: gray, $radius: 5px, $padding: 3px 1rem) {
 	border: 1px solid $color;
 	border-radius: $radius;
 }
-@mixin border-large($color: gray, $radius: 10px, $padding: 1rem 2rem) {
+@mixin border-lg($color: gray, $radius: 10px, $padding: 1rem 2rem) {
 	border: 1px solid $color;
 	border-radius: $radius;
+}
+@mixin border-xl($color: gray, $radius: 20px, $padding: 1.5rem 3rem) {
+	border: 1px solid $color;
+	border-radius: $radius;
+}
+@mixin cr-button($color: white, $background-color: navy) {
+	@extend inline-block;
+	color: $color;
+	background-color: $background-color;
 }

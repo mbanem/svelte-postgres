@@ -14,6 +14,7 @@
 		{ color: 'Pink', title: 'Bindable', href: '/bindable' },
 		{ color: 'SkyBlue', title: 'Communicate', href: '/communicate' },
 		{ color: 'ForestGreen', title: 'ContactCard', href: '/contact' },
+		{ color: 'Yellow', title: 'Duck-Goose', href: '/duck_goose' },
 		{ color: 'Yellow', title: 'Flip', href: '/flip' }
 	]
 

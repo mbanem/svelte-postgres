@@ -25,6 +25,12 @@
 */
 </script>
 
+<!--
+<a-button href="/caterpillar">caterpillar</a-button>
+<cr-button>cr-button</cr-button>
+<cr-button>cr-button</cr-button>
+<cr-button>caterpillar</cr-button> -->
+
 <!-- <pre style="font-size:11px;">layout role {data?.locals?.user?.role}</pre> -->
 <div class="wrapper">
 	{#key data?.locals?.user?.role}

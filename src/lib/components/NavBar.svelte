@@ -231,6 +231,7 @@
 		justify-content: flex-start;
 		align-items: baseline;
 		gap: 6px;
+		margin-top: 4px;
 	}
 	.nav div {
 		/* @extend .navbar-button;*/

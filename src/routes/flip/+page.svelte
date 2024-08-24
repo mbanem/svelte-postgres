@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores'
 	import { onMount } from 'svelte'
-	// import { onMount, getContext } from 'svelte';
 	import { tick } from 'svelte'
 	import { gsap } from 'gsap'
 	import Flip from 'gsap/dist/Flip'
@@ -172,7 +171,13 @@
 <!-- <svelte:window onclick={flip} /> -->
 <!-- three column grid -->
 <main>
-	<h3 class="click-info">Click on a circle to FLIP</h3>
+	{#if !start}
+		<h3 class="hide-label" in:send={{ key: 'y' }} out:receive={{ key: 'y' }}>&nbsp;</h3>
+	{:else}
+		<h3 class="info-label" in:send={{ key: 'y' }} out:receive={{ key: 'y' }}>
+			Click on a Hiding Box to vanish
+		</h3>
+	{/if}
 	<div class="label-abs">
 		<div data-label={layout}>click on an image to rearrange them</div>
 	</div>
@@ -224,7 +229,7 @@
 				{#if start}
 					<label
 						class="crossfade-a"
-						for="cBox"
+						for="checkBox"
 						in:send={{ key: 'x' }}
 						out:receive={{ key: 'x' }}
 						aria-hidden={true}
@@ -234,7 +239,7 @@
 					<label
 						class="crossfade-b"
 						style:width="10.1rem"
-						for="cBox"
+						for="checkBox"
 						in:send={{ key: 'x' }}
 						out:receive={{ key: 'x' }}
 					>
@@ -245,7 +250,7 @@
 			<!-- clicks toggle checkbox's bind-variable true/false
 				which in turn activates transition in the previous block above
 			-->
-			<input id="cBox" type="checkbox" bind:checked={visible} class="hidden" />
+			<input id="checkBox" type="checkbox" bind:checked={visible} class="hidden" />
 		</div>
 	</div>
 </main>
@@ -284,7 +289,7 @@
 	.crossfade-a {
 		position: absolute;
 		top: 15rem;
-		left: 15rem;
+		left: -15rem;
 		opacity: 0;
 	}
 	.crossfade-b {
@@ -292,13 +297,14 @@
 		top: -5rem;
 		left: -6rem;
 		border: 1px solid yellow !important;
-		border: 4px solid yellow;
+		// border: 4px solid yellow;
+		opacity: 1;
 	}
 	.hidden {
 		display: none;
 	}
 
-	label[for='cBox'] {
+	label[for='checkBox'] {
 		display: inline-block;
 		width: 9rem;
 		height: 1.5rem;
@@ -400,13 +406,22 @@
 		text-align: center;
 		user-select: none;
 	}
-	.click-info {
+	/* crossfade works among two objects having the same position;
+		the only difference is the opacity from 1 to zero, though
+		the crossfade handle the text like rotating on y axis
+	*/
+	.info-label,
+	.hide-label {
 		position: absolute;
-		top: -4rem;
-		left: 42vw;
+		top: 15rem;
+		left: 70vw;
 		font-weight: 300;
 		user-select: none;
 		color: lightgreen;
+		opacity: 1;
+	}
+	.hide-label {
+		opacity: 0;
 	}
 	section {
 		margin-left: 4rem;
