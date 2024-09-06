@@ -3,13 +3,12 @@
 	import { page } from '$app/stores'
 	import { onMount, getContext } from 'svelte'
 	import { enhance } from '$app/forms'
-	import * as utils  from '$utils'
+	import * as utils from '$utils'
 	import type { SubmitFunction } from '@sveltejs/kit'
 	import type { ActionData } from './$types'
 
-	export let form: ActionData
-	$: data = form?.data
-
+	let { data } = $props()
+	// let data = $derived(form.data)
 	let firstNameIsRequired = ''
 	let lastNameIsRequired = ''
 	let emailIsRequired = ''
@@ -28,13 +27,13 @@
 		message = action.search === '?/register' ? 'registering account...' : 'updating account...'
 	}
 	let result: string
-	let message:string
+	let message: string
 	$effect(() => {
 		utils.setColor(
-		form?.message ? (form.message.includes('successfully') ? 'lightgreen' : 'pink') : 'lightgreen')
-		message = form?.message || ''
-	}
-)
+			data?.message ? (data.message.includes('successfully') ? 'lightgreen' : 'pink') : 'lightgreen'
+		)
+		message = data?.message || ''
+	})
 
 	let snap = {
 		firstName: '',
@@ -49,7 +48,6 @@
 			snap = value
 		}
 	}
-	let mrPath = getContext('mrPath') as SvelteStore<string>
 
 	// const shallowCopy = (source: Object, target: Object) => {
 	// 	for (const [k, v] of Object.entries(source)) {
@@ -58,12 +56,12 @@
 	// };
 	onMount(() => {
 		// shallowCopy(data as Object, snap);
-		if (form?.data) {
-			snap = form.data
+		if (data?.data) {
+			snap = data.data
 		}
 		return () => {
 			// @ts-expect-error
-			mrPath.set($page.url.pathname)
+			utils.setMrPath.set($page.url.pathname)
 		}
 	})
 </script>
@@ -75,8 +73,8 @@
 <h2>Register Page</h2>
 
 <div class="container">
-	{#if form?.message}
-		<p class="error">{form.message}</p>
+	{#if data?.message}
+		<p class="error">{data.message}</p>
 	{/if}
 	<form method="POST" action="?/register" use:enhance={enhanceRegister}>
 		<div>

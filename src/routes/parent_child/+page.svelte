@@ -17,7 +17,6 @@
 	let person = $state<Person>({ name: 'Mr. Filip Isakovic', age: 18, city: 'San Diego' })
 	let nameUpper = $derived(person.name.toUpperCase())
 
-	// let mrPath = getContext('mrPath') as SvelteStore<string>
 
 	onMount(() => {
 		return () => {

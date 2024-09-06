@@ -44,7 +44,6 @@
 	let createdAt = new Date('2/18/2006').toLocaleString()
 	let updatedAt = new Date('8/22/2007').toLocaleString()
 
-	let mrPath = getContext('mrPath') as SvelteStore<string>
 
 	onMount(() => {
 		return () => {
@@ -108,7 +107,7 @@
 	}
 	:global(.local-tooltip) {
 		position: absolute;
-		top: -2rem !important;
+		top: -4rem !important;
 		left: 5rem;
 		display: inline-block;
 		font-size: 14px;

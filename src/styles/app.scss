@@ -5,29 +5,6 @@
 	--PLACEHOLDER_COLOR: lightgreen;
 }
 
-$TEXT-COLOR: white;
-$TEXT-HOVER: yellow;
-$BACK-COLOR: #3e3e3e;
-$LINK-COLOR: white;
-$LINK-HOVER: yellow;
-$LINK-ACTIVE: lightgreen;
-$BORDER: 1px solid gray;
-$MESSAGE-COLOR: lightgreen;
-$BORDER-RADIUS: 5px;
-$BORDER-HOVER-COLOR: yellow;
-
-$color: royalblue;
-$title-color: skyblue;
-$border-color: #bde168;
-
-$TEXT-COLOR: white;
-$BACK-COLOR: #3e3e3e;
-$LINK-COLOR: white;
-$LINK-HOVER: yellow;
-$LINK-ACTIVE: lightgreen;
-$BORDER: 1px solid gray;
-$BORDER-RADIUS: 6px;
-$BORDER-HOVER: yellow;
 html {
 	font-family: 'Times New Roman', Times, serif;
 	// font-size: 16psx;
@@ -61,6 +38,9 @@ h2 {
 	&:hover {
 		border-color: lightgreen;
 	}
+}
+.hidden {
+	display: none;
 }
 .button-sm {
 	@extend .button;
@@ -325,21 +305,38 @@ button {
 		background-color: gray;
 	}
 }
-// input {
-// 	display: block;
-// 	width: 80%;
-// 	margin-bottom: 1rem;
-// 	height: 2rem;
-// 	color: black;
-// 	&::placeholder {
-// 		color: var(--PLACEHOLDER_COLOR);
-// 		font-weight: normal;
-// 	}
-// }
-h1 {
-	color: $LINK-COLOR;
+input {
+	display: inline-block;
+	height: 1.8rem;
+	margin-bottom: 10px;
+	width: 30rem;
+	font-size: 18px;
+	color: lightgreen;
+	background-color: #3e3e3e;
+	outline: none;
+	border-radius: 4px;
+	padding-left: 1rem;
+	&:focus {
+		color: yellow;
+	}
+	&::placeholder {
+		color: var(--PLACEHOLDER_COLOR);
+		font-weight: 400;
+	}
 }
-
+/*
+input {
+	display: block;
+	width: 80%;
+	margin-bottom: 1rem;
+	height: 2rem;
+	color: black;
+	&::placeholder {
+		color: var(--PLACEHOLDER_COLOR);
+		font-weight: normal;
+	}
+}
+*/
 a {
 	color: $LINK-COLOR;
 	text-decoration: none;
@@ -378,10 +375,6 @@ a-button {
 nav a:any-link {
 	@extend a;
 	@extend a-block;
-}
-
-h1 {
-	color: navy;
 }
 
 .relative {

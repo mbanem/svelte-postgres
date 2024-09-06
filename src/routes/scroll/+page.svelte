@@ -4,6 +4,7 @@
 	import { capitalize } from '$utils/helpers.svelte'
 	import { flip } from 'svelte/animate'
 	import { fade } from 'svelte/transition'
+	import { Tooltip } from 'flowbite-svelte'
 
 	let max_range = 5
 	let startInt = $state(0)
@@ -44,23 +45,27 @@
 		'Zeljko Kotur'
 	]
 	let ix = 0
-	let message = ''
-	const inputBoxAddName = (event: KeyboardEvent) => {
-		if (event.key !== 'Enter' || messages.includes(message)) return
-		messages.push(message)
-	}
-	const addName = (event: MouseEvent | KeyboardEvent) => {
-		if (event instanceof KeyboardEvent) {
-			if (event.key !== 'Enter') return
-			messages.push(message)
-		} else if (ix < names.length) {
-			messages.push(names[ix++] as string)
-		}
+	let input_message: HTMLInputElement
 
+	const scroll = () => {
 		if (div.offsetHeight + div.scrollTop > div.getBoundingClientRect().height - 20) {
 			tick().then(() => {
 				div.scrollTo(0, div.scrollHeight)
 			})
+		}
+	}
+	const addAnotherName = (event: MouseEvent | KeyboardEvent) => {
+		if (event instanceof KeyboardEvent) {
+			if (event.key !== 'Enter') return
+			messages.push(input_message.value)
+			scroll()
+			input_message.value = ''
+		}
+	}
+	const addListedName = () => {
+		if (ix < names.length) {
+			messages.push(names[ix++] as string)
+			scroll()
 		}
 	}
 	let info: HTMLDivElement
@@ -163,18 +168,51 @@
 				}
 			)
 	}
+	type ButtonCaption = 'a' | 'b' | 'c' | 'd'
+	let ttEl: HTMLDivElement
+	const tooltips: Record<ButtonCaption, String> = {
+		a: 'this page',
+		b: 'the page below',
+		c: 'the second page below',
+		d: 'the third page below'
+	}
+	const setTooltipText = (el: HTMLButtonElement) => {
+		const tooltipEl = el.innerText as ButtonCaption
+		ttEl.innerHTML = 'Will animate in<br/>' + tooltips[tooltipEl]
+	}
+	const tooltipScrollBy = (event: MouseEvent) => {
+		setTooltipText(event.target as HTMLButtonElement)
+		document.querySelector('.tooltip-scroll-by')?.classList.toggle('hidden')
+		// setTimeout(() => {
+		// 	document.querySelector('.tooltip-scroll-by')?.classList.toggle('hidden')
+		// }, 3000)
+	}
+	const tooltipMouseWheel = () => {
+		document.querySelector('.tooltip-mouse-wheel')?.classList.toggle('hidden')
+		setTimeout(() => {
+			document.querySelector('.tooltip-mouse-wheel')?.classList.toggle('hidden')
+		}, 1500)
+	}
 </script>
 
 <!-- === BEGIN squares in separate pages ====
     so we have to scroll and bring them
     into view in order to trigger the animation
 -->
+<div class="tooltip-mouse-wheel hidden">focus & use mouse wheel</div>
+<div bind:this={ttEl} class="tooltip-scroll-by hidden"></div>
 <div class="container">
 	<div class="buttons">
 		<!-- scroll array elements left and right -->
 		<p>
 			Scroll array elements by &nbsp;
-			<input bind:value={delta} type="number" min="1" max={max_range} />
+			<input
+				bind:value={delta}
+				type="number"
+				min="1"
+				max={max_range}
+				onmouseenter={tooltipMouseWheel}
+			/>
 			&nbsp; element{delta === 1 ? '' : 's'}
 		</p>
 		<div id="wrapper">
@@ -197,7 +235,11 @@
 		<br />
 
 		{#each Object.keys(params) as cn}
-			<button onclick={() => animation(`.${cn}`)}>{cn}</button>
+			<button
+				onclick={() => animation(`.${cn}`)}
+				onmouseenter={tooltipScrollBy}
+				onmouseleave={tooltipScrollBy}>{cn}</button
+			>
 		{/each}
 
 		{#each Object.keys(params) as cn}
@@ -208,11 +250,16 @@
 	<div class="main">
 		<pre style="margin-left:- class='scroll-button' rem;">
 				$effect.pre does not work on adding messages to the div element
-				so we can use scrollTo inside the addName method instead
+				so we can use scrollTo inside the addListedName method instead
 			</pre>
 		<p>Enter a name to the input below and press Enter to add it t the list</p>
-		<input type="text" bind:value={message} onkeydown={addName} placeholder="Enter a message" />
-		<button onclick={addName}>add name</button>
+		<input
+			type="text"
+			bind:this={input_message}
+			onkeypress={addAnotherName}
+			placeholder="Enter a name and press Enter"
+		/>
+		<button onclick={addListedName}>add name</button>
 
 		<div bind:this={div} class="message-container">
 			{#key messages}
@@ -275,6 +322,7 @@
 	.button-wrapper {
 		display: inline-block;
 		background: transparent;
+		border: 1px solid transparent;
 		border-radius: 5px;
 		z-index: 2;
 		&:hover {
@@ -362,10 +410,13 @@
 	p {
 		color: lightgreen;
 	}
+	/* grid last column must be fixed e.g. 12rem otherwise
+		it slightly change the width on content animation
+	*/
 	.container {
 		display: grid;
-		grid-template-columns: 2.5fr 2fr 0.8fr;
-		margin-top: 1rem;
+		grid-template-columns: 2.5fr 2fr 12rem;
+		margin: 1rem 0 0 2rem;
 		width: 80vw;
 	}
 	.wrapper {
@@ -416,5 +467,35 @@
 	[type='number'] {
 		display: inline-block;
 		width: 3rem;
+	}
+	.tooltip-scroll-by,
+	.tooltip-scroll {
+		position: fixed;
+		top: 4.3rem;
+		left: 35rem;
+		width: 9.2rem;
+		text-align: center;
+		word-break: break-word;
+		color: gray;
+		background-color: #3e3e3e;
+		border: 1px solid gray;
+		border-radius: 5px;
+		cursor: progress;
+	}
+	.tooltip-scroll-by {
+		top: 20rem;
+		left: 6rem;
+	}
+	.tooltip-mouse-wheel {
+		position: fixed;
+		top: 4.3rem;
+		left: 9rem;
+		width: 12rem;
+		text-align: center;
+		color: gray;
+		background-color: #3e3e3e;
+		border: 1px solid gray;
+		border-radius: 5px;
+		cursor: progress;
 	}
 </style>

@@ -47,7 +47,6 @@
 		throw error(420, 'Enhance your calm')
 	}
 
-	// let mrPath = getContext('mrPath') as SvelteStore<string>;
 
 	let boxTimeline = gsap.core.Timeline
 	const boxPlay = (node: string) => {
@@ -413,8 +412,8 @@
 	.info-label,
 	.hide-label {
 		position: absolute;
-		top: 15rem;
-		left: 70vw;
+		top: 12rem;
+		left: 78vw;
 		font-weight: 300;
 		user-select: none;
 		color: lightgreen;
@@ -460,8 +459,8 @@
 	.label-abs {
 		position: absolute;
 		display: flex;
-		top: 10rem;
-		left: 17.2rem;
+		top: 8rem;
+		left: 14rem;
 		margin-bottom: 5px;
 		color: lightgreen;
 		transition-delay: 6s;

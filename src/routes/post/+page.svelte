@@ -1,13 +1,13 @@
 <script lang="ts">
 	// @ts-check
 	import type { Snapshot } from '../$types' // .sveltekit/$types
-	import { onMount, getContext } from 'svelte'
 	import type { PageData, ActionData } from './$types'
 	import type { SubmitFunction } from '@sveltejs/kit'
 	import { enhance } from '$app/forms'
 	import { invalidateAll } from '$app/navigation'
 	import { page } from '$app/stores' // for $age.status code on actions
 	import CircleSpinner from '$lib/components/CircleSpinner.svelte'
+	import { onMount } from 'svelte'
 	import * as utils from '$utils'
 
 	import PageTitleCombo from '$lib/components/PageTitleCombo.svelte'
@@ -85,7 +85,16 @@
 		the action can respond with data that will be available through the form property on
 		the corresponding page and through $page.form app-wide until the next update.
 	*/
-	const enhancePost: SubmitFunction = ({ action, formData }) => {
+	const enhancePost: SubmitFunction = ({ action, formData, cancel }) => {
+		if (action.search === '?/clearForm') {
+			return cancel()
+		}
+		if (action.search !== 'deletePost' && !snap.categoryIds) {
+			categoryIsRequired = requiredCategory
+			message = 'Please select corresponding categories'
+			utils.setColor('pink')
+			return
+		}
 		result = ''
 		titleIsRequired = ''
 		ignoreFormMessage = false
@@ -111,7 +120,7 @@
 		loading = true // start spinner animation
 		if (action.search === '?/createPost') {
 			utils.setButtonVisible([btnCreate, btnUpdate, btnDelete])
-			result = 'saving post...'
+			result = 'creating post...'
 		} else if (action.search === '?/deletePost') {
 			result = 'deleting post...'
 		} else if (action.search === '?/updatePost') {
@@ -134,6 +143,7 @@
 			utils.setButtonVisible([btnCreate, btnUpdate, btnDelete])
 			clearForm()
 			loading = false // stop spinner animation
+			utils.setColor('lightgreen')
 		}
 	}
 
@@ -340,17 +350,17 @@
 						update
 					</button>
 				{/if}
+				<button
+					formaction="?/clearForm"
+					onclick={() => {
+						clearForm()
+						return false
+					}}
+				>
+					clear
+				</button>
 			</label>
 		</form>
-		<button
-			class="clear-button"
-			onclick={() => {
-				clearForm()
-				return false
-			}}
-		>
-			clear
-		</button>
 		<div class="multi-select-container">
 			<MultiSelectBox
 				categories={data.categories}
@@ -388,19 +398,19 @@
 		align-items: baseline;
 	}
 
-	input {
-		display: inline-block;
-		width: 5rem;
-		width: 100%;
-		padding-left: 0.5rem;
-		line-height: 0.8rem;
-		color: $BACK-COLOR;
-		height: 1.3rem;
-		&::placeholder {
-			color: var(--PLACEHOLDER_COLOR);
-			font-weight: normal;
-		}
-	}
+	// input {
+	// 	display: inline-block;
+	// 	width: 5rem;
+	// 	width: 100%;
+	// 	padding-left: 0.5rem;
+	// 	line-height: 0.8rem;
+	// 	color: $BACK-COLOR;
+	// 	height: 1.3rem;
+	// 	&::placeholder {
+	// 		color: var(--PLACEHOLDER_COLOR);
+	// 		font-weight: normal;
+	// 	}
+	// }
 	label input {
 		display: inline-block;
 		width: 1rem;
@@ -417,21 +427,13 @@
 	/* move the clear button out of the form to avoid submit action but
 		set it adjacent to create/update button using the absolute position
 	*/
-	.clear-button {
-		position: absolute;
-		top: 6.75rem;
-		left: 18rem;
-	}
+	// .clear-button {
+	// 	display: inline-block;
+	// 	position: absolute;
+	// 	top: 5.6rem;
+	// 	left: 18rem;
+	// }
 	.hidden {
 		display: none;
-	}
-	[type='text'] {
-		background-color: #3e3e3e;
-		font-size: 18px;
-		height: 2rem;
-		padding-left: 1rem;
-		&:focus {
-			background-color: #e3e3e3;
-		}
 	}
 </style>

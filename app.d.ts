@@ -58,17 +58,18 @@ declare global {
 	type TNavButtonProps = PartialRecord<TButtonParam, string>
 	type TXNavButtonProps = PartialRecord<TXButtonParam, string>
 
-	declare module 'FrontBackButton' {
-		import { SvelteComponentTyped } from 'svelte'
-		interface FBButtonProps
-			extends svelte.JSX.HTMLAttributes<HTMLElementTagNameMap['HTMLButtonElement']> {
-			target_href: string
-			title: string
-			css_class?: string
-			css_style_active?: string
-		}
-		export default class FBButton extends SvelteComponentTyped<FBButtonProps> {}
-	}
+	// declare module 'FrontBackButton' {
+	// 	import { SvelteComponentTyped } from 'svelte'
+	// 	interface FBButtonProps
+	// 		extends svelte.JSX.HTMLAttributes<HTMLElementTagNameMap['HTMLButtonElement']> {
+	// 		target_href: string
+	// 		title: string
+	// 		css_class?: string
+	// 		css_style_active?: string
+	// 		onclick:(event:MouseEvent)=>void
+	// 	}
+	// 	export default class FBButton extends SvelteComponentTyped<FBButtonProps> {}
+	// }
 	// interface WritableStore<T> extends Writable<T> {
 	// 	getPath: () => string;
 	// 	setPath: (name: string) => void;

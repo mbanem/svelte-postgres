@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores'
 	import { onMount, getContext } from 'svelte'
+	import * as utils from '$utils'
 
 	import type { PageData } from './$types'
 
@@ -19,12 +20,10 @@
 		// console.log(JSON.stringify(data, null, 2));
 	}
 
-	let mrPath = getContext('mrPath') as SvelteStore<string>
-
 	onMount(() => {
 		return () => {
 			// @ts-expect-error
-			mrPath.set($page.url.pathname)
+			utils.setMrPath.set($page.url.pathname)
 		}
 	})
 </script>

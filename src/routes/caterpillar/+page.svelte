@@ -209,7 +209,7 @@
 		display: grid;
 		position: relative;
 		align-items: center;
-		width: 70vw;
+		width: 75vw;
 		margin: 0 auto;
 		margin-top: 3rem;
 		border: 1px solid gray;
@@ -221,7 +221,7 @@
 		position: absolute;
 		display: flex;
 		top: 5px;
-		left: 15%;
+		left: 23%;
 		margin-bottom: 5px;
 		color: lightgreen;
 		transition-delay: 3s;

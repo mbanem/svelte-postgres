@@ -147,6 +147,10 @@
 
 	const toggleCompleted = async (id: string) => {
 		loading = true
+		const completed = (uTodos?.filter((uTodo) => uTodo.todoId === id)[0] as UTodo).completed
+		const currentState = completed ? 'completed' : 'active'
+		const newState = completed ? 'active' : 'completed'
+		result = `toggling ${currentState} into ${newState}...`
 		// if form fields are prepared for update but user
 		// select different action we clear the form fields
 		clearForm()
@@ -157,7 +161,9 @@
 			body: id
 		})
 		const data = await response.json()
+		await utils.sleep(2000)
 		loading = false
+		result = `toggled into ${newState}`
 		// setting message will dynamically set result, which in turn will show message
 		// for several seconds and then clear it out
 
@@ -166,6 +172,10 @@
 				if (todo.todoId === id) {
 					todo.completed = !todo.completed
 				}
+				invalidateAll()
+				setTimeout(() => {
+					result = ''
+				}, 2000)
 				return todo
 			})
 		}
@@ -244,6 +254,13 @@
 		}
 	}
 
+	const tooltipMouseWheel = () => {
+		console.log('tooltipMouseWheel')
+		document.querySelector('.tooltip-mouse-wheel')?.classList.toggle('hidden')
+		setTimeout(() => {
+			document.querySelector('.tooltip-mouse-wheel')?.classList.toggle('hidden')
+		}, 1500)
+	}
 	// const todoUserToSnap = (tUser: UTodo, snap: TodoFormData) => {
 	// 	snap.id = tUser.todoId;
 	// 	snap.authorId = tUser.id;
@@ -266,6 +283,8 @@
 	})
 </script>
 
+<!-- scroll to  onmouseenter={tooltipMouseWheel} where tooltip is activated-->
+<div class="tooltip-mouse-wheel hidden">focus & use mouse wheel</div>
 <svelte:head>
 	<title>Todo</title>
 </svelte:head>
@@ -290,7 +309,14 @@
 				placeholder={titleIsRequired || 'enter todo title'}
 				bind:value={snap.title}
 			/>
-			<input type="number" name="priority" placeholder="Priority" bind:value={snap.priority} />
+
+			<input
+				onmouseenter={tooltipMouseWheel}
+				type="number"
+				name="priority"
+				placeholder="Priority"
+				bind:value={snap.priority}
+			/>
 		</div>
 		<div class="two-inputs">
 			<input
@@ -381,6 +407,18 @@
 		color: pink !important;
 		border-color: pink;
 	}
+	.tooltip-mouse-wheel {
+		position: fixed;
+		width: 12rem;
+		text-align: center;
+		color: lightgreen;
+		background-color: #3e3e3e;
+		border: 1px solid lightgreen;
+		border-radius: 5px;
+		top: 4.3rem;
+		left: 35rem;
+		cursor: progress;
+	}
 	.board {
 		display: grid;
 		grid-template-columns: 1fr 1fr;
@@ -416,18 +454,8 @@
 				width: calc(100% - 5rem);
 				padding-left: 1rem;
 				[type='number'] {
-					width: 7.35rem;
+					width: 5rem;
 					padding-left: 2px;
-				}
-				input {
-					display: inline-block;
-					&::placeholder {
-						color: var(--PLACEHOLDER_COLOR);
-						font-weight: normal;
-					}
-				}
-				.hidden {
-					display: none;
 				}
 			}
 		}
@@ -445,5 +473,8 @@
 		font-weight: 200;
 		margin-left: 1rem;
 		border-bottom: 1px solid gray;
+	}
+	.hidden {
+		display: none;
 	}
 </style>

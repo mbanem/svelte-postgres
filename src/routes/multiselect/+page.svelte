@@ -62,8 +62,6 @@
 		name: string
 	}
 
-	let mrPath = getContext('mrPath') as SvelteStore<string>
-
 	onMount(() => {
 		return () => {
 			utils.setMrPath($page.url.pathname)

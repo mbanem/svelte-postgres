@@ -22,7 +22,6 @@
 			snap = value
 		}
 	}
-	let mrPath = getContext('mrPath') as SvelteStore<string>
 
 	onMount(() => {
 		return () => {

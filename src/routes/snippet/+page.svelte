@@ -71,7 +71,7 @@
 		and snippet destructure image into its props
 		src, caption, width, height
 	-->
-	{#snippet figure({ src, caption, width, height, href })}
+	{#snippet figure({ src, caption, width, height, href }: TImage)}
 		{#if href}
 			<a {href}>
 				<div>
@@ -115,7 +115,7 @@
 	{/if}
 {/snippet}
 <div class="block">
-	<pre>Snippet @render countdown(10)</pre>
+	<pre>Snippet @render countdown(20)</pre>
 	{@render blast()}fixed
 	{@render countdown(20)}
 	<div class="buttons">
@@ -139,7 +139,7 @@
 		display: grid;
 		grid-template-columns: repeat(6, 1fr);
 		gap: 1rem;
-		height: 70vh;
+		height: 65vh;
 		width: 80vw;
 		margin: 1rem 3rem 0 7rem;
 		overflow: auto;

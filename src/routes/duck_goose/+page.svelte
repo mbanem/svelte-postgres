@@ -17,6 +17,7 @@
 
 <div class="wrapper">
 	<input type="text" class="text-box" placeholder="Enter First Name" />
+	<input type="text" class="text-box" placeholder="Enter Last Name" />
 	{#if bird}
 		<img src={bird} alt="" />
 	{/if}

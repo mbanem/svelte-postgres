@@ -38,8 +38,7 @@
 
 	const idFromName = (name: string) => {
 		for (let i = 0; i < categories.length; i++) {
-			// @ts-expect-error
-			if (categories[i].name === name) {
+			if (categories[i]?.name === name) {
 				// @ts-expect-error
 				return categories[i].id
 			}
@@ -96,7 +95,7 @@
 	{#key categories}
 		{#each categories as category}
 			<li>
-				<button onclick={onClick} class:selected={category.selected}>
+				<button type='button' onclick={onClick} class:selected={category.selected}>
 					{category.name}
 				</button>
 			</li>

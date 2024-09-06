@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
+	import { Tooltip } from 'flowbite-svelte'
 	import { createCounter, getGlobalCounter } from '$lib/utils/counter.svelte'
 	import Area from '$components/Area.svelte'
 	const counter = createCounter()
@@ -12,7 +13,7 @@
 	let height = $state(13)
 	let pHeight = $state(10)
 
-	let frozen = $state.frozen([])
+	let raw = $state.raw([])
 	let appended = $state<number[]>([])
 
 	const appendToFrozen = () => {
@@ -20,12 +21,12 @@
 		appended.push(num)
 		setTimeout(() => {
 			// @ts-expect-error
-			frozen = [...frozen, num]
+			raw = [...raw, num]
 		}, 0)
 	}
 	const removeFromToFrozen = () => {
 		setTimeout(() => {
-			frozen = frozen.filter((_, ix) => ix < frozen.length - 1)
+			raw = raw.filter((_:number, ix:number) => ix < raw.length - 1)
 		})
 		appended.pop()
 	}
@@ -40,6 +41,7 @@
     Counter component is defined in $lib-utils.counter.svelte.ts
     and can be used across the app, here in /counter/+page.svelte
   </pre>
+
 	<button onclick={counter.increment}>
 		clicks: {counter.count}
 	</button>
@@ -61,17 +63,17 @@
 	</div>
 
 	<pre>
-	We define frozen = $state.frozen([100, 101, 102]) that could only be reassigned/replaced
-	completely, say this way: frozen = [...frozen, new+item]
-	We can use reduce on frozen like
-		&lcub;frozen.reduce((a, b) =&gt; a + b, 0)&rcub; should give 303=100+101+103
+	We define raw = $state.raw([100, 101, 102]) that could only be reassigned/replaced
+	completely, say this way: raw = [...raw, new+item]
+	We can use reduce on raw like
+		&lcub;raw.reduce((a, b) =&gt; a + b, 0)&rcub; should give 303=100+101+103
 
-	For instance &lcub;(frozen = [300, 400, 500]).reduce((a, b) =&gt; a + b, 0)&rcub;
-	gives total 	<span class="highlighted-number">{frozen.reduce((a, b) => a + b, 0)}</span>
+	For instance &lcub;(raw = [300, 400, 500]).reduce((a, b) =&gt; a + b, 0)&rcub;
+	gives total 	<span class="highlighted-number">{raw.reduce((a, b) => a + b, 0)}</span>
 	appended 	<span class="highlighted-array">{appended.join(', ')}</span>
 	</pre>
-	<button data-append onclick={appendToFrozen}>append to frozen</button>
-	<button data-prepend onclick={removeFromToFrozen}>remove last from frozen</button>
+	<button data-append onclick={appendToFrozen}>append to raw</button>
+	<button data-prepend onclick={removeFromToFrozen}>remove last from raw</button>
 </div>
 
 <!-- svelte-ignore css_unused_selector -->

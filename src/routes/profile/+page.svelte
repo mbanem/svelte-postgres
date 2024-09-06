@@ -269,7 +269,7 @@
 			<form action="?/create" method="post" use:enhance={enhanceProfile}>
 				<textarea
 					bind:this={bioTextArea}
-					class="text-area"
+					class="textarea"
 					placeholder="Place bio here"
 					rows={5}
 					cols={35}
@@ -409,9 +409,17 @@
 				width: 33rem;
 				height: 23rem;
 				text-align: left;
-				color: black;
+				color: lightgreen;
 				margin-top: 1rem;
 				overflow-y: auto;
+				background-color: #5e5e5e;
+				&:focus {
+					color: yellow;
+				}
+				&::placeholder {
+					color: var(--PLACEHOLDER_COLOR);
+					font-weight: normal;
+				}
 			}
 			button {
 				position: relative;
@@ -429,12 +437,7 @@
 			}
 		}
 	}
-	textarea {
-		&::placeholder {
-			color: var(--PLACEHOLDER_COLOR);
-			font-weight: normal;
-		}
-	}
+
 	.hidden {
 		display: none;
 	}

@@ -38,7 +38,7 @@
 		})
 	}
 	// for Flip we need two areas, usually le3ft and right, for flipping between
-	// so we make left anf right from uTodos based on completed left=false, right=true
+	// so we make left and right from uTodos based on completed left=false, right=true
 	// let left = $state<UTodos>([])
 	// let right = $state<UTodos>([])
 	// $effect(() => {
@@ -59,7 +59,6 @@
 	const moveRight = (item: UTodo) => {
 		// @ts-expect-error
 		;[left, right] = move(item, left, right)
-		console
 	}
 
 	const td = {
@@ -71,7 +70,6 @@
 	}
 </script>
 
-<pre style="font-size:11px;">selectedUserId {JSON.stringify(selectedUserId, null, 2)}</pre>
 <!-- Looks like you cannot change some markup conditionally -->
 {#snippet tooltip(tf: boolean, title: string)}
 	{#if !tf}
