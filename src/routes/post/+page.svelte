@@ -25,10 +25,10 @@
 	let message = ''
 	let loading = $state<boolean>(false)
 	let ignoreFormMessage = $state<boolean>(false)
+	const requiredCategory = 'Please select corresponding categories'
 	let selectedUserId = $state<string>('')
 	let titleIsRequired = ''
 	let contentIsRequired = ''
-	const requiredCategory = 'Please select corresponding categories'
 	let categoryIsRequired = requiredCategory
 
 	let btnCreate: HTMLButtonElement
@@ -86,10 +86,11 @@
 		the corresponding page and through $page.form app-wide until the next update.
 	*/
 	const enhancePost: SubmitFunction = ({ action, formData, cancel }) => {
+		console.log('enhancePost', action.search, formData.get('id'))
 		if (action.search === '?/clearForm') {
 			return cancel()
 		}
-		if (action.search !== 'deletePost' && !snap.categoryIds) {
+		if (action.search !== '?/deletePost' && !snap.categoryIds) {
 			categoryIsRequired = requiredCategory
 			message = 'Please select corresponding categories'
 			utils.setColor('pink')
@@ -99,7 +100,7 @@
 		titleIsRequired = ''
 		ignoreFormMessage = false
 		contentIsRequired = ''
-
+		console.log('enhancePost1', action.search)
 		for (const key of Object.keys(required)) {
 			if (formData.get(key) == '') {
 				switch (key) {
@@ -126,24 +127,24 @@
 		} else if (action.search === '?/updatePost') {
 			result = 'updating post...'
 		}
-
+		console.log('enhancePost2 result', result)
 		return async ({ update }) => {
 			await update()
 			ignoreFormMessage = true
-
+			console.log('enhancePost after action', action.search, $page.status)
 			if (action.search === '?/createPost') {
-				result = $page.status === 200 ? 'Post created' : 'create failed'
+				result = $page.status === 200 ? 'post created' : 'create failed'
 			} else if (action.search === '?/deletePost') {
-				result = $page.status === 200 ? 'Post deleted' : 'delete failed'
+				result = $page.status === 200 ? 'post deleted' : 'delete failed'
 			} else if (action.search === '?/updatePost') {
-				result = $page.status === 200 ? 'Post updated' : 'update failed'
+				result = $page.status === 200 ? 'post updated' : 'update failed'
 			}
-			clearMessage()
-			invalidateAll()
 			utils.setButtonVisible([btnCreate, btnUpdate, btnDelete])
+			invalidateAll()
 			clearForm()
 			loading = false // stop spinner animation
 			utils.setColor('lightgreen')
+			clearMessage()
 		}
 	}
 
@@ -240,8 +241,8 @@
 		// }
 	}
 
-	let formMessage = ignoreFormMessage ? '' : form?.message || ''
-	let result = $state<string>(message || formMessage)
+	// let formMessage = ignoreFormMessage ? '' : form?.message || ''
+	let result = $state<string>(message || (form?.message as string))
 	let wrongUser = $derived(selectedUserId !== data.locals.user.id)
 
 	type TSnap = {

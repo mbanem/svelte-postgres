@@ -18,7 +18,7 @@
 				{postAuthors[0].lastName}
 				<span class="count">{postAuthors.length} post{postAuthors.length === 1 ? '' : 's'}</span>
 			</p>
-			{#each postAuthors as { id, title, content, published, createdAt, updatedAt, firstName, lastName, author }}
+			{#each postAuthors as { id, title, content, published, createdAt, updatedAt, author }}
 				<li class="post-block">
 					<div class="title">
 						<p>{title}</p>
@@ -129,16 +129,22 @@
 		font-size: 14px !important;
 		padding: 0;
 		margin: 0;
+		cursor: pointer;
 		p {
 			font-size: 17px !important;
 			margin: 0 0 5px 0;
 			padding: 0;
-			width: 95%;
+			&:nth-child(1) {
+				width: 80%;
+			}
 		}
 	}
-	.highlight:hover {
-		background-color: pink;
-		cursor: pointer;
+	.highlight {
+		width: 1rem !important;
+		:hover {
+			background-color: pink;
+			cursor: pointer;
+		}
 	}
 	.content {
 		display: inline-block;

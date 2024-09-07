@@ -10,5 +10,36 @@
 		"README.md": true,
 		"scss.validate": true
 	},
-	"hide-files.files": ["node_modules", "pnpm-lock.yaml", ".svelte-kit"]
+	"hide-files.files": ["node_modules", "pnpm-lock.yaml", ".svelte-kit"],
+	// generating a print statement of the current word on the next line, in different languages
+	"multiCommand.commands": [
+		{
+			"command": "multiCommand.jsGeneratePrint",
+			"sequence": [
+				"editor.action.addSelectionToNextFindMatch",
+				"editor.action.clipboardCopyAction",
+				"editor.action.insertLineAfter",
+				{
+					"command": "editor.action.insertSnippet",
+					"args": {
+						"snippet": "console.log(\"$CLIPBOARD: \", $CLIPBOARD);"
+					}
+				}
+			]
+		},
+		{
+			"command": "multiCommand.javaGeneratePrint",
+			"sequence": [
+				"editor.action.addSelectionToNextFindMatch",
+				"editor.action.clipboardCopyAction",
+				"editor.action.insertLineAfter",
+				{
+					"command": "editor.action.insertSnippet",
+					"args": {
+						"snippet": "System.out.println(\"$CLIPBOARD: \" + $CLIPBOARD);"
+					}
+				}
+			]
+		}
+	]
 }
