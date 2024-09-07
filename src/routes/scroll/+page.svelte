@@ -464,10 +464,7 @@
 	.scroll-button {
 		width: 10rem;
 	}
-	[type='number'] {
-		display: inline-block;
-		width: 3rem;
-	}
+
 	.tooltip-scroll-by,
 	.tooltip-scroll {
 		position: fixed;

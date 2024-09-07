@@ -1,21 +1,21 @@
 <script lang="ts">
 	// import type { MouseEventHandler } from 'svelte/elements';
 	type ARGS = {
-		handleClick:(event: MouseEvent, delta: number) => void;
+		handleClick: (event: MouseEvent, delta: number) => void
 	}
-	let { handleClick }: ARGS = $props();
+	let { handleClick }: ARGS = $props()
 
-	let delta = $state<number>(4);
+	let delta = $state<number>(4)
 	const click = (event: MouseEvent, delta: number) => {
 		// console.log('child click', handleClick);
-		handleClick(event, delta);
-	};
+		handleClick(event, delta)
+	}
 	const increment = (event: MouseEvent) => {
-		click(event, delta);
-	};
+		click(event, delta)
+	}
 	const decrement = (event: MouseEvent) => {
-		click(event, -delta);
-	};
+		click(event, -delta)
+	}
 </script>
 
 <button class="button" onclick={increment}> increment by {delta} </button>

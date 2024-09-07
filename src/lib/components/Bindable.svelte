@@ -1,25 +1,25 @@
 <script lang="ts">
 	// child component to update local childCount when called from parent
-	let childCount = $state<number>(0);
-	export const counter = (delta: number) => (childCount += delta);
+	let childCount = $state<number>(0)
+	export const counter = (delta: number) => (childCount += delta)
 
 	// let { bindableProp = $bindable('fallback') } = $props();	// the default if parent value is missing
 	// let { count = $bindable() }: { count: any } = $props();
 	// type ARGS = { count: any};
-	type Handler = (delta: number, event?: MouseEvent) => void;
+	type Handler = (delta: number, event?: MouseEvent) => void
 	type ARGS = {
-		count: number;
-		clickArg: Handler;
-	};
-	let { count = $bindable(0), clickArg = $bindable() }: ARGS = $props();
+		count: number
+		clickArg: Handler
+	}
+	let { count = $bindable(0), clickArg = $bindable() }: ARGS = $props()
 
 	const increment = () => {
-		count += 1;
-	};
-	let delta = $state<number>(-3);
+		count += 1
+	}
+	let delta = $state<number>(-3)
 	const updateParentCount = (event: MouseEvent) => {
-		clickArg(delta, event);
-	};
+		clickArg(delta, event)
+	}
 </script>
 
 <p class="inline">child local counter <span class="count">{childCount}</span></p>

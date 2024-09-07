@@ -26,7 +26,7 @@
 		border: 1px solid gray;
 		width: 70vw;
 		border-radius: 10px;
-		margin: 2rem;
+		margin: 2rem 0 0 10rem;
 		padding: 2rem;
 	}
 </style>

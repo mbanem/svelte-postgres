@@ -137,13 +137,6 @@ h2 {
 	color: skyblue;
 }
 
-input [type='number'] {
-	width: 4rem;
-	height: 2rem;
-	font-size: 18px;
-	padding: 4px;
-}
-
 section ul[style^='margin'] li.list-item {
 	@for $i from 1 through 4 {
 		// font-size: var(--font-size);
@@ -173,14 +166,39 @@ section ul[style^='margin'] li.list-item {
 		text-align: center;
 	}
 }
-[type='number'] {
-	color: black;
-	background-color: white;
+input:not([type='number']) {
+	display: inline-block;
+	height: 1.8rem;
+	margin-bottom: 10px;
+	width: 30rem;
 	font-size: 18px;
-	padding: 0;
-	text-align: center;
-	width: 3.5rem;
+	color: lightgreen;
+	background-color: #3e3e3e;
+	outline: none;
 	border-radius: 4px;
+	padding-left: 1rem;
+	&:focus {
+		color: yellow;
+	}
+	&::placeholder {
+		color: var(--PLACEHOLDER_COLOR);
+		font-weight: 400;
+	}
+}
+input[type='number'] {
+	width: 3.5rem;
+	height: 1.2rem;
+	font-size: 16px;
+	padding: 4px 0 4px 8px;
+	font-weight: 400;
+	border-radius: 4px;
+	color: lightgreen;
+	background-color: #3e3e3e;
+	outline: none;
+	&:focus {
+		color: yellow;
+		background-color: #3e3e3e;
+	}
 }
 @function string($input) {
 	@return str($input);
@@ -305,25 +323,7 @@ button {
 		background-color: gray;
 	}
 }
-input {
-	display: inline-block;
-	height: 1.8rem;
-	margin-bottom: 10px;
-	width: 30rem;
-	font-size: 18px;
-	color: lightgreen;
-	background-color: #3e3e3e;
-	outline: none;
-	border-radius: 4px;
-	padding-left: 1rem;
-	&:focus {
-		color: yellow;
-	}
-	&::placeholder {
-		color: var(--PLACEHOLDER_COLOR);
-		font-weight: 400;
-	}
-}
+
 /*
 input {
 	display: block;
@@ -338,14 +338,20 @@ input {
 }
 */
 a {
+	display: inline-block;
+	border: 1px solid gray;
+	border-radius: 5px;
+	padding: 3px 1.5rem;
 	color: $LINK-COLOR;
 	text-decoration: none;
 	text-align: center;
 	user-select: none;
 	cursor: pointer;
+
 	&:hover,
 	&:focus-visible {
 		color: $LINK-HOVER;
+		border-color: $LINK-ACTIVE;
 	}
 	&:active {
 		color: $LINK-ACTIVE;
@@ -363,8 +369,9 @@ a-block {
 a-button {
 	@extend a;
 	@extend a-block;
-	// border: 1px solid gray;
+	text-decoration: none;
 	padding: 4px 1rem;
+
 	&:hover {
 		@include highlight();
 	}

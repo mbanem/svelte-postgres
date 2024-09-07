@@ -453,10 +453,6 @@
 				grid-column: 1/3;
 				width: calc(100% - 5rem);
 				padding-left: 1rem;
-				[type='number'] {
-					width: 5rem;
-					padding-left: 2px;
-				}
 			}
 		}
 	}
