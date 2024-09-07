@@ -1,4 +1,5 @@
 <script lang="ts">
+	// https://github.com/mbanem/svelte-postgres.git
 	import '$styles/app.scss'
 	import { navBars, navPath, navButtons } from '$utils/helpers.svelte.js'
 	import { getNavButtons } from '$lib/utils/navButtons.svelte'
