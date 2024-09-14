@@ -27,7 +27,7 @@
 	gsap.registerPlugin(ScrollTrigger)
 
 	// -------------------------------------------------------------------
-	let div: HTMLDivElement
+	let divEl: HTMLDivElement
 	let messages = $state([
 		'Filip Isakovic',
 		'Matia Isakovic',
@@ -48,9 +48,9 @@
 	let input_message: HTMLInputElement
 
 	const scroll = () => {
-		if (div.offsetHeight + div.scrollTop > div.getBoundingClientRect().height - 20) {
+		if (divEl.offsetHeight + divEl.scrollTop > divEl.getBoundingClientRect().height - 20) {
 			tick().then(() => {
-				div.scrollTo(0, div.scrollHeight)
+				divEl.scrollTo(0, divEl.scrollHeight)
 			})
 		}
 	}
@@ -261,7 +261,7 @@
 		/>
 		<button onclick={addListedName}>add name</button>
 
-		<div bind:this={div} class="message-container">
+		<div bind:this={divEl} class="message-container">
 			{#key messages}
 				{#each messages as message}
 					<p>{message}</p>

@@ -1,21 +1,25 @@
 <script lang="ts">
-	import { onMount } from 'svelte'
+	import { onMount, tick } from 'svelte'
 	import * as utils from '$utils'
+	let divEl: HTMLDivElement
 	type TImage = {
 		src: string
 		width: number
 		height: number
 		caption: string
 		href: string
+		alt: string
 	}
 	let imgWidth = 120
 	const imgWH = () => {
+		const id = utils.id()
 		const img = {
 			src: `https://picsum.photos/${imgWidth}/120`,
 			width: 120,
 			height: 120,
-			caption: 'this one does not',
-			href: ''
+			caption: id,
+			href: '',
+			alt: id
 		}
 		return img as TImage
 	}
@@ -48,11 +52,29 @@
 		console.log('addImage')
 		images.push(imgWH())
 		imgWidth += 1
+		scroll()
 	}
 	const removeImage = () => {
 		console.log('removeImage')
 		images = images.slice(0, -1)
 		imgWidth -= 1
+		scroll()
+	}
+	const deleteImg = (event: MouseEvent) => {
+		// @ts-expect-error
+		const image = event.target as TImage
+		images = images.filter((img) => img.alt !== image.alt)
+		scroll()
+	}
+
+	const scroll = () => {
+		// console.log(divEl.offsetHeight, divEl.scrollTop, divEl.getBoundingClientRect().height)
+		// height - 20 is to react properly to scroll
+		if (divEl.offsetHeight + divEl.scrollTop > divEl.getBoundingClientRect().height - 20) {
+			tick().then(() => {
+				divEl.scrollTo(0, divEl.scrollHeight)
+			})
+		}
 	}
 	onMount(() => {
 		// @ts-expect-error
@@ -64,6 +86,23 @@
 </script>
 
 <div class="main">
+	{#snippet countdown(n: number)}
+		{#if n > 0}
+			<span>{n}, </span>
+			{@render countdown(n - 1)}
+		{:else}
+			{@render blastoff()}
+		{/if}
+	{/snippet}
+	<div class="block">
+		<pre>Snippet @render countdown(20)</pre>
+		{@render blast()}fixed
+		{@render countdown(20)}
+		<div class="buttons">
+			<button onclick={addImage}>add image</button>
+			<button onclick={removeImage}>remove last</button>
+		</div>
+	</div>
 	<!-- snippet is called as a function sending it arguments
 		but the caller can send thw whole object and snippet
 		could be defined by destructuring elements of the
@@ -92,7 +131,7 @@
 	{/snippet}
 
 	<div>
-		<div class="container">
+		<div bind:this={divEl} class="container" onclick={deleteImg} aria-hidden={true}>
 			{#each images as image}
 				{@render figure(image)}
 			{/each}
@@ -106,30 +145,9 @@
 	<span>🚀</span>
 {/snippet}
 
-{#snippet countdown(n: number)}
-	{#if n > 0}
-		<span>{n}, </span>
-		{@render countdown(n - 1)}
-	{:else}
-		{@render blastoff()}
-	{/if}
-{/snippet}
-<div class="block">
-	<pre>Snippet @render countdown(20)</pre>
-	{@render blast()}fixed
-	{@render countdown(20)}
-	<div class="buttons">
-		<button onclick={addImage}>add image</button>
-		<button onclick={removeImage}>remove image</button>
-	</div>
-</div>
-
 <style>
-	body {
-		position: relative;
-	}
 	.main {
-		margin: 2rem 0 0 4rem;
+		margin: 0 0 0 4rem;
 	}
 	.container {
 		/* position: absolute; */
@@ -138,23 +156,27 @@
 		align-items: flex-start; */
 		display: grid;
 		grid-template-columns: repeat(6, 1fr);
-		gap: 1rem;
-		height: 65vh;
+		row-gap: px;
+		column-gap: 1rem;
+		height: 75vh;
 		width: 80vw;
-		margin: 1rem 3rem 0 7rem;
+		margin: 0 3rem 0 7rem;
 		overflow: auto;
+		border: 1px solid gray;
+		border-radius: 10px;
+		padding: 1rem;
 		/* padding: 4rem; */
 	}
 	.block {
 		display: block;
-		margin: 5rem 0 0 4rem;
+		margin: 1rem 0 0 4rem;
 	}
 	.buttons {
 		display: block;
 		position: sticky;
-		top: 3rem;
-		left: 0rem;
-		margin: 1rem 0 0 4rem;
+		top: 0;
+		left: 0;
+		margin: 0 0 1rem 4rem;
 		/* button {
 			display: block;
 			margin: 6px 0 0 0;
@@ -172,5 +194,12 @@
 		width: 100%;
 		height: auto;
 		background: #eee;
+		cursor: pointer;
+	}
+	pre {
+		display: inline-block;
+		margin-left: 4rem;
+		margin-right: 3rem;
+		padding: 0;
 	}
 </style>
