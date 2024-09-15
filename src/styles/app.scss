@@ -1,12 +1,17 @@
 @import './mixins.scss';
-
-🥇root {
+:root {
 	$font-size: 16px;
+	--BODY-COLOR: #e3e3e3;
+	--BODY-BACKGROUND-COLOR: #3e3e3e;
 	--PLACEHOLDER_COLOR: lightgreen;
-	--COLOR: yellow;
-	--BACKGROUND-COLOR: #3e3e3e;
+	--COLOR: #e3e3e3;
+	--BACKGROUND-COLOR: skyblue;
 }
-
+.expression-highlighted {
+	font-size: 18px;
+	font-weight: 700;
+	color: yellow;
+}
 html {
 	font-family: 'Times New Roman', Times, serif;
 	// font-size: 16psx;

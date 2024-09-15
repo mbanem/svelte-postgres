@@ -5,6 +5,9 @@
 	import { getNavButtons } from '$lib/utils/navButtons.svelte'
 	import NavBar from '$components/NavBar.svelte'
 
+	let classes = 'teal'
+	let styles = 'color: blue'
+
 	let { data, children } = $props()
 
 	let role = 'VISITOR'
@@ -25,12 +28,6 @@
 */
 </script>
 
-<!--
-<a-button href="/caterpillar">caterpillar</a-button>
-<cr-button>cr-button</cr-button>
-<cr-button>cr-button</cr-button>
-<cr-button>caterpillar</cr-button> -->
-
 <!-- <pre style="font-size:11px;">layout role {data?.locals?.user?.role}</pre> -->
 <div class="wrapper">
 	{#key data?.locals?.user?.role}
@@ -46,9 +43,9 @@
 
 <!-- svelte-ignore css_unused_selector -->
 <style lang="scss'">
-	body {
-		margin: 0 0 0 1rem;
-		background-color: #3e3e3e;
+	:global(body) {
+		color: var(--BODY-COLOR);
+		background-color: VAR(--BODY-BACKGROUND-COLOR);
 	}
 	.wrapper {
 		margin: 0;

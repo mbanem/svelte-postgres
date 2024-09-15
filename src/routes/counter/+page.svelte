@@ -69,7 +69,7 @@
 		&lcub;raw.reduce((a, b) =&gt; a + b, 0)&rcub; should give 303=100+101+103
 
 	For instance &lcub;(raw = [300, 400, 500]).reduce((a, b) =&gt; a + b, 0)&rcub;
-	gives total 	<span class="highlighted-number">{raw.reduce((a, b) => a + b, 0)}</span>
+	gives total 	<span class="expression-highlighted">{raw.reduce((a, b) => a + b, 0)}</span>
 	appended 	<span class="highlighted-array">{appended.join(', ')}</span>
 	</pre>
 	<button data-append onclick={appendToFrozen}>append to raw</button>
@@ -106,10 +106,6 @@
 		display: grid;
 		width: 13.5rem;
 		grid-template-columns: 10rem 3rem;
-	}
-	.highlighted-number {
-		font-size: 28px;
-		color: yellow;
 	}
 	.highlighted-array {
 		font-size: 20px;

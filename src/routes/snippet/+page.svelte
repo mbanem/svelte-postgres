@@ -101,6 +101,7 @@
 		<div class="buttons">
 			<button onclick={addImage}>add image</button>
 			<button onclick={removeImage}>remove last</button>
+			<pre>click on an image to remove it</pre>
 		</div>
 	</div>
 	<!-- snippet is called as a function sending it arguments

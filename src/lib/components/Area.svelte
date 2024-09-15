@@ -18,12 +18,11 @@
 	Area Component
 	<div class="wrapper">
 		<pre>
-		Rectangle with dimensions <span class="expression">{width}x{height}</span> has area of <span
-				class="expression">{area}</span
-			>
+		Rectangle with dimensions <span class="expression-highlighted">{width}x{height}</span
+			> has area of <span class="expression-highlighted">{area}</span>
 		globalVolume.volume for parallelepiped
-		with dimensions <span class="expression">{width}x{height}x{pHeight} </span> is <span
-				class="expression">{globalVolume.volume}</span
+		with dimensions <span class="expression-highlighted">{width}x{height}x{pHeight} </span> is <span
+				class="expression-highlighted">{globalVolume.volume}</span
 			>
 
 	numbers is a $state rune of Array&lt;number> [1,2,3...]
@@ -39,21 +38,9 @@
 
 <!-- svelte-ignore css_unused_selector -->
 <style lang="scss">
-	.page {
-		background-color: #3e3e3e;
-		color: white;
-	}
 	.wrapper {
 		width: 30rem;
 		padding: 1rem;
 		margin: 1rem 0 0 2rem;
 	}
-	.expression {
-		font-size: 18px;
-		font-weight: 700;
-		color: yellow;
-	}
-	// button {
-	// 	display: inline-block;
-	// }
 </style>

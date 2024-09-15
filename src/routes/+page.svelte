@@ -68,7 +68,7 @@
 <!-- svelte-ignore css_unused_selector -->
 <style lang="scss'">
 	.wrapper {
-		margin: 2rem 0 0 3rem;
+		margin: 2rem 3rem 0 3rem;
 		background-color: #4e4e5e;
 		color: white;
 		padding: 1rem 0 1rem 3rem;
