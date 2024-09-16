@@ -22,7 +22,7 @@
 	div {
 		display: inline-block;
 		vertical-align: middle;
-		margin: 0 3pt;
+		margin: 0 4pt;
 		border-width: calc(1em / 5);
 		border-style: solid;
 		border-radius: 50%;

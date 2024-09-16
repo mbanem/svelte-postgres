@@ -1,19 +1,19 @@
 <script lang="ts">
-	import Bindable from '$components/Bindable.svelte';
-	let count = 12; //$state(22);
+	import Bindable from '$components/Bindable.svelte'
+	let count = 12 //$state(22);
 
 	const click = () => {
-		count++;
+		count++
 		// console.log('parent click', count);
-	};
+	}
 	// child calls parent's function to update parent's count
 	const clickArg = (delta: number, event?: MouseEvent) => {
-		count = count + delta;
-	};
+		count = count + delta
+	}
 
 	// ------------  parent to call child function to update its local childCount -------------
 
-	let childComponent: Bindable;
+	let childComponent: Bindable
 
 	// for parent to call child function it has to have reference to the
 	// child component by binding this way <Child bind:this={childComponent}...
@@ -26,18 +26,18 @@
 	// so only the exported functions can be used from parent
 
 	const getRandomInt = () => {
-		return Math.round(Math.random() * 10000);
-	};
+		return Math.round(Math.random() * 10000)
+	}
 	const callChildCounter = () => {
-		console.log('callChildCounter');
-		childComponent.counter(getRandomInt());
-	};
+		console.log('callChildCounter')
+		childComponent.counter(getRandomInt())
+	}
 </script>
 
 <div class="wrapper">
 	This is parent block with count managed by its bindable component
-	<p>parent count <span class="count">{count}</span></p>
-	<button class="inline-button" onclick={click}>parent count {count} </button>
+	<p>parent count <span class="expression-highlighted">{count}</span></p>
+	<button onclick={click}>parent count {count} </button>
 </div>
 <br />
 <pre>
@@ -60,7 +60,7 @@ with child click event:MouseEvent and value of delta bound in &lt;input type='nu
 	</pre>
 <br />
 
-<button class="inline" onclick={callChildCounter}>
+<button style="margin-left:2rem;" onclick={callChildCounter}>
 	call child counter to increment its count
 </button>
 <Bindable bind:count {clickArg} bind:this={childComponent} />
@@ -68,27 +68,13 @@ with child click event:MouseEvent and value of delta bound in &lt;input type='nu
 <style>
 	.wrapper,
 	pre {
-		display: inline-block;
 		margin: 5px 0 5px 2rem;
-		padding: 1rem;
 		border: 1px solid gray;
-		border-radius: 8px;
-		color: lightgreen;
-		font-size: 18px;
-		width: 50rem;
-	}
-	.count {
-		font-size: 20px;
-		color: yellow;
+		padding: 1rem;
 	}
 	.inline {
 		display: inline-block;
 		width: 22rem;
-		margin: 0 1rem 0 2rem;
-	}
-	.inline-button {
-		display: inline-block;
-		width: 12rem;
 		margin: 0 1rem 0 2rem;
 	}
 </style>

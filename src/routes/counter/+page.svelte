@@ -38,18 +38,15 @@
 
 <div class="wrapper">
 	<pre>
-    Counter component is defined in $lib-utils.counter.svelte.ts
-    and can be used across the app, here in /counter/+page.svelte
-  </pre>
-
-	<button onclick={counter.increment}>
-		clicks: {counter.count}
-	</button>
-	<button onclick={counter.decrement}> decrement </button>
-
-	<p>Global counter {gCounter.count} is equal across the pages</p>
-	<button onclick={() => (gCounter.count += 1)}>+</button>
-	<button onclick={() => (gCounter.count -= 1)}>-</button>
+	Counter component is defined in $lib-utils.counter.svelte.ts
+	and can be used across the app, here in /counter/+page.svelte
+		<button onclick={counter.increment}>clicks: {counter.count}</button> <button
+			onclick={counter.decrement}> decrement </button>
+	Global counter {gCounter.count} is equal across the pages
+		<button onclick={() => (gCounter.count += 1)}>+</button> <button
+			onclick={() => (gCounter.count -= 1)}>-</button
+		>
+	</pre>
 
 	<Area {width} {height} {pHeight} />
 
@@ -63,26 +60,29 @@
 	</div>
 
 	<pre>
-	We define raw = $state.raw([100, 101, 102]) that could only be reassigned/replaced
+	We define <span style="color:yellow;">raw</span
+		> = $state.raw([100, 101, 102]) that could only be reassigned/replaced
 	completely, say this way: raw = [...raw, new+item]
 	We can use reduce on raw like
-		&lcub;raw.reduce((a, b) =&gt; a + b, 0)&rcub; should give 303=100+101+103
+		&lcub;raw.reduce((a, b) =&gt; a + b, 0)&rcub; which should give 303=100+101+103
 
 	For instance &lcub;(raw = [300, 400, 500]).reduce((a, b) =&gt; a + b, 0)&rcub;
+	raw [<span class="highlighted-array">{appended.join(', ')}</span>]
 	gives total 	<span class="expression-highlighted">{raw.reduce((a, b) => a + b, 0)}</span>
-	appended 	<span class="highlighted-array">{appended.join(', ')}</span>
-	</pre>
-	<button data-append onclick={appendToFrozen}>append to raw</button>
-	<button data-prepend onclick={removeFromToFrozen}>remove last from raw</button>
+	<button data-append onclick={appendToFrozen}>append to raw</button> <button
+			data-prepend
+			onclick={removeFromToFrozen}>remove last from raw</button
+		>
+</pre>
 </div>
 
 <!-- svelte-ignore css_unused_selector -->
 <style lang="scss'">
 	.wrapper {
-		margin: 2rem 0 0 3rem;
+		margin: 8px 1rem;
 		background-color: #4e4e5e;
 		color: white;
-		padding: 1rem 0 1rem 3rem;
+		padding-left: 2rem;
 		border-radius: 1rem;
 		/* width: 90vw;
 		height: 80vh;
@@ -101,6 +101,9 @@
 				border-color: yellow;
 			}
 		}
+	}
+	button {
+		display: inline-block;
 	}
 	.dimensions {
 		display: grid;

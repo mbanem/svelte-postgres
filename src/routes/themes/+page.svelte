@@ -153,13 +153,10 @@
 		border-radius: 8px;
 	}
 
-	button {
-		width: 12rem;
-	}
+	// button {
+	// 	width: 12rem;
+	// }
 	pre {
 		font-size: 16px;
-	}
-	.def {
-		width: 10rem;
 	}
 </style>

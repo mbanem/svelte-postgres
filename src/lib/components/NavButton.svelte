@@ -1,13 +1,13 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
-	import type { ComponentProps, Snippet } from 'svelte';
+	import { goto } from '$app/navigation'
+	import type { ComponentProps, Snippet } from 'svelte'
 	type ARGS = {
-		colorName: string;
-		title: string;
-		href: string;
-		media: Snippet;
-	};
-	let { colorName, title, href = '', media }: ARGS = $props();
+		colorName: string
+		title: string
+		href: string
+		media: Snippet
+	}
+	let { colorName, title, href = '', media }: ARGS = $props()
 </script>
 
 <div class="chip" onclick={() => goto(`${href}`)} aria-hidden={true}>
@@ -25,7 +25,7 @@
 		padding: 0 8px;
 		cursor: pointer;
 	}
-	a {
+	/* a {
 		text-decoration: none;
 		margin: 0;
 		padding: 0;
@@ -33,9 +33,5 @@
 		border-radius: 5px;
 		color: transparent;
 		background-color: transparent;
-		/* &:hover {
-		color: yellow;
-		border-color: yellow;
 	} */
-	}
 </style>

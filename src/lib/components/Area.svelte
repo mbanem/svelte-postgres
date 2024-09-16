@@ -14,33 +14,28 @@
 	let numbers = $state([1, 2, 3])
 </script>
 
-<div class="page">
+<pre>
 	Area Component
-	<div class="wrapper">
-		<pre>
-		Rectangle with dimensions <span class="expression-highlighted">{width}x{height}</span
-			> has area of <span class="expression-highlighted">{area}</span>
-		globalVolume.volume for parallelepiped
-		with dimensions <span class="expression-highlighted">{width}x{height}x{pHeight} </span> is <span
-				class="expression-highlighted">{globalVolume.volume}</span
-			>
+Rectangle with dimensions <span class="expression-highlighted">{width}x{height}</span
+	> has area of <span class="expression-highlighted">{area}</span>
+globalVolume.volume for parallelepiped
+with dimensions <span class="expression-highlighted">{width}x{height}x{pHeight} </span> is <span
+		class="expression-highlighted">{globalVolume.volume}</span
+	>
 
-	numbers is a $state rune of Array&lt;number> [1,2,3...]
-	where buttons add or remove the next number
-	with last line rendering the total
-		<button onclick={() => numbers.push(numbers.length + 1)}> add </button> <button
-				onclick={() => numbers.pop()}> remove </button>  {numbers.join(' + ') ||
-				0} = {numbers.reduce((a, b) => a + b, 0)}
+numbers is a $state rune of Array&lt;number> [1,2,3...]
+where buttons add or remove the next number
+with last line rendering the total
+<button onclick={() => numbers.push(numbers.length + 1)}> add </button> <button
+		onclick={() => numbers.pop()}> remove </button>  {numbers.join(' + ') || 0} = {numbers.reduce(
+		(a, b) => a + b,
+		0
+	)}
 		</pre>
-	</div>
-	<hr />
-</div>
 
-<!-- svelte-ignore css_unused_selector -->
 <style lang="scss">
-	.wrapper {
-		width: 30rem;
-		padding: 1rem;
-		margin: 1rem 0 0 2rem;
+	pre {
+		margin: 0;
+		padding: 8px 1rem;
 	}
 </style>

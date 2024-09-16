@@ -1,31 +1,88 @@
 @import './mixins.scss';
 :root {
-	$font-size: 16px;
 	--BODY-COLOR: #e3e3e3;
 	--BODY-BACKGROUND-COLOR: #3e3e3e;
-	--PLACEHOLDER_COLOR: lightgreen;
-	--COLOR: #e3e3e3;
-	--BACKGROUND-COLOR: skyblue;
+
+	--H-COLOR: royalblue;
+	--INPUT-COLOR: #e3e3e3;
+	--INPUT-BACKGROUND-COLOR: #3e3e3e;
+	--INPUT-FOCUS-COLOR: lightgreen;
+	--PLACEHOLDER_COLOR: #8e8e8e;
+
+	--BUTTON-COLOR: #e3e3e3;
+	--BUTTON-HOVER-COLOR: rgb(222, 206, 141);
+	--BUTTON-TARGET-COLOR: blue;
+	--BUTTON-BACKGROUND-COLOR: #3e3e3e;
+	--BUTTON-BACKGROUND: 1px solid gray;
+
+	--LINK-COLOR: white;
+	--LINK-HOVER: yellow;
+	--LINK-ACTIVE: lightgreen;
+
+	--BORDER: 1px solid gray;
+	--BORDER-COLOR: yellow;
+	--BORDER-HOVER-COLOR: var(--BORDER-COLOR);
+	--BORDER-RADIUS: 5px;
+
+	--MESSAGE-COLOR: lightgreen;
+
+	--TITLE-COLOR: skyblue;
+	--TITLE-SHADOW: 5px 5px 5px navy;
+	--PRE-COLOR: skyblue;
+	--PRE-FONT-SIZE: 16px;
+
+	--TOOLTIP-COLOR: lightgreen;
+	--TOOLTIP-BACKGROUND-COLOR: black;
+	--TOOLTIP-BORDER: 1px solid gray;
+	--TOOLTIP-BORDER-RADIUS: 4px;
+
+	--ANCHOR-COLOR: lightgreen;
+	--ANCHOR-HOVER-COLOR: yellow;
+	--ANCHOR-ACTIVE-COLOR: lightgreen;
+
+	--BLOCK-COLOR: gray;
+	--BLOCK-BORDER: 1px solid gray;
+	--BLOCK-BORDER-RADIUS: 4px;
+
+	--SELECT-OPTION-COLOR: #e3e3e3;
+	--SELECT-OPTION-HOVER-COLOR: yellow;
+	--SELECT-OPTION-SELECTED-COLOR: lightgreen;
+}
+:global(html) {
+	font-family: 'Times New Roman', Times, serif;
+	font-size: 16psx;
+}
+:global(body) {
+	padding: 0;
+	margin: 0;
+	color: var(--BODY-COLOR);
+	background-color: VAR(--BODY-BACKGROUND-COLOR);
+	position: relative;
 }
 .expression-highlighted {
+	display: inline-block;
 	font-size: 18px;
-	font-weight: 700;
+	font-weight: 400;
 	color: yellow;
 }
-html {
-	font-family: 'Times New Roman', Times, serif;
-	// font-size: 16psx;
-}
-h2 {
-	color: $color;
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	display: inline-block;
+	width: max-content;
+	color: var(--H-COLOR);
 	font-family: 'Times New Roman', Times, serif;
 	font-weight: 600;
 	font-style: italic;
-	width: 100vw;
 	text-align: center;
+	padding: 3px 1rem;
 }
 .page-title {
-	color: $title-color;
+	color: var(--TITLE-COLOR);
 	font-family: 'Times New Roman', Times, serif;
 	font-size: 30px;
 	font-weight: 400;
@@ -33,88 +90,97 @@ h2 {
 	width: 100vw;
 	text-align: center;
 	letter-spacing: 0.1em;
-	text-shadow: 5px 5px 5px $border-color;
+	text-shadow: var(--TITLE-SHADOW);
 }
+button,
 .button {
-	border: 2px solid transparent;
+	width: max-content;
+	padding: 6px 1.5rem;
+	border: 1px solid gray;
 	border-radius: 5px;
-	color: lightgreen;
-	background-color: navy !important;
+	color: var(--BUTTON-COLOR);
+	background-color: var(--BUTTON-BACKGROUND-COLOR) !important;
 	cursor: pointer;
 	user-select: none;
-	&:hover {
-		border-color: lightgreen;
+	&:hover,
+	&:active {
+		color: var(--BUTTON-HOVER-COLOR);
+		border-color: var(--BUTTON-HOVER-COLOR);
+	}
+	&:disabled {
+		background-color: gray;
+	}
+	&:target {
+		color: var(--BUTTON-TARGET-COLOR);
 	}
 }
+
 .hidden {
 	display: none;
 }
 .button-sm {
 	@extend .button;
 	padding: 2px 6px;
-	width: 4px;
+	width: max-content;
 	height: 1.2rem;
 }
 .button-md {
 	@extend .button;
 	padding: 2px 6px;
-	width: 6rem;
+	width: max-content;
 	padding: 5px 1rem;
 }
 .button-lg {
 	@extend .button;
 	padding: 2px 6px;
-	width: 8rem;
+	width: max-content;
 	font-size: 18px;
 	padding: 5px 1rem;
 }
 .button-xl {
 	@extend .button;
 	padding: 2px 6px;
-	width: 12rem;
+	width: max-content;
 	font-size: 18px;
 	padding: 5px 1rem;
 }
 .button-xxl {
 	@extend .button;
 	padding: 2px 6px;
-	width: 18rem;
+	width: max-content;
 	font-size: 18px;
-	padding: 5px 1rem;
+	padding: 5px 1.5rem;
 }
 
 @mixin button() {
 	display: inline-block;
 	font-size: 16px;
 	text-decoration: none;
-	// @mixin input-text($width: 5rem) {
-	// 	width: $width;
-	// }
 	border-radius: 5px;
 	border: 1px solid gray;
 	display: inline-block;
-	padding: 3px 2px;
+	padding: 3px 1rem;
 	text-align: center;
-	width: $width;
+	width: max-content;
 	&:hover {
-		color: yellow;
-		border-color: lightgreen;
+		color: var(--BUTTON-HOVER-COLOR);
+		border-color: var(--BUTTON-HOVER-COLOR);
 	}
 	&:target {
-		background-color: blue;
+		background-color: var(--BUTTON-TARGET-COLOR);
 	}
 }
-@mixin capitalize($fs: 1rem) {
+@mixin capitalize($font-size: 1rem) {
 	// $fs: to-unit(unit($fs), $fs);
-	font-size: $fs;
+	font-size: $font-size;
 	text-transform: capitalize;
-	$lh: #{2.8 - (strip-unit($fs) * 0.00625 + 1.3)};
+	$line-height: #{2.8 - (strip-unit($font-size) * 0.00625 + 1.3)};
 
-	@if unit($fs) ==1ch {
-		$lh: $lh / 2;
+	@if unit($font-size) ==1ch {
+		$line-height: $line-height / 2;
 	}
 
-	line-hight: $lh;
+	line-hight: $line-height;
 }
 .navbar-button {
 	display: inline-block;
@@ -134,14 +200,20 @@ h2 {
 	margin: 0 4px;
 	text-transform: uppercase;
 	&:hover {
-		color: yellow;
-		border-color: lightgreen;
+		color: var(--BORDER-HOVER-COLOR);
+		border-color: var(--BUTTON-HOVER-COLOR);
 	}
 }
 :global(pre) {
 	font-size: 20px;
 	margin: 1rem 0 0 1rem;
-	color: skyblue;
+	color: var(--PRE-COLOR);
+}
+pre {
+	display: inline-block;
+	color: var(--PRE-COLOR);
+	font-size: var(--PRE-FONT-SIZE);
+	padding: 1rem;
 }
 
 section ul[style^='margin'] li.list-item {
@@ -165,7 +237,6 @@ section ul[style^='margin'] li.list-item {
 	}
 
 	h2 {
-		color: royalblue;
 		margin: 2rem auto;
 		width: 30rem;
 		font-family: 'Times New Roman', Times, serif;
@@ -173,38 +244,57 @@ section ul[style^='margin'] li.list-item {
 		text-align: center;
 	}
 }
+
 input:not([type='number']) {
 	display: inline-block;
 	height: 1.8rem;
 	margin-bottom: 10px;
 	width: 30rem;
-	font-size: 18px;
-	color: lightgreen;
-	background-color: #3e3e3e;
+	font-size: 16px;
+	padding: 4px 1rem;
+	color: var(--INPUT-COLOR);
+	background-color: var(--INPUT-BACKGROUND-COLOR);
 	outline: none;
 	border-radius: 4px;
-	padding-left: 1rem;
-	&:focus {
-		color: yellow;
-	}
 	&::placeholder {
 		color: var(--PLACEHOLDER_COLOR);
-		font-weight: 400;
+	}
+	&:hover,
+	&:focus {
+		color: var(--INPUT-FOCUS-COLOR);
 	}
 }
 input[type='number'] {
 	width: 3.5rem;
 	height: 1.2rem;
+	color: var(--INPUT-COLOR);
+	background-color: var(--INPUT-BACKGROUND-COLOR);
 	font-size: 16px;
 	padding: 4px 0 4px 8px;
 	font-weight: 400;
 	border-radius: 4px;
-	color: lightgreen;
-	background-color: #3e3e3e;
 	outline: none;
 	&:focus {
-		color: yellow;
-		background-color: #3e3e3e;
+		color: var(--INPUT-FOCUS-COLOR);
+	}
+}
+textarea {
+	width: 33rem;
+	height: 23rem;
+	text-align: left;
+	color: var(--INPUT-COLOR);
+	margin-top: 1rem;
+	overflow-y: auto;
+	background-color: var(--INPUT-BACKGROUND-COLOR);
+	outline: none;
+	&:focus,
+	&:active {
+		color: var(--INPUT-FOCUS-COLOR);
+		background-color: var(--INPUT-BACKGROUND-COLOR);
+	}
+	&::placeholder {
+		color: var(--PLACEHOLDER-COLOR);
+		font-weight: normal;
 	}
 }
 @function string($input) {
@@ -229,50 +319,12 @@ input[type='number'] {
 	@return $number;
 }
 
-h1 {
-	color: lightgreen;
-}
-
-pre {
-	color: skyblue;
-	font-family: Times New Roman;
-	font-size: 14px;
-}
-
-body {
-	padding: 0;
-	margin: 0;
-	background-color: #3e3e3e; /*$BACK-COLOR;*/
-	color: $TEXT-COLOR;
-	position: relative;
-}
-button {
-	width: 8rem;
-	border: 1px solid gray;
-	border-radius: 5px;
-	padding: 5px 5px;
-	font-size: 16px;
-	color: $TEXT-COLOR;
-	background-color: #3e3e3e; /*$BACK-COLOR;*/
-	&:hover {
-		color: yellow;
-		border: 1px solid white;
-		cursor: pointer;
-	}
-	&:active {
-		border: 1px solid yellow;
-	}
-	&:disabled {
-		background-color: gray;
-	}
-}
-
 a {
 	display: inline-block;
 	border: 1px solid gray;
 	border-radius: 5px;
 	padding: 3px 1.5rem;
-	color: $LINK-COLOR;
+	color: var(--ANCHOR-COLOR);
 	text-decoration: none;
 	text-align: center;
 	user-select: none;
@@ -280,19 +332,19 @@ a {
 
 	&:hover,
 	&:focus-visible {
-		color: $LINK-HOVER;
-		border-color: $LINK-ACTIVE;
+		color: var(--ANCHOR-HOVER-COLOR);
+		border-color: var(--ANCHOR-HOVER-COLOR);
 	}
 	&:active {
-		color: $LINK-ACTIVE;
+		color: var(-ANCHOR-ACTIVE-COLOR);
 	}
 }
 a-block {
 	display: inline-block;
 	inline-size: auto;
-	border: $BORDER;
-	border-radius: 2px;
-	color: $LINK-COLOR;
+	border: var(--BLOCK-BORDER);
+	color: var(--BLOCK-COLOR);
+	border-radius: var(--BLOCK-BORDER-RADIUS);
 	padding: 8px 1rem;
 	margin-left: 0.5rem;
 }
@@ -303,7 +355,8 @@ a-button {
 	padding: 4px 1rem;
 
 	&:hover {
-		@include highlight();
+		color: var(--BUTTON-HOVER-COLOR);
+		border-color: var(--BUTTON-HOVER-COLOR);
 	}
 }
 
@@ -320,18 +373,19 @@ nav a:any-link {
 	.tooltip {
 		position: absolute;
 		top: -3rem;
-		display: block;
-		width: 11rem;
+		display: inline-block;
+		width: max-content;
 		font-size: 14px;
 		font-weight: 400;
 		padding: 3px 1rem;
-		border: 1px solid gray;
-		border-radius: 4px;
-		background-color: #3e3e3e; /*$BACK-COLOR;*/
+		border: var(--TOOLTIP-BORDER);
+		border-radius: 4var (--TOOLTIP-BORDER-RADIUS);
+		background-color: var(--TOOLTIP-BACKGROUND-COLOR);
 		text-align: center;
+		margin-bottom: 6px;
 	}
 	.master {
-		color: yellow;
+		color: var(--TOOLTIP-COLOR);
 		font-size: 14px;
 		font-weight: 400;
 		p {
@@ -431,10 +485,11 @@ nav a:any-link {
 
 	@return $input;
 }
+
 $font-size: (24px, 22px, 20px, 18px);
-$f: 1;
-$e: 4;
-@for $i from $f through $e {
+$from: 1;
+$to: 4;
+@for $i from $from through $to {
 	h#{$i} {
 		font-size: nth($font-size, $i);
 	}

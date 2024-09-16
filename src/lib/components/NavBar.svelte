@@ -43,11 +43,14 @@
 		// for every button so every new navBar should continue with last
 		// id incremented by 1, so we need max id of navBars
 		let maxId = 0
-		if (navBars && navBars.length > 0) {
+		if ((navBars as TNavBar[]) && navBars.length > 0) {
 			for (i = 0; i < navBars.length; i++) {
+				// @ts-expect-error
 				if (maxId < navBars[i].Ix) {
+					// @ts-expect-error
 					maxId = navBars[i].Ix + 1
 				}
+				// @ts-expect-error
 				if (navBars[i].navId === navCategory) {
 					navBarsItem = navBars[i] as TNavBar
 					if (navButtonObjects[0]?.position === 0) {
@@ -153,14 +156,14 @@
 	// or condition could change e.g. by login or logout
 	export const getNavButtonItemIndex = (className: string): number => {
 		for (let i = 0; i < navButtons.length; i++) {
-			if (navButtons[i].className === className) {
+			if (navButtons[i]?.className === className) {
 				return i
 			}
 		}
 		return -1
 	}
 	/** titles are enclosed in pipe chars e.g. |login|logout|*/
-	const removeByTitle = (titles: string, buttons: TXNavButtonObject[]) => {
+	const removeByTitle = (_: string, buttons: TXNavButtonObject[]) => {
 		return buttons.filter((btn) => !'|login|logout|'.includes(`|${btn.title.toLowerCase()}|`))
 	}
 

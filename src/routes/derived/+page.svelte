@@ -194,7 +194,7 @@
 	</div>
 </div>
 <div class="main">
-	<input type="text" bind:value />
+	<input type="text" bind:value placeholder="enter you full name" />
 	<pre>value {facade.value}</pre>
 
 	<pre>

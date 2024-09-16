@@ -22,11 +22,11 @@
 	}
 </script>
 
-<p class="inline">child local counter <span class="count">{childCount}</span></p>
+<p class="inline">child local counter <span class="expression-highlighted">{childCount}</span></p>
 
 <div class="wrapper">
 	<pre>This is child component.
-Child button clicked changing parent count<span class="count"> {count}</span></pre>
+Child button clicked changing parent count<span class="expression-highlighted"> {count}</span></pre>
 	<button style="width:15rem;display:inline-block;" onclick={increment}
 		>child click calling parent func
 	</button>
@@ -38,18 +38,19 @@ Child button clicked changing parent count<span class="count"> {count}</span></p
 		<input id="delta" type="number" bind:value={delta} /></label
 	>
 	<button class="update-parent-button" onclick={updateParentCount}>
-		call parent to update its count by delta = {delta}
+		call parent to update its count by delta={delta}
 	</button>
 </div>
 
 <!-- svelte-ignore css_unused_selector -->
 <style lang="scss">
-	.count {
+	.expression-highlighted {
 		font-size: 24px;
 		color: yellow;
 	}
 	.wrapper {
 		// display: inline-block;
+		width: 60.5vw;
 		margin: 1rem 0 1rem 2rem;
 		padding: 5px 1rem;
 		border: 1px solid gray;
@@ -62,7 +63,7 @@ Child button clicked changing parent count<span class="count"> {count}</span></p
 		.update-parent-button {
 			width: 11rem;
 		}
-		.count {
+		.expression-highlighted {
 			font-size: 20px;
 			color: yellow;
 		}

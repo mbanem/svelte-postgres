@@ -220,8 +220,6 @@
 	})
 </script>
 
-<p>wrongUser {wrongUser}</p>
-
 <!-- <pre style="font-size:14px;">selectedUserWithBio-Page {JSON.stringify(selectedUserWithBio, null, 2)}
 	</pre> -->
 {#snippet tooltipBio(userWithBio: UserWithBio)}
@@ -269,7 +267,6 @@
 			<form action="?/create" method="post" use:enhance={enhanceProfile}>
 				<textarea
 					bind:this={bioTextArea}
-					class="textarea"
 					placeholder="Place bio here"
 					rows={5}
 					cols={35}
@@ -405,27 +402,6 @@
 				color: skyblue;
 				font-size: 20px;
 			}
-			textarea {
-				width: 33rem;
-				height: 23rem;
-				text-align: left;
-				color: lightgreen;
-				margin-top: 1rem;
-				overflow-y: auto;
-				background-color: #5e5e5e;
-				&:focus {
-					color: yellow;
-				}
-				&::placeholder {
-					color: var(--PLACEHOLDER_COLOR);
-					font-weight: normal;
-				}
-			}
-			button {
-				position: relative;
-				// add margin to the class defined in app-wide styles/app.scss
-				margin: 1rem 0;
-			}
 		}
 		.right-column {
 			border: 1px solid gray;
@@ -438,19 +414,13 @@
 		}
 	}
 
-	.hidden {
-		display: none;
-	}
 	.buttons {
 		display: flex;
 		gap: 1rem;
 		justify-content: center;
 		width: 100%;
 	}
-	button {
-		width: 5rem;
-		cursor: pointer;
-	}
+
 	.delete-icon {
 		padding: 1px 8px 0 8px;
 		outline: 1px solid tomato;
@@ -465,12 +435,5 @@
 	.pink {
 		color: pink !important;
 		border-color: pink !important;
-	}
-	[name='bio'] {
-		background-color: #3e3e3e;
-		font-size: 18px;
-		&:focus {
-			background-color: #e3e3e3;
-		}
 	}
 </style>

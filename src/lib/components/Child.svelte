@@ -1,11 +1,11 @@
 <script lang="ts">
-	type ARGS ={
+	type ARGS = {
 		array: number[]
 	}
-	let { array = $bindable([]) }: ARGS = $props();
+	let { array = $bindable([]) }: ARGS = $props()
 </script>
 
-<div class="wrapper">
+<div class="wrapper expression-highlighted">
 	{#each array as n}
 		<p>{n}</p>
 	{/each}
@@ -19,5 +19,8 @@ Child area
 	.wrapper {
 		display: flex;
 		gap: 4px;
+	}
+	p {
+		display: inline-block;
 	}
 </style>

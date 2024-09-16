@@ -62,16 +62,15 @@
 
 	:global(.local-tooltip) {
 		position: absolute;
-		color: lightgreen;
+		color: var(-TOOLTIP-COLOR);
 		top: -1.5rem !important;
 		left: calc(100% - 35rem) !important;
-		display: inline-block;
 		display: inline-block;
 		font-size: 14px;
 		font-weight: 400;
 		padding: 3px 1rem;
-		border: 1px solid gray;
-		border-radius: 4px;
+		border: var(--TOOLTIP-BORDER);
+		border-radius: var(--TOOLTIP-BORDER-RADIUS);
 		text-align: left;
 		.prop-value {
 			color: yellow;
@@ -91,7 +90,7 @@
 	}
 	.post-container {
 		overflow-y: auto;
-		width: 55vw;
+		width: 40vw;
 		min-width: 36em;
 		height: 15rem;
 		border: 1px solid gray;

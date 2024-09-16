@@ -399,7 +399,7 @@
 		font-weight: 400;
 		padding: 3px 1rem;
 		text-align: center;
-		background-color: $BACK-COLOR;
+		background-color: var(--TOOLTIP-BACKGROUND-COLOR);
 		border: 1px solid gray;
 		border-radius: 6px;
 	}

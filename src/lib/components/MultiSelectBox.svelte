@@ -1,8 +1,9 @@
 <script lang="ts">
-	import { onMount } from 'svelte'
+	import { onMount, tick } from 'svelte'
 	import * as utils from '$utils'
 	import { page } from '$app/stores' // for $age.status code on actions
 
+	let pEl: HTMLParagraphElement
 	const pleaseSelect = 'Please select corresponding categories'
 	const requiredCategory = 'category is required'
 	type ARGS = {
@@ -72,8 +73,17 @@
 		// we place CSV string in selectedOptions HTML paragraph element
 		selectedOptions.innerText =
 			selectedNames.size > 0 ? [...selectedNames].join(', ') : categoryIsRequired
+		scroll()
 	}
-
+	const scroll = () => {
+		// console.log(pEl.offsetHeight, pEl.scrollTop, pEl.getBoundingClientRect().height)
+		// height - 20 is to react properly to scroll
+		if (pEl.offsetHeight + pEl.scrollTop > pEl.getBoundingClientRect().height - 20) {
+			tick().then(() => {
+				pEl.scrollTo(0, pEl.scrollHeight)
+			})
+		}
+	}
 	onMount(() => {
 		return () => {
 			utils.setMrPath($page.url.pathname)
@@ -88,24 +98,25 @@
 
 <!-- <pre style="font-size:11px;">data {JSON.stringify(categories, null, 2)}</pre> -->
 
-<p bind:this={selectedOptions} class="selected-cats">
+<p bind:this={selectedOptions} class="selected-cats" bind:this={pEl}>
 	{pleaseSelect}
 </p>
 <ul class="category-list">
 	{#key categories}
 		{#each categories as category}
 			<li>
-				<button type='button' onclick={onClick} class:selected={category.selected}>
+				<p onclick={onClick} class:selected={category.selected} aria-hidden={true}>
 					{category.name}
-				</button>
+				</p>
 			</li>
 		{/each}
 	{/key}
 </ul>
+``
 
 <style lang="scss">
 	.selected-cats {
-		width: 42rem;
+		width: 30rem;
 		height: 1.5rem; // more entries? 2.7rem
 		line-height: 1.5rem;
 		padding: 4px 1rem;
@@ -115,6 +126,7 @@
 		color: var(--MESSAGE-COLOR);
 		font-weight: 300;
 		font-family: Arial, sans-serif;
+		overflow-y: auto;
 	}
 	.category-list {
 		margin: 8px 0 0 3rem;
@@ -123,37 +135,39 @@
 		list-style: none;
 		border: 1px solid yellow;
 		border-radius: 5px;
-		padding: 5px 1rem;
+		padding: 8px 1rem 8px 1.5rem;
 		margin: 0;
-		height: 9rem;
+		height: auto;
 		width: 8rem;
 		overflow-y: auto;
 		li {
-			margin-bottom: 4px;
+			// margin: 0;
+			padding-bottom: 4px;
+			// border: none;
+			// outline: none;
+			// margin-bottom: 4px;
 			&:first-child {
 				margin-top: 5px;
+				color: red;
+			}
+			&:last-child {
+				margin-bottom: 1rem;
 			}
 		}
 	}
 	p {
 		margin: 0;
-		color: $TEXT-COLOR;
+		padding: 0;
+		color: var(--SELECT-OPTION-COLOR);
+		border: none;
+		outline: none;
 		&:hover {
-			color: yellow;
+			color: var(--SELECT-OPTION-HOVER-COLOR);
 			cursor: pointer;
 		}
 	}
 	.selected {
-		color: lightgreen;
+		color: var(--SELECT-OPTION-SELECTED-COLOR);
 		width: 100%;
-	}
-
-	button {
-		border: none;
-		outline: none;
-		height: 1rem;
-		width: 5rem;
-		text-align: left;
-		padding: 0;
 	}
 </style>

@@ -226,8 +226,8 @@
 		font-weight: 400;
 		padding: 3px 1rem;
 		text-align: center;
-		background-color: $BACK-COLOR;
-		border: 1px solid gray;
+		background-color: var(--TOOLTIP-BACKGROUND-COLOR);
+		border: var(--TOOLTIP-BORDER);
 		border-radius: 6px;
 		p:nth-child(even) {
 			color: yellow;
@@ -242,7 +242,7 @@
 		width: 6rem !important;
 		color: yellow !important;
 		border: 1px solid yellow;
-		background-color: $BACK-COLOR;
+		background-color: var(--TOOLTIP-BACKGROUND-COLOR);
 		border-radius: 6px;
 		padding: 4px 1rem;
 		text-align: center;

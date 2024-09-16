@@ -7,16 +7,16 @@
 	height: 2rem;
 	color: #e3e3e3;
 	font-size: 20px;
-	background-color: #4e4e4e;
+	background-color: var(--INPUT-BACKGROUND-COLOR);
 	border: none;
 	outline: 1px solid gray;
 	border-radius: $border-radius;
 	&:focus {
-		color: rgb(231, 231, 42);
+		color: var(--INPUT-FOCUS-COLOR);
 		background-color: #6e6e6e;
 	}
 	&::placeholder {
-		color: lightgreen;
+		color: var(--PLACEHOLDER_COLOR);
 		font-weight: normal;
 	}
 }

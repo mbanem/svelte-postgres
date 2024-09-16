@@ -386,12 +386,12 @@
 		display: grid;
 		grid-template-columns: 1fr 1fr;
 		min-width: 60rem;
-		width: 90vw;
+		width: 80vw;
 		gap: 2px;
 		padding: 0 1rem 1rem 1rem;
 		margin-left: 1rem;
 		form {
-			width: calc(100% - 1rem);
+			width: calc(40vw - 1rem);
 		}
 	}
 	.label-save {
@@ -399,19 +399,6 @@
 		align-items: baseline;
 	}
 
-	// input {
-	// 	display: inline-block;
-	// 	width: 5rem;
-	// 	width: 100%;
-	// 	padding-left: 0.5rem;
-	// 	line-height: 0.8rem;
-	// 	color: $BACK-COLOR;
-	// 	height: 1.3rem;
-	// 	&::placeholder {
-	// 		color: var(--PLACEHOLDER_COLOR);
-	// 		font-weight: normal;
-	// 	}
-	// }
 	label input {
 		display: inline-block;
 		width: 1rem;
@@ -428,13 +415,4 @@
 	/* move the clear button out of the form to avoid submit action but
 		set it adjacent to create/update button using the absolute position
 	*/
-	// .clear-button {
-	// 	display: inline-block;
-	// 	position: absolute;
-	// 	top: 5.6rem;
-	// 	left: 18rem;
-	// }
-	.hidden {
-		display: none;
-	}
 </style>

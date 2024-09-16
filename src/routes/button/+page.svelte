@@ -2,14 +2,14 @@
 	import Button from '$components/Button.svelte'
 	let count = 0
 
-	const handleClick = (event: MouseEvent, delta: number) => {
+	const handleClick = (_: MouseEvent, delta: number) => {
 		count += delta
 	}
 </script>
 
 <div class="main">
 	<Button {handleClick} />
-	<p>Parent count handled by child: <span style="color:yellow;">count = {count}</span></p>
+	<p>Parent count handled by child: <span class="expression-highlighted">count = {count}</span></p>
 </div>
 <pre>
 	This parent page sends a handleClick function which expects two arguments
@@ -36,8 +36,5 @@
 <style lang="scss">
 	.main {
 		margin: 2rem 0 0 2rem;
-	}
-	pre {
-		font-size: 18px;
 	}
 </style>
