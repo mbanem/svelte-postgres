@@ -8,7 +8,6 @@
 	let { cls, caption2, children }: ARGS = $props()
 </script>
 
-<!-- just markup without TypeScript using $$props -->
 <div class={cls} onclick={() => console.log('clicked')} aria-hidden={true}>
 	{caption2 ?? 'Child'}
 	{@render children()}

@@ -193,15 +193,19 @@
 	>
 		{item}
 	</div>
-{/each}
-<br />
-{facade.value}
-<input type="text" bind:value placeholder="enter you full name" />
-<pre>
-  Sometimes we need to create complex derivations that don't fit 
-inside a short expression. In such cases, we can use $derived.by 
-which accepts a function as its argument.
-<button onclick={() => numbers.push(numbers.length + 1)}> expand </button> <button
+</div>
+<div class="main">
+	<input type="text" bind:value />
+	<pre>value {facade.value}</pre>
+
+	<pre>
+  Sometimes we need to create complex derivations that don't fit inside a short expression.
+  In such cases, we can use $derived.by which accepts a function as its argument.
+</pre>
+
+	<pre>sum {numbers.join('+')} is {total}</pre>
+	<button onclick={() => numbers.push(numbers.length + 1)}> expand </button>
+	<button
 		onclick={() => {
 			numbers.pop()
 		}}>reduce</button
