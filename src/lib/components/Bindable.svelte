@@ -71,4 +71,7 @@ Child button clicked changing parent count<span class="expression-highlighted"> 
 	.inline {
 		display: inline-block;
 	}
+	pre {
+		font-size: 15px;
+	}
 </style>
