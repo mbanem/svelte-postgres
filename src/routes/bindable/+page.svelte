@@ -34,12 +34,14 @@
 	}
 </script>
 
-<div class="wrapper">
-	This is parent block with count managed by its bindable component
-	<p>parent count <span class="expression-highlighted">{count}</span></p>
+<div>
+	<p class="label-title">This is parent block with count managed by its bindable component.</p>
+
 	<button onclick={click}>parent count {count} </button>
+	<p style="display:inline-block">
+		Parent count <span class="expression-highlighted">{count}</span>
+	</p>
 </div>
-<br />
 <pre>
 The Count variable is defined at parent as a let count = 22 with no $state(22) and <i>bound</i
 	> as a prop to child as
@@ -68,5 +70,12 @@ with child click event:MouseEvent and value of delta bound in &lt;input type='nu
 		margin: 5px 0 5px 2rem;
 		border: 1px solid gray;
 		padding: 1rem;
+		font-size: 15px;
+	}
+	button {
+		display: inline-block;
+	}
+	.label-title {
+		margin: 6px 0 0 2rem;
 	}
 </style>

@@ -181,9 +181,7 @@
 <RandomCanvas />
 
 <p style="margin:1rem 0 0 1rem;padding:0;">Click color button to change Color Directive</p>
-<p style:background-color={h4Color} style="width:10rem;display:inline-block;margin-left:1rem;">
-	Color Style Directives
-</p>
+<p style:background-color={h4Color} class="label-title">Color Style Directives</p>
 {#each colors as item (item)}
 	<div
 		class="div-button"
@@ -193,23 +191,22 @@
 	>
 		{item}
 	</div>
-</div>
-<div class="main">
-	<input type="text" bind:value />
-	<pre>value {facade.value}</pre>
+{/each}
 
-	<pre>
+<input type="text" bind:value />
+<pre>value {facade.value}</pre>
+
+<pre>
   Sometimes we need to create complex derivations that don't fit inside a short expression.
   In such cases, we can use $derived.by which accepts a function as its argument.
 </pre>
 
-	<pre>sum {numbers.join('+')} is {total}</pre>
-	<button onclick={() => numbers.push(numbers.length + 1)}> expand </button>
-	<button
+<pre>sum {numbers.join('+')} is {total}
+<button onclick={() => numbers.push(numbers.length + 1)}> expand </button><button
 		onclick={() => {
 			numbers.pop()
 		}}>reduce</button
-	> sum {numbers.join('+')} is {total}
+	>
 </pre>
 <canvas bind:this={canvas} width={size} height={size}></canvas>
 
@@ -329,15 +326,4 @@ clicking faster increases speed on every click
 		like we cannot change it inline dynamically except by
 		changing :root attribute --BUTTON-BACKGRPOIUND-COLOR itself
 		*/
-	.div-button {
-		display: inline-block;
-		width: 5rem;
-		height: 1.5rem;
-		border: 1px solid gray;
-		border-radius: 5px;
-		text-align: center;
-		line-height: 1.5rem;
-		cursor: pointer;
-		margin: 0;
-	}
 </style>

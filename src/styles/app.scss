@@ -34,6 +34,9 @@
 	--PRE-COLOR: skyblue;
 	--PRE-FONT-SIZE: 16px;
 
+	--TITLE-COLOR: #e3e3e3;
+	--TITLE-BACKGROUND-COLOR: royalblue;
+
 	--TOOLTIP-COLOR: lightgreen;
 	--TOOLTIP-BACKGROUND-COLOR: black;
 	--TOOLTIP-BORDER: 1px solid gray;
@@ -105,6 +108,31 @@ h6 {
 	text-align: center;
 	letter-spacing: 0.1em;
 	text-shadow: var(--TITLE-SHADOW);
+}
+.label-title {
+	display: inline-block;
+	width: max-content;
+	font-size: 18px;
+	padding: 4px 1rem;
+	margin: 0;
+	color: var(--TITLE-COLOR);
+	background-color: var(--TITLE-BACKGROUND-COLOR);
+	border-radius: 5px;
+}
+
+.div-button {
+	display: inline-block;
+	width: 5rem;
+	height: 1.5rem;
+	border: 1px solid gray;
+	border-radius: 5px;
+	text-align: center;
+	line-height: 1.5rem;
+	cursor: pointer;
+	margin: 0;
+	&:not(:last-child) {
+		margin-right: 6px;
+	}
 }
 button,
 .button {

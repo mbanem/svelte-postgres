@@ -136,13 +136,13 @@
 	// }
 	.container {
 		display: grid;
-		grid-template-columns: 1fr 2fr;
+		grid-template-columns: 1.3fr 2fr;
 		width: 80vw;
 		margin: 1rem 0 0 10vw;
 	}
 	.div-class {
 		display: inline-block;
-		width: 300px;
+		width: 400px;
 		height: 300px;
 		padding: 1rem;
 		font-size: 18px;
@@ -153,9 +153,10 @@
 		border-radius: 8px;
 	}
 
-	// button {
-	// 	width: 12rem;
-	// }
+	button {
+		margin-top: 6px;
+		width: 14rem;
+	}
 	pre {
 		font-size: 16px;
 	}
