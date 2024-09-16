@@ -1,7 +1,11 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte'
-	let { cls, caption2, children }: { cls: string; caption2: string; children: Snippet<[]> } =
-		$props()
+	type ARGS = {
+		cls: string
+		caption2: string
+		children: Snippet<[]>
+	}
+	let { cls, caption2, children }: ARGS = $props()
 </script>
 
 <!-- just markup without TypeScript using $$props -->
