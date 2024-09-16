@@ -130,10 +130,7 @@
 		margin: 3rem auto;
 		padding: 1rem;
 	}
-	button {
-		color: black;
-	}
 	.error {
-		color: yellow;
+		color: pink;
 	}
 </style>

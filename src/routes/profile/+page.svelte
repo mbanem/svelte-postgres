@@ -346,9 +346,9 @@
 	:global(.tooltip-profile),
 	:global(.tt-profile) {
 		position: absolute;
-		left: calc(100% - 14rem) !important;
+		left: calc(100% - 16rem) !important;
 		display: inline-block;
-		width: 11rem !important;
+		width: 14rem !important;
 		font-size: 14px;
 		font-weight: 400;
 		padding: 3px 1rem;
@@ -360,7 +360,7 @@
 	:global(.master-profile),
 	:global(.m-profile) {
 		color: skyblue;
-		font-size: 14px;
+		width: 14rem;
 		font-weight: 400;
 		p {
 			display: flex;

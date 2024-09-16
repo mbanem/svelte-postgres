@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { page } from '$app/stores'
-	import { onMount, getContext } from 'svelte'
+	import { onMount } from 'svelte'
 	import { crossfade } from 'svelte/transition'
-	import CircleSpinner from '$lib/components/CircleSpinner.svelte'
+	// import CircleSpinner from '$lib/components/CircleSpinner.svelte'
 	import { Tooltip } from 'flowbite-svelte'
 	import * as utils from '$utils'
 	let showTooltip = false
@@ -44,7 +44,6 @@
 	let createdAt = new Date('2/18/2006').toLocaleString()
 	let updatedAt = new Date('8/22/2007').toLocaleString()
 
-
 	onMount(() => {
 		return () => {
 			utils.setMrPath($page.url.pathname)
@@ -58,7 +57,7 @@
 
 <main>
 	<h1>Crossfade Page</h1>
-	<div class="main" onclick={toggleStartAndLoading} aria-hidden={true}>
+	<div class="relative" onclick={toggleStartAndLoading} aria-hidden={true}>
 		{#if start}
 			<div class="a" in:send={{ key: 'x' }} out:receive={{ key: 'x' }} onoutroend={handleEnd}>
 				click me
@@ -71,9 +70,9 @@
 	</div>
 	<div style="position:relative">
 		<button onclick={toggleLoading} style="text-align:center;">
-			{#if loading}
+			<!-- {#if loading}
 				<CircleSpinner color="skyblue" />
-			{/if}
+			{/if} -->
 			toggle loading
 		</button>
 	</div>
@@ -97,9 +96,6 @@
 	main {
 		margin-top: 2rem;
 		margin-left: 5rem;
-	}
-	.tooltip-wrapper {
-		position: relative;
 	}
 
 	.tooltip-value {
@@ -136,9 +132,7 @@
 		top: 60vh;
 		left: 20vw;
 	}
-	.main {
-		position: relative;
-	}
+
 	.a,
 	.b {
 		border: 1px solid gray;
@@ -153,11 +147,11 @@
 			color: lightgreen;
 			border: 4px solid lightgreen;
 		}
-		label {
-			border: none;
-			margin: 0;
-			padding: 0;
-		}
+		// label {
+		// 	border: none;
+		// 	margin: 0;
+		// 	padding: 0;
+		// }
 	}
 	.a {
 		position: absolute;
@@ -172,12 +166,12 @@
 		left: 20rem;
 		border: 4px solid lightgreen;
 	}
-	button {
-		background-color: $BACK-COLOR;
-		color: skyblue;
-		width: 10rem;
-		height: 2rem;
-	}
+	// button {
+	// 	background-color: $BACK-COLOR;
+	// 	color: skyblue;
+	// 	width: 10rem;
+	// 	height: 2rem;
+	// }
 	.tooltip-base {
 		display: inline-block;
 		height: 0.7rem;

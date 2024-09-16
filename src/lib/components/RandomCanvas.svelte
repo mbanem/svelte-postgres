@@ -16,7 +16,7 @@
 	const hexColors = () => {
 		let c = '#'
 		let bc = '#'
-		;[0, 1, 2].forEach((n) => {
+		;[0, 1, 2].forEach((_) => {
 			const v = Math.floor((Math.random() * 1000) % 255)
 			c = c + ('0' + v.toString(16)).slice(-2)
 			bc = bc + ('0' + (255 - v).toString(16)).slice(-2)
@@ -160,7 +160,7 @@
 		p {
 			display: inline-block;
 			border-radius: 4px;
-			margin: 1rem 0 0 0;
+			margin: 0;
 			padding: 3px 1rem;
 		}
 	}
@@ -169,10 +169,10 @@
 		border: 4px solid lightgreen;
 	}
 	.controls {
-		// width: 40rem;
+		width: 60rem;
 		border: 1px solid yellow;
 		padding: 1em 0 1em 1rem;
-		margin: 1em 0;
+		margin: 0;
 		display: flex;
 		gap: 1em;
 	}

@@ -1,7 +1,9 @@
 <script lang="ts">
+	import type {Snippet} from 
 	type ARGS = {
 		data: { hex: string; name: string }
 		field: string
+		children:Snippet<[]>
 	}
 	let { data, field }: ARGS = $props()
 

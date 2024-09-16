@@ -28,7 +28,7 @@
 
 	// $effect(...) runs onMount so the bind to canvas is already established
 	$effect(() => {
-		if (!ctx) return
+		if (!canvas) return
 		// const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
 		ctx.clearRect(0, 0, canvas.width, canvas.height)
 		ctx.textAlign = 'center'
@@ -50,7 +50,7 @@
 	const hexColors = () => {
 		let c = '#'
 		let bc = '#'
-		;[0, 1, 2].forEach((n) => {
+		;[0, 1, 2].forEach((_) => {
 			const v = Math.floor((Math.random() * 1000) % 255)
 			c = c + ('0' + v.toString(16)).slice(-2)
 			bc = bc + ('0' + (255 - v).toString(16)).slice(-2)
@@ -100,8 +100,8 @@
 	let ctx2Text = 'Canvas Text Number Two'
 
 	$effect(() => {
-		if (!ctx2) return
-		// const ctx2 = canvas2.getContext('2d') as CanvasRenderingContext2D;
+		if (!canvas2) return
+		const ctx2 = canvas2.getContext('2d') as CanvasRenderingContext2D
 		ctx2.roundRect(10, 20, 150, 100, [40])
 		ctx2?.clearRect(0, 0, canvas2.width, canvas2.height)
 		// this will re-run whenever `color` changes...
@@ -130,9 +130,9 @@
 		const btn = event.target as HTMLButtonElement
 		if (btn.innerText.startsWith('stop')) {
 			clearInterval(interval)
-			btn.innerText = 'restart counter'
+			btn.innerText = 'restart_counter'
 		} else {
-			btn.innerText = 'stop counter'
+			btn.innerText = 'stop_counter'
 			count += 1
 		}
 	}
@@ -173,48 +173,43 @@
 	})
 </script>
 
-<br />
-<a href="/">Home</a>
-<a href="/navbar">Navbar</a>
+<!-- <a href="/">Home</a>
+<a href="/navbar">Navbar</a> -->
 
-<div class="absolute">
-	<div class="row">
-		<canvas bind:this={canvas2} width={size2} height={size2}></canvas>
+<!-- <canvas bind:this={canvas2} width={size2} height={size2}></canvas> -->
 
-		<p class="style-directive-title">Click color button to change Color Directive</p>
-		<h4 style:background-color={h4Color}>Color Style Directives</h4>
-		{#each colors as item (item)}
-			<button
-				style:background-color={item}
-				onclick={() => (h4Color = `${item === 'default' ? 'royalblue' : item}`)}
-			>
-				{item}
-			</button>
-		{/each}
+<RandomCanvas />
+
+<p style="margin:1rem 0 0 1rem;padding:0;">Click color button to change Color Directive</p>
+<p style:background-color={h4Color} style="width:10rem;display:inline-block;margin-left:1rem;">
+	Color Style Directives
+</p>
+{#each colors as item (item)}
+	<div
+		class="div-button"
+		style:background-color={item}
+		onclick={() => (h4Color = `${item === 'default' ? 'royalblue' : item}`)}
+		aria-hidden={true}
+	>
+		{item}
 	</div>
-</div>
-<div class="main">
-	<input type="text" bind:value placeholder="enter you full name" />
-	<pre>value {facade.value}</pre>
-
-	<pre>
-  Sometimes we need to create complex derivations that don't fit inside a short expression.
-  In such cases, we can use $derived.by which accepts a function as its argument.
-</pre>
-
-	<pre>sum {numbers.join('+')} is {total}</pre>
-	<button onclick={() => numbers.push(numbers.length + 1)}> expand </button>
-	<button
+{/each}
+<br />
+{facade.value}
+<input type="text" bind:value placeholder="enter you full name" />
+<pre>
+  Sometimes we need to create complex derivations that don't fit 
+inside a short expression. In such cases, we can use $derived.by 
+which accepts a function as its argument.
+<button onclick={() => numbers.push(numbers.length + 1)}> expand </button> <button
 		onclick={() => {
 			numbers.pop()
 		}}>reduce</button
-	>
+	> sum {numbers.join('+')} is {total}
+</pre>
+<canvas bind:this={canvas} width={size} height={size}></canvas>
 
-	<hr />
-	<canvas bind:this={canvas} width={size} height={size}></canvas>
-
-	<RandomCanvas />
-	<!-- <div class="controls">
+<!-- <div class="controls">
 		<label>
 			<input type="range" min="50" max="300" bind:value={size} /> size
 		</label>
@@ -227,54 +222,63 @@
 		<p>back color {backColor}</p>
 	</div> -->
 
-	<h1 style="color:skyblue;">{count}</h1>
-	<p>clicking faster increases speed on every click</p>
-	<button onclick={() => (milliseconds *= 2)}>slower</button>
-	<button onclick={() => (milliseconds /= 2)}>faster</button>
-	<button onclick={() => (count = 0)}>clear counter</button>
-	<button onclick={toggleCounter}>stop counter</button>
-	<label for="cnt">
-		Count up to
-		<input type="number" bind:value={maxCount} />
-	</label>
-</div>
+<br />
+<label for="cnt" style="display: inline-block;margin-left:1rem;">
+	Count up to
+	<input type="number" bind:value={maxCount} />
+</label>
+<h2 style="color:skyblue;">{count}</h2>
+clicking faster increases speed on every click
+<button onclick={() => (milliseconds *= 2)}>slower</button>
+<button onclick={() => (milliseconds /= 2)}>faster</button>
+<button style="width:8rem" onclick={() => (count = 0)}>clear&nbsp;counter</button>
+<button style="width:8rem" onclick={toggleCounter}>stop&nbsp;counter</button>
 
 <!-- svelte-ignore css_unused_selector -->
 <style lang="scss'">
 	.absolute {
-		position: absolute;
-		top: 6rem;
-		right: 8rem;
+		/* position: absolute;
+		top: 4rem;
+		left: 2rem; */
+		height: 5rem;
+		width: max-content;
+		border: 1px solid yellow;
 	}
-	.row {
+	/* .row {
 		position: relative;
 		display: inline-block;
 		margin: 0 0 0 2rem;
 		padding: 0;
-		height: 2rem;
-		canvas {
-			display: inline-block;
-		}
-		h4,
-		button {
-			border-radius: 6px;
-			background-color: royalblue;
-			text-align: center;
-			width: 6rem;
-			height: 1.8rem;
-			margin-left: 6px;
-			user-select: none;
-		}
-		h4 {
-			width: 14rem;
-			height: 1.8rem;
-			line-height: 1.8rem;
-			font-weight: 400;
-			display: inline-block;
-		}
+		border: 1px solid yellow; */
+	/* height: 5rem; */
+	canvas {
+		display: inline-block;
 	}
+
+	button {
+		border-radius: 6px;
+		background-color: royalblue;
+		text-align: center;
+		width: 6rem;
+		height: 1.8rem;
+		margin-left: 6px;
+		user-select: none;
+	}
+
+	h4 {
+		display: inline-block;
+		color: white;
+		width: 14rem;
+		height: 1.5rem;
+		line-height: 1.5rem;
+		font-weight: 400;
+		margin-left: 1rem;
+		border-radius: 5px;
+	}
+	/* } */
 	.main {
-		margin: 1rem 0 0 2rem;
+		margin: 0 0 0 2rem;
+		padding: 0;
 	}
 	.controls {
 		width: 40rem;
@@ -305,7 +309,7 @@
 	}
 	a {
 		text-decoration: none;
-		margin: 1rem 0 0 1rem;
+		margin: 0; /*1rem 0 0 1rem;*/
 		padding: 5px 1rem;
 		border: 1px solid transparent;
 		border-radius: 5px;
@@ -316,7 +320,20 @@
 			border-color: yellow;
 		}
 	}
-	[type='text'] {
-		width: 30rem;
+	/* NOTE: as <button> is globally defined in app.scss with
+		CSS variables var(--BUTTON-BACKGRPOIUND-COLOR) it looks
+		like we cannot change it inline dynamically except by
+		changing :root attribute --BUTTON-BACKGRPOIUND-COLOR itself
+		*/
+	.div-button {
+		display: inline-block;
+		width: 5rem;
+		height: 1.5rem;
+		border: 1px solid gray;
+		border-radius: 5px;
+		text-align: center;
+		line-height: 1.5rem;
+		cursor: pointer;
+		margin: 0;
 	}
 </style>

@@ -20,8 +20,9 @@ const navButtonObjects = [
 	{ position: '40', title: 'button', condition: 'VISITOR' },
 	{ position: '45', title: 'caterpillar', condition: 'ADMIN' },
 	{ position: '46', title: 'opposites', href: '/opposite-lists', condition: 'ADMIN' },
-	{ position: '46', title: 'crossfade', condition: 'VISITOR' },
-	{ position: '47', title: 'navbar', condition: 'VISITOR' },
+	{ position: '46', title: 'cross_fade', condition: 'VISITOR' },
+	{ position: '47', title: 'crossfade', condition: 'VISITOR' },
+	{ position: '48', title: 'navbar', condition: 'VISITOR' },
 	{ position: '50', title: 'login', condition: 'VISITOR' },
 	{ position: '50', title: 'logout', condition: 'USER' },
 	{ position: '51', title: 'register', condition: 'VISITOR' }

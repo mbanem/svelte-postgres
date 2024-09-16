@@ -299,10 +299,10 @@
 <style lang="scss">
 	@use 'sass:list';
 	.main {
-		margin: 1rem;
+		margin: 0.1rem 1rem;
 		border: 1px solid gray;
-		border-radius: 5px;
-		padding: 6px 1rem;
+		border-radius: 1rem;
+		padding: 2rem 1rem;
 	}
 	.div-button {
 		width: 6rem;
@@ -415,7 +415,7 @@
 	*/
 	.container {
 		display: grid;
-		grid-template-columns: 2.5fr 2fr 12rem;
+		grid-template-columns: 1fr 1fr 0.3fr;
 		margin: 1rem 0 0 2rem;
 		width: 80vw;
 	}
@@ -424,11 +424,11 @@
 		flex-direction: column;
 		align-items: center;
 		gap: 5px;
-		margin-left: 8rem;
+		margin-left: 2rem;
 		border: 1px solid gray;
 		border-radius: 1rem;
 		width: 100%;
-		height: 85vh;
+		height: 92vh;
 	}
 
 	.buttons {
@@ -436,7 +436,7 @@
 		border: 1px solid gray;
 		border-radius: 1rem;
 		padding: 2rem 0 1rem 1rem;
-		width: 90%;
+		// width: 90%;
 		height: 85vh;
 		button:nth-child(1) {
 			display: block;

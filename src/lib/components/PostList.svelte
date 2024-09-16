@@ -140,10 +140,6 @@
 	}
 	.highlight {
 		width: 1rem !important;
-		:hover {
-			background-color: pink;
-			cursor: pointer;
-		}
 	}
 	.content {
 		display: inline-block;

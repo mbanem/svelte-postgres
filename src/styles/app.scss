@@ -16,7 +16,10 @@
 	--BUTTON-BACKGROUND: 1px solid gray;
 
 	--LINK-COLOR: white;
+	--LINK-BACKGROUND-COLOR: navy;
 	--LINK-HOVER: yellow;
+	--LINK-BORDER: 1px solid gray;
+	--LINK-DISABLED: gray;
 	--LINK-ACTIVE: lightgreen;
 
 	--BORDER: 1px solid gray;
@@ -65,7 +68,15 @@
 	font-weight: 400;
 	color: yellow;
 }
-
+.tooltip-wrapper {
+	position: relative;
+}
+.absolute {
+	position: absolute;
+}
+.relative {
+	position: relative;
+}
 h1,
 h2,
 h3,
@@ -80,6 +91,9 @@ h6 {
 	font-style: italic;
 	text-align: center;
 	padding: 3px 1rem;
+}
+.title {
+	display: inline-block;
 }
 .page-title {
 	color: var(--TITLE-COLOR);
@@ -100,6 +114,7 @@ button,
 	border-radius: 5px;
 	color: var(--BUTTON-COLOR);
 	background-color: var(--BUTTON-BACKGROUND-COLOR) !important;
+	word-break: keep-all;
 	cursor: pointer;
 	user-select: none;
 	&:hover,
@@ -245,7 +260,9 @@ section ul[style^='margin'] li.list-item {
 	}
 }
 
-input:not([type='number']) {
+input[type='text'],
+input[type='email'],
+input[type='password'] {
 	display: inline-block;
 	height: 1.8rem;
 	margin-bottom: 10px;
@@ -255,6 +272,7 @@ input:not([type='number']) {
 	color: var(--INPUT-COLOR);
 	background-color: var(--INPUT-BACKGROUND-COLOR);
 	outline: none;
+	border: 1px solid gray;
 	border-radius: 4px;
 	&::placeholder {
 		color: var(--PLACEHOLDER_COLOR);

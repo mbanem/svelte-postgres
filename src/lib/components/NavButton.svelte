@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation'
 	import type { ComponentProps, Snippet } from 'svelte'
 	type ARGS = {
-		colorName: string
+		colorName?: string
 		title: string
 		href: string
 		media: Snippet

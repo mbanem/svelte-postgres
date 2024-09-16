@@ -1,8 +1,9 @@
 <script lang="ts">
-	import type { LayoutData } from './$types';
+	import type { Snippet } from 'svelte'
+	import type { LayoutData } from './$types'
 	// +page.server.ts send categories from its load function
 	// that we can get as data object
-	export let data: LayoutData;
+	let { data, children }: { data: LayoutData; children: Snippet<[]> } = $props()
 </script>
 
 <div class="submenu">
@@ -12,7 +13,7 @@
 </div>
 <h4>Layout for SelectBox and SelectList Pages</h4>
 
-<slot />
+{@render children()}
 
 <style lang="scss">
 	a {

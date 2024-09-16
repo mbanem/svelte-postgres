@@ -48,23 +48,6 @@
 	}
 </script>
 
-<pre>Using $effect based on messages.length to render
-	a list of values entered in the below input box
-</pre>
-<input
-	type="text"
-	placeholder="Enter item for the list and press Enter key"
-	size="20"
-	class="input-box"
-	bind:this={inputBox}
-	onkeydown={change}
-/>
-<div bind:this={div}>
-	{#each messages as message}
-		<p class="names">{message}</p>
-	{/each}
-</div>
-
 <!-- snipper default color is red -->
 {#snippet icon(color = 'Red')}
 	<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" width="16">
@@ -105,6 +88,23 @@
 	{/snippet}
 </NavButton>
 
+<pre>Using $effect based on messages.length to render
+	a list of values entered in the below input box
+</pre>
+<input
+	type="text"
+	placeholder="Enter item for the list and press Enter key"
+	size="20"
+	class="input-box"
+	bind:this={inputBox}
+	onkeydown={change}
+/>
+<div bind:this={div}>
+	{#each messages as message, index}
+		<p class="names">{index > 0 ? ', ' : ''} {message}</p>
+	{/each}
+</div>
+
 <!-- using $effect -->
 <style>
 	.input-box {
@@ -125,6 +125,8 @@
 	}
 	p.names {
 		color: yellow;
+		padding: 0;
+		margin: 0;
 	}
 	:global(.greeting) {
 		font-style: italic;

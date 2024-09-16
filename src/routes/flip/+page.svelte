@@ -47,7 +47,6 @@
 		throw error(420, 'Enhance your calm')
 	}
 
-
 	let boxTimeline = gsap.core.Timeline
 	const boxPlay = (node: string) => {
 		let boxTimeline = gsap.timeline()
@@ -228,6 +227,7 @@
 				{#if start}
 					<label
 						class="crossfade-a"
+						style:width="9rem"
 						for="checkBox"
 						in:send={{ key: 'x' }}
 						out:receive={{ key: 'x' }}
@@ -237,7 +237,7 @@
 				{:else}
 					<label
 						class="crossfade-b"
-						style:width="10.1rem"
+						style:width="9rem"
 						for="checkBox"
 						in:send={{ key: 'x' }}
 						out:receive={{ key: 'x' }}
@@ -269,7 +269,7 @@
 	.crossfade-a,
 	.crossfade-b {
 		border: 1px solid gray;
-		border-radius: 5px;
+		border-radius: 15px;
 		padding: 3px 1rem;
 		margin-top: 1rem;
 		width: 30rem;
@@ -278,17 +278,11 @@
 		&:hover {
 			border-color: yellow;
 		}
-		label {
-			border: none;
-			margin: 0;
-			padding: 0;
-			color: yellow;
-		}
 	}
 	.crossfade-a {
 		position: absolute;
 		top: 15rem;
-		left: -15rem;
+		left: -20rem;
 		opacity: 0;
 	}
 	.crossfade-b {
@@ -321,7 +315,7 @@
 
 	.tween-block {
 		display: grid;
-		grid-template-columns: 1fr 1fr 1fr;
+		grid-template-columns: 1fr 0.5fr 1fr;
 		align-items: center;
 		margin-top: 4rem 0 0 0;
 		padding: 1rem;
@@ -396,7 +390,7 @@
 		grid-template-columns: 1fr 15rem 1fr;
 		justify-content: center;
 		position: relative;
-		width: 100vw;
+		width: 95vw;
 		height: 70vh;
 	}
 	.transition-info {
@@ -413,7 +407,7 @@
 	.hide-label {
 		position: absolute;
 		top: 12rem;
-		left: 78vw;
+		left: 75vw;
 		font-weight: 300;
 		user-select: none;
 		color: lightgreen;

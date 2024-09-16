@@ -1,4 +1,5 @@
 <script lang="ts">
+	<import type { Snippet } from 'svelte'>
 	// for items of different type embedded in <NavBar objects>
 	const makeCSSClass = (cssClassDef: string) => {
 		try {
@@ -10,6 +11,7 @@
 			console.log(err)
 		}
 	}
+	let { children }: { children: Snippet<[]> } = $props()
 	// const callMakeCSSClass = async () =>
 	// 	await
 
@@ -60,7 +62,7 @@
 
 <div class="container">
 	<!-- {callMakeCSSClass()} -->
-	<slot />
+	{@render children()}
 </div>
 
 <style>

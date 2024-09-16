@@ -64,7 +64,6 @@ with child click event:MouseEvent and value of delta bound in &lt;input type='nu
 <Bindable bind:count {clickArg} bind:this={childComponent} />
 
 <style>
-	.wrapper,
 	pre {
 		margin: 5px 0 5px 2rem;
 		border: 1px solid gray;
