@@ -10,16 +10,16 @@
 	import { setColor, setButtonVisible } from '$lib/utils'
 
 	import PageTitleCombo from '$lib/components/PageTitleCombo.svelte'
-	import TodoLists from './TodoLists.svelte'
+	import ListsWrapper from './ListsWrapper.svelte'
 	import { onMount, tick } from 'svelte'
 	import * as utils from '$lib/utils'
 
-	type SelectedUser = {
-		id: string
-		firstName: string
-		lastName: string
-		role: string
-	}
+	// type SelectedUser = {
+	// 	id: string
+	// 	firstName: string
+	// 	lastName: string
+	// 	role: string
+	// }
 	type ARGS = {
 		data: PageData
 		form: ActionData
@@ -254,13 +254,13 @@
 		}
 	}
 
-	const tooltipMouseWheel = () => {
-		console.log('tooltipMouseWheel')
-		document.querySelector('.tooltip-mouse-wheel')?.classList.toggle('hidden')
-		setTimeout(() => {
-			document.querySelector('.tooltip-mouse-wheel')?.classList.toggle('hidden')
-		}, 1500)
-	}
+	// const tooltipMouseWheel = () => {
+	// 	console.log('tooltipMouseWheel')
+	// 	document.querySelector('.tooltip-mouse-wheel')?.classList.toggle('hidden')
+	// 	setTimeout(() => {
+	// 		document.querySelector('.tooltip-mouse-wheel')?.classList.toggle('hidden')
+	// 	}, 1500)
+	// }
 	// const todoUserToSnap = (tUser: UTodo, snap: TodoFormData) => {
 	// 	snap.id = tUser.todoId;
 	// 	snap.authorId = tUser.id;
@@ -284,7 +284,7 @@
 </script>
 
 <!-- scroll to  onmouseenter={tooltipMouseWheel} where tooltip is activated-->
-<div class="tooltip-mouse-wheel hidden">focus & use mouse wheel</div>
+<!-- <div class="tooltip-mouse-wheel hidden">focus & use mouse wheel</div> -->
 <svelte:head>
 	<title>Todo</title>
 </svelte:head>
@@ -301,7 +301,7 @@
 <div class="board">
 	<form bind:this={theForm} method="POST" action="?/addTodo" use:enhance={enhanceTodo}>
 		<div class="two-inputs">
-			<input bind:this={todoIdEl} type="hidden" name="id" bind:value={snap.id} />
+			<input type="hidden" bind:this={todoIdEl} name="id" bind:value={snap.id} />
 			<input type="hidden" name="userId" bind:value={snap.authorId} />
 			<input
 				type="text"
@@ -310,13 +310,8 @@
 				bind:value={snap.title}
 			/>
 
-			<input
-				onmouseenter={tooltipMouseWheel}
-				type="number"
-				name="priority"
-				placeholder="Priority"
-				bind:value={snap.priority}
-			/>
+			<!-- onmouseenter={tooltipMouseWheel} -->
+			<input type="number" name="priority" placeholder="Priority" bind:value={snap.priority} />
 		</div>
 		<div class="two-inputs">
 			<input
@@ -375,7 +370,7 @@
 		</div>
 	</form>
 	<div class="two-columns">
-		<TodoLists
+		<ListsWrapper
 			id={data.locals.user.id}
 			role={data.locals.user.role}
 			uTodosProp={data.uTodos}
@@ -383,7 +378,7 @@
 			{toggleCompleted}
 			{prepareUpdate}
 			{deleteTodo}
-		></TodoLists>
+		></ListsWrapper>
 	</div>
 </div>
 
@@ -407,43 +402,32 @@
 		color: pink !important;
 		border-color: pink;
 	}
-	.tooltip-mouse-wheel {
-		position: fixed;
-		width: 12rem;
-		text-align: center;
-		color: lightgreen;
-		background-color: #3e3e3e;
-		border: 1px solid lightgreen;
-		border-radius: 5px;
-		top: 4.3rem;
-		left: 35rem;
-		cursor: progress;
-	}
+	// .tooltip-mouse-wheel {
+	// 	position: fixed;
+	// 	width: 12rem;
+	// 	text-align: center;
+	// 	color: lightgreen;
+	// 	background-color: #3e3e3e;
+	// 	border: 1px solid lightgreen;
+	// 	border-radius: 5px;
+	// 	top: 4.3rem;
+	// 	left: 35rem;
+	// 	cursor: progress;
+	// }
 	.board {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		grid-column-gap: 1em;
 		min-width: 36em;
 		width: 62vw;
 		padding: 1rem;
 		border: 1px solid gray;
 		border-radius: 8px;
 		margin-left: 1rem;
-
-		.left-column,
-		.right-column {
-			display: flex;
-			flex-direction: column;
-			width: 100%;
-			margin-top: 1rem;
-		}
 		.two-columns {
 			grid-column: span 2;
 		}
 
 		:nth-child(1) {
-			grid-column: span 2;
 			display: flex;
+			grid-column: span 2;
 			flex-direction: column;
 			margin: 0;
 			.two-inputs {
@@ -453,22 +437,21 @@
 				grid-column: 1/3;
 				width: calc(100% - 5rem);
 				padding-left: 1rem;
+				[type='number'] {
+					width: 4rem;
+					padding-left: 1rem;
+				}
 			}
 		}
 	}
 	button {
+		/* margin-top on app.scss class */
 		margin-top: 1rem !important;
 	}
 	.buttons-relative {
 		position: relative;
 		display: flex;
 		gap: 1rem;
-	}
-	h3 {
-		display: block;
-		font-weight: 200;
-		margin-left: 1rem;
-		border-bottom: 1px solid gray;
 	}
 	.hidden {
 		display: none;

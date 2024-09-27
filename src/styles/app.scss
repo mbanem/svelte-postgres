@@ -29,16 +29,15 @@
 
 	--MESSAGE-COLOR: lightgreen;
 
-	--TITLE-COLOR: skyblue;
-	--TITLE-SHADOW: 5px 5px 5px navy;
 	--PRE-COLOR: skyblue;
 	--PRE-FONT-SIZE: 16px;
 
 	--TITLE-COLOR: #e3e3e3;
 	--TITLE-BACKGROUND-COLOR: royalblue;
+	--TITLE-SHADOW: 5px 5px 5px navy;
 
 	--TOOLTIP-COLOR: lightgreen;
-	--TOOLTIP-BACKGROUND-COLOR: black;
+	--TOOLTIP-BACKGROUND-COLOR: #3e3e3e;
 	--TOOLTIP-BORDER: 1px solid gray;
 	--TOOLTIP-BORDER-RADIUS: 4px;
 
@@ -53,6 +52,9 @@
 	--SELECT-OPTION-COLOR: #e3e3e3;
 	--SELECT-OPTION-HOVER-COLOR: yellow;
 	--SELECT-OPTION-SELECTED-COLOR: lightgreen;
+}
+.yellow {
+	color: yellow;
 }
 :global(html) {
 	font-family: 'Times New Roman', Times, serif;
@@ -74,11 +76,106 @@
 .tooltip-wrapper {
 	position: relative;
 }
+.tooltip-profile {
+	position: absolute;
+	top: -2.8rem !important;
+	right: 1rem !important;
+	display: inline-block;
+	width: max-content !important;
+	padding: 0 1rem;
+	line-height: 1px;
+	font-weight: 400;
+	border-radius: 5px;
+	font-size: 14px; /* works here but not in tooltip-master*/
+	color: skyblue;
+	background-color: #3e3e3e;
+	border: 1px solid gray;
+	z-index: 5;
+}
+.tolltip-label {
+	position: absolute;
+	top: 0 !important;
+	right: 1rem !important;
+	display: inline-block;
+	width: max-content !important;
+	padding: 0 1rem;
+	line-height: 1px;
+	font-weight: 400;
+	border-radius: 5px;
+	font-size: 14px; /* works here but not in tooltip-master*/
+	color: skyblue;
+	background-color: #3e3e3e;
+	border: 1px solid gray;
+	p {
+		display: inline-block;
+		width: max-content;
+		color: lightblue;
+	}
+}
+:global(.master-profile) {
+	text-align: center;
+	display: inline-block;
+	p {
+		display: flex;
+		justify-content: space-between;
+		align-content: flex-start;
+		gap: 0.5rem;
+		padding: 0;
+		margin: 0;
+	}
+}
+.property-value {
+	color: yellow;
+}
 .absolute {
 	position: absolute;
 }
 .relative {
 	position: relative;
+}
+/* used with capital letter X */
+.icon-update-color {
+	color: lightblue;
+	border: 3px solid lightblue !important;
+	background-color: rgb(44, 111, 115);
+	outline: none;
+}
+.icon-delete-color {
+	color: tomato;
+	border: 3px solid tomato !important;
+	background-color: rgb(44, 111, 115);
+	outline: none;
+}
+.icon-update,
+.icon-disabled,
+.icon-delete {
+	@extend .icon-delete-color;
+	padding: 1px 8px 0 8px;
+	border: 3px solid tomato !important;
+	border-radius: 4px;
+	font-size: 20px;
+	line-height: 22px;
+	font-weight: 800;
+	cursor: pointer;
+	opacity: 0.6;
+	&:hover {
+		@extend .icon-delete-color;
+		opacity: 1;
+	}
+}
+.icon-update-color {
+	color: lightgreen; //var(--BUTTON-HOVER-COLOR);
+	border-color: lightgreen; //var(--BUTTON-HOVER-COLOR);
+	background-color: #3e3e3e;
+}
+.icon-update {
+	@extend .icon-update-color;
+	opacity: 0.6;
+
+	&:hover {
+		@extend .icon-update-color;
+		opacity: 1;
+	}
 }
 h1,
 h2,
@@ -413,46 +510,33 @@ nav a:any-link {
 	@extend a-block;
 }
 
-.relative {
-	position: relative;
+// .relative {
+// 	position: relative;
 
-	.tooltip {
-		position: absolute;
-		top: -3rem;
-		display: inline-block;
-		width: max-content;
-		font-size: 14px;
-		font-weight: 400;
-		padding: 3px 1rem;
-		border: var(--TOOLTIP-BORDER);
-		border-radius: 4var (--TOOLTIP-BORDER-RADIUS);
-		background-color: var(--TOOLTIP-BACKGROUND-COLOR);
-		text-align: center;
-		margin-bottom: 6px;
-	}
-	.master {
-		color: var(--TOOLTIP-COLOR);
-		font-size: 14px;
-		font-weight: 400;
-		p {
-			padding: 0;
-			margin: 0;
-		}
-	}
-	/* master class has higher specificity than tooltip class, e.g. */
-	/* <Tooltip
-				placement="top"
-				type="custom"
-				defaultClass="tooltip"
-				class="master"
-				arrow={false}
-		>
-			flowbite-svelte Tooltip
-		</Tooltip>
-		NOTE: defaultClass holds primary style
-		while master class could be for warning, error,...
-	*/
-}
+// 	.tooltip {
+// 		position: absolute;
+// 		top: -3rem;
+// 		display: inline-block;
+// 		width: max-content;
+// 		font-size: 14px;
+// 		font-weight: 400;
+// 		padding: 3px 1rem;
+// 		border: var(--TOOLTIP-BORDER);
+// 		border-radius: 4var (--TOOLTIP-BORDER-RADIUS);
+// 		background-color: var(--TOOLTIP-BACKGROUND-COLOR);
+// 		text-align: center;
+// 		margin-bottom: 6px;
+// 	}
+// 	.master {
+// 		color: var(--TOOLTIP-COLOR);
+// 		font-size: 14px;
+// 		font-weight: 400;
+// 		p {
+// 			padding: 0;
+// 			margin: 0;
+// 		}
+// 	}
+// }
 // Conversion function
 // prettier-ignore
 @function to-unit($unit, $input) {
