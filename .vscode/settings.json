@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {
 	"files.exclude": {
 		"**/.git": true,
@@ -43,3 +44,69 @@
 		}
 	]
 }
+=======
+{
+	"files.exclude": {
+		"**/.git": true,
+		"**/.svn": true,
+		"**/.hg": true,
+		"**/CVS": true,
+		"**/.DS_Store": true,
+		"**/Thumbs.db": true,
+		"**/.tgz": true,
+		"README.md": true,
+		"scss.validate": true,
+		"node_modules": true,
+		"pnpm-lock.yaml": true,
+		".svelte-kit": true,
+		"src/styles/app.css": true,
+		"src/styles/mixins.css": true,
+		"src/styles/mixins.css.map": true,
+		"src/styles/variables.css": true,
+		"src/styles/variables.css.map": true,
+		"src/styles/app.css.map": true
+	},
+	"hide-files.files": [
+		"node_modules",
+		"pnpm-lock.yaml",
+		".svelte-kit",
+		"src/styles/app.css",
+		"src/styles/mixins.css",
+		"src/styles/mixins.css.map",
+		"src/styles/variables.css",
+		"src/styles/variables.css.map",
+		"src/styles/app.css.map"
+	],
+	// generating a print statement of the current word on the next line, in different languages
+	"multiCommand.commands": [
+		{
+			"command": "multiCommand.jsGeneratePrint",
+			"sequence": [
+				"editor.action.addSelectionToNextFindMatch",
+				"editor.action.clipboardCopyAction",
+				"editor.action.insertLineAfter",
+				{
+					"command": "editor.action.insertSnippet",
+					"args": {
+						"snippet": "console.log(\"$CLIPBOARD: \", $CLIPBOARD);"
+					}
+				}
+			]
+		},
+		{
+			"command": "multiCommand.javaGeneratePrint",
+			"sequence": [
+				"editor.action.addSelectionToNextFindMatch",
+				"editor.action.clipboardCopyAction",
+				"editor.action.insertLineAfter",
+				{
+					"command": "editor.action.insertSnippet",
+					"args": {
+						"snippet": "System.out.println(\"$CLIPBOARD: \" + $CLIPBOARD);"
+					}
+				}
+			]
+		}
+	]
+}
+>>>>>>> bebf506 (Before moveing CSS to app.scss)

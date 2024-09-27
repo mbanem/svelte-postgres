@@ -52,6 +52,11 @@
 	--SELECT-OPTION-COLOR: #e3e3e3;
 	--SELECT-OPTION-HOVER-COLOR: yellow;
 	--SELECT-OPTION-SELECTED-COLOR: lightgreen;
+
+	--DIV-BUTTON-COLOR: LIGHTBLUE;
+	--DIV-BUTTON-BACKGROND-COLOR: #3e3e3e;
+	--DIV-BUTTON-BORDER: 1px solid lightblue;
+	--DIV-BUTTON-BORDER-RADIUS: 5px;
 }
 .yellow {
 	color: yellow;
@@ -217,12 +222,15 @@ h6 {
 	border-radius: 5px;
 }
 
+div-button,
 .div-button {
 	display: inline-block;
-	width: 5rem;
+	width: max-content;
 	height: 1.5rem;
-	border: 1px solid gray;
-	border-radius: 5px;
+	color: var(--DIV-BUTTON-COLOR);
+	background-color: var(--DIV-BUTTON-BACKGROND-COLOR);
+	border: var(--DIV-BUTTON-BORDER);
+	border-radius: var(--DIV-BUTTON-BORDER-RADIUS);
 	text-align: center;
 	line-height: 1.5rem;
 	cursor: pointer;
