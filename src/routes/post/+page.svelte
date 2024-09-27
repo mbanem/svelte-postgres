@@ -458,7 +458,7 @@
 	const authorId = data?.user?.id
 
 	let categoryIds: number[] = []
-	let multiSelectComponent: MultiSelectBox
+	let multiSelectComponent: typeof MultiSelectBox
 	$effect(() => {
 		utils.setColor(
 			form?.message ? (form.message.includes('successfully') ? 'lightgreen' : 'pink') : 'lightgreen'
