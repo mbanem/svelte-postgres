@@ -516,7 +516,9 @@ clicking faster increases speed on every click
 <RandomCanvas />
 
 <p style="margin:1rem 0 0 1rem;padding:0;">Click color button to change Color Directive</p>
-<p style:background-color={h4Color} class="label-title">Color Style Directives</p>
+<p style:background-color={h4Color} class="label-title" class:border={h4Color !== 'royalblue'}>
+	Color Style Directives
+</p>
 {#each colors as item (item)}
 	<div
 		class="div-button"

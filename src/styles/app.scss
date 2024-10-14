@@ -97,7 +97,7 @@
 	border: 1px solid gray;
 	z-index: 5;
 }
-.tolltip-label {
+.tooltip-label {
 	position: absolute;
 	top: 0 !important;
 	right: 1rem !important;
@@ -215,20 +215,25 @@ h6 {
 	display: inline-block;
 	width: max-content;
 	font-size: 18px;
-	padding: 4px 1rem;
+	padding: 5px 1rem;
 	margin: 0;
 	color: var(--TITLE-COLOR);
 	background-color: var(--TITLE-BACKGROUND-COLOR);
 	border-radius: 5px;
+	&.border {
+		border: var(--DIV-BUTTON-BORDER);
+	}
 }
 
 div-button,
 .div-button {
 	display: inline-block;
 	width: max-content;
+	padding: 3px 1rem;
+	min-width: 3rem;
 	height: 1.5rem;
 	color: var(--DIV-BUTTON-COLOR);
-	background-color: var(--DIV-BUTTON-BACKGROND-COLOR);
+	background-color: var(--DIV-BUTTON-BACKGROUND-COLOR);
 	border: var(--DIV-BUTTON-BORDER);
 	border-radius: var(--DIV-BUTTON-BORDER-RADIUS);
 	text-align: center;
