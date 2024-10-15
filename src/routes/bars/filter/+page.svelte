@@ -1,26 +1,30 @@
-<script>
+<script lang="ts">
 	import FilterableList from './FilterableList.svelte'
-	import { colors } from './colors'
+	import { colors, type Color } from './colors'
 
 	// let row = colors[0];
 </script>
 
-<FilterableList data={colors} field="name" let:item={row}>
-	<header slot="header" class="row">
-		<span class="color"></span>
-		<span class="name">name</span>
-		<span class="hex">hex</span>
-		<span class="rgb">rgb</span>
-		<span class="hsl">hsl</span>
-	</header>
+<FilterableList data={colors} field="name">
+	{#snippet header()}
+		<header class="row">
+			<span class="color"></span>
+			<span class="name">name</span>
+			<span class="hex">hex</span>
+			<span class="rgb">rgb</span>
+			<span class="hsl">hsl</span>
+		</header>
+	{/snippet}
 
-	<div class="row">
-		<span class="color" style="background-color: {row.hex}"></span>
-		<span class="name">{row.name}</span>
-		<span class="hex">{row.hex}</span>
-		<span class="rgb">{row.rgb}</span>
-		<span class="hsl">{row.hsl}</span>
-	</div>
+	{#snippet item_row(a_row: Color)}
+		<div class="row">
+			<span class="color" style="background-color: {a_row.hex}"></span>
+			<span class="name">{a_row.name}</span>
+			<span class="hex">{a_row.hex}</span>
+			<span class="rgb">{a_row.rgb}</span>
+			<span class="hsl">{a_row.hsl}</span>
+		</div>
+	{/snippet}
 </FilterableList>
 
 <style>

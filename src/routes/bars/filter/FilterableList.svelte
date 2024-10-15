@@ -70,23 +70,16 @@
 =======
 <script lang="ts">
 	import type { Snippet } from 'svelte'
-	type Value = {
-		hex: string
-		name: string
-	}
-	type Data = {
-		[key: string]: {
-			hex: string
-			name: string
-			filter: (_: Data[]) => Data
-		}
-	}
+	import { type Color } from './colors'
+
 	type ARGS = {
-		data: Data[]
+		data: Color[]
 		field: string
 		children: Snippet<[]>
+		header: Snippet
+		item_row: Snippet<[Color]>
 	}
-	let { data, field }: ARGS = $props()
+	let { data, field, header, item_row }: ARGS = $props()
 
 	let search = $state('')
 
@@ -101,12 +94,12 @@
 	</label>
 
 	<div class="header">
-		<slot name="header" />
+		{@render header()}
 	</div>
 
 	<div class="content">
 		{#each data.filter(matches) as item}
-			<slot {item} />
+			{@render item_row(item)}
 		{/each}
 	</div>
 </div>

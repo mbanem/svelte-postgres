@@ -14,7 +14,7 @@
     while the :before class is visible and displays a given title as content -- content: " " attr(title) "";
     </pre>
 
-		<a href="https://www.w3schools.com" title="anchor title">&nbsp;</a>
+		<a href="https://www.w3schools.com" title="anchor title" aria-label="w3c school">&nbsp;</a>
 	</div>
 	<div style="margin-top:4rem;">
 		css ul &lcub; list-style-type: lower-greek; &rcub;

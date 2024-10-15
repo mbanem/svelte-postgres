@@ -676,16 +676,28 @@
 		c: 'the second page below',
 		d: 'the third page below'
 	}
-	const setTooltipText = (el: HTMLButtonElement) => {
+	const setTooltip = (el: HTMLButtonElement) => {
 		const tooltipEl = el.innerText as ButtonCaption
 		ttEl.innerHTML = 'Will animate in<br/>' + tooltips[tooltipEl]
+		// const rect = el.getBoundingClientRect()
+		// // console.log('rect', rect.left + 'px', rect.top + 'px')
+		// ttEl.style.position = 'absolute'
+		// ttEl.style.left = rect.left - 10 + 'px'
+		// ttEl.style.top = rect.top - 25 + 'px'
+		// document.querySelector('.tooltip-scroll')?.classList.toggle('hidden')
 	}
-	const tooltipScrollBy = (event: MouseEvent) => {
-		setTooltipText(event.target as HTMLButtonElement)
-		document.querySelector('.tooltip-scroll-by')?.classList.toggle('hidden')
+	const tooltipShow = (event: MouseEvent) => {
+		const el = event.target as HTMLButtonElement
+		setTooltip(el)
+		ttEl.classList.remove('hidden')
+		// console.log(ttEl.classList)
 		// setTimeout(() => {
-		// 	document.querySelector('.tooltip-scroll-by')?.classList.toggle('hidden')
+		// 	document.querySelector('.tooltip-scroll')?.classList.toggle('hidden')
 		// }, 3000)
+	}
+	const tooltipHide = (event: MouseEvent) => {
+		const el = event.target as HTMLButtonElement
+		ttEl.classList.add('hidden')
 	}
 	const tooltipMouseWheel = () => {
 		document.querySelector('.tooltip-mouse-wheel')?.classList.toggle('hidden')
@@ -700,7 +712,7 @@
     into view in order to trigger the animation
 -->
 <div class="tooltip-mouse-wheel hidden">focus & use mouse wheel</div>
-<div bind:this={ttEl} class="tooltip-scroll-by hidden"></div>
+<div bind:this={ttEl} class="tooltip-scroll hidden"></div>
 <div class="container">
 	<div class="buttons">
 		<!-- scroll array elements left and right -->
@@ -737,8 +749,8 @@
 		{#each Object.keys(params) as cn}
 			<button
 				onclick={() => animation(`.${cn}`)}
-				onmouseenter={tooltipScrollBy}
-				onmouseleave={tooltipScrollBy}>{cn}</button
+				onmouseenter={tooltipShow}
+				onmouseleave={tooltipHide}>{cn}</button
 			>
 		{/each}
 
@@ -965,23 +977,24 @@
 		width: 10rem;
 	}
 
-	.tooltip-scroll-by,
 	.tooltip-scroll {
-		position: fixed;
-		top: 4.3rem;
-		left: 35rem;
-		width: 9.2rem;
+		position: absolute;
+		display: inline-block;
+		top: 0;
+		left: 0;
+		width: max-content;
+		padding: 3px 1rem;
 		text-align: center;
 		word-break: break-word;
+		max-width: 10rem;
 		color: gray;
 		background-color: #3e3e3e;
 		border: 1px solid gray;
 		border-radius: 5px;
 		cursor: progress;
-	}
-	.tooltip-scroll-by {
-		top: 20rem;
-		left: 6rem;
+		&::before {
+			position: relative;
+		}
 	}
 	.tooltip-mouse-wheel {
 		position: fixed;

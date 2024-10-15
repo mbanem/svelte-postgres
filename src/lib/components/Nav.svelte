@@ -1,5 +1,5 @@
 <script lang="ts">
-	export let locals: App.Locals;
+	export let locals: App.Locals
 </script>
 
 <nav>
@@ -47,18 +47,18 @@
 			display: inline-block;
 			width: 6rem;
 			padding: 4px 0;
-			border: $BORDER;
-			border-radius: $BORDER-RADIUS;
+			border: var(--BORDER);
+			border-radius: var(--BORDER-RADIUS);
 			text-decoration: none;
-			color: $LINK-COLOR;
+			color: var(--LINK-COLOR);
 			opacity: 0.7;
-			background-color: $BACK-COLOR;
+			background-color: var(--BODY-BACKGROUND-COLOR);
 			// text-wrap: nowrap;
 			&:hover {
-				background-color: $BACK-COLOR;
-				color: $LINK-HOVER;
-				border: $BORDER-HOVER;
-				border-radius: $BORDER-RADIUS;
+				background-color: var(--BODY-BACKGROUND-COLOR);
+				color: var(--LINK-HOVER);
+				border: var(--BORDER-HOVER-COLOR);
+				border-radius: var(--BORDER-RADIUS);
 				opacity: 1;
 			}
 		}

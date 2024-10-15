@@ -104,11 +104,13 @@
 
 		child.style.border = `8px solid gray` //${child.style.color}`;
 		const match = el.outerHTML.match(/class=.(\w+\d) /)
-		const id = match ? match[1].slice(-1) : ''
+		const id = match ? match[1]?.slice(-1) : ''
 		let state = Flip.getState(id === '1' ? '.item' : '.itm') as Flip.FlipState
 		let target = id === '1' ? '.item' : '.itm'
 
-		moveCard(id)
+		if (id) {
+			moveCard(id)
+		}
 
 		Flip.from(state, {
 			targets: target,

@@ -1,7 +1,7 @@
-<script lang="ts">
+<script lang="ts" module>
 	// child component to update local childCount when called from parent
-	let childCount = $state<number>(0);
-	export const counter = (delta: number) => (childCount += delta);
+	let childCount = $state<number>(0)
+	export const counter = (delta: number) => (childCount += delta)
 </script>
 
 <div class="wrapper">

@@ -170,7 +170,7 @@
 <!-- three column grid -->
 <main>
 	{#if !start}
-		<h3 class="hide-label" in:send={{ key: 'y' }} out:receive={{ key: 'y' }}>&nbsp;</h3>
+		<h3 class="hide-label" in:send={{ key: 'y' }} out:receive={{ key: 'y' }}>.</h3>
 	{:else}
 		<h3 class="info-label" in:send={{ key: 'y' }} out:receive={{ key: 'y' }}>
 			Click on a Hiding Box to vanish

@@ -82,7 +82,7 @@ with child click event:MouseEvent and value of delta bound in &lt;input type='nu
 </style>
 =======
 <script lang="ts">
-	import Bindable from '$components/Bindable.svelte'
+	import Bindable, { counter } from '$components/Bindable.svelte'
 	let count = 12 //$state(22);
 
 	const click = () => {
@@ -97,7 +97,7 @@ with child click event:MouseEvent and value of delta bound in &lt;input type='nu
 
 	// ------------  parent to call child function to update its local childCount -------------
 
-	let childComponent: Bindable
+	let childComponent: typeof Bindable
 
 	// for parent to call child function it has to have reference to the
 	// child component by binding this way <Child bind:this={childComponent}...
@@ -113,8 +113,7 @@ with child click event:MouseEvent and value of delta bound in &lt;input type='nu
 		return Math.round(Math.random() * 10000)
 	}
 	const callChildCounter = () => {
-		console.log('callChildCounter')
-		childComponent.counter(getRandomInt())
+		counter(getRandomInt())
 	}
 </script>
 
@@ -145,9 +144,14 @@ with child click event:MouseEvent and value of delta bound in &lt;input type='nu
 </pre>
 <br />
 <button style="margin-left:2rem;" onclick={callChildCounter}>
-	call child counter to increment its count
+	parent call child counter to increment its count
 </button>
-<Bindable bind:count {clickArg} bind:this={childComponent} />
+<!-- NOTE: to use child function we export it from <script lang='ts' module>
+	and import it along the component itself like
+	import Comp, {func} from './ChildComponent.svelte'
+	no more <ChildComponent bind:this={X}> and calling X.func()
+-->
+<Bindable bind:count {clickArg}></Bindable>
 
 <style>
 	/* pre {

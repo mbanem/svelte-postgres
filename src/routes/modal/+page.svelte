@@ -144,21 +144,9 @@
 	.hidden {
 		display: none;
 	}
-	.pointer {
-		cursor: pointer;
-	}
 	pre {
 		margin: 0 0 0 calc(50vw - 22rem);
 		font-size: 16px;
 		width: 30rem;
-	}
-	.clear-messages {
-		display: inline-block;
-    position:fixed;
-    top:47vh;
-    left:2rem
-		/* margin-left: 2rem; */
-		color: yellow;
-		cursor: pointer;
 	}
 </style>

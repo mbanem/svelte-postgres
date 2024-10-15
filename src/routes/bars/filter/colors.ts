@@ -1,4 +1,18 @@
-const data = [
+// this structure is used first for two mandatory properties name and hex as an object array
+// Array<{ name: string, hex: string }> which is transformed via map into a wider
+// Array<{ name: string, hex: string, rgb?: string, hsl?: string }> with optional rgb and hsl
+// properties as the first structure handle only the name and hex properties
+// and for filtering colors based on part of color name the structure also have an optional
+// filter property -- a function that extract part of the array that matches the filter criteria
+export type Color = {
+	name: string
+	hex: string
+	rgb?: string
+	hsl?: string
+	filter?: (_: Color[]) => Color
+}
+
+const data: Color[] = [
 	{ hex: '#f0f8ff', name: 'AliceBlue' },
 	{ hex: '#faebd7', name: 'AntiqueWhite' },
 	{ hex: '#00ffff', name: 'Aqua' },
@@ -149,31 +163,35 @@ const data = [
 	{ hex: '#9acd32', name: 'YellowGreen' }
 ]
 
-export const colors = data.map(({ hex, name }) => {
+// transform name,hex into name,hex,rgb,hsl array
+export const colors: Color[] = data.map(({ hex, name }) => {
 	// calculate rgb
-	let r = parseInt(hex.slice(1, 3), 16)
-	let g = parseInt(hex.slice(3, 5), 16)
-	let b = parseInt(hex.slice(5, 7), 16)
+	let r = parseInt(hex.slice(1, 3), 16) // 1,2
+	let g = parseInt(hex.slice(3, 5), 16) // 3.4
+	let b = parseInt(hex.slice(5, 7), 16) // 5.6
 
-	const rgb = `rgb(${r}, ${g}, ${b})`
+	const rgb = `rgb(${r}, ${g}, ${b})` // rgb(125, 189, 211)
 
 	// calculate hsl
 	r /= 255
 	g /= 255
 	b /= 255
 
-	const max = Math.max(r, g, b)
+	const max = Math.max(r, g, b) // one of the r,g,b
 	const min = Math.min(r, g, b)
 
 	let h = 0
 	let s = 0
-	const l = (max + min) / 2
+	// use el instead of l as it looks like digit one
+	const el = (max + min) / 2 // not the average
 
 	if (max > min) {
 		const d = max - min
-		s = l > 0.5 ? d / (2 - max - min) : d / (max + min)
+		s = el > 0.5 ? d / (2 - (min + max)) : d / (max + min)
 
-		switch (max) {
+		switch (
+			max // as max is one of the r,g,b
+		) {
 			case r:
 				h = (g - b) / d + (g < b ? 6 : 0)
 				break

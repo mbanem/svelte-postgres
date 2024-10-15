@@ -97,7 +97,7 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
 		select distinct t.user_id as "id",
 										u.first_name as "firstName",
 										u.last_name as "lastName",
-										u.role from todo t
+										u.'from' todo t
 											join users u on u.id = t.user_id`
 
 	// console.log(uTodos, users)

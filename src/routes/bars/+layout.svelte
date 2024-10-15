@@ -187,27 +187,5 @@
 	button {
 		background-color: rgb(5, 5, 153) !important;
 	}
-	.container {
-		width: 30rem;
-		margin-left: 5rem;
-	}
-	.bar-button {
-		display: inline-block;
-		background-color: rgb(5, 5, 153);
-		color: lightgreen;
-		border-radius: 5px;
-		padding: 1px 0.5rem;
-		border: 1px solid transparent;
-		text-align: center;
-		min-width: 3rem;
-		height: 1.5rem;
-		font-size: 20px;
-		font-family: 'Times New Roman', Times, serif;
-		cursor: pointer;
-		user-select: none;
-		outline: none;
-		margin: 4px;
-		text-transform: capitalize;
-	}
 </style>
 >>>>>>> bebf506 (Before moveing CSS to app.scss)

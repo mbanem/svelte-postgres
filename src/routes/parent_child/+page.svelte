@@ -17,7 +17,6 @@
 	let person = $state<Person>({ name: 'Mr. Filip Isakovic', age: 18, city: 'San Diego' })
 	let nameUpper = $derived(person.name.toUpperCase())
 
-
 	onMount(() => {
 		return () => {
 			utils.setMrPath($page.url.pathname)
@@ -73,7 +72,7 @@
 		padding-left: 1rem;
 		width: 81vw;
 	}
-	getContext p {
+	p {
 		margin: 0;
 		padding: 6px 0 0 0;
 	}

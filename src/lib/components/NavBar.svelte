@@ -290,11 +290,11 @@
 
 	type ARGS = {
 		navButtonObjects: TXNavButtonObject[]
-		role: string
+		role?: string
 	}
 	// export let navButtonObjects: TXNavButtonObject[] = [];
-	// export let role: string = 'VISITOR'; //Role = Role.VISITOR
-	let { navButtonObjects = $bindable(), role }: ARGS = $props()
+	// export let role: string = 'VISITOR'; //Role = 'VISITOR'
+	let { navButtonObjects = $bindable(), role = 'VISITOR' }: ARGS = $props()
 	// }: { navButtonObjects: TXNavButtonObject[]; role: string } = $props();
 
 	// variables for defining css class categories and class ids

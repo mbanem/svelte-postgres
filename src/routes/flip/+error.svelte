@@ -13,9 +13,6 @@
 </div>
 
 <style lang="scss">
-	.button {
-		display: inline-block;
-	}
 	.container {
 		margin: 5rem 0 0 10rem;
 		h2 {

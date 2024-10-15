@@ -11,4 +11,4 @@
 
 <h1 style="color:lightgreen;font-weight:400;">SelectList page</h1>
 
-<SelectBox categories={data.categories} {selectedCategoryIds} />
+<SelectBox categories={data.categories} {selectedCategoryIds} categoryIsRequired="" />

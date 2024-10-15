@@ -282,10 +282,6 @@
 		margin-left: 5rem;
 	}
 
-	.mp-zero {
-		padding: 0;
-		margin: 2px 0;
-	}
 	.a,
 	.b {
 		border: 1px solid gray;

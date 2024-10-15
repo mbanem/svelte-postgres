@@ -240,8 +240,9 @@ export {}
 =======
 // See https://kit.svelte.dev/docs/types#app
 // for information about these interfaces
+
 declare global {
-	type Role = 'USER' | 'ADMIN' | 'VISITOR'
+	// type Role = 'USER' | 'ADMIN' | 'VISITOR'
 	type TNavBar = {
 		navId: string
 		startIx: number
@@ -432,11 +433,11 @@ declare global {
 		updatedAt?: Date
 	}
 
-	enum Role {
-		USER = 'USER',
-		ADMIN = 'ADMIN',
-		VISITOR = 'VISITOR'
-	}
+	// enum Role {
+	// 	USER = 'USER',
+	// 	ADMIN = 'ADMIN',
+	// 	VISITOR = 'VISITOR'
+	// }
 
 	type Profile = {
 		id: string

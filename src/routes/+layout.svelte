@@ -111,7 +111,9 @@
 <!-- <pre style="font-size:11px;">layout role {data?.locals?.user?.role}</pre> -->
 <div class="wrapper">
 	{#key data?.locals?.user?.role}
-		<NavBar bind:navButtonObjects role={data?.locals?.user?.role} />
+		<div class="nav-wrapper">
+			<NavBar bind:navButtonObjects role={data?.locals?.user?.role} />
+		</div>
 	{/key}
 	<main>{@render children()}</main>
 </div>
@@ -126,6 +128,15 @@
 	:global(body) {
 		color: var(--BODY-COLOR);
 		background-color: VAR(--BODY-BACKGROUND-COLOR);
+	}
+	.nav-wrapper {
+		position: fixed;
+		top: 0;
+		border-bottom: 2px solid var(--BODY-BACKGROUND-COLOR);
+		background-color: var(--BODY-BACKGROUND-COLOR);
+	}
+	main {
+		margin-top: 2.5rem;
 	}
 	.wrapper {
 		margin: 0;

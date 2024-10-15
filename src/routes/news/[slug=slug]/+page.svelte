@@ -39,8 +39,7 @@
 		background-color: #3e3e3e;
 		margin: 1rem 0 0 3rem;
 	}
-	h1,
-	h2 {
+	h1 {
 		color: skyblue;
 	}
 	.a-button {

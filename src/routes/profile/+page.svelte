@@ -733,7 +733,12 @@
 							{/if}
 							update
 						</button>
-						<button bind:this={btnDelete} type="submit" formaction="?/delete" class="button hidden"
+						<button
+							bind:this={btnDelete}
+							type="submit"
+							formaction="?/delete"
+							class="button hidden"
+							aria-label="delete profile"
 						></button>
 					{/if}
 					<button onclick={clearForm}>clear</button>
