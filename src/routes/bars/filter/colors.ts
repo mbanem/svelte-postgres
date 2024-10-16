@@ -9,7 +9,7 @@ export type Color = {
 	hex: string
 	rgb?: string
 	hsl?: string
-	filter?: (_: Color[]) => Color
+	filter?: (_: Color[]) => Color[]
 }
 
 const data: Color[] = [
@@ -206,7 +206,7 @@ export const colors: Color[] = data.map(({ hex, name }) => {
 		h /= 6
 	}
 
-	const hsl = `hsl(${Math.round(h * 360)}, ${Math.round(s * 100)}%, ${Math.round(l * 100)}%)`
+	const hsl = `hsl(${Math.round(h * 360)}, ${Math.round(s * 100)}%, ${Math.round(el * 100)}%)`
 
 	return {
 		name,

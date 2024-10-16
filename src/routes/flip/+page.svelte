@@ -454,7 +454,7 @@
 		position: absolute;
 		display: flex;
 		top: 8rem;
-		left: 14rem;
+		left: 20rem;
 		margin-bottom: 5px;
 		color: lightgreen;
 		transition-delay: 6s;

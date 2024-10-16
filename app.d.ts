@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 // See https://kit.svelte.dev/docs/types#app
 // for information about these interfaces
 declare global {
@@ -237,7 +236,7 @@ declare global {
 }
 
 export {}
-=======
+
 // See https://kit.svelte.dev/docs/types#app
 // for information about these interfaces
 
@@ -479,4 +478,3 @@ declare global {
 }
 
 export {}
->>>>>>> bebf506 (Before moveing CSS to app.scss)

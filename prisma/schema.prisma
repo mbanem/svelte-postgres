@@ -127,6 +127,27 @@ model Todo {
 
 // ALTER SEQUENCE category_id_seq RESTART WITH 12;
 
+
+// CREATE ROLE mili SUPERUSER LOGIN PASSWORD 'kiki';
+// GRANT ALL PRIVILEGES TO mili;
+
+// CREATE DATABASE FORMS OWNER mili;
+// GRANT ALL PRIVILEGES ON DATABASE forms TO mili;
+
+// \c forms mili
+// You are now connected to database "forms" as user "mili".
+
+// go to vsCode
+//  -- delete prisma node
+//  -- execute
+//  pnpx prisma init
+//  -- replace schema.prisma content with this file
+//  -- check .env file on user mili:kiki   DATABASE_URL="postgresql://mili:kiki@localhost:5432/forms?schema=public"
+//  -- execute
+//  pnpx prisma migrate dev --name init
+//  pnpx prisma generate
+//  -- insert into category
+
 // insert into category (name) values('JavaScript'),
 //  ('Typescript'),
 //  ('Svelte'),

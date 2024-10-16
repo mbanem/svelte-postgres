@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import { redirect } from '@sveltejs/kit'
 import type { Actions } from './$types'
 
@@ -46,7 +45,7 @@ export const actions: Actions = {
 		throw redirect(302, '/')
 	}
 } satisfies Actions
-=======
+
 import { redirect } from '@sveltejs/kit'
 import type { Actions } from './$types'
 
@@ -94,4 +93,3 @@ export const actions: Actions = {
 		throw redirect(303, '/')
 	}
 } satisfies Actions
->>>>>>> bebf506 (Before moveing CSS to app.scss)

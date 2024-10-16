@@ -1,13 +1,13 @@
-import type { RequestHandler } from './$types';
-import { redirect } from '@sveltejs/kit';
-import { db } from '$lib/server/db';
-const dbModel = { post: db.post, user: db.user };
-type Model = 'post' | 'user';
+import type { RequestHandler } from './$types'
+import { redirect } from '@sveltejs/kit'
+import { db } from '$lib/server/db'
+const dbModel = { post: db.post, user: db.user }
+type Model = 'post' | 'user'
 // path:  src/routes/api/disconnect/[type]x[id]x[dependenttype]
 export const GET: RequestHandler = (async ({ params }) => {
-	const parent = params.type.slice(1, -1) as Model; // remove brackets around the type
-	const ID = String(params.id.slice(1, -1)); // remove brackets around the id
-	const dependent = params.dependenttype.slice(1, -1);
+	const parent = params.type.slice(1, -1) as Model // remove brackets around the type
+	const ID = String(params.id.slice(1, -1)) // remove brackets around the id
+	// const dependent = params.dependenttype.slice(1, -1);
 
 	try {
 		// @ts-expect-error
@@ -20,9 +20,9 @@ export const GET: RequestHandler = (async ({ params }) => {
 					disconnect: true
 				}
 			}
-		});
+		})
 	} catch (err) {
-		console.log(err);
+		console.log(err)
 	}
-	throw redirect(303, `/`);
-}) satisfies RequestHandler;
+	throw redirect(303, `/`)
+}) satisfies RequestHandler

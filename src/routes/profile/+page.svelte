@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 <script lang="ts">
 	import type { Snapshot } from '../$types'
 	import { onMount } from 'svelte'
@@ -438,7 +438,7 @@
 		border-color: pink !important;
 	}
 </style>
-=======
+
 <script lang="ts">
 	import type { Snapshot } from '../$types'
 	import { onMount } from 'svelte'
@@ -840,4 +840,4 @@
 		border-color: pink !important;
 	}
 </style>
->>>>>>> bebf506 (Before moveing CSS to app.scss)
+

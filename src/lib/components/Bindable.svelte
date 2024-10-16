@@ -45,7 +45,6 @@ Child button clicked changing parent count<span class="expression-highlighted"> 
 		call parent to update its count by delta={delta}
 	</button>
 </div>
->>>>>>> bebf506 (Before moveing CSS to app.scss)
 
 <!-- svelte-ignore css_unused_selector -->
 <style lang="scss">

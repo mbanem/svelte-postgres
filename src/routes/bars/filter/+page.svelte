@@ -16,13 +16,13 @@
 		</header>
 	{/snippet}
 
-	{#snippet item_row(a_row: Color)}
+	{#snippet item_row(c: Color)}
 		<div class="row">
-			<span class="color" style="background-color: {a_row.hex}"></span>
-			<span class="name">{a_row.name}</span>
-			<span class="hex">{a_row.hex}</span>
-			<span class="rgb">{a_row.rgb}</span>
-			<span class="hsl">{a_row.hsl}</span>
+			<span class="color" style="background-color: {c.hex}"></span>
+			<span class="name">{c.name}</span>
+			<span class="hex">{c.hex}</span>
+			<span class="rgb">{c.rgb}</span>
+			<span class="hsl">{c.hsl}</span>
 		</div>
 	{/snippet}
 </FilterableList>

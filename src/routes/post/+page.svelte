@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 <script lang="ts">
 	// @ts-check
 	import type { Snapshot } from '../$types' // .sveltekit/$types
@@ -417,7 +417,7 @@
 		set it adjacent to create/update button using the absolute position
 	*/
 </style>
-=======
+
 <script lang="ts">
 	// @ts-check
 	import type { Snapshot } from '../$types' // .sveltekit/$types
@@ -907,4 +907,4 @@
 		position: relative;
 	}
 </style>
->>>>>>> bebf506 (Before moveing CSS to app.scss)
+

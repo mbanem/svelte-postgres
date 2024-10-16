@@ -13,6 +13,20 @@
 		return (Math.random() + 1).toString(36).slice(2, 5)
 	}
 
+	let pix = 0
+	let cix = 0
+	const parents = [
+		['Snezana', 'Ljubomir', 'Isakovic'],
+		['Tanja', 'Ljuban', 'Milutinovic'],
+		['Dragana', 'Zeljko', 'Kotur'],
+		['Mirjana', 'Sasa', 'Krsmanovic']
+	]
+	const children = [
+		['Matia', 'Filip'],
+		['Mia', 'Marko'],
+		['Bojana', 'Nikola'],
+		['Jovana', 'Milica']
+	]
 	// state
 	const createOuter = (inner) => {
 		let _text = `outer-${randomId()}`
@@ -109,64 +123,79 @@
 	})
 </script>
 
-<Explanation />
+<div class="wrap-all">
+	<Explanation />
 
-<ul class="container">
-	<div class="header">
-		<button onclick={() => appendOuter()}> append new outer </button>
-	</div>
-	{#each list as outer, index (outer.text)}
-		<li class="outer container" animate:flip={{ duration: 300 }}>
-			<MoveButtons actionUp={moveOuter(outer, -1)} actionDown={moveOuter(outer, 1)} />
-			<ul class="content">
-				<div class="header">
-					<span>{outer.text}</span>
-					<button onclick={() => appendInner(outer)}> append new inner </button>
-				</div>
-				{#each outer.inner as inner, i (inner.text)}
-					<li
-						class="inner container"
-						in:receive={{ key: inner.text }}
-						out:send={{ key: inner.text }}
-						animate:flip={{ duration: 300 }}
-					>
-						<MoveButtons
-							actionUp={moveInner(outer, inner, -1)}
-							actionDown={moveInner(outer, inner, 1)}
-						/>
-						<div class="content">
-							{inner.text}
-						</div>
-					</li>
-				{/each}
-			</ul>
-		</li>
-	{/each}
-</ul>
+	<ul class="container">
+		<div class="header">
+			<button onclick={() => appendOuter()}> append new outer </button>
+		</div>
+		{#each list as outer, index (outer.text)}
+			<li class="outer container" animate:flip={{ duration: 300 }}>
+				<MoveButtons actionUp={moveOuter(outer, -1)} actionDown={moveOuter(outer, 1)} />
+				<ul class="content">
+					<div class="header">
+						<span>{outer.text}</span>
+						<button onclick={() => appendInner(outer)}> append new inner </button>
+					</div>
+					{#each outer.inner as inner, i (inner.text)}
+						<li
+							class="inner container"
+							in:receive={{ key: inner.text }}
+							out:send={{ key: inner.text }}
+							animate:flip={{ duration: 300 }}
+						>
+							<MoveButtons
+								actionUp={moveInner(outer, inner, -1)}
+								actionDown={moveInner(outer, inner, 1)}
+							/>
+							<div class="content">
+								{inner?.text}
+							</div>
+						</li>
+					{/each}
+				</ul>
+			</li>
+		{/each}
+	</ul>
+</div>
 
 <style>
+	.wrap-all {
+		margin-left: 5rem !important;
+	}
 	.container {
-		border: 1px solid;
+		border: 1px solid gray;
+		border-radius: 8px;
 		padding: 1rem;
 		display: flex;
 		flex-direction: column;
 		gap: 1rem;
+		width: 80vw;
+		/* margin: 0 auto; */
 	}
 
 	.outer,
 	.inner {
 		display: flex;
 		flex-direction: row;
+		width: 98.4%;
+		background-color: bisque;
+		/* border: 1px solid pink; */
 	}
 
 	.outer > .content,
 	.inner > .content {
 		flex: 1;
-		padding: 0;
+		padding: 0 0 0 1rem;
 		margin: 0;
 		display: flex;
 		flex-direction: column;
 		gap: 0.75rem;
+		width: 90%;
+		background-color: aliceblue;
+		font-size: 18px;
+		color: black;
 	}
 
 	.header {
@@ -174,5 +203,7 @@
 		flex-direction: row;
 		justify-content: space-between;
 		align-items: center;
+		width: 100%;
+		/* border: 1px solid yellow; */
 	}
 </style>

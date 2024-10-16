@@ -22,7 +22,7 @@ CREATE TABLE "profile" (
     "bio" TEXT,
     "user_id" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL,
+    "updated_at" TIMESTAMP(3),
 
     CONSTRAINT "profile_pkey" PRIMARY KEY ("id")
 );
@@ -45,7 +45,7 @@ CREATE TABLE "post" (
     "published" BOOLEAN NOT NULL DEFAULT false,
     "author_id" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL,
+    "updated_at" TIMESTAMP(3),
 
     CONSTRAINT "post_pkey" PRIMARY KEY ("id")
 );
@@ -67,7 +67,7 @@ CREATE TABLE "todo" (
     "completed" BOOLEAN NOT NULL DEFAULT false,
     "user_id" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL,
+    "updated_at" TIMESTAMP(3),
 
     CONSTRAINT "todo_pkey" PRIMARY KEY ("id")
 );
@@ -86,9 +86,6 @@ CREATE UNIQUE INDEX "users_first_name_last_name_email_key" ON "users"("first_nam
 
 -- CreateIndex
 CREATE UNIQUE INDEX "profile_user_id_key" ON "profile"("user_id");
-
--- CreateIndex
-CREATE UNIQUE INDEX "todo_user_id_key" ON "todo"("user_id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "_CategoryToPost_AB_unique" ON "_CategoryToPost"("A", "B");

@@ -1,8 +1,10 @@
 @import './mixins.scss';
 :root {
 	--BODY-COLOR: #e3e3e3;
+	--TEXT-COLOR: #e3e3e3;
 	--BODY-BACKGROUND-COLOR: #3e3e3e;
 
+	--FONT-SIZE: 16px;
 	--H-COLOR: royalblue;
 	--INPUT-COLOR: #e3e3e3;
 	--INPUT-BACKGROUND-COLOR: #3e3e3e;
@@ -80,6 +82,22 @@
 }
 .tooltip-wrapper {
 	position: relative;
+	display: inline-block;
+	width: max-content;
+}
+.tooltip {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: max-content;
+	padding: 0 1rem;
+	text-align: center;
+	word-break: break-word;
+	color: skyblue;
+	background-color: #3e3e3e;
+	border: 1px solid gray;
+	border-radius: 5px;
+	cursor: progress;
 }
 .tooltip-profile {
 	position: absolute;

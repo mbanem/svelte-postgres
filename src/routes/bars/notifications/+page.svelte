@@ -12,13 +12,13 @@
 {#if notifications.count > 0}
 	<div class="notes">
 		<p>Current World News</p>
-		<ul>
+		<ul id="fake">
 			{#each notifications.items as { content }}
 				<li class="content">{content}</li>
 			{/each}
-			<a href="{base}/"><div class="button">home</div></a>
+			<a href="{base}/">home</a>
 			{#if browser}
-				<div class="button" onclick={() => history.back()} aria-hidden={true}>go back</div>
+				<a href="#fake" onclick={() => history.back()} aria-hidden={true}>go back</a>
 			{/if}
 		</ul>
 	</div>

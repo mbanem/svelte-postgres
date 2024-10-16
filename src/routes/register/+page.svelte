@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 <script lang="ts">
 	import type { Snapshot } from '../$types' // .sveltekit/$types
 	import { page } from '$app/stores'
@@ -135,7 +135,7 @@
 		color: pink;
 	}
 </style>
-=======
+
 <script lang="ts">
 	import type { Snapshot } from '../$types' // .sveltekit/$types
 	import { page } from '$app/stores'
@@ -274,4 +274,4 @@
 		color: pink;
 	}
 </style>
->>>>>>> bebf506 (Before moveing CSS to app.scss)
+
