@@ -1,6 +1,6 @@
 <script>
 	import MoveButtons from './MoveButtons.svelte'
-	import Explanation from './Explanation.svelte'
+	// import Explanation from './Explanation.svelte'
 
 	import { crossfade } from 'svelte/transition'
 	import { cubicInOut } from 'svelte/easing'
@@ -13,20 +13,6 @@
 		return (Math.random() + 1).toString(36).slice(2, 5)
 	}
 
-	let pix = 0
-	let cix = 0
-	const parents = [
-		['Snezana', 'Ljubomir', 'Isakovic'],
-		['Tanja', 'Ljuban', 'Milutinovic'],
-		['Dragana', 'Zeljko', 'Kotur'],
-		['Mirjana', 'Sasa', 'Krsmanovic']
-	]
-	const children = [
-		['Matia', 'Filip'],
-		['Mia', 'Marko'],
-		['Bojana', 'Nikola'],
-		['Jovana', 'Milica']
-	]
 	// state
 	const createOuter = (inner) => {
 		let _text = `outer-${randomId()}`
@@ -123,8 +109,9 @@
 	})
 </script>
 
+<a href="/crossfade2">to Cross Fade 2</a>
 <div class="wrap-all">
-	<Explanation />
+	<!-- <Explanation /> -->
 
 	<ul class="container">
 		<div class="header">
@@ -150,7 +137,7 @@
 								actionDown={moveInner(outer, inner, 1)}
 							/>
 							<div class="content">
-								{inner?.text}
+								{inner.text}
 							</div>
 						</li>
 					{/each}

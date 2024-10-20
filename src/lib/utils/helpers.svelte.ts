@@ -505,3 +505,12 @@ export const parseToHTML = (str: string) => {
 	dom.innerHTML = str
 	return dom
 }
+
+export const array_move = (arr: Array<any>, fromIx: number, toIx: number) => {
+	// the next call removes element from toIx position without deleting any
+	// returns removed if any, in this case an empty array
+	// as we do not remove any elements but just move one
+	arr.splice(toIx, 0, arr.splice(fromIx, 1)[0])
+	// now array is mutated and we return the resulting one
+	return arr
+}

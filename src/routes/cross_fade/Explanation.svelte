@@ -1,3 +1,6 @@
+<script lang="ts">
+</script>
+
 <div class="container">
 	<h3>Crossfade only working in some occasions</h3>
 	<p>
