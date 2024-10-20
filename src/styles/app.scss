@@ -55,8 +55,11 @@
 	--SELECT-OPTION-HOVER-COLOR: yellow;
 	--SELECT-OPTION-SELECTED-COLOR: lightgreen;
 
+	--SELECT-BOX-COLOR: rgb(41, 37, 37);
+	--SELECT-BOX-OPACITY:0.9;
+
 	--DIV-BUTTON-COLOR: LIGHTBLUE;
-	--DIV-BUTTON-BACKGROND-COLOR: #3e3e3e;
+	--DIV-BUTTON-BACKGROUND-COLOR: #3e3e3e;
 	--DIV-BUTTON-BORDER: 1px solid lightblue;
 	--DIV-BUTTON-BORDER-RADIUS: 5px;
 }
@@ -366,7 +369,6 @@ button,
 	font-size: 20px;
 	cursor: pointer;
 	user-select: none;
-	user-select: none;
 	outline: none;
 	margin: 0 4px;
 	text-transform: uppercase;
@@ -471,6 +473,21 @@ textarea {
 		font-weight: normal;
 	}
 }
+select{
+	width:max-content;
+	padding:4px 1rem;
+
+	color:var(--SELECT-BOX-COLOR);
+	opacity: var(--SELECT-BOX-OPACITY);
+	font-size:18px;
+	// font-weight: bold;
+	option{
+		color:black !important;
+		font-weight:normal;
+		font-size:16px;
+	}
+}
+
 @function string($input) {
 	@return str($input);
 }

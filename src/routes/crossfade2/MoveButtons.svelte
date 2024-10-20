@@ -1,14 +1,15 @@
 <script lang="ts">
+	// does not work correctly when attempting to cross family borders
 	let { actionUp, actionDown } = $props()
 </script>
 
-<div>
+<div class="up-down">
 	<button onclick={() => actionUp}> ↑ </button>
 	<button onclick={() => actionDown}> ↓ </button>
 </div>
 
 <style>
-	div {
+	.up-down {
 		display: flex;
 		flex-direction: column;
 		justify-content: space-between;

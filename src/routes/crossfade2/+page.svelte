@@ -41,7 +41,7 @@
 		3: ['Jovana', 'Milica']
 	}
 	//.map((c) => [...c, 0, c.length]) as string[][]
-	let selectFamilyIx = $state<number>()
+	let selectFamilyIx = $state<string>()
 	const parents = [
 		['Snezana', 'Ljubomir', 'Isakovic'],
 		['Tanja', 'Ljuban', 'Milutinovic'],
@@ -58,7 +58,7 @@
 		if (ix >= parents.length) return
 		const p = parents[ix]
 		if (!p) return
-		return `<p style="color:blue;">${p[1]} and ${p[2]} ${p[3]}</p>`
+		return `${p[1]} and ${p[2]} ${p[3]}`
 	}
 
 	// ChildObject and Other are objects with read-only properties
@@ -78,7 +78,8 @@
 		// console.log(p)
 
 		// wile p[0] is in parents array we need id in the object
-		let _text = parentNames(ix)
+		let _text = `<p style='color: blue;font-size: 24px;font-style: italic;'>${parentNames(ix)}</p>`
+
 		// no childObjects when family object is created but should be added later n
 		let _childObjects = $state<Array<ChildObject>>([])
 		// every family gets new children select box and its reference is bound to
@@ -158,6 +159,7 @@
 	}
 
 	const moveChildObject = (familyObject: FamilyObject, childObject: ChildObject, shift: number) => {
+		console.log('shift', shift)
 		const familyFrom = list.indexOf(familyObject)
 		const childFrom = familyObject.childObjects.indexOf(childObject)
 
@@ -165,14 +167,12 @@
 		// if one is available
 		let familyTo = familyFrom
 		let childTo = 0
+		const CFS = childFrom + shift
 
-		if (childFrom + shift < familyObject.childObjects.length && childFrom + shift >= 0) {
+		if (CFS < familyObject.childObjects.length && CFS >= 0) {
 			// we shift within the same familyObject!
-			childTo = childFrom + shift
-		} else if (
-			childFrom + shift >= familyObject.childObjects.length &&
-			familyFrom + shift < list.length
-		) {
+			childTo = CFS
+		} else if (CFS >= familyObject.childObjects.length && familyFrom + shift < list.length) {
 			// we shift to first item of the next familyObject
 			familyTo += 1
 			childTo = 0
@@ -180,10 +180,13 @@
 			// we shift to the last item of the previous familyObject
 			familyTo -= 1
 			childTo = Number(list[familyTo]?.childObjects.length)
+		} else {
+			return alert('Cannot move child to this position')
 		}
 
 		visitor = children[familyTo]?.includes(childObject.text) ? '' : '  -- visitor'
 		const moved = list[familyFrom]?.childObjects.splice(childFrom, 1)[0] as ChildObject
+		console.log(familyFrom, familyTo, childFrom, childTo)
 		list[familyTo]?.childObjects.splice(childTo, 0, moved)
 	}
 
@@ -201,9 +204,10 @@
 	}
 
 	const showFamily = () => {
-		const ix = selectFamilyIx as number
+		const ix = selectFamilyIx as string
 		const familyObject = createFamily(ix) as FamilyObject
 		list.push(familyObject)
+		selectFamilyIx = '100'
 	}
 
 	// transition
@@ -221,6 +225,12 @@
 		}
 	})
 
+	const hideTopOption = (event: MouseEvent | KeyboardEvent) => {
+		const sb = event.target as HTMLSelectElement
+		if (sb.options[0]) {
+			sb.options[0].style.display = 'none'
+		}
+	}
 	onMount(() => {
 		return () => {
 			utils.setMrPath($page.url.pathname)
@@ -236,8 +246,14 @@
 		<div class="header">
 			<label for="parents"
 				>Choose family:
-				<select bind:value={selectFamilyIx} name="parents" id="parents" onchange={showFamily}>
-					<option selected>Select Family to Show</option>
+				<select
+					bind:value={selectFamilyIx}
+					onfocus={hideTopOption}
+					name="parents"
+					id="parents"
+					onchange={showFamily}
+				>
+					<option selected value="100">Select Family to Show</option>
 					{#each parents as parent, ix}
 						<option value={ix}>{parent[3]}</option>
 					{/each}
@@ -261,6 +277,7 @@
 							<select
 								bind:this={familyObject.childrenSelBox}
 								bind:value={familyObject.selectedChildId}
+								onfocus={hideTopOption}
 								name="newInner"
 								id="newInner"
 								onchange={() => addChildToFamily(familyObject)}
@@ -274,17 +291,17 @@
 						</label>
 					</div>
 
-					{#each familyObject.childObjects as childObject, i (childObject.text)}
+					{#each familyObject.childObjects as childObject (childObject.text)}
 						<li
 							class="child-object container"
 							in:receive={{ key: childObject.text }}
 							out:send={{ key: childObject.text }}
 							animate:flip={{ duration: 300 }}
 						>
-							<MoveButtons
-								actionUp={moveChildObject(familyObject, childObject, -1)}
-								actionDown={moveChildObject(familyObject, childObject, 1)}
-							/>
+							<div class="up-down">
+								<button onclick={() => moveChildObject(familyObject, childObject, -1)}> ↑ </button>
+								<button onclick={() => moveChildObject(familyObject, childObject, 1)}> ↓ </button>
+							</div>
 							<div class="content">
 								{childObject.text}
 								{visitor}
@@ -298,6 +315,15 @@
 </div>
 
 <style>
+	.up-down {
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		border-right: 1px solid;
+		padding: 0.5rem 0.5rem;
+		margin: -1rem 0 -1rem -1rem;
+		gap: 0.5rem;
+	}
 	.wrap-all {
 		margin-left: 5rem !important;
 	}
