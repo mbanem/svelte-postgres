@@ -1,10 +1,9 @@
 <script lang="ts">
-	import { onMount, tick } from 'svelte'
+	import { tick } from 'svelte'
 	import { ScrollTrigger } from 'gsap/ScrollTrigger'
 	import { capitalize } from '$utils/helpers.svelte'
 	import { flip } from 'svelte/animate'
 	import { fade } from 'svelte/transition'
-	import { Tooltip } from 'flowbite-svelte'
 
 	let max_range = 5
 	let startInt = $state(0)
@@ -173,6 +172,7 @@
 	type ButtonCaption = 'a' | 'b' | 'c' | 'd'
 	let ttEl = $state<HTMLDivElement>()
 	const where = 'Will animate in<br/>'
+	const when_visible = '<br/>when it gets visible'
 	const tooltips: Record<ButtonCaption, String> = {
 		a: `${where}this page`,
 		b: `${where}the page below`,
@@ -185,7 +185,7 @@
 		if (el.dataset.tooltip) {
 			ttEl.innerHTML = el.dataset.tooltip
 		} else {
-			ttEl.innerHTML = '' + tooltips[tooltipEl]
+			ttEl.innerHTML = '' + tooltips[tooltipEl] + when_visible
 		}
 	}
 	const positionTooltip = (el: HTMLButtonElement | HTMLInputElement) => {
@@ -195,7 +195,7 @@
 		const y = window.scrollY
 		console.log('x', x, 'y', y, 'top', rect.top, 'height', 1.6 * rect.height)
 		ttEl.style.left = `${x + rect.left - rect.width / 2}px`
-		ttEl.style.top = `${y + Math.floor(rect.top) - 1.6 * Math.floor(rect.height)}px`
+		ttEl.style.top = `${y + Math.floor(rect.top) - 2 * Math.floor(rect.height)}px`
 	}
 	const tooltipToggle = async (event: MouseEvent) => {
 		if (timeoutId) {
@@ -212,13 +212,7 @@
 			if (ttEl) {
 				ttEl.classList.toggle('hidden')
 			}
-		}, 1500)
-	}
-	const tooltipMouseWheel = () => {
-		document.querySelector('.tooltip-mouse-wheel')?.classList.toggle('hidden')
-		setTimeout(() => {
-			document.querySelector('.tooltip-mouse-wheel')?.classList.toggle('hidden')
-		}, 1500)
+		}, 4000)
 	}
 </script>
 
@@ -312,6 +306,12 @@
 		</div>
 	</div>
 
+	<!-- NOTE. We put onclick hendler on boxes as on the wrapper it cannot ingnore
+		clicks probably the animation handler does not break when it starts so when we
+		return false when clicked on the wrapper the handler continus and make
+		just a jerk instead of a full animation.$derived.
+		And this does not work seo we left handler on wrapper
+		-->
 	<div class="wrapper" onclick={animateOut} aria-hidden={true}>
 		<p class="caption">Click a box to transition out</p>
 		<div class="button-wrapper">

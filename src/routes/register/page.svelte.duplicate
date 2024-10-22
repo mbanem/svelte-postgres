@@ -8,9 +8,8 @@
 	import type { SubmitFunction } from '@sveltejs/kit'
 	import type { ActionData } from './$types'
 
-	let { data, form } = $props()
+	let { data } = $props()
 	// let data = $derived(form.data)
-
 	let firstNameIsRequired = ''
 	let lastNameIsRequired = ''
 	let emailIsRequired = ''
@@ -32,21 +31,16 @@
 	let message: string
 	$effect(() => {
 		utils.setColor(
-			form?.message ? (form.message.includes('successfully') ? 'lightgreen' : 'pink') : 'lightgreen'
+			data?.message ? (data.message.includes('successfully') ? 'lightgreen' : 'pink') : 'lightgreen'
 		)
-		message = form?.message || ''
+		message = data?.message || ''
 	})
 
-	type RegisterSnap = {
-		firstName: string
-		lastName: string
-		email: string
-	}
-	let snap = $state<RegisterSnap>({
+	let snap = {
 		firstName: '',
 		lastName: '',
 		email: ''
-	})
+	}
 	export const snapshot: Snapshot = {
 		capture: () => {
 			return snap
@@ -62,9 +56,13 @@
 	// 	}
 	// };
 	onMount(() => {
-		utils.shallowCopy(data, snap)
+		// shallowCopy(data as Object, snap);
+		if (data?.data) {
+			snap = data.data
+		}
 		return () => {
-			utils.setMrPath($page.url.pathname)
+			// @ts-expect-error
+			utils.setMrPath.set($page.url.pathname)
 		}
 	})
 </script>
@@ -76,8 +74,8 @@
 <h2>Register Page</h2>
 
 <div class="container">
-	{#if form?.message}
-		<p class="error">{form.message}</p>
+	{#if data?.message}
+		<p class="error">{data.message}</p>
 	{/if}
 	<form method="POST" action="?/register" use:enhance={enhanceRegister}>
 		<div>
@@ -137,4 +135,3 @@
 		color: pink;
 	}
 </style>
-

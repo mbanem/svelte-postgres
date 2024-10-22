@@ -1,3 +1,4 @@
+
 <script lang="ts">
 	// @ts-check
 	import type { Snapshot } from '../$types' // .sveltekit/$types
@@ -8,7 +9,6 @@
 	import { page } from '$app/stores' // for $age.status code on actions
 	import CircleSpinner from '$lib/components/CircleSpinner.svelte'
 	import { onMount } from 'svelte'
-	import { Tooltip } from 'flowbite-svelte'
 	import * as utils from '$utils'
 
 	import PageTitleCombo from '$lib/components/PageTitleCombo.svelte'
@@ -38,7 +38,7 @@
 	const authorId = data?.user?.id
 
 	let categoryIds: number[] = []
-	let multiSelectComponent: typeof MultiSelectBox
+	let multiSelectComponent: MultiSelectBox
 	$effect(() => {
 		utils.setColor(
 			form?.message ? (form.message.includes('successfully') ? 'lightgreen' : 'pink') : 'lightgreen'
@@ -78,6 +78,7 @@
 		// @ts-expect-error
 		return arr.map((n) => data.categories[n - 1].name).join(', ')
 	}
+
 	let selectedCategoryIds: () => string
 
 	/*
@@ -100,7 +101,7 @@
 		titleIsRequired = ''
 		ignoreFormMessage = false
 		contentIsRequired = ''
-		// console.log('enhancePost1', action.search)
+		console.log('enhancePost1', action.search)
 		for (const key of Object.keys(required)) {
 			if (formData.get(key) == '') {
 				switch (key) {
@@ -127,7 +128,7 @@
 		} else if (action.search === '?/updatePost') {
 			result = 'updating post...'
 		}
-		// console.log('enhancePost2 result', result)
+		console.log('enhancePost2 result', result)
 		return async ({ update }) => {
 			await update()
 			ignoreFormMessage = true
@@ -163,6 +164,16 @@
 		}
 	}
 
+	onMount(() => {
+		// if (data.postAuthors[0]) {
+		// 	utils.shallowCopy(data.postAuthors[0], snap);
+		// }
+		snap.authorId = authorId as string
+		boardBlock.classList.toggle('hidden')
+		selectedUserId = data.user.id as string
+		adminSelected = data.locals.user.role === 'ADMIN'
+	})
+
 	const postsAuthors = () => {
 		const arr: PAuthor[] = []
 
@@ -178,9 +189,7 @@
 					firstName,
 					lastName,
 					role,
-					author,
-					authorId,
-					categoryNames
+					author
 				} = post
 				arr.push({
 					id,
@@ -191,9 +200,7 @@
 					updatedAt,
 					firstName: `${firstName}${role === 'ADMIN' ? 'T' : ''}`,
 					lastName,
-					author,
-					authorId,
-					categoryNames
+					author
 				})
 			}
 		})
@@ -202,8 +209,7 @@
 
 	let setSelectedOptions: (arr: number[] | [], nameList: string) => void
 
-	const toUpdatePost = (event: MouseEvent | KeyboardEvent, postId: string) => {
-		event.preventDefault()
+	const toUpdatePost = (postId: string) => {
 		const authorPost = data.postAuthors.filter((pa) => pa.id === postId)[0] as PostAuthor
 		utils.shallowCopy(authorPost, snap)
 		const { title, content, published, categoryIds } = authorPost //as PostAuthor
@@ -229,8 +235,7 @@
 		multiSelectComponent.setSelectedOptions(numArr, categoryList(numArr))
 	}
 
-	const deletePost = (event: MouseEvent | KeyboardEvent, id: string) => {
-		event.preventDefault()
+	const deletePost = (id: string) => {
 		// if (browser) {
 		;(document.querySelector("input[name='id']") as HTMLInputElement).value = id
 		btnDelete.click()
@@ -277,13 +282,6 @@
 	}
 
 	onMount(() => {
-		// if (data.postAuthors[0]) {
-		// 	utils.shallowCopy(data.postAuthors[0], snap);
-		// }
-		snap.authorId = authorId as string
-		boardBlock.classList.toggle('hidden')
-		selectedUserId = data.user.id as string
-		adminSelected = data.locals.user.role === 'ADMIN'
 		utils.shallowCopy(initialSnap, snap)
 		snap.authorId = data.locals.user.id
 		multiSelectComponent.setSelectedOptions([], categoryIsRequired)
@@ -296,8 +294,7 @@
 <svelte:head>
 	<title>Post</title>
 </svelte:head>
-
-<!-- <pre style="font-size:13px;">data {JSON.stringify(data, null, 2)}</pre> -->
+<!-- <pre style="font-size:13px;">categoryIds {JSON.stringify(snap, null, 2)}</pre> -->
 <!-- amendTrueFalseUserId = {true} forced selectBox value userId to be prefixed with T=ADMIN, F=USER -->
 <PageTitleCombo
 	PageName="Post"
@@ -308,21 +305,7 @@
 	user={data.locals.user}
 	users={data.users}
 />
-{#snippet tooltip(title: string)}
-	<!-- NOTE the way to toggle string content based on a predicate -->
-	<Tooltip placement="top" defaultClass={`tooltip_default-update`} arrow={false}>
-		{title}
-	</Tooltip>
-{/snippet}
 
-{#snippet toggle_published(title: string)}
-	<div class="tooltip-wrapper">
-		<button class="ok-hover">
-			<input type="checkbox" name="published" id="published" bind:checked={snap.published} />
-			{@render tooltip(title)}
-		</button>
-	</div>
-{/snippet}
 <div bind:this={boardBlock} class="board hidden">
 	<div style="position:relative;">
 		<form method="POST" action="?/createPost" use:enhance={enhancePost}>
@@ -341,26 +324,21 @@
 				bind:value={snap.content}
 				placeholder={contentIsRequired || 'enter post content'}
 			/>
-			<div class="multi-select-container">
-				<MultiSelectBox
-					categories={data.categories}
-					bind:categoryIsRequired
-					bind:this={multiSelectComponent}
-					bind:selectedCategoryIds={snap.categoryIds}
-				/>
-			</div>
 			<label for="published" class="label-save">
-				{@render toggle_published('Toggle the Published Flag')}
+				<input type="checkbox" name="published" id="published" bind:checked={snap.published} />
 				<span style="user-select:none">published</span>
 				{#if !wrongUser}
-					<button bind:this={btnCreate} type="submit">
+					<button bind:this={btnCreate} type="submit" class="button">
 						{#if loading}
 							<CircleSpinner color="skyblue" />
 						{/if}
 						create
 					</button>
-					<button bind:this={btnDelete} type="submit" formaction="?/deletePost" class="hidden"
-						>delete</button
+					<button
+						bind:this={btnDelete}
+						type="submit"
+						formaction="?/deletePost"
+						class="button hidden">delete</button
 					>
 					<button
 						bind:this={btnUpdate}
@@ -385,77 +363,26 @@
 				</button>
 			</label>
 		</form>
+		<div class="multi-select-container">
+			<MultiSelectBox
+				categories={data.categories}
+				bind:categoryIsRequired
+				bind:this={multiSelectComponent}
+				bind:selectedCategoryIds={snap.categoryIds}
+			/>
+		</div>
 	</div>
 
 	<div>
 		{#key postAuthors}
 			{#key selectedUserId}
-				<PostList postAuthors={postsAuthors()} {toUpdatePost} {deletePost} {selectedUserId} />
+				<PostList postAuthors={postsAuthors()} {toUpdatePost} {deletePost} />
 			{/key}
 		{/key}
 	</div>
 </div>
 
 <style lang="scss">
-	.tooltip-wrapper {
-		position: relative;
-		p {
-			display: flex;
-			justify-content: space-between;
-			align-content: flex-start;
-			gap: 0.5rem;
-			padding: 0 0 0 5px;
-			margin: 0;
-		}
-		&:hover {
-			cursor: pointer;
-		}
-	}
-	:global(.tooltip_default) {
-		position: absolute;
-		left: 12rem !important;
-		top: -4rem !important;
-		display: grid;
-		grid-template-columns: 6rem max-content;
-		justify-content: flex-start;
-		width: 15rem !important;
-		color: skyblue !important;
-		font-size: 14px;
-		line-height: 14px;
-		font-weight: 400;
-		padding: 3px 1rem !important;
-		text-align: center;
-		background-color: var(--TOOLTIP-BACKGROUND-COLOR);
-		border: 1px solid gray;
-		border-radius: 8px;
-		z-index: 6;
-		p:nth-child(even) {
-			color: yellow;
-		}
-	}
-	:global(.tooltip_default-update) {
-		position: absolute;
-		// top: -2rem !important;
-		left: -2rem !important;
-		width: max-content !important;
-		color: lightblue !important;
-		border: 1px solid lightblue;
-		background-color: var(--TOOLTIP-BACKGROUND-COLOR);
-		border-radius: 6px;
-		padding: 3px 1rem;
-		text-align: center;
-		z-index: 6;
-		p {
-			padding: 0 1rem !important;
-		}
-	}
-	.ok-hover {
-		border: none; //1px solid transparent;
-		outline: none;
-		padding: 0;
-		font-size: 14px;
-		color: lightblue;
-	}
 	.board {
 		display: grid;
 		grid-template-columns: 1fr 1fr;
@@ -486,5 +413,7 @@
 	.button {
 		position: relative;
 	}
+	/* move the clear button out of the form to avoid submit action but
+		set it adjacent to create/update button using the absolute position
+	*/
 </style>
-

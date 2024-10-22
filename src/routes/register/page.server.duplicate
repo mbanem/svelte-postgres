@@ -1,21 +1,12 @@
-
 import { db } from '$lib/server/db'
 import bcrypt from 'bcrypt'
 import type { Actions } from './$types'
 import { fail, redirect } from '@sveltejs/kit'
 
 import type { PageServerLoad } from './$types'
-import { page } from '$app/stores'
 
-export const load: PageServerLoad = (async ({ url }) => {
-	console.log('register load +page.server.ts', url)
-	const data = {
-		firstName: url.searchParams.get('firstName'),
-		lastName: url.searchParams.get('lastName'),
-		email: url.searchParams.get('email'),
-		password: url.searchParams.get('password')
-	}
-	return data
+export const load: PageServerLoad = (async ({}) => {
+	// todo
 }) satisfies PageServerLoad
 
 export const actions: Actions = {
@@ -29,15 +20,9 @@ export const actions: Actions = {
 			email: string
 			password: string
 		}
-		console.log('register', firstName, lastName, email, password)
-
 		if (firstName === '' || lastName === '' || email === '') {
 			return fail(400, {
-				data: {
-					firstName,
-					lastName,
-					email
-				},
+				data: { firstName, lastName, email },
 				message: 'Insufficient data supplied'
 			})
 		}
@@ -62,9 +47,11 @@ export const actions: Actions = {
 					email,
 					passwordHash: await bcrypt.hash(password, 10),
 					userAuthToken: crypto.randomUUID()
+					// role: 'USER'		// default by Prisma schema
 				}
 			})
 		}
+
 		throw redirect(303, '/')
 	}
 } satisfies Actions

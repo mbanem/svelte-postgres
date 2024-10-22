@@ -46,7 +46,6 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
 	if (!user) {
 		throw error(400, 'User not found')
 	}
-
 	if (locals.user?.role === 'ADMIN') {
 		uTodos = (await db.$queryRaw`select
 				u.id,
@@ -93,12 +92,12 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
 		}
 	}
 
-	const users: UserPartial[] = await db.$queryRaw`
-		select distinct t.user_id as "id",
-										u.first_name as "firstName",
-										u.last_name as "lastName",
-										u.'from' todo t
-											join users u on u.id = t.user_id`
+	const users: UserPartial[] = await db.$queryRaw`select
+		 distinct t.user_id as "id",
+				u.first_name as "firstName",
+				u.last_name as "lastName"
+				from todo t
+					join users u on u.id = t.user_id;`
 
 	// console.log(uTodos, users)
 	return {
@@ -125,7 +124,7 @@ export const actions: Actions = {
 			// @ts-expect-error
 			await request.formData()
 		) as InputData
-		console.log('addTodo', JSON.stringify(input_data, null, 2))
+		// console.log('addTodo', JSON.stringify(input_data, null, 2))
 		input_data.priority = Number(input_data.priority)
 		const { userId, title, content, priority } = input_data
 		if (title === '' || content === '' || userId === '') {

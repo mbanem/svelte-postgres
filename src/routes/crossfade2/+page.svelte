@@ -231,6 +231,20 @@
 			sb.options[0].style.display = 'none'
 		}
 	}
+	const movingDisabled = (
+		familyObject: FamilyObject,
+		childObject: ChildObject,
+		buttonUp: boolean
+	) => {
+		const listMaxIx = list.length - 1
+		const lastChildIx = familyObject.childObjects.length - 1
+		const fix = list.findIndex((fo) => fo.id === familyObject.id)
+		const cix = familyObject.childObjects.findIndex((co) => co.text === childObject.text)
+		return (
+			(fix === 0 && cix === 0 && buttonUp) ||
+			(fix === listMaxIx && cix === lastChildIx && !buttonUp)
+		)
+	}
 	onMount(() => {
 		return () => {
 			utils.setMrPath($page.url.pathname)
@@ -263,7 +277,8 @@
 		<!-- all activities finish in changing the list array, which in turn
 				generates the following markup 
 		-->
-		{#each list as familyObject (familyObject.text)}
+		{#each list as familyObject, ix (familyObject.text)}
+			{@const lfix = list.length - 1}
 			<li class="family-object container" animate:flip={{ duration: 300 }}>
 				<MoveButtons
 					actionUp={moveFamilyObject(familyObject, -1)}
@@ -291,7 +306,8 @@
 						</label>
 					</div>
 
-					{#each familyObject.childObjects as childObject (childObject.text)}
+					{#each familyObject.childObjects as childObject, jx (childObject.text)}
+						{@const lcix = familyObject.childObjects.length - 1}
 						<li
 							class="child-object container"
 							in:receive={{ key: childObject.text }}
@@ -299,8 +315,18 @@
 							animate:flip={{ duration: 300 }}
 						>
 							<div class="up-down">
-								<button onclick={() => moveChildObject(familyObject, childObject, -1)}> ↑ </button>
-								<button onclick={() => moveChildObject(familyObject, childObject, 1)}> ↓ </button>
+								<button
+									disabled={ix === 0 && jx === 0}
+									onclick={() => moveChildObject(familyObject, childObject, -1)}
+								>
+									↑
+								</button>
+								<button
+									disabled={lfix == ix && lcix == jx}
+									onclick={() => moveChildObject(familyObject, childObject, 1)}
+								>
+									↓
+								</button>
 							</div>
 							<div class="content">
 								{childObject.text}
@@ -375,5 +401,9 @@
 		text-align: left;
 		font-size: 18px;
 		color: blue;
+	}
+	button:disabled {
+		background-color: darkgray !important;
+		cursor: not-allowed;
 	}
 </style>
