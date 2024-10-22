@@ -27,7 +27,7 @@
 	// family can be created only once se we keep the list
 	let listOfCreatedFamilies: Array<number> = []
 	// when child is moved into another family bounds we flag them as visitors
-	let visitor = ''
+	// let visitor = ''
 	// children array of Array<[name1, name2, current-index, number-of=names]>
 
 	// clicking inside parent to add  child we use parent id to
@@ -75,7 +75,6 @@
 
 		// get 1st parent and 2cnd parent names and family name
 		const p = parents[ix]
-		// console.log(p)
 
 		// wile p[0] is in parents array we need id in the object
 		let _text = `<p style='color: blue;font-size: 24px;font-style: italic;'>${parentNames(ix)}</p>`
@@ -159,7 +158,6 @@
 	}
 
 	const moveChildObject = (familyObject: FamilyObject, childObject: ChildObject, shift: number) => {
-		console.log('shift', shift)
 		const familyFrom = list.indexOf(familyObject)
 		const childFrom = familyObject.childObjects.indexOf(childObject)
 
@@ -184,9 +182,8 @@
 			return alert('Cannot move child to this position')
 		}
 
-		visitor = children[familyTo]?.includes(childObject.text) ? '' : '  -- visitor'
+		// visitor = children[familyTo]?.includes(childObject.text) ? '' : '  -- visitor'
 		const moved = list[familyFrom]?.childObjects.splice(childFrom, 1)[0] as ChildObject
-		console.log(familyFrom, familyTo, childFrom, childTo)
 		list[familyTo]?.childObjects.splice(childTo, 0, moved)
 	}
 
@@ -337,7 +334,7 @@
 							</div>
 							<div class="content">
 								{childObject.text}
-								{visitor}
+								{children[ix]?.includes(childObject.text) ? '' : '  -- visitor'}
 							</div>
 						</li>
 					{/each}
