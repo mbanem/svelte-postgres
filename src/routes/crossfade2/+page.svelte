@@ -314,6 +314,11 @@
 							out:send={{ key: childObject.text }}
 							animate:flip={{ duration: 300 }}
 						>
+							<!-- NOTE: what I think is that disabled only works with boolean expressions
+						but not with functions, so we use @cons var = last index to handle top first
+						and last bottom button. Notice that if below the last child button there is a
+						empty family the button is not disabled as the child can move thers as a visitor
+						-->
 							<div class="up-down">
 								<button
 									disabled={ix === 0 && jx === 0}
