@@ -283,6 +283,8 @@
 				<MoveButtons
 					actionUp={moveFamilyObject(familyObject, -1)}
 					actionDown={moveFamilyObject(familyObject, 1)}
+					first={ix === 0 || lfix === 0}
+					last={ix === lfix}
 				/>
 				<ul class="content">
 					<div class="header">
