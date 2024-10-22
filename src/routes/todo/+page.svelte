@@ -7,7 +7,7 @@
 	import { page } from '$app/stores' // for $age.status code on actions
 	import CircleSpinner from '$lib/components/CircleSpinner.svelte'
 	import { Tooltip } from 'flowbite-svelte'
-	import { setColor, setButtonVisible } from '$lib/utils'
+	import { setColor, hideButtonsExceptFirst } from '$lib/utils'
 
 	import PageTitleCombo from '$lib/components/PageTitleCombo.svelte'
 	import ListsWrapper from './ListsWrapper.svelte'
@@ -66,13 +66,13 @@
 			ignoreFormMessage = false
 			result = ''
 		}, 2000)
-		setButtonVisible([btnCreate, btnUpdate])
+		hideButtonsExceptFirst([btnCreate, btnUpdate, btnDelete])
 	}
 
 	// if form is filled with  data for update, but user chose other action, we
 	// clear the form input elements
 	const clearForm = async () => {
-		setButtonVisible([btnCreate, btnUpdate])
+		hideButtonsExceptFirst([btnCreate, btnUpdate, btnDelete])
 		;(document.querySelector("input[name='title']") as HTMLInputElement).value = ''
 		;(document.querySelector("input[name='content']") as HTMLInputElement).value = ''
 		;(document.querySelector("input[type='number']") as HTMLInputElement).value = '0'
@@ -140,7 +140,7 @@
 			await invalidateAll()
 			loading = false // turn the spinner off
 			ignoreFormMessage = true
-			setButtonVisible([btnCreate, btnUpdate])
+			hideButtonsExceptFirst([btnCreate, btnUpdate, btnDelete])
 			clearMessage()
 		}
 	}
@@ -222,7 +222,7 @@
 		// (document.querySelector("input[name='priority']") as HTMLInputElement).value = String(
 		// 	uTodo.priority
 		// );
-		setButtonVisible([btnUpdate, btnCreate])
+		hideButtonsExceptFirst([btnUpdate, btnCreate, btnDelete])
 	}
 
 	// updatePrepared say data is copied into the form elements
@@ -234,7 +234,7 @@
 		prepareDataForEdit(todoId)
 		updatePrepared = true
 		// hide create button and show the update one
-		setButtonVisible([btnUpdate, btnCreate])
+		hideButtonsExceptFirst([btnUpdate, btnCreate, btnDelete])
 	}
 
 	let formMessage = ignoreFormMessage ? '' : form?.message || ''
@@ -276,7 +276,7 @@
 		const tUser = utils.selectRecordItems<UTodo>('id', selectedUserId, data.uTodos)
 		snap.authorId = selectedUserId
 		authorId = selectedUserId
-		setButtonVisible([btnCreate, btnUpdate])
+		hideButtonsExceptFirst([btnCreate, btnUpdate, btnDelete])
 		return () => {
 			utils.setMrPath($page.url.pathname)
 		}
@@ -286,7 +286,7 @@
 <!-- scroll to  onmouseenter={tooltipMouseWheel} where tooltip is activated-->
 <!-- <div class="tooltip-mouse-wheel hidden">focus & use mouse wheel</div> -->
 <svelte:head>
-	<title>Todo</title>
+	<title>To Do</title>
 </svelte:head>
 <PageTitleCombo
 	PageName="Todo"
@@ -326,6 +326,7 @@
 			<div class="buttons-relative">
 				<button bind:this={btnCreate} type="submit">
 					{#if loading}
+						<!-- NOTE: must have ancestor with position relative to get proper position -->
 						<CircleSpinner color="skyblue" top="50%" />
 					{/if}
 					create
@@ -351,10 +352,21 @@
 					</Tooltip>
 				{/if}
 				{#if loading}
+					<!-- NOTE: must have ancestor with position relative to get proper position -->
 					<CircleSpinner color="skyblue" top="50%" />
 				{/if}
-				<button bind:this={btnDelete} type="submit" formaction="?/deleteTodo" class="button hidden"
-				></button>
+				<button
+					bind:this={btnDelete}
+					type="submit"
+					formaction="?/deleteTodo"
+					class="button hidden"
+					aria-label="delete to do"
+				>
+					{#if loading}
+						<!-- NOTE: must have ancestor with position relative to get proper position -->
+						<CircleSpinner color="skyblue" top="50%" />
+					{/if}
+				</button>
 				{#if selectedUserId !== authorId}
 					<Tooltip
 						placement="top"

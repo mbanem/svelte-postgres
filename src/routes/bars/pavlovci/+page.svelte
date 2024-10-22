@@ -14,6 +14,9 @@
 	]
 </script>
 
+<svelte:head>
+	<title>Pavlovci</title>
+</svelte:head>
 <br />
 <NavBar {navButtonObjects} role="VISITOR" />
 <pre>It is a small village near city of Ruma

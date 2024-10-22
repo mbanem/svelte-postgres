@@ -28,6 +28,9 @@
 	})
 </script>
 
+<svelte:head>
+	<title>Users List</title>
+</svelte:head>
 <h1>User List</h1>
 <!-- <pre>{JSON.stringify(data,null,2)}</pre> -->
 <ul>

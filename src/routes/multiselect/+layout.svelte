@@ -6,6 +6,9 @@
 	let { data, children }: { data: LayoutData; children: Snippet<[]> } = $props()
 </script>
 
+<svelte:head>
+	<title>Multiselect Layout</title>
+</svelte:head>
 <div class="submenu">
 	{#each data.sections as section}
 		<a href="/multiselect/{section.slug}">{section.title}</a>

@@ -70,6 +70,9 @@
 	})
 </script>
 
+<svelte:head>
+	<title>Selecting Theme</title>
+</svelte:head>
 <!-- <svelte:window on:beforeunload={beforeUnload} /> -->
 <div class="container">
 	<div>

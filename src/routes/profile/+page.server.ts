@@ -135,7 +135,7 @@ export const actions: Actions = {
 			})
 			return {
 				bio,
-				success: 'Profile updated'
+				success: 'Profile updated successfully'
 			}
 		} catch (err) {
 			return fail(500, { message: 'Internal error occurred' })

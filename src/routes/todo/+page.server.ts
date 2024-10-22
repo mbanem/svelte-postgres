@@ -225,7 +225,7 @@ export const actions: Actions = {
 			}
 		})
 		return {
-			success: 'todo deleted'
+			success: 'todo deleted successfully'
 		}
 	}
 } satisfies Actions

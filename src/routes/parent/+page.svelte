@@ -10,6 +10,9 @@
 	}
 </script>
 
+<svelte:head>
+	<title>Parent Child</title>
+</svelte:head>
 <div class="wrapper">
 	<!-- bind:childFunction = { local function of the same type } -->
 	<Child></Child>

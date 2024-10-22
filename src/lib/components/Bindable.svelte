@@ -1,3 +1,17 @@
+<!-- 
+@component
+	Bindable component accept props and make them bindable so
+	parent component can be bound them to have full access to them
+		type Handler = (delta: number, event?: MouseEvent) => void
+		type ARGS = {
+			count: number
+			clickArg: Handler
+		}
+	let { count = $bindable(0), clickArg = $bindable() }: ARGS = $props()
+	The Component is calling clickArg handler to increment parent's count
+	by delta value while parent uses its local click function to increment by 1
+-->
+
 <script lang="ts" module>
 	// in order to export a function to parent we need a script with context module
 	// beside the regular script block

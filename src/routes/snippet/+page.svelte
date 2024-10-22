@@ -85,6 +85,10 @@
 	})
 </script>
 
+<svelte:head>
+	<title>Snippets</title>
+</svelte:head>
+
 <div class="main">
 	{#snippet countdown(n: number)}
 		{#if n > 0}

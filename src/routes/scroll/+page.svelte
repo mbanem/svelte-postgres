@@ -216,6 +216,9 @@
 	}
 </script>
 
+<svelte:head>
+	<title>Scroll</title>
+</svelte:head>
 <!-- === BEGIN squares in separate pages ====
     so we have to scroll and bring them
     into view in order to trigger the animation

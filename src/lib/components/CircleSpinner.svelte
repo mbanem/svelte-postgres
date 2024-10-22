@@ -8,7 +8,9 @@
 	let { color = `black`, duration = `1.5s`, size = `1em`, top = `20%` }: ARGS = $props()
 </script>
 
-<!-- border-color for every side top right bottom left -->
+<!-- border-color for every side top right bottom left 
+	NOTE: dynamic style
+-->
 <div
 	style:border-color="{color} transparent {color}
 	{color}"

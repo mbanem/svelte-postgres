@@ -121,7 +121,7 @@
 		}
 		loading = true // start spinner animation
 		if (action.search === '?/createPost') {
-			utils.setButtonVisible([btnCreate, btnUpdate, btnDelete])
+			utils.hideButtonsExceptFirst([btnCreate, btnUpdate, btnDelete])
 			result = 'creating post...'
 		} else if (action.search === '?/deletePost') {
 			result = 'deleting post...'
@@ -140,7 +140,7 @@
 			} else if (action.search === '?/updatePost') {
 				result = $page.status === 200 ? 'post updated' : 'update failed'
 			}
-			utils.setButtonVisible([btnCreate, btnUpdate, btnDelete])
+			utils.hideButtonsExceptFirst([btnCreate, btnUpdate, btnDelete])
 			invalidateAll()
 			clearForm()
 			loading = false // stop spinner animation
@@ -221,7 +221,7 @@
 			{ categoryIds }
 		]
 
-		utils.setButtonVisible([btnUpdate, btnCreate, btnDelete])
+		utils.hideButtonsExceptFirst([btnUpdate, btnCreate, btnDelete])
 		// NOTE: in TypeScript Playground instead of using nested loops as we use below,
 		// the spread operators works, but here does not
 		// for (const [k,v] of Object.entries([...els])) { code here }

@@ -56,21 +56,60 @@
 	const requiredCategory = 'category is required'
 	type ARGS = {
 		categories: { id: number; name: string; selected?: boolean }[]
-		selectedCategoryIds: string // CSV string
-		categoryIsRequired: string
+		selectedCategoryIds: string // bindable CSV string
+		categoryIsRequired: string	// bindable
 	}
-	let {
-		categories,
-		selectedCategoryIds = $bindable(),
-		categoryIsRequired = $bindable()
-	}: ARGS = $props()
+	displays a list of categories to select from and on every
+	selected item it updates a selectedCategoryIds which is
+	available at parent component as a bindable
+- Typical usage:
+  ```html
+  <div class="multi-select-container">
+		<MultiSelectBox
+			categories={data.categories}
+			bind:categoryIsRequired
+			bind:this={multiSelectComponent}
+			bind:selectedCategoryIds={snap.categoryIds}
+		/>
+	</div>
+  ```
+	where data.categories are usually part of wider structure. like 
+	```html
+		let data: {
+				locals: App.Locals;
+				postAuthors: PostAuthor[];
+				user: UserPartial;
+				users: UserPartial[];
+				categories: {
+						id: number;
+						name: string;
+				}[];
+		}
+	```
+	with a snap holding form's data ready for submit
+	```html
+		type TSnap = {
+				id: string
+				authorId: string
+				categoryIds: string
+				title: string
+				content: string
+				published: boolean
+			}
+	```
+-->
+<script module lang="ts">
+	let categoryIsRequired: string = ''
+	type Category = { id: number; name: string; selected?: boolean }
 
 	let selectedOptions: HTMLParagraphElement
 	// cannot be const as the setSelectedOptions rebuilds them via new Set()
 	let selectedIds = new Set<string>()
 	let selectedNames = new Set<string>()
+	let categories = $state<Category[]>([])
 
 	export const setSelectedOptions = (arr: number[], selOptions: string) => {
+		console.log('arr,selOptions', arr, selOptions)
 		selectedIds = new Set(arr.map((n) => String(n)))
 		selectedNames = new Set(selOptions.split(','))
 		if (arr.length === 0) {
@@ -84,6 +123,30 @@
 			return { id: cat.id, name: cat.name, selected: arr.includes(cat.id) }
 		})
 	}
+</script>
+
+<script lang="ts">
+	import { onMount, tick } from 'svelte'
+	import * as utils from '$utils'
+	import { page } from '$app/stores' // for $age.status code on actions
+
+	let pEl: HTMLParagraphElement
+	const pleaseSelect = 'Please select corresponding categories'
+	const requiredCategory = 'category is required'
+
+	type ARGS = {
+		categories: Category[]
+		selectedCategoryIds: string // CSV string
+		categoryIsRequired: string
+	}
+	let {
+		categories: cat,
+		selectedCategoryIds = $bindable(),
+		categoryIsRequired: required = $bindable()
+	}: ARGS = $props()
+
+	categoryIsRequired = required
+	categories = cat
 
 	const idFromName = (name: string) => {
 		for (let i = 0; i < categories.length; i++) {

@@ -14,6 +14,9 @@
 	})
 </script>
 
+<svelte:head>
+	<title>Admin</title>
+</svelte:head>
 <main class="container">
 	<h1>Admin Page</h1>
 	<pre>this is an empty page just to show it is protected and accessible only by ADMIN

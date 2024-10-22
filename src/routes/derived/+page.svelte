@@ -173,6 +173,9 @@
 	})
 </script>
 
+<svelte:head>
+	<title>Dynamically Derived</title>
+</svelte:head>
 <!-- <a href="/">Home</a>
 <a href="/navbar">Navbar</a> -->
 
@@ -327,8 +330,8 @@ clicking faster increases speed on every click
 		}
 	}
 	/* NOTE: as <button> is globally defined in app.scss with
-		CSS variables var(--BUTTON-BACKGRPOIUND-COLOR) it looks
+		CSS variables var(--BUTTON-BACKGROUND-COLOR) it looks
 		like we cannot change it inline dynamically except by
-		changing :root attribute --BUTTON-BACKGRPOIUND-COLOR itself
+		changing :root attribute --BUTTON-BACKGROUND-COLOR itself
 		*/
 </style>

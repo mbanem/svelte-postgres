@@ -109,6 +109,9 @@
 	})
 </script>
 
+<svelte:head>
+	<title>Cross Fade</title>
+</svelte:head>
 <a href="/crossfade2">to Cross Fade 2</a>
 <div class="wrap-all">
 	<!-- <Explanation /> -->

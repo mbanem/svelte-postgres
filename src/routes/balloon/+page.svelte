@@ -44,6 +44,9 @@
 	}
 </script>
 
+<svelte:head>
+	<title>Inflatable Balloon</title>
+</svelte:head>
 <div class="wrapper">
 	<div class="parent">
 		Parent area <button onclick={addNew}>add next</button>

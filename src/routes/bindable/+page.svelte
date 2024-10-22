@@ -35,6 +35,9 @@
 	}
 </script>
 
+<svelte:head>
+	<title>Bindable</title>
+</svelte:head>
 <div>
 	<p class="label-title">This is parent block with count managed by its bindable component.</p>
 

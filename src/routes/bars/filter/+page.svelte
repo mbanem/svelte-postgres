@@ -5,6 +5,9 @@
 	// let row = colors[0];
 </script>
 
+<svelte:head>
+	<title>Filterable List</title>
+</svelte:head>
 <FilterableList data={colors} field="name">
 	{#snippet header()}
 		<header class="row">

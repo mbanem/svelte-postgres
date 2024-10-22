@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import type { Snapshot } from '../$types'
 	import { onMount } from 'svelte'
@@ -8,7 +7,7 @@
 	import { invalidateAll } from '$app/navigation'
 	import { page } from '$app/stores' // for $age.status code on actions
 	import CircleSpinner from '$lib/components/CircleSpinner.svelte'
-	import { setColor, setButtonVisible } from '$lib/utils'
+	import { setColor, hideButtonsExceptFirst } from '$lib/utils'
 	import { Tooltip } from 'flowbite-svelte'
 	import * as utils from '$lib/utils'
 
@@ -75,7 +74,7 @@
 	const clearForm = () => {
 		// bioTextArea.value =''	// using querySelector on attribute name and value
 		;(document.querySelector("textarea[name='bio']") as HTMLTextAreaElement).value = ''
-		setButtonVisible([btnCreate, btnUpdate])
+		hideButtonsExceptFirst([btnCreate, btnUpdate, btnDelete])
 		// change bioId only when snap.authorId changes
 		// selectedUserWithBio = getUserWithBio(snap.authorId) as UserWithBio
 	}
@@ -98,6 +97,10 @@
 				: action.search === '?/update'
 					? 'updating profile...'
 					: 'deleting profile...'
+		if (action.search === '?/delete') {
+			console.log('action is delete', action.search)
+			hideButtonsExceptFirst([btnDelete, btnCreate, btnUpdate])
+		}
 		return async ({ update }) => {
 			await update()
 			ignoreFormMessage = true
@@ -111,7 +114,7 @@
 			} else if (action.search === '?/delete') {
 				result = $page.status === 200 ? 'Profile deleted' : 'delete failed'
 				iconDelete.classList.toggle('hidden')
-				setButtonVisible([btnCreate, btnUpdate])
+				hideButtonsExceptFirst([btnCreate, btnUpdate, btnDelete])
 			}
 			// await invalidateAll()
 			loading = false // stop spinner animation
@@ -163,7 +166,7 @@
 		// as DOMStringMap capitalize every occurrence of dash user-new-id --> userNewId
 		// console.log('user.id', user.id, 'dataset.userId', divEl.dataset.userId);
 		bioTextArea.value = selectedUserWithBio?.bio as string
-		setButtonVisible([btnUpdate, btnCreate])
+		hideButtonsExceptFirst([btnUpdate, btnCreate, btnDelete])
 		// iconDelete.classList.toggle('hidden');
 	}
 
@@ -174,7 +177,7 @@
 	$effect(() => {
 		snap.bio = snap_bio
 		if (selectedUserWithBio?.id) {
-			setButtonVisible([btnUpdate, btnCreate])
+			hideButtonsExceptFirst([btnUpdate, btnCreate, btnDelete])
 		}
 	})
 	export const snapshot: Snapshot = {
@@ -221,6 +224,9 @@
 	})
 </script>
 
+<svelte:head>
+	<title>Profile</title>
+</svelte:head>
 <!-- <pre style="font-size:14px;">selectedUserWithBio-Page {JSON.stringify(selectedUserWithBio, null, 2)}
 	</pre> -->
 {#snippet tooltipBio(userWithBio: UserWithBio)}
@@ -232,7 +238,7 @@
 			</span>
 		</p>
 		<p>
-			<span style="color:lightgreen;margin:0 1rem 0 0;"> udated at</span>
+			<span style="color:lightgreen;margin:0 1rem 0 0;"> updated at</span>
 			<span class="property-value">
 				{userWithBio.updatedAt.toLocaleString()}
 			</span>
@@ -249,9 +255,6 @@
 		<p class="pink">Owner only permission</p>
 	</Tooltip>
 {/snippet}
-<svelte:head>
-	<title>Profile</title>
-</svelte:head>
 
 <PageTitleCombo
 	PageName="Profile"
@@ -282,6 +285,7 @@
 				<p class="buttons">
 					<button bind:this={btnCreate} type="submit" disabled={!snap.authorId} class="button">
 						{#if loading}
+							<!-- NOTE: must have ancestor with position relative to get proper position -->
 							<CircleSpinner color="skyblue" />
 						{/if}
 						create
@@ -289,6 +293,7 @@
 					{#if !wrongUser}
 						<button bind:this={btnUpdate} type="submit" formaction="?/update" class="button hidden">
 							{#if loading}
+								<!-- NOTE: must have ancestor with position relative to get proper position -->
 								<CircleSpinner color="skyblue" />
 							{/if}
 							update
@@ -299,7 +304,13 @@
 							formaction="?/delete"
 							class="button hidden"
 							aria-label="delete profile"
-						></button>
+						>
+							delete
+							{#if loading}
+								<!-- NOTE: must have ancestor with position relative to get proper position -->
+								<CircleSpinner color="skyblue" />
+							{/if}
+						</button>
 					{/if}
 					<button onclick={clearForm}>clear</button>
 				</p>
@@ -399,5 +410,8 @@
 		color: pink !important;
 		border-color: pink !important;
 	}
+	/* for <CircleSpinner> to get proper position */
+	button {
+		position: relative;
+	}
 </style>
-

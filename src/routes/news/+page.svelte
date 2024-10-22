@@ -23,6 +23,9 @@
 	})
 </script>
 
+<svelte:head>
+	<title>News</title>
+</svelte:head>
 <div class="">
 	<p class="page-title">News Page</p>
 	<ul>

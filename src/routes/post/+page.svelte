@@ -12,8 +12,11 @@
 	import * as utils from '$utils'
 
 	import PageTitleCombo from '$lib/components/PageTitleCombo.svelte'
-	// categories
-	import MultiSelectBox from '$lib/components/MultiSelectBox.svelte'
+	// NOTE: exporting a function from .svelte is now by importing from a separate additionL module
+	// 		<svelte module lang='ts'>
+	// not from regular script block
+	// 		<script lang='ts'>
+	import MultiSelectBox, { setSelectedOptions } from '$lib/components/MultiSelectBox.svelte'
 	import PostList from '$lib/components/PostList.svelte'
 
 	type ARGS = {
@@ -38,7 +41,6 @@
 	const authorId = data?.user?.id
 
 	let categoryIds: number[] = []
-	let multiSelectComponent: typeof MultiSelectBox
 	$effect(() => {
 		utils.setColor(
 			form?.message ? (form.message.includes('successfully') ? 'lightgreen' : 'pink') : 'lightgreen'
@@ -53,6 +55,7 @@
 			result = ''
 			categoryIsRequired = requiredCategory
 		}, 2000)
+		utils.setColor('lightgreen')
 	}
 
 	const clearForm = (event?: MouseEvent) => {
@@ -64,9 +67,9 @@
 		// 	(document.querySelector(`input[name='${k}']`) as HTMLInputElement).value = '';
 		// });
 		// (document.querySelector(`input[name='published']`) as HTMLInputElement).checked = false;
-		multiSelectComponent.setSelectedOptions([], requiredCategory)
+		setSelectedOptions([], requiredCategory)
 		utils.setColor('lightgreen')
-		utils.setButtonVisible([btnCreate, btnUpdate, btnDelete])
+		utils.hideButtonsExceptFirst([btnCreate, btnUpdate, btnDelete])
 	}
 
 	const required = {
@@ -121,7 +124,7 @@
 		}
 		loading = true // start spinner animation
 		if (action.search === '?/createPost') {
-			utils.setButtonVisible([btnCreate, btnUpdate, btnDelete])
+			utils.hideButtonsExceptFirst([btnCreate, btnUpdate, btnDelete])
 			result = 'creating post...'
 		} else if (action.search === '?/deletePost') {
 			result = 'deleting post...'
@@ -140,12 +143,12 @@
 			} else if (action.search === '?/updatePost') {
 				result = $page.status === 200 ? 'post updated' : 'update failed'
 			}
-			utils.setButtonVisible([btnCreate, btnUpdate, btnDelete])
+			utils.hideButtonsExceptFirst([btnCreate, btnUpdate, btnDelete])
 			invalidateAll()
 			clearForm()
 			loading = false // stop spinner animation
-			utils.setColor('lightgreen')
 			clearMessage()
+			utils.setColor('lightgreen')
 		}
 	}
 
@@ -201,7 +204,7 @@
 		return arr
 	}
 
-	let setSelectedOptions: (arr: number[] | [], nameList: string) => void
+	// let setSelectedOptions: (arr: number[] | [], nameList: string) => void
 
 	const toUpdatePost = (event: MouseEvent | KeyboardEvent, postId: string) => {
 		event.preventDefault()
@@ -216,7 +219,7 @@
 			{ categoryIds }
 		]
 
-		utils.setButtonVisible([btnUpdate, btnCreate, btnDelete])
+		utils.hideButtonsExceptFirst([btnUpdate, btnCreate, btnDelete])
 		// NOTE: in TypeScript Playground instead of using nested loops as we use below,
 		// the spread operators works, but here does not
 		// for (const [k,v] of Object.entries([...els])) { code here }
@@ -227,7 +230,8 @@
 		})
 		;(document.querySelector(`input[name='published']`) as HTMLInputElement).checked = published
 		const numArr = utils.csvToNumArr(categoryIds)
-		multiSelectComponent.setSelectedOptions(numArr, categoryList(numArr))
+		setSelectedOptions(numArr, categoryList(numArr))
+		utils.setColor('lightgreen')
 	}
 
 	const deletePost = (event: MouseEvent | KeyboardEvent, id: string) => {
@@ -287,7 +291,7 @@
 		adminSelected = data.locals.user.role === 'ADMIN'
 		utils.shallowCopy(initialSnap, snap)
 		snap.authorId = data.locals.user.id
-		multiSelectComponent.setSelectedOptions([], categoryIsRequired)
+		setSelectedOptions([], categoryIsRequired)
 		return () => {
 			utils.setMrPath($page.url.pathname)
 		}
@@ -346,7 +350,6 @@
 				<MultiSelectBox
 					categories={data.categories}
 					bind:categoryIsRequired
-					bind:this={multiSelectComponent}
 					bind:selectedCategoryIds={snap.categoryIds}
 				/>
 			</div>
@@ -356,6 +359,7 @@
 				{#if !wrongUser}
 					<button bind:this={btnCreate} type="submit">
 						{#if loading}
+							<!-- NOTE: must have ancestor with position relative to get proper position -->
 							<CircleSpinner color="skyblue" />
 						{/if}
 						create
@@ -370,6 +374,7 @@
 						class="button hidden"
 					>
 						{#if loading}
+							<!-- NOTE: must have ancestor with position relative to get proper position -->
 							<CircleSpinner color="skyblue" />
 						{/if}
 						update

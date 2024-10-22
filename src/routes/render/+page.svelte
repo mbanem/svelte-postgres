@@ -6,6 +6,9 @@
 	import ContactCard from './ContactCard.svelte'
 </script>
 
+<svelte:head>
+	<title>Visit Cards</title>
+</svelte:head>
 <div class="parent">
 	<Comp1 cls="childClass" {caption1}>Matia Isakovic</Comp1>
 </div>

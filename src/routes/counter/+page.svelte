@@ -36,6 +36,9 @@
 	})
 </script>
 
+<svelte:head>
+	<title>Counter</title>
+</svelte:head>
 <div class="wrapper">
 	<pre>
 	Counter component is defined in $lib-utils.counter.svelte.ts

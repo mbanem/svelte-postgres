@@ -12,6 +12,9 @@
 	}
 </script>
 
+<svelte:head>
+	<title>News Slug</title>
+</svelte:head>
 <!-- <pre style="font-size:11px;">data {JSON.stringify(data, null, 2)}</pre> -->
 <div class="body">
 	<h1>Seminar Attendees</h1>

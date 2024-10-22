@@ -25,7 +25,7 @@
 </script>
 
 <svelte:head>
-	<title>Box</title>
+	<title>Parent-Child</title>
 </svelte:head>
 <main>
 	<h2>Parent Page</h2>

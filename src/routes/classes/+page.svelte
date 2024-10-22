@@ -83,6 +83,9 @@
 	}
 </script>
 
+<svelte:head>
+	<title>Classes</title>
+</svelte:head>
 <div class="container">
 	<div class="left-side">
 		<textarea id="txt" rows="5" cols="50" bind:value={cssRules} placeholder="enter css rules"

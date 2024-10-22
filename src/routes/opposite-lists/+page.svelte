@@ -23,6 +23,9 @@
 	}
 </script>
 
+<svelte:head>
+	<title>Opposite Lists</title>
+</svelte:head>
 <main class="main-class">
 	<p>Click a button to move it to the opposite list.</p>
 	<div class="grid-block">

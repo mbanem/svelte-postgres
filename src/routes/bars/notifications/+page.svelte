@@ -9,6 +9,9 @@
 	$: ({ notifications } = data)
 </script>
 
+<svelte:head>
+	<title>Notifications</title>
+</svelte:head>
 {#if notifications.count > 0}
 	<div class="notes">
 		<p>Current World News</p>

@@ -1,15 +1,14 @@
 <script lang="ts">
-	import { asClassComponent } from 'svelte/legacy'
 	type Car = {
 		make: string
 		year: number
-		maillage: number
+		mileage: number
 		price: number
 	}
 	let cadillac: Car = {
 		make: 'Cadillac',
 		year: 2009,
-		maillage: 102000,
+		mileage: 102000,
 		price: 40000.0
 	}
 	// this part is getting access to Child <script module lang='ts'> exported functions
@@ -25,6 +24,9 @@
 	}
 </script>
 
+<svelte:head>
+	<title>Comp Comp</title>
+</svelte:head>
 <p class="info">Child values are in <span class="lightgreen">lightgreen</span></p>
 <p class="info">Parent values are in <span class="yellow">yellow</span></p>
 
@@ -43,13 +45,13 @@
 
 <div class="car-container">
 	<p></p>
-	<p>Car Detailes at Parent</p>
+	<p>Car Details at Parent</p>
 	<p>Make</p>
 	<input type="text" bind:value={cadillac.make} />
 	<p>Year</p>
 	<input type="text" bind:value={cadillac.year} />
-	<p>Maillage</p>
-	<input type="text" bind:value={cadillac.maillage} />
+	<p>Mileage</p>
+	<input type="text" bind:value={cadillac.mileage} />
 	<p>Price</p>
 	<input type="text" bind:value={cadillac.price} />
 </div>
@@ -72,7 +74,7 @@
         let cadillac: Car = &lcub;
           make: 'Cadillac',
           year: 2009,
-          maillage: 102000,
+          mileage: 102000,
           price: 40000.0
         &rcub;
   and export is to child but requires two way communication on changing object properties
@@ -84,7 +86,7 @@
       type Car = &lcub;
         make: string
         year: number
-        maillage: number
+        mileage: number
         price: number
       &rcub;
       type PROPS = &lcub;

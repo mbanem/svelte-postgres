@@ -2,7 +2,7 @@
 	import { page } from '$app/stores'
 	import { onMount } from 'svelte'
 	import { crossfade } from 'svelte/transition'
-	// import CircleSpinner from '$lib/components/CircleSpinner.svelte'
+	import CircleSpinner from '$lib/components/CircleSpinner.svelte'
 	import { Tooltip } from 'flowbite-svelte'
 	import * as utils from '$utils'
 	let showTooltip = false
@@ -113,11 +113,15 @@
 				</div>
 			{/if}
 		</div>
+		<!-- NOTE: for <CircleSpinner> we must have a wrapper with position relative
+			in order to position itself according to the relative ancestor
+		-->
 		<div style="position:relative">
 			<button onclick={toggleLoading} style="text-align:center;">
-				<!-- {#if loading}
-				<CircleSpinner color="skyblue" />
-			{/if} -->
+				{#if loading}
+					<!-- NOTE: must have ancestor with position relative to get proper position -->
+					<CircleSpinner color="skyblue" />
+				{/if}
 				toggle loading
 			</button>
 		</div>

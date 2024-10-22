@@ -151,7 +151,7 @@ export const actions: Actions = {
 		}
 		return {
 			success: true,
-			message: 'Post created'
+			message: 'Post created successfully'
 		}
 	},
 	deletePost: async ({ request }) => {
@@ -174,7 +174,7 @@ export const actions: Actions = {
 		// console.log('post deleted')
 		return {
 			success: true,
-			message: 'Post deleted'
+			message: 'Post deleted successfully'
 		}
 	},
 	updatePost: async ({ request }) => {
@@ -219,9 +219,20 @@ export const actions: Actions = {
 		} catch (err) {
 			throw new Error('internal error on post update')
 		}
+		/* NOTE: +page.svelte checks for word successfully to set lightgreen or pink color
+				$effect(() => {
+					utils.setColor(
+						form?.message
+							? form.message.includes('successfully')
+								? 'lightgreen'
+								: 'pink'
+							: 'lightgreen'
+					)
+				})
+		*/
 		return {
 			success: true,
-			message: 'Post updated'
+			message: 'Post updated successfully'
 		}
 	}
 } satisfies Actions

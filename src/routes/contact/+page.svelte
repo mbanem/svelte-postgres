@@ -12,6 +12,9 @@
 	]
 </script>
 
+<svelte:head>
+	<title>Contact</title>
+</svelte:head>
 <h4>The Third Coca-Cola Annual Meeting Members</h4>
 <ContactCard {members}></ContactCard>
 

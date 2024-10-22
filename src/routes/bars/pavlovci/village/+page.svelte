@@ -2,6 +2,9 @@
 	Where I like to spend my time enjoying the weather, quiet neighbors and wide backyard with my
 	lovely life saver and life and love partner Milka
 </h3>
+<svelte:head>
+	<title>Pavlovci Village</title>
+</svelte:head>
 
 <style lang="scss">
 	h3 {

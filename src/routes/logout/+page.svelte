@@ -12,6 +12,9 @@
 	})
 </script>
 
+<svelte:head>
+	<title>Log Out</title>
+</svelte:head>
 <!-- <h2>Successively logged out</h2> -->
 <a href="/login">log in</a>
 <!-- <br /> -->

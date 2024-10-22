@@ -4,6 +4,7 @@
 	import { navBars, navPath, navButtons } from '$utils/helpers.svelte.js'
 	import { getNavButtons } from '$lib/utils/navButtons.svelte'
 	import NavBar from '$components/NavBar.svelte'
+	import '@fortawesome/fontawesome-free/css/all.min.css'
 
 	let classes = 'teal'
 	let styles = 'color: blue'
@@ -28,6 +29,9 @@
 */
 </script>
 
+<svelte:head>
+	<title>Users Layout</title>
+</svelte:head>
 <!-- <pre style="font-size:11px;">layout role {data?.locals?.user?.role}</pre> -->
 <div class="wrapper">
 	{#key data?.locals?.user?.role}

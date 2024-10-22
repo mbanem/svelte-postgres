@@ -44,6 +44,9 @@
 	console.log(getFormParams())
 </script>
 
+<svelte:head>
+	<title>Bars Layout</title>
+</svelte:head>
 <main>
 	<NavContainer>
 		<NavBar navButtonObjects={navButtonObjects1} role={locals?.user?.role ?? 'VISITOR'} />

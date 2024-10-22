@@ -1,19 +1,36 @@
 <script lang="ts">
+	type Person = {
+		name: string
+		age: number
+	}
+
 	import Box from '$lib/components/Box.svelte'
-	let name = 'Mr. Filip Isakovic'
-	let age = 18
-	let person = { name, age }
-	$: nameUpper = person.name.toUpperCase()
+
+	let person = $state<Person>({ name: 'Mr. Filip Isakovic', age: 18 })
+
+	let nameUpper = $derived(person.name.toUpperCase())
 </script>
 
-<h2>Child actions on bind:person parent's prop</h2>
-<Box bind:person />
+<svelte:head>
+	<title>Box</title>
+</svelte:head>
+<div class="wrapper">
+	<h2>Child actions on bind:person parent's prop</h2>
 
-<p>Reactive child value in the parent: {nameUpper}</p>
-<p style="color:yellow">{person.name} is of age {person.age}</p>
+	<Box bind:person />
 
-<pre>
+	<p>Reactive child value in the parent: {nameUpper}</p>
+	<p style="color:yellow">{person.name} is of age {person.age}</p>
+
+	<pre>
   All actions on a parent's person object exposed via bind:parent as
-  prop to child componentare carried out inside the child component
+  prop to child component are carried out inside the child component
   but displayed only in the parent
-</pre>
+	</pre>
+</div>
+
+<style lang="scss">
+	.wrapper {
+		margin: 5rem 0 0 20vw;
+	}
+</style>

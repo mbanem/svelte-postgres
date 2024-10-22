@@ -59,6 +59,9 @@
 	}
 </script>
 
+<svelte:head>
+	<title>Modal</title>
+</svelte:head>
 <pre style="margin-top:4rem;">
   Div element below rendered as a button &lt;Modal Dialog&gt; relies on an
                   action <span style="color:yellow;">use:clickOutside</span> for the click action.

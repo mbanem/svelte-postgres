@@ -10,6 +10,9 @@
 	}
 </script>
 
+<svelte:head>
+	<title>Font Size</title>
+</svelte:head>
 <div class="container">
 	<div class="clamp" style={`font-size:${fontSize}`}>
 		<!--cSpell:disable -->

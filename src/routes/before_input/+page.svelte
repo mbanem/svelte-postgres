@@ -56,6 +56,9 @@
 	})
 </script>
 
+<svelte:head>
+	<title>Before Input</title>
+</svelte:head>
 <pre>
   Input box keystrokes are monitored by 'beforeinput' event handler
   preventing non-numeric keystrokes allowing numbers with up to 10

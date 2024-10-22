@@ -50,6 +50,9 @@
 	}
 </script>
 
+<svelte:head>
+	<title>Navigation Bar</title>
+</svelte:head>
 <!-- snipper default color is red -->
 {#snippet icon(color = 'Red')}
 	<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" width="16">

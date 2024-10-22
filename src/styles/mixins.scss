@@ -21,8 +21,20 @@
 	}
 }
 
-@mixin caterpillar-item($bgcolor) {
-	background-color: $bgcolor;
+@mixin rectangle($width:80px, $height:80px, $color:yellow, $background-color:royalblue, $border:2px solid pink, $border-radius:8px){
+	width: $width;
+  height: $height;
+	color: $color;
+  background-color: $background-color;
+  border: $border;
+	border-radius:$border-radius;
+	font-size:18px;
+	text-align:center;
+	line-height:$height;
+	overflow:auto;
+}
+@mixin caterpillar-item($background-color) {
+	background-color: $background-color;
 	color: white;
 	border-radius: 5px;
 	border: 1px solid gray;

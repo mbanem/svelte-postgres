@@ -7,6 +7,9 @@
 	}
 </script>
 
+<svelte:head>
+	<title>Button</title>
+</svelte:head>
 <div class="main">
 	<Button {handleClick} />
 	<p>Parent count handled by child: <span class="expression-highlighted">count = {count}</span></p>

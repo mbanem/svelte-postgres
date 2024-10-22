@@ -149,6 +149,9 @@
 	})
 </script>
 
+<svelte:head>
+	<title>Caterpillar</title>
+</svelte:head>
 <div class="in-grid">
 	<div class="caterpillar">click on square box to make it the last one in caterpillar</div>
 	<div class="label-abs">
