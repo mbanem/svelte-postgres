@@ -10,6 +10,8 @@
 	let { postAuthors, deletePost, toUpdatePost, selectedUserId }: ARGS = $props()
 </script>
 
+<!-- <pre>{selectedUserId} {JSON.stringify(postAuthors[0], null, 2)}</pre> -->
+
 {#snippet tooltip(allowed: boolean, title: string)}
 	<!-- NOTE the way to toggle string content based on a predicate -->
 	<Tooltip
@@ -92,12 +94,11 @@
 			<p>updated at</p>
 			<p>{pA.updatedAt.toLocaleString()}</p>
 			<p>categories</p>
-			<p>{pA.categoryNames.trim()}</p>
 		</Tooltip>
 	</div>
 {/snippet}
 
-<!-- <pre style="font-size:11px;">postAuthors {JSON.stringify(postAuthors, null, 2)}</pre> -->
+<!-- <pre style="font-size:11px;">postAuthors[0] {JSON.stringify(postAuthors[0], null, 2)}</pre> -->
 <div class="post-container">
 	<ul>
 		{#if postAuthors[0]}
@@ -108,7 +109,7 @@
 			</p>
 
 			{#each postAuthors as pA}
-				{@const isOwner = pA.authorId === selectedUserId}
+				{@const isOwner = pA.author}
 				<li class="post-block">
 					<label>
 						{@render info_panel(isOwner, pA)}
@@ -120,8 +121,6 @@
 		{/if}
 	</ul>
 </div>
-
-<!-- <pre style="font-size:11px;">postAuthors {JSON.stringify(postAuthors, null, 2)}</pre> -->
 
 <style lang="scss">
 	/* ready for app.scss */

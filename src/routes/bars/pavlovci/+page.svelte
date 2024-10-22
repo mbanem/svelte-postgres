@@ -15,7 +15,7 @@
 </script>
 
 <br />
-<NavBar {navButtonObjects} />
+<NavBar {navButtonObjects} role="VISITOR" />
 <pre>It is a small village near city of Ruma
 in Vojvodina, a Northern part of Serbia
 with population of around 200 people

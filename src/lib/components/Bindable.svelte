@@ -1,5 +1,8 @@
 <script lang="ts" module>
-	// child component to update local childCount when called from parent
+	// in order to export a function to parent we need a script with context module
+	// beside the regular script block
+
+	// child component local childCount variable when called from parent
 	let childCount = $state<number>(0)
 	export const counter = (delta: number) => {
 		childCount += delta
@@ -9,6 +12,8 @@
 
 <script lang="ts">
 	type Handler = (delta: number, event?: MouseEvent) => void
+
+	// parent sent props numeric variable and a handler function
 	type ARGS = {
 		count: number
 		clickArg: Handler
@@ -20,6 +25,7 @@
 	}
 	let delta = $state<number>(-3)
 	const updateParentCount = (event: MouseEvent) => {
+		// call parent function with incremental value
 		clickArg(delta, event)
 	}
 </script>

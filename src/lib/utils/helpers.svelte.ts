@@ -371,7 +371,7 @@ export const hexCodeToOpposite = (hex_code: string) => {
 		hex_code = hex_code.slice(1)
 	}
 	let val = '#'
-	const twoHexDigits = (ix: number, iy?: number) => {
+	const twoHexDigits = (ix: number, _?: number) => {
 		const d =
 			255 - hex.indexOf(hex_code[ix] as string) * 16 - hex.indexOf(hex_code[ix + 1] as string)
 		const x = d.toString(16)
@@ -514,3 +514,20 @@ export const array_move = (arr: Array<any>, fromIx: number, toIx: number) => {
 	// now array is mutated and we return the resulting one
 	return arr
 }
+
+// const getUser = async (id: number) => {
+// 	sleep(1000)
+// 	if (id === 2) {
+// 		throw new Error('user not found')
+// 	}
+// 	return { id, name: 'Filip Isakovic' }
+// }
+// export function catchError<T>(promise: Promise<T>): Promise<[undefined, T] | [Error]> {
+// 	return promise
+// 		.then((data) => {
+// 			return [undefined, data] as [undefined, T]
+// 		})
+// 		.catch((error) => {
+// 			return [error] as [Error]
+// 		})
+// }

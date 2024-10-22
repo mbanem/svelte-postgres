@@ -16,6 +16,8 @@
 		{ color: 'ForestGreen', title: 'ContactCard', href: '/contact' },
 		{ color: 'Yellow', title: 'Duck-Goose', href: '/duck_goose' },
 		{ color: 'Rebeccapurple', title: 'Themes', href: '/themes' },
+		{ color: 'Red', title: 'Floating Labels', href: '/floating_label' },
+		{ color: 'LightGreen', title: 'Before-Input', href: '/before_input' },
 		{ color: 'Yellow', title: 'Flip', href: '/flip' }
 	]
 
@@ -29,7 +31,7 @@
 		if (!div) return // not yet mountedChip
 		// reference `messages` array length so that this code re-runs whenever it changes
 		messages.length
-		// autoscroll when new messages are added
+		// auto scroll when new messages are added
 		if (div.offsetHeight + div.scrollTop > div.scrollHeight - 20) {
 			tick().then(() => {
 				div?.scrollTo(0, div.scrollHeight)

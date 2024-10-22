@@ -1,3 +1,51 @@
+<!-- 
+@component
+-- MultiSelectBox.svelte accept the following properties
+	type ARGS = {
+		categories: { id: number; name: string; selected?: boolean }[]
+		selectedCategoryIds: string // bindable CSV string
+		categoryIsRequired: string	// bindable
+	}
+	displays a list of categories to select from and on every
+	selected item it updates a selectedCategoryIds which is
+	available at parent component as a bindable
+- Typical usage:
+  ```html
+  <div class="multi-select-container">
+		<MultiSelectBox
+			categories={data.categories}
+			bind:categoryIsRequired
+			bind:this={multiSelectComponent}
+			bind:selectedCategoryIds={snap.categoryIds}
+		/>
+	</div>
+  ```
+	where data.categories are usually part of wider structure. like 
+	```html
+		let data: {
+				locals: App.Locals;
+				postAuthors: PostAuthor[];
+				user: UserPartial;
+				users: UserPartial[];
+				categories: {
+						id: number;
+						name: string;
+				}[];
+		}
+	```
+	with a snap holding form's data ready for submit
+	```html
+		type TSnap = {
+				id: string
+				authorId: string
+				categoryIds: string
+				title: string
+				content: string
+				published: boolean
+			}
+	```
+-->
+
 <script lang="ts">
 	import { onMount, tick } from 'svelte'
 	import * as utils from '$utils'

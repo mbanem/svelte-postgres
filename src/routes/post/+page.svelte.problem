@@ -38,7 +38,7 @@
 	const authorId = data?.user?.id
 
 	let categoryIds: number[] = []
-	let multiSelectComponent: typeof MultiSelectBox
+	let multiSelectComponent: any //typeof MultiSelectBox
 	$effect(() => {
 		utils.setColor(
 			form?.message ? (form.message.includes('successfully') ? 'lightgreen' : 'pink') : 'lightgreen'
@@ -66,7 +66,6 @@
 		// (document.querySelector(`input[name='published']`) as HTMLInputElement).checked = false;
 		multiSelectComponent.setSelectedOptions([], requiredCategory)
 		utils.setColor('lightgreen')
-		utils.setButtonVisible([btnCreate, btnUpdate, btnDelete])
 	}
 
 	const required = {
@@ -192,9 +191,7 @@
 					updatedAt,
 					firstName: `${firstName}${role === 'ADMIN' ? 'T' : ''}`,
 					lastName,
-					author,
-					authorId,
-					categoryNames
+					author
 				})
 			}
 		})
@@ -227,7 +224,7 @@
 		})
 		;(document.querySelector(`input[name='published']`) as HTMLInputElement).checked = published
 		const numArr = utils.csvToNumArr(categoryIds)
-		multiSelectComponent.setSelectedOptions(numArr, categoryList(numArr))
+		multiSelectComponent.setSelectedOptions(numArr, categoryList(numArr) as string)
 	}
 
 	const deletePost = (event: MouseEvent | KeyboardEvent, id: string) => {

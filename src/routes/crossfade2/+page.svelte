@@ -201,7 +201,7 @@
 	}
 
 	const showFamily = () => {
-		const ix = selectFamilyIx as string
+		const ix = Number(selectFamilyIx)
 		const familyObject = createFamily(ix) as FamilyObject
 		list.push(familyObject)
 		selectFamilyIx = '100'
@@ -222,7 +222,7 @@
 		}
 	})
 
-	const hideTopOption = (event: MouseEvent | KeyboardEvent) => {
+	const hideTopOption = (event: FocusEvent | KeyboardEvent) => {
 		const sb = event.target as HTMLSelectElement
 		if (sb.options[0]) {
 			sb.options[0].style.display = 'none'

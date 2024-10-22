@@ -4,7 +4,7 @@
 
 	const click = () => {
 		count++
-		// console.log('parent click', count);
+		console.log('parent click increment count', count)
 	}
 	// child calls parent's function to update parent's count
 	const clickArg = (delta: number, _?: MouseEvent) => {
@@ -18,17 +18,18 @@
 
 	// for parent to call child function it has to have reference to the
 	// child component by binding this way <Child bind:this={childComponent}...
-	// and child component must export the function like
+	// and child component have to export the function like
 	//   export const counter = (delta: number) => (childCount += delta);
 	// then calling child function 'counter' could be done like this:
 	// 					childComponent.counter(value)
-	// Even if child variable is defined as 'export let childVar = 0' it cannot
+	// NOTE: Even if child VARIABLE is defined as 'export let childVar = 0' it cannot
 	// be updated from parent via childComponent.childVar += 1
-	// so only the exported functions can be used from parent
+	// so only the exported functions can be used from parent to do that
 
 	const getRandomInt = () => {
 		return Math.round(Math.random() * 10000)
 	}
+	// cal child counter with random integer less then 10,000
 	const callChildCounter = () => {
 		counter(getRandomInt())
 	}
@@ -71,12 +72,6 @@ with child click event:MouseEvent and value of delta bound in &lt;input type='nu
 <Bindable bind:count {clickArg}></Bindable>
 
 <style>
-	/* pre {
-		margin: 5px 0 5px 2rem;
-		border: 1px solid gray;
-		padding: 1rem;
-		font-size: 15px;
-	} */
 	button {
 		display: inline-block;
 	}

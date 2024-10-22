@@ -85,7 +85,8 @@
 
 <div class="container">
 	<div class="left-side">
-		<textarea id="txt" rows="5" cols="50" bind:value={cssRules} placeholder="enter css rules" />
+		<textarea id="txt" rows="5" cols="50" bind:value={cssRules} placeholder="enter css rules"
+		></textarea>
 
 		<div id="bbb" style="width:200px;height:50px;border:2px solid gray;">
 			Dynamic style will be applied here

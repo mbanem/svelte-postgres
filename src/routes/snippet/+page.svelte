@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount, tick } from 'svelte'
 	import * as utils from '$utils'
+	import { sveltekit } from '@sveltejs/kit/vite'
 	let divEl: HTMLDivElement
 	type TImage = {
 		src: string
@@ -23,7 +24,6 @@
 		}
 		return img as TImage
 	}
-
 	// to get different picture change width or height slightly
 	let images = $state<TImage[]>([])
 	// 	{

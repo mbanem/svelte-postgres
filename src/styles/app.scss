@@ -48,8 +48,10 @@
 	--ANCHOR-ACTIVE-COLOR: lightgreen;
 
 	--BLOCK-COLOR: gray;
+	--BLOCK-COLOR-LIGHT:yellow;
 	--BLOCK-BORDER: 1px solid gray;
 	--BLOCK-BORDER-RADIUS: 4px;
+	--BLOCK-BACKGROUND-COLOR:royalblue;
 
 	--SELECT-OPTION-COLOR: #e3e3e3;
 	--SELECT-OPTION-HOVER-COLOR: yellow;
@@ -63,6 +65,18 @@
 	--DIV-BUTTON-BORDER: 1px solid lightblue;
 	--DIV-BUTTON-BORDER-RADIUS: 5px;
 }
+// *,
+// *::before,
+// *::after
+// {
+// 	box-sizing:border-box;
+// }
+
+// *{
+// 	margin:0;
+// 	padding:0;
+// 	line-height:1.5;
+// }
 .yellow {
 	color: yellow;
 }
