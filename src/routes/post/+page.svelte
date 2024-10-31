@@ -6,18 +6,14 @@
 	import { enhance } from '$app/forms'
 	import { invalidateAll } from '$app/navigation'
 	import { page } from '$app/stores' // for $age.status code on actions
-	import CircleSpinner from '$lib/components/CircleSpinner.svelte'
 	import { onMount } from 'svelte'
 	import { Tooltip } from 'flowbite-svelte'
+	import CircleSpinner from '$components/CircleSpinner.svelte'
+	import ButtonSpinner from '$components/ButtonSpinner.svelte'
+	import PageTitleCombo from '$components/PageTitleCombo.svelte'
+	import MultiSelectBox, { setSelectedOptions } from '$components/MultiSelectBox.svelte'
+	import PostList from '$components/PostList.svelte'
 	import * as utils from '$utils'
-
-	import PageTitleCombo from '$lib/components/PageTitleCombo.svelte'
-	// NOTE: exporting a function from .svelte is now by importing from a separate additionL module
-	// 		<svelte module lang='ts'>
-	// not from regular script block
-	// 		<script lang='ts'>
-	import MultiSelectBox, { setSelectedOptions } from '$lib/components/MultiSelectBox.svelte'
-	import PostList from '$lib/components/PostList.svelte'
 
 	type ARGS = {
 		data: PageData
@@ -38,6 +34,7 @@
 	let btnCreate: HTMLButtonElement
 	let btnDelete: HTMLButtonElement
 	let btnUpdate: HTMLButtonElement
+	let updateSpinner:typeof ButtonSpinner
 	const authorId = data?.user?.id
 
 	let categoryIds: number[] = []
@@ -220,6 +217,7 @@
 		]
 
 		utils.hideButtonsExceptFirst([btnUpdate, btnCreate, btnDelete])
+		console.log(btnUpdate.classList)
 		// NOTE: in TypeScript Playground instead of using nested loops as we use below,
 		// the spread operators works, but here does not
 		// for (const [k,v] of Object.entries([...els])) { code here }
@@ -381,20 +379,7 @@
 							<CircleSpinner> we have to wrap button with another tag with position:relative
 							in order to spin inside the button itself
 					-->
-					<p style="position:relative">
-						<button
-							bind:this={btnUpdate}
-							type="submit"
-							formaction="?/updatePost"
-							class="button hidden"
-						>
-							{#if loading}
-								<!-- NOTE: must have ancestor with position relative to get proper position -->
-								<CircleSpinner color="skyblue" />
-							{/if}
-							update
-						</button>
-					</p>
+					<ButtonSpinner bind:bindTo={btnUpdate} spinOn={loading} caption='update' formaction='?/updatePost'></ButtonSpinner>
 				{/if}
 				<button
 					formaction="?/clearForm"

@@ -19,9 +19,9 @@
 		fontsize?: string
 	}
 	let { title, width = '16rem', height = '2.5rem', fontsize = '16px' }: PROPS = $props()
-	if (width) utils.setCSSValue('--INPUT-ComRunner-WIDTH', width as string)
-	if (height) utils.setCSSValue('--INPUT-ComRunner-HEIGHT', height as string)
-	if (fontsize) utils.setCSSValue('--INPUT-ComRunner-FONT-SIZE', fontsize as string)
+	if (width) utils.setCSSValue('--INPUT-COMRUNNER-WIDTH', width as string)
+	if (height) utils.setCSSValue('--INPUT-COMRUNNER-HEIGHT', height as string)
+	if (fontsize) utils.setCSSValue('--INPUT-COMRUNNER-FONT-SIZE', fontsize as string)
 
 	// const test = async () => {
 	// 	const [error, user] = await utils.catchError(getUser(1))
@@ -46,7 +46,7 @@
 		label {
 			position: absolute;
 			transform: translateY(-50%);
-			top: calc(var(--INPUT-ComRunner-HEIGHT) * 0.5);
+			top: calc(var(--INPUT-COMRUNNER-HEIGHT) * 0.5);
 			left: 15px;
 			color: var(--INPUT-COLOR);
 			background-color: var(--INPUT-BACKGROUND-COLOR);
@@ -54,9 +54,9 @@
 			transition: 0.5s;
 		}
 		input {
-			width: var(--INPUT-ComRunner-WIDTH);
-			height: var(--INPUT-ComRunner-HEIGHT);
-			font-size: var(--INPUT-ComRunner-FONT-SIZE);
+			width: var(--INPUT-COMRUNNER-WIDTH);
+			height: var(--INPUT-COMRUNNER-HEIGHT);
+			font-size: var(--INPUT-COMRUNNER-FONT-SIZE);
 			padding: 0 10px;
 			color: var(--TEXT-COLOR);
 			&:focus {

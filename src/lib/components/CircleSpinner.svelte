@@ -12,6 +12,7 @@
 	NOTE: dynamic style
 -->
 <div
+	class="comrunner-div"
 	style:border-color="{color} transparent {color}
 	{color}"
 	style="--duration: {duration}"
@@ -21,7 +22,7 @@
 ></div>
 
 <style>
-	div {
+	.comrunner-div {
 		display: inline-block;
 		vertical-align: middle;
 		margin: 0 4pt;
