@@ -41,7 +41,7 @@
 		})
 		return params.slice(0, -1)
 	}
-	console.log(getFormParams())
+	//console.log(getFormParams())
 </script>
 
 <svelte:head>

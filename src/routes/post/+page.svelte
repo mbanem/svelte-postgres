@@ -90,7 +90,7 @@
 		the corresponding page and through $page.form app-wide until the next update.
 	*/
 	const enhancePost: SubmitFunction = ({ action, formData, cancel }) => {
-		console.log('enhancePost', action.search, formData.get('id'))
+		//console.log('enhancePost', action.search, formData.get('id'))
 		if (action.search === '?/clearForm') {
 			return cancel()
 		}
@@ -124,9 +124,9 @@
 		}
 		loading = true // start spinner animation
 		if (action.search === '?/createPost') {
-			utils.hideButtonsExceptFirst([btnCreate, btnUpdate, btnDelete])
 			result = 'creating post...'
 		} else if (action.search === '?/deletePost') {
+			utils.hideButtonsExceptFirst([btnDelete, btnCreate, btnUpdate])
 			result = 'deleting post...'
 		} else if (action.search === '?/updatePost') {
 			result = 'updating post...'
@@ -135,7 +135,7 @@
 		return async ({ update }) => {
 			await update()
 			ignoreFormMessage = true
-			console.log('enhancePost after action', action.search, $page.status)
+			//console.log('enhancePost after action', action.search, $page.status)
 			if (action.search === '?/createPost') {
 				result = $page.status === 200 ? 'post created' : 'create failed'
 			} else if (action.search === '?/deletePost') {
@@ -143,9 +143,9 @@
 			} else if (action.search === '?/updatePost') {
 				result = $page.status === 200 ? 'post updated' : 'update failed'
 			}
-			utils.hideButtonsExceptFirst([btnCreate, btnUpdate, btnDelete])
 			invalidateAll()
-			clearForm()
+			clearForm() // also set buttons
+			// utils.hideButtonsExceptFirst([btnCreate, btnUpdate, btnDelete])
 			loading = false // stop spinner animation
 			clearMessage()
 			utils.setColor('lightgreen')
@@ -238,6 +238,8 @@
 		event.preventDefault()
 		// if (browser) {
 		;(document.querySelector("input[name='id']") as HTMLInputElement).value = id
+		utils.hideButtonsExceptFirst([btnDelete, btnUpdate, btnCreate])
+		result = 'deleting post...'
 		btnDelete.click()
 		// }
 	}
@@ -328,8 +330,8 @@
 		</button>
 	</div>
 {/snippet}
-<div bind:this={boardBlock} class="board hidden">
-	<div style="position:relative;">
+<div bind:this={boardBlock} class="board">
+	<div>
 		<form method="POST" action="?/createPost" use:enhance={enhancePost}>
 			<input type="hidden" name="id" bind:value={snap.id} />
 			<input type="hidden" name="authorId" bind:value={snap.authorId} />
@@ -357,28 +359,42 @@
 				{@render toggle_published('Toggle the Published Flag')}
 				<span style="user-select:none">published</span>
 				{#if !wrongUser}
-					<button bind:this={btnCreate} type="submit">
-						{#if loading}
-							<!-- NOTE: must have ancestor with position relative to get proper position -->
-							<CircleSpinner color="skyblue" />
-						{/if}
-						create
-					</button>
-					<button bind:this={btnDelete} type="submit" formaction="?/deletePost" class="hidden"
-						>delete</button
-					>
-					<button
-						bind:this={btnUpdate}
-						type="submit"
-						formaction="?/updatePost"
-						class="button hidden"
-					>
-						{#if loading}
-							<!-- NOTE: must have ancestor with position relative to get proper position -->
-							<CircleSpinner color="skyblue" />
-						{/if}
-						update
-					</button>
+					<p style="position:relative">
+						<button bind:this={btnCreate} type="submit">
+							{#if loading}
+								<!-- NOTE: must have ancestor with position relative to get proper position -->
+								<CircleSpinner color="skyblue" />
+							{/if}
+							create
+						</button>
+					</p>
+					<p style="position:relative">
+						<button bind:this={btnDelete} type="submit" formaction="?/deletePost" class="hidden">
+							{#if loading}
+								<!-- NOTE: must have ancestor with position relative to get proper position -->
+								<CircleSpinner color="skyblue" />
+							{/if}
+							delete
+						</button>
+					</p>
+					<!-- NOTE: Despite the fact that <button has position:relative> essential for
+							<CircleSpinner> we have to wrap button with another tag with position:relative
+							in order to spin inside the button itself
+					-->
+					<p style="position:relative">
+						<button
+							bind:this={btnUpdate}
+							type="submit"
+							formaction="?/updatePost"
+							class="button hidden"
+						>
+							{#if loading}
+								<!-- NOTE: must have ancestor with position relative to get proper position -->
+								<CircleSpinner color="skyblue" />
+							{/if}
+							update
+						</button>
+					</p>
 				{/if}
 				<button
 					formaction="?/clearForm"
@@ -396,7 +412,8 @@
 	<div>
 		{#key postAuthors}
 			{#key selectedUserId}
-				<PostList postAuthors={postsAuthors()} {toUpdatePost} {deletePost} {selectedUserId} />
+				<PostList postAuthors={postsAuthors()} {toUpdatePost} {deletePost} {selectedUserId}
+				></PostList>
 			{/key}
 		{/key}
 	</div>
@@ -487,9 +504,5 @@
 	label {
 		display: flex;
 		gap: 1.5rem;
-	}
-
-	.button {
-		position: relative;
 	}
 </style>

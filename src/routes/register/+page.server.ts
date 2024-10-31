@@ -1,4 +1,3 @@
-
 import { db } from '$lib/server/db'
 import bcrypt from 'bcrypt'
 import type { Actions } from './$types'
@@ -8,7 +7,7 @@ import type { PageServerLoad } from './$types'
 import { page } from '$app/stores'
 
 export const load: PageServerLoad = (async ({ url }) => {
-	console.log('register load +page.server.ts', url)
+	//console.log('register load +page.server.ts', url)
 	const data = {
 		firstName: url.searchParams.get('firstName'),
 		lastName: url.searchParams.get('lastName'),
@@ -29,7 +28,7 @@ export const actions: Actions = {
 			email: string
 			password: string
 		}
-		console.log('register', firstName, lastName, email, password)
+		//console.log('register', firstName, lastName, email, password)
 
 		if (firstName === '' || lastName === '' || email === '') {
 			return fail(400, {

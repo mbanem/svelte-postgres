@@ -232,7 +232,7 @@ export const setCSSValue = (varName: string, value: string) => {
 			root.style.setProperty(varName, value)
 		}
 	} catch (err) {
-		console.log('setCSSValue', err)
+		// $1.log('setCSSValue', err)
 	}
 }
 export const setTextColor = (varName: string, color: string) => {

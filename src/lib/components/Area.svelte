@@ -40,7 +40,6 @@ with last line rendering the total
 		0
 	)}
 </pre>
-</pre>
 
 <style lang="scss">
 	pre {

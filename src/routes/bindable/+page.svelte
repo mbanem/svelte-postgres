@@ -4,11 +4,11 @@
 
 	const click = () => {
 		count++
-		console.log('parent click increment count', count)
+		//console.log('parent click increment count', count)
 	}
 	// child calls parent's function to update parent's count
 	const clickArg = (delta: number, _?: MouseEvent) => {
-		console.log('parent clickArg ', delta)
+		//console.log('parent clickArg ', delta)
 		count = count + delta
 	}
 

@@ -29,7 +29,7 @@
 		context.fillRect(0, 0, size, size)
 	}
 	const colorOnClick = () => {
-		console.log('colorOnClick')
+		//console.log('colorOnClick')
 		elColor.value = ''
 	}
 	$effect(setColor)

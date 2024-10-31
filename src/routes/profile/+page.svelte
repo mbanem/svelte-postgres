@@ -98,7 +98,7 @@
 					? 'updating profile...'
 					: 'deleting profile...'
 		if (action.search === '?/delete') {
-			console.log('action is delete', action.search)
+			//console.log('action is delete', action.search)
 			hideButtonsExceptFirst([btnDelete, btnCreate, btnUpdate])
 		}
 		return async ({ update }) => {

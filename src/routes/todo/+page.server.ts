@@ -140,10 +140,10 @@ export const actions: Actions = {
 
 		try {
 			const upd = new Date()
-			console.log(
-				'db.todo.create',
-				JSON.stringify({ title, content, priority, userId, updatedAt: upd }, null, 2)
-			)
+			// console.log(
+			// 	'db.todo.create',
+			// 	JSON.stringify({ title, content, priority, userId, updatedAt: upd }, null, 2)
+			// )
 			const newTodo = await db.todo.create({
 				data: {
 					title,
@@ -208,7 +208,7 @@ export const actions: Actions = {
 		}
 	},
 	deleteTodo: async ({ request }) => {
-		console.log('deleteTodo')
+		//console.log('deleteTodo')
 		const body = await request.formData()
 		const id = body.get('id') as string
 

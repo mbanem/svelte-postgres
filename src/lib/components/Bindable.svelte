@@ -20,7 +20,7 @@
 	let childCount = $state<number>(0)
 	export const counter = (delta: number) => {
 		childCount += delta
-		console.log('parent call ', delta)
+		// console.log('parent call ', delta)
 	}
 </script>
 

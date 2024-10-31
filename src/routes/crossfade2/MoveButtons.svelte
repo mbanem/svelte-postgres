@@ -7,7 +7,7 @@
 		last: boolean
 	}
 	let { actionUp, actionDown, first, last } = $props()
-	console.log(first, last)
+	//console.log(first, last)
 </script>
 
 <div class="up-down">

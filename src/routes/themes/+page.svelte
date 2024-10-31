@@ -64,7 +64,7 @@
 		const rs = getComputedStyle(root)
 		defaultColor = rs.getPropertyValue('--BODY-COLOR')
 		defaultBackgroundColor = rs.getPropertyValue('--BODY-BACKGROUND-COLOR')
-		console.log(defaultColor, defaultBackgroundColor)
+		//console.log(defaultColor, defaultBackgroundColor)
 		setTheme('def')
 		return beforeUnload
 	})

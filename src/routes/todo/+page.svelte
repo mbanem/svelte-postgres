@@ -100,7 +100,7 @@
 
 	// get params action for URL and formData to check on required fields
 	const enhanceTodo: SubmitFunction = async ({ action, formData }) => {
-		console.log('action.search')
+		//console.log('action.search')
 		titleIsRequired = ''
 		contentIsRequired = ''
 		ignoreFormMessage = false
@@ -125,7 +125,7 @@
 				: action.search === '?/updateTodo'
 					? 'updating todo...'
 					: 'deleting todo...'
-
+		//console.log('before update', result)
 		return async ({ update }) => {
 			await update()
 			if (action.search === '?/addTodo') {
@@ -137,6 +137,7 @@
 				result = $page.status === 200 ? 'todo deleted' : 'delete failed'
 				// updateTodos(formData)
 			}
+			//console.log('after update', result)
 			await invalidateAll()
 			loading = false // turn the spinner off
 			ignoreFormMessage = true
@@ -182,12 +183,13 @@
 	}
 
 	const deleteTodo = async (id: string) => {
-		console.log('deleteTodo', id)
+		//console.log('deleteTodo', id)
 		// snap.id = id
+		hideButtonsExceptFirst([btnDelete, btnCreate, btnUpdate])
 		todoIdEl.value = id
+		loading = true
+		result = 'deleting todo...'
 		btnDelete.click()
-		// loading = true
-		// result = 'deleting todo...'
 		// clearForm()
 		// const response = await fetch(`/todo?id=${id}`, {
 		// 	method: 'DELETE',
@@ -201,6 +203,7 @@
 		// if (form?.success) {
 		// 	uTodos = uTodos.filter((uTodo: UTodo) => uTodo.todoId !== id)
 		// }
+		hideButtonsExceptFirst([btnCreate, btnDelete, btnUpdate])
 	}
 
 	let todoIdEl: HTMLInputElement
@@ -230,7 +233,7 @@
 	// update button is taken
 
 	const prepareUpdate = async (todoId: string) => {
-		console.log('prepareUpdate', todoId)
+		//console.log('prepareUpdate', todoId)
 		prepareDataForEdit(todoId)
 		updatePrepared = true
 		// hide create button and show the update one
@@ -270,7 +273,7 @@
 	// };
 	onMount(() => {
 		if (selectedUserId !== data.locals.user.id) {
-			console.log('ids do not match')
+			//console.log('ids do not match')
 			return
 		}
 		const tUser = utils.selectRecordItems<UTodo>('id', selectedUserId, data.uTodos)
@@ -320,65 +323,62 @@
 				placeholder={contentIsRequired || 'enter todo content'}
 				bind:value={snap.content}
 			/>
-			<!-- position:relative here is essential for CircleSpinner
-					to stay inside the buttons
-			-->
-			<div class="buttons-relative">
-				<button bind:this={btnCreate} type="submit">
-					{#if loading}
-						<!-- NOTE: must have ancestor with position relative to get proper position -->
-						<CircleSpinner color="skyblue" top="50%" />
-					{/if}
-					create
-				</button>
-				<button
-					bind:this={btnUpdate}
-					disabled={selectedUserId !== authorId}
-					style:cursor={selectedUserId === authorId ? 'pointer' : 'not-allowed'}
-					formaction="?/updateTodo"
-					type="submit"
-					class="hidden"
-				>
-					update
-				</button>
-				{#if selectedUserId !== authorId}
-					<Tooltip
-						placement="top"
-						defaultClass="tooltip-update-false"
-						class="master-todo"
-						arrow={false}
-					>
-						<p>owner only permission</p>
-					</Tooltip>
-				{/if}
+			<!-- <div class="buttons-relative"> -->
+			<button
+				bind:this={btnUpdate}
+				disabled={selectedUserId !== authorId}
+				style:cursor={selectedUserId === authorId ? 'pointer' : 'not-allowed'}
+				formaction="?/updateTodo"
+				type="submit"
+				class="hidden"
+			>
 				{#if loading}
 					<!-- NOTE: must have ancestor with position relative to get proper position -->
-					<CircleSpinner color="skyblue" top="50%" />
+					<CircleSpinner color="skyblue" top="0" />
 				{/if}
-				<button
-					bind:this={btnDelete}
-					type="submit"
-					formaction="?/deleteTodo"
-					class="button hidden"
-					aria-label="delete to do"
+				update
+			</button>
+			<button bind:this={btnCreate} type="submit">
+				{#if loading}
+					<!-- NOTE: must have ancestor with position relative to get proper position -->
+					<CircleSpinner color="skyblue" top="0" />
+				{/if}
+				create
+			</button>
+			{#if selectedUserId !== authorId}
+				<Tooltip
+					placement="top"
+					defaultClass="tooltip-update-false"
+					class="master-todo"
+					arrow={false}
 				>
-					{#if loading}
-						<!-- NOTE: must have ancestor with position relative to get proper position -->
-						<CircleSpinner color="skyblue" top="50%" />
-					{/if}
-				</button>
-				{#if selectedUserId !== authorId}
-					<Tooltip
-						placement="top"
-						defaultClass="tooltip-update-button"
-						class="master-todo"
-						arrow={false}
-					>
-						<p>owner only permission</p>
-					</Tooltip>
+					<p>owner only permission</p>
+				</Tooltip>
+			{/if}
+			<button
+				bind:this={btnDelete}
+				type="submit"
+				formaction="?/deleteTodo"
+				class="button hidden"
+				aria-label="delete to do"
+			>
+				{#if loading}
+					<!-- NOTE: must have ancestor with position relative to get proper position -->
+					<CircleSpinner color="skyblue" />
 				{/if}
-				<button onclick={clearForm}>clear form</button>
-			</div>
+			</button>
+			{#if selectedUserId !== authorId}
+				<Tooltip
+					placement="top"
+					defaultClass="tooltip-update-button"
+					class="master-todo"
+					arrow={false}
+				>
+					<p>owner only permission</p>
+				</Tooltip>
+			{/if}
+			<button onclick={clearForm}>clear form</button>
+			<!-- </div> -->
 		</div>
 	</form>
 	<div class="two-columns">
@@ -457,11 +457,12 @@
 		}
 	}
 	button {
+		position: relative;
 		/* margin-top on app.scss class */
 		margin-top: 1rem !important;
 	}
 	.buttons-relative {
-		position: relative;
+		// position: relative;
 		display: flex;
 		gap: 1rem;
 	}

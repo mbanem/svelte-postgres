@@ -4,7 +4,7 @@ import type { PageServerLoad } from './$types'
 
 export const load = (async ({}) => {
 	const users = (await db.user.findMany()) as User[]
-	console.log('news/slug/+page.server.ts load users', users)
+	//console.log('news/slug/+page.server.ts load users', users)
 
 	return {
 		users

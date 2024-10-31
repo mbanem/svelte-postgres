@@ -1,7 +1,7 @@
 let role = $state<string>()
 export const setRole = (role_: string) => {
 	role = role_
-	console.log('setRole', role)
+	// $1.log('setRole', role)
 }
 
 // console.log('utils/navButtons.svelte.ts getNavButtons', role);

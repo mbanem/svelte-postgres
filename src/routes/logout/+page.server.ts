@@ -1,4 +1,3 @@
-
 import { redirect } from '@sveltejs/kit'
 import type { Actions } from './$types'
 
@@ -15,7 +14,7 @@ export const load: PageServerLoad = (async ({ cookies, locals }) => {
 		lastName: '',
 		role: 'VISITOR'
 	}
-	console.log('logout/+page.server.ts load', 'VISITOR')
+	//console.log('logout/+page.server.ts load', 'VISITOR')
 	// await fetch('/')
 	// throw redirect(302, '/')
 }) satisfies PageServerLoad
@@ -41,7 +40,7 @@ export const actions: Actions = {
 			lastName: '',
 			role: 'VISITOR'
 		}
-		console.log('logout', 'VISITOR')
+		//console.log('logout', 'VISITOR')
 		// await fetch('/')
 		throw redirect(303, '/')
 	}

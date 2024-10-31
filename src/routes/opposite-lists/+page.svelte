@@ -19,7 +19,6 @@
 	const moveRight = (item: string) => {
 		// @ts-expect-error
 		;[left, right] = move(item, left, right)
-		console
 	}
 </script>
 

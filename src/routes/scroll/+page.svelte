@@ -193,7 +193,7 @@
 		const rect = el.getBoundingClientRect()
 		const x = window.scrollX
 		const y = window.scrollY
-		console.log('x', x, 'y', y, 'top', rect.top, 'height', 1.6 * rect.height)
+		//console.log('x', x, 'y', y, 'top', rect.top, 'height', 1.6 * rect.height)
 		ttEl.style.left = `${x + rect.left - rect.width / 2}px`
 		ttEl.style.top = `${y + Math.floor(rect.top) - 2 * Math.floor(rect.height)}px`
 	}

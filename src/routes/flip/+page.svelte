@@ -16,12 +16,12 @@
 	let [send, receive] = crossfade({
 		duration: 2000
 	})
-	const handleEndA = () => {
-		console.log('handleEnd A')
-	}
-	const handleEndB = () => {
-		console.log('handleEnd B')
-	}
+	// const handleEndA = () => {
+	// 	console.log('handleEnd A')
+	// }
+	// const handleEndB = () => {
+	// 	console.log('handleEnd B')
+	// }
 	type Layout = 'stack' | 'grid'
 	// NOTE: in route 'flip' layout is not defined by rune $state and works OK
 	// but here layout = $state<Layout> is necessary for flip to work

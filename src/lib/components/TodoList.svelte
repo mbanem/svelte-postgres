@@ -11,7 +11,7 @@
 		deleteTodo: (id: string) => void
 	}
 
-	type ARGS = {
+	type PROPS = {
 		id: string
 		selectedUserId: string
 		uTodos: UTodos
@@ -26,7 +26,7 @@
 		toggleCompleted,
 		deleteTodo,
 		prepareUpdate
-	}: ARGS = $props()
+	}: PROPS = $props()
 
 	const permission = 'owner only permission'
 	const getSelectedRole = () => {

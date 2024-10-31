@@ -49,13 +49,13 @@
 	// 	}
 	// ])
 	const addImage = () => {
-		console.log('addImage')
+		//console.log('addImage')
 		images.push(imgWH())
 		imgWidth += 1
 		scroll()
 	}
 	const removeImage = () => {
-		console.log('removeImage')
+		//console.log('removeImage')
 		images = images.slice(0, -1)
 		imgWidth -= 1
 		scroll()

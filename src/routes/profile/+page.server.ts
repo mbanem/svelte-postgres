@@ -118,7 +118,7 @@ export const actions: Actions = {
 			bioId: string
 			authorId: string
 		}
-		console.log(bio, bioId, authorId)
+		//console.log(bio, bioId, authorId)
 		if (bio === '' || authorId === '' || bioId === '') {
 			return fail(400, { bio, bioId, message: 'Insufficient data supplied' })
 		}

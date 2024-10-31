@@ -31,7 +31,7 @@
 
 	// unable to handle other events just on:outroend={handleEnd}
 	const handleEnd = () => {
-		console.log('Transition ended!')
+		//.log('Transition ended!')
 		loading = !loading
 		showTooltip = false
 	}
@@ -74,8 +74,8 @@
 			? el.innerText.replace(/insert/, 'remove')
 			: el.innerText.replace(/remove/, 'insert')
 		const host = document.getElementById('host')
-		console.log(host, host.children[0])
-		if (host && host.children[0].children[0]) {
+		//console.log(host, host.children[0])
+		if (host && host?.children[0]?.children[0]) {
 			host.children[0].children[0].remove()
 			return
 		}
@@ -116,7 +116,7 @@
 		<!-- NOTE: for <CircleSpinner> we must have a wrapper with position relative
 			in order to position itself according to the relative ancestor
 		-->
-		<div style="position:relative">
+		<div>
 			<button onclick={toggleLoading} style="text-align:center;">
 				{#if loading}
 					<!-- NOTE: must have ancestor with position relative to get proper position -->
@@ -171,8 +171,7 @@
 		border: 1px solid gray;
 		border-radius: 1rem;
 		padding: 2rem;
-		// margin-top: 2rem;
-		// margin-left: 5rem;
+
 		& > div {
 			/* direct div children not nested ones */
 			border: 1px solid gray;
@@ -211,5 +210,8 @@
 		top: 12rem;
 		left: 20rem;
 		border: 4px solid lightgreen;
+	}
+	button {
+		position: relative;
 	}
 </style>

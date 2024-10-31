@@ -242,7 +242,7 @@
 
 	Select.prototype.onLabelClick = function () {
 		this.comboEl.style.diplay = 'block'
-		console.log('onLabelClick')
+		//console.log('onLabelClick')
 		this.comboEl.focus()
 	}
 
@@ -419,7 +419,7 @@
 		})
 	}
 	function showMenu() {
-		console.log('showMenu')
+		//console.log('showMenu')
 		document.querySelector('.combo-input').style.display = 'block'
 	}
 </script>

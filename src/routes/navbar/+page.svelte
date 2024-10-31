@@ -1,8 +1,8 @@
 <script lang="ts">
 	import NavButton from '$lib/components/NavButton.svelte'
-	const turn = () => {
-		console.log('turn')
-	}
+	// const turn = () => {
+	// 	console.log('turn')
+	// }
 	const items = [
 		{ color: 'Pink', title: 'Home', href: '/' },
 		{ color: 'Blue', title: 'Derived', href: '/derived' },
