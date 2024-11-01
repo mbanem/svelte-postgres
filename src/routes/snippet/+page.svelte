@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { onMount, tick } from 'svelte'
 	import * as utils from '$utils'
-	import { sveltekit } from '@sveltejs/kit/vite'
 	let divEl: HTMLDivElement
 	type TImage = {
 		src: string

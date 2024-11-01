@@ -281,8 +281,8 @@
 			{@const lfix = list.length - 1}
 			<li class="family-object container" animate:flip={{ duration: 300 }}>
 				<MoveButtons
-					actionUp={moveFamilyObject(familyObject, -1)}
-					actionDown={moveFamilyObject(familyObject, 1)}
+					actionUp={moveFamilyObject}
+					actionDown={moveFamilyObject}
 					first={ix === 0 || lfix === 0}
 					last={ix === lfix}
 				/>

@@ -1,199 +1,257 @@
-<script>
-	import MoveButtons from './MoveButtons.svelte'
-	// import Explanation from './Explanation.svelte'
+<script lang="ts">
+  // import MoveButtons from './MoveButtons.svelte';
+  // import Explanation from './Explanation.svelte'
 
-	import { crossfade } from 'svelte/transition'
-	import { cubicInOut } from 'svelte/easing'
-	import { flip } from 'svelte/animate'
-	import { onMount } from 'svelte'
-	import { page } from '$app/stores' // for $age.status code on actions
-	import * as utils from '$utils'
-	// dirty function to quickly generate some keys
-	const randomId = () => {
-		return (Math.random() + 1).toString(36).slice(2, 5)
-	}
+  import { crossfade } from 'svelte/transition';
+  import { cubicInOut } from 'svelte/easing';
+  import { flip } from 'svelte/animate';
+  import { onMount } from 'svelte';
+  import { page } from '$app/stores'; // for $age.status code on actions
+  import * as utils from '$utils';
+  // dirty function to quickly generate some keys
+  const randomId = () => {
+    return (Math.random() + 1).toString(36).slice(2, 5);
+  };
 
-	// state
-	const createOuter = (inner) => {
-		let _text = `outer-${randomId()}`
-		let _inner = $state(inner)
+  type Inner = {
+    text: string;
+  };
+  type Outer = {
+    text: string;
+    inners: Inner[];
+  };
+  // type Inner = typeof createInner
+  // state
+  const createOuter = (inners: Inner[]): Outer => {
+    let _text = `outer-${randomId()}`;
+    let _inners = $state<Inner[]>(inners);
 
-		return {
-			get text() {
-				return _text
-			},
-			get inner() {
-				return _inner
-			}
-		}
-	}
+    return {
+      get text() {
+        return _text;
+      },
+      get inners() {
+        return _inners;
+      },
+    };
+  };
 
-	const createInner = () => {
-		let _text = `inner-${randomId()}`
+  const createInner = (): Inner => {
+    let _text = `inner-${randomId()}`;
 
-		return {
-			get text() {
-				return _text
-			}
-		}
-	}
+    return {
+      get text() {
+        return _text;
+      },
+    };
+  };
+  // type MoveOuterUp = (outer: any, shift: -1) => void;
+  // type MoveOuterDown = (outer: any, shift: 1) => void;
+  // type MoveInnerUp = (inner: any, shift: -1) => void;
+  // type MoveInnerDown = (inner: any, shift: 1) => void;
 
-	// for moving items
-	function moveOuter(outer, shift) {
-		const from = list.indexOf(outer)
-		// make sure to check array bounds
-		const to = from + shift > list.length || from + shift < 0 ? from : from + shift
+  // create the initial list
+  let list = $state<Outer[]>([])
+  list.push( createOuter([createInner(), createInner()]) as Outer);
 
-		list.splice(to, 0, list.splice(from, 1)[0])
-	}
+  // for moving items
+  function moveOuterUp(outer:Outer){
+    moveOuter(outer,-1)
+  }
+  function moveOuterDown(outer:Outer){
+    moveOuter(outer,1)
+  }
+  function moveOuter(outer: Outer, shift: number) {
+    const from = (list as Outer[]).indexOf(outer);
+    // make sure to check array bounds
+    const to =
+      from + shift > list.length || from + shift < 0 ? from : from + shift;
+if(from ===to)return
+    // (list.splice(from, 1) removes the element from index from, and returns
+    // that as an an array of one element, so we extract the element as the first [0]
+    list.splice(to, 0, list.splice(from, 1)[0] as Outer);
+  }
+// function moveInnerUp(outer:Outer){
+// moveInner(outer,-1)
+// }
+// function moveInnerDown(outer:Outer){
+// moveInner(outer,1)
+// }
+  function moveInner(outer: Outer, inner: Inner, shift: -1) {
+    const outerFrom = list.indexOf(outer);
+    const innerFrom = outer.inners.indexOf(inner);
 
-	function moveInner(outer, inner, shift) {
-		const outerFrom = list.indexOf(outer)
-		const innerFrom = outer.inner.indexOf(inner)
+    // check array bounds, but make sure to move the inner to the adjacent outer
+    // if one is available
+    let outerTo = outerFrom;
+    let innerTo = 0;
+    if (innerFrom + shift < outer.inners.length && innerFrom + shift >= 0) {
+      // we shift within the same outer!
+      innerTo = innerFrom + shift;
+    } else if (
+      innerFrom + shift >= outer.inners.length &&
+      outerFrom + shift < list.length
+    ) {
+      // we shift to first item of the next outer
+      outerTo += 1;
+      innerTo = 0;
+    } else if (innerFrom + shift < 0 && outerFrom + shift >= 0) {
+      // we shift to the last item of the previous outer
+      outerTo -= 1;
+      if (list[outerTo]?.inners){
+      innerTo = (list[outerTo]?.inners as Inner[]).length;
+    }
+    }
 
-		// check array bounds, but make sure to move the inner to the adjacent outer
-		// if one is available
-		let outerTo = outerFrom
-		let innerTo = 0
-		if (innerFrom + shift < outer.inner.length && innerFrom + shift >= 0) {
-			// we shift within the same outer!
-			innerTo = innerFrom + shift
-		} else if (innerFrom + shift >= outer.inner.length && outerFrom + shift < list.length) {
-			// we shift to first item of the next outer
-			outerTo += 1
-			innerTo = 0
-		} else if (innerFrom + shift < 0 && outerFrom + shift >= 0) {
-			// we shift to the last item of the previous outer
-			outerTo -= 1
-			innerTo = list[outerTo].inner.length
-		}
+    const moved = (list[outerFrom]?.inners as Inner[]).splice(innerFrom, 1)[0] as Inner;
+    (list[outerTo]?.inners as Inner[]).splice(innerTo, 0, moved);
+  }
 
-		const moved = list[outerFrom].inner.splice(innerFrom, 1)[0]
-		list[outerTo].inner.splice(innerTo, 0, moved)
-	}
+  // for adding new items
+  function appendInner(outer: Outer) {
+    (outer?.inners as Inner[]).push(createInner());
+  }
 
-	// for adding new items
-	function appendInner(outer) {
-		outer.inner.push(createInner())
-	}
+  function appendOuter() {
+    list.push(createOuter([]));
+  }
 
-	function appendOuter() {
-		list.push(createOuter([]))
-	}
+  // transition
+  const [send, receive] = crossfade({
+    duration: (d) => Math.sqrt(d * 200),
 
-	// create the initial list
-	let list = $state([
-		createOuter([createInner(), createInner()]),
-		createOuter([createInner(), createInner()])
-	])
+    fallback() {
+      return {
+        duration: 300,
+        easing: cubicInOut,
+        css: () => `opacity: 0;`,
+      };
+    },
+  });
 
-	// transition
-	const [send, receive] = crossfade({
-		duration: (d) => Math.sqrt(d * 200),
-
-		fallback() {
-			return {
-				duration: 300,
-				easing: cubicInOut,
-				css: () => `
-				opacity: 0;
-			`
-			}
-		}
-	})
-
-	onMount(() => {
-		return () => {
-			utils.setMrPath($page.url.pathname)
-		}
-	})
+  onMount(() => {
+    return () => {
+      utils.setMrPath($page.url.pathname);
+    };
+  });
 </script>
 
 <svelte:head>
-	<title>Cross Fade</title>
+  <title>Cross Fade</title>
 </svelte:head>
 <a href="/crossfade2">to Cross Fade 2</a>
-<div class="wrap-all">
-	<!-- <Explanation /> -->
+<!-- <div class="wrap-all"> -->
+  <!-- <Explanation /> -->
 
-	<ul class="container">
-		<div class="header">
-			<button onclick={() => appendOuter()}> append new outer </button>
-		</div>
-		{#each list as outer, index (outer.text)}
-			<li class="outer container" animate:flip={{ duration: 300 }}>
-				<MoveButtons actionUp={moveOuter(outer, -1)} actionDown={moveOuter(outer, 1)} />
-				<ul class="content">
-					<div class="header">
-						<span>{outer.text}</span>
-						<button onclick={() => appendInner(outer)}> append new inner </button>
-					</div>
-					{#each outer.inner as inner, i (inner.text)}
-						<li
-							class="inner container"
-							in:receive={{ key: inner.text }}
-							out:send={{ key: inner.text }}
-							animate:flip={{ duration: 300 }}
-						>
-							<MoveButtons
-								actionUp={moveInner(outer, inner, -1)}
-								actionDown={moveInner(outer, inner, 1)}
-							/>
-							<div class="content">
-								{inner.text}
-							</div>
-						</li>
-					{/each}
-				</ul>
-			</li>
-		{/each}
-	</ul>
-</div>
+  <ul class="container">
+    <li class="header">
+      <button onclick={() => appendOuter()}> append new outer </button>
+    </li>
+      {#each (list as Outer[]) as outer, index (outer.text)}
+        <li class="outer-item" animate:flip={{ duration: 300 }}>
+          <div class="stacked-buttons top">
+            <button onclick={()=>moveOuter(outer,-1)}> ↑</button>
+            <button onclick={()=>moveOuter(outer,1)}> ↓</button>
+          </div>
+          <div>
+            <ul class="content">
+              <div class="outer-header">
+                <span>{outer.text}</span>
+                <button onclick={() => appendInner(outer)}>
+                  append new inner
+                </button>
+              </div>
+              {#each (outer.inners as Inner[]) as inner, i (inner.text)}
+                <li
+                  class="inner-container"
+                  in:receive={{ key: inner.text }}
+                  out:send={{ key: inner.text }}
+                  animate:flip={{ duration: 300 }}
+                >
+                <div class="inner">
+                    <div class="stacked-buttons">
+                      <button onclick={()=>moveInner(outer,inner,-1)}> ↑</button>
+                      <button onclick={()=>moveInner(outer,inner,1)}> ↓</button>
+                    </div>
+                    <div>
+                      {inner.text}
+                    </div>
+                </div>
+                </li>
+              {/each}
+            </ul>
+          </div>
+        </li>
+      {/each}
+
+  </ul>
+<!-- </div> -->
 
 <style>
-	.wrap-all {
-		margin-left: 5rem !important;
-	}
-	.container {
-		border: 1px solid gray;
-		border-radius: 8px;
-		padding: 1rem;
-		display: flex;
-		flex-direction: column;
-		gap: 1rem;
-		width: 80vw;
-		/* margin: 0 auto; */
-	}
-
-	.outer,
-	.inner {
-		display: flex;
-		flex-direction: row;
-		width: 98.4%;
-		background-color: bisque;
-		/* border: 1px solid pink; */
-	}
-
-	.outer > .content,
-	.inner > .content {
-		flex: 1;
-		padding: 0 0 0 1rem;
-		margin: 0;
-		display: flex;
-		flex-direction: column;
-		gap: 0.75rem;
-		width: 90%;
-		background-color: aliceblue;
-		font-size: 18px;
-		color: black;
-	}
-
-	.header {
-		display: flex;
-		flex-direction: row;
-		justify-content: space-between;
-		align-items: center;
-		width: 100%;
-		/* border: 1px solid yellow; */
-	}
+  /* .wrap-all {
+    margin-left: 5rem !important;
+  } */
+  .container {
+    border: 1px solid gray;
+    border-radius: 8px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 90vw;
+    list-style: none;
+    /* margin: 0 auto; */
+    border:1px solid gray;
+    }
+    .header {
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-start;
+      row-gap:1rem;
+      align-items: center;
+      width: 100%;
+    }
+    .outer-item{
+      display:flex;
+      width:100%;
+      border-top:1px solid gray;
+      /* border:1px solid pink; */
+    }
+    .outer-header{
+      display:flex;
+      justify-content: space-between;
+      width:98%;
+      margin-top:6px;
+    }
+    .content{
+      width:80vw;
+      /* border-top:1px solid gray; */
+      margin-top:1rem;
+      /* border:1px solid lightgreen; */
+    }
+    .stacked-buttons{
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+      .top{
+        margin-top:1rem;
+      }
+    }
+    .inner{
+      display: flex;
+      width:100%;
+      flex-direction: row;
+      align-items: center;
+      gap: 0.5rem;
+      &:not(:last-child) {
+        border-bottom: 6px;
+      /* border:1ps solid blue; */
+    }
+  }
+    .inner-container{
+      border:1px solid gray;
+      border-radius: 8px;
+      width:98%;
+      list-style: none;
+    }
 </style>

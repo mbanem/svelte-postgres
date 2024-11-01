@@ -180,8 +180,6 @@
 					lastName,
 					role,
 					author,
-					authorId,
-					categoryNames
 				} = post
 				arr.push({
 					id,
@@ -193,8 +191,6 @@
 					firstName: `${firstName}${role === 'ADMIN' ? 'T' : ''}`,
 					lastName,
 					author,
-					authorId,
-					categoryNames
 				})
 			}
 		})
@@ -357,28 +353,8 @@
 				{@render toggle_published('Toggle the Published Flag')}
 				<span style="user-select:none">published</span>
 				{#if !wrongUser}
-					<p style="position:relative">
-						<button bind:this={btnCreate} type="submit">
-							{#if loading}
-								<!-- NOTE: must have ancestor with position relative to get proper position -->
-								<CircleSpinner color="skyblue" />
-							{/if}
-							create
-						</button>
-					</p>
-					<p style="position:relative">
-						<button bind:this={btnDelete} type="submit" formaction="?/deletePost" class="hidden">
-							{#if loading}
-								<!-- NOTE: must have ancestor with position relative to get proper position -->
-								<CircleSpinner color="skyblue" />
-							{/if}
-							delete
-						</button>
-					</p>
-					<!-- NOTE: Despite the fact that <button has position:relative> essential for
-							<CircleSpinner> we have to wrap button with another tag with position:relative
-							in order to spin inside the button itself
-					-->
+					<ButtonSpinner bind:bindTo={btnCreate} spinOn={loading} caption='create' formaction='?/createPost' hidden={false}></ButtonSpinner>
+					<ButtonSpinner bind:bindTo={btnDelete} spinOn={loading} caption='delete' formaction='?/deletePost'></ButtonSpinner>
 					<ButtonSpinner bind:bindTo={btnUpdate} spinOn={loading} caption='update' formaction='?/updatePost'></ButtonSpinner>
 				{/if}
 				<button

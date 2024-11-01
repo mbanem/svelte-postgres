@@ -6,12 +6,12 @@
 	import { enhance } from '$app/forms'
 	import { invalidateAll } from '$app/navigation'
 	import { page } from '$app/stores' // for $age.status code on actions
-	import CircleSpinner from '$lib/components/CircleSpinner.svelte'
-	import { setColor, hideButtonsExceptFirst } from '$lib/utils'
+	import { setColor, hideButtonsExceptFirst } from '$utils'
 	import { Tooltip } from 'flowbite-svelte'
-	import * as utils from '$lib/utils'
-
-	import PageTitleCombo from '$lib/components/PageTitleCombo.svelte'
+	
+	import ButtonSpinner from '$components/ButtonSpinner.svelte'
+	import PageTitleCombo from '$components/PageTitleCombo.svelte'
+	import * as utils from '$utils'
 
 	type ARGS = {
 		data: PageData
@@ -283,34 +283,11 @@
 				<input type="hidden" name="bioId" bind:value={snap.bioId} />
 
 				<p class="buttons">
-					<button bind:this={btnCreate} type="submit" disabled={!snap.authorId} class="button">
-						{#if loading}
-							<!-- NOTE: must have ancestor with position relative to get proper position -->
-							<CircleSpinner color="skyblue" />
-						{/if}
-						create
-					</button>
+					<ButtonSpinner bind:bindTo={btnCreate} spinOn={loading} caption='create' disabled={!snap.authorId}></ButtonSpinner>
+					
 					{#if !wrongUser}
-						<button bind:this={btnUpdate} type="submit" formaction="?/update" class="button hidden">
-							{#if loading}
-								<!-- NOTE: must have ancestor with position relative to get proper position -->
-								<CircleSpinner color="skyblue" />
-							{/if}
-							update
-						</button>
-						<button
-							bind:this={btnDelete}
-							type="submit"
-							formaction="?/delete"
-							class="button hidden"
-							aria-label="delete profile"
-						>
-							delete
-							{#if loading}
-								<!-- NOTE: must have ancestor with position relative to get proper position -->
-								<CircleSpinner color="skyblue" />
-							{/if}
-						</button>
+					<ButtonSpinner bind:bindTo={btnUpdate} spinOn={loading} caption='update' formaction="?/update"></ButtonSpinner>
+					<ButtonSpinner bind:bindTo={btnDelete} spinOn={loading} caption='delete' formaction="?/delete"></ButtonSpinner>
 					{/if}
 					<button onclick={clearForm}>clear</button>
 				</p>
@@ -409,9 +386,5 @@
 	.pink {
 		color: pink !important;
 		border-color: pink !important;
-	}
-	/* for <CircleSpinner> to get proper position */
-	button {
-		position: relative;
 	}
 </style>
