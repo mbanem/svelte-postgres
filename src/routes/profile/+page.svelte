@@ -278,6 +278,7 @@
 					cols={35}
 					name="bio"
 					bind:value={snap_bio}
+					autofocus
 				></textarea>
 				<input type="hidden" name="authorId" bind:value={snap.authorId} />
 				<input type="hidden" name="bioId" bind:value={snap.bioId} />

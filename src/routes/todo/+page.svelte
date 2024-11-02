@@ -75,9 +75,7 @@
     hideButtonsExceptFirst([btnCreate, btnUpdate, btnDelete]);
     (document.querySelector("input[name='title']") as HTMLInputElement).value =
       '';
-    (
-      document.querySelector("input[name='content']") as HTMLInputElement
-    ).value = '';
+    (document.querySelector("[name='content']") as HTMLInputElement).value = '';
     (document.querySelector("input[type='number']") as HTMLInputElement).value =
       '0';
     titleIsRequired = contentIsRequired = '';
@@ -310,6 +308,7 @@
         name="title"
         placeholder={titleIsRequired || 'enter todo title'}
         bind:value={snap.title}
+        autofocus
       />
 
       <!-- onmouseenter={tooltipMouseWheel} -->
@@ -320,18 +319,22 @@
         bind:value={snap.priority}
       />
     </div>
-    <input
-      type="text"
-      name="content"
-      placeholder={contentIsRequired || 'enter todo content'}
-      bind:value={snap.content}
-    />
+    <div class="two-columns">
+      <textarea
+        rows={2}
+        cols={80}
+        name="content"
+        placeholder={contentIsRequired || 'enter todo content'}
+        bind:value={snap.content}
+        style="width:100%;height:8rem;overflowY:auto"
+      ></textarea>
+    </div>
     <div class="button-spinners">
       <ButtonSpinner
         bind:bindTo={btnUpdate}
         spinOn={loading}
         caption="update"
-        formaction="?/updatePost"
+        formaction="?/updateTodo"
         cursor={selectedUserId === authorId}
       ></ButtonSpinner>
 
