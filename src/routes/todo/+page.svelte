@@ -15,18 +15,13 @@
   import ButtonSpinner from '$components/ButtonSpinner.svelte';
   import * as utils from '$utils';
 
-  // type SelectedUser = {
-  // 	id: string
-  // 	firstName: string
-  // 	lastName: string
-  // 	role: string
-  // }
   type ARGS = {
     data: PageData;
     form: ActionData;
   };
   let { data, form }: ARGS = $props();
   let { users } = data;
+  let hidden = $state(true);
 
   // NOTE: When the page updates uTodos = $state<UTodos>() is not refreshed but data.uTodos are refreshed.
   // In order to have uTodos refreshed we need two steps: let uTodos = $state<UTodos>() like a definition
@@ -92,8 +87,8 @@
     setColor('lightgreen');
   };
 
-  // on update todo we do not load todos again but we have to change
-  // uTodos list with the updated todo
+  // on update todo action we do not load todos again but we have to change
+  // uTodos list with the updated todo flag
   const updateTodos = (formData: FormData) => {
     if (uTodos) {
       uTodos = uTodos.map((t) => {
@@ -109,7 +104,6 @@
 
   // get params action for URL and formData to check on required fields
   const enhanceTodo: SubmitFunction = async ({ action, formData }) => {
-    //console.log('action.search')
     titleIsRequired = '';
     contentIsRequired = '';
     ignoreFormMessage = false;
@@ -134,19 +128,17 @@
         : action.search === '?/updateTodo'
           ? 'updating todo...'
           : 'deleting todo...';
-    //console.log('before update', result)
+
     return async ({ update }) => {
       await update();
       if (action.search === '?/addTodo') {
         result = $page.status === 200 ? 'todo created' : 'create failed';
       } else if (action.search === '?/updateTodo') {
         result = $page.status === 200 ? 'todo updated' : 'update failed';
-        // updateTodos(formData)
       } else if (action.search === '?/deleteTodo') {
         result = $page.status === 200 ? 'todo deleted' : 'delete failed';
-        // updateTodos(formData)
       }
-      //console.log('after update', result)
+
       await invalidateAll();
       loading = false; // turn the spinner off
       ignoreFormMessage = true;
@@ -174,10 +166,10 @@
     });
     const data = await response.json();
     await utils.sleep(2000);
-    loading = false;
+    loading = false; // TODO: comment out for production
     result = `toggled into ${newState}`;
-    // setting message will dynamically set result, which in turn will show message
-    // for several seconds and then clear it out
+    // setting the message will dynamically set the result, which in turn will
+    // show message for several seconds and then clear it out
 
     if (data.toggled) {
       uTodos = (uTodos as UTodos).map((todo) => {
@@ -194,7 +186,7 @@
   };
 
   const deleteTodo = async (id: string) => {
-    //console.log('deleteTodo', id)
+    console.log('deleteTodo', id);
     // snap.id = id
     hideButtonsExceptFirst([btnDelete, btnCreate, btnUpdate]);
     btnDelete.focus();
@@ -203,28 +195,7 @@
     result = 'deleting todo...';
     btnDelete.click();
 
-    // const event = new KeyboardEvent('keydown', {
-    //   key: 'Enter',
-    //   code: 'Enter',
-    //   which: 13,
-    //   keyCode: 13,
-    // });
-    // btnDelete.dispatchEvent(event);
     utils.sleep(2000);
-    // clearForm()
-    // const response = await fetch(`/todo?id=${id}`, {
-    // 	method: 'DELETE',
-    // 	body: id
-    // })
-    // result = await response.json()
-    // loading = false
-    // // setting result will dynamically set result, which in turn will show result
-    // // for several seconds and then clear it out
-    // result = form?.success ? 'deleted successfully' : 'delete failed'
-    // if (form?.success) {
-    // 	uTodos = uTodos.filter((uTodo: UTodo) => uTodo.todoId !== id)
-    // }
-    hideButtonsExceptFirst([btnCreate, btnDelete, btnUpdate]);
   };
 
   let todoIdEl: HTMLInputElement;
@@ -239,15 +210,7 @@
     snap.title = uTodo.title;
     snap.content = uTodo.content;
     snap.priority = Number(uTodo.priority);
-    // todoIdEl.value = uTodo.todoId as string;
-    // (document.querySelector("input[name='userId']") as HTMLInputElement).value = uTodo.id as string;
-    // (document.querySelector("input[name='title']") as HTMLInputElement).value =
-    // 	uTodo.title as string;
-    // (document.querySelector("input[name='content']") as HTMLInputElement).value =
-    // 	uTodo.content as string;
-    // (document.querySelector("input[name='priority']") as HTMLInputElement).value = String(
-    // 	uTodo.priority
-    // );
+
     hideButtonsExceptFirst([btnUpdate, btnCreate, btnDelete]);
   };
 
@@ -256,15 +219,15 @@
   // update button is taken
 
   const prepareUpdate = async (todoId: string) => {
-    //console.log('prepareUpdate', todoId)
     prepareDataForEdit(todoId);
     updatePrepared = true;
-    // hide create button and show the update one
+    // hide create and delete buttons and show the update one
     hideButtonsExceptFirst([btnUpdate, btnCreate, btnDelete]);
   };
 
   let formMessage = ignoreFormMessage ? '' : form?.message || '';
   let result = $state<string>(formMessage);
+
   // setting result will call showMessage and this one will setTimeout
   // to clear the message after several seconds
   // let result = $derived(message || formMessage)
@@ -280,7 +243,7 @@
     },
   };
 
-  // const tooltipMouseWheel = () => {
+  // const tooltipMouseWheel = () => {  // do not work with input type=number
   // 	console.log('tooltipMouseWheel')
   // 	document.querySelector('.tooltip-mouse-wheel')?.classList.toggle('hidden')
   // 	setTimeout(() => {
@@ -296,7 +259,6 @@
   // };
   onMount(() => {
     if (selectedUserId !== data.locals.user.id) {
-      //console.log('ids do not match')
       return;
     }
     const tUser = utils.selectRecordItems<UTodo>(
@@ -335,7 +297,7 @@
     action="?/addTodo"
     use:enhance={enhanceTodo}
   >
-    <div class="two-inputs">
+    <div class="inputs-title-priority">
       <input
         type="hidden"
         bind:this={todoIdEl}
@@ -358,14 +320,13 @@
         bind:value={snap.priority}
       />
     </div>
-    <div class="two-inputs">
-      <input
-        type="text"
-        name="content"
-        placeholder={contentIsRequired || 'enter todo content'}
-        bind:value={snap.content}
-      />
-      <!-- <div class="buttons-relative"> -->
+    <input
+      type="text"
+      name="content"
+      placeholder={contentIsRequired || 'enter todo content'}
+      bind:value={snap.content}
+    />
+    <div class="button-spinners">
       <ButtonSpinner
         bind:bindTo={btnUpdate}
         spinOn={loading}
@@ -374,11 +335,7 @@
         cursor={selectedUserId === authorId}
       ></ButtonSpinner>
 
-      <ButtonSpinner
-        bind:bindTo={btnCreate}
-        spinOn={loading}
-        caption="create"
-        hidden={false}
+      <ButtonSpinner bind:bindTo={btnCreate} spinOn={loading} caption="create"
       ></ButtonSpinner>
 
       {#if selectedUserId !== authorId}
@@ -397,6 +354,7 @@
         caption="delete"
         formaction="?/deleteTodo"
         cursor={selectedUserId === authorId}
+        {hidden}
       ></ButtonSpinner>
 
       {#if selectedUserId !== authorId}
@@ -410,7 +368,6 @@
         </Tooltip>
       {/if}
       <button onclick={clearForm}>clear form</button>
-      <!-- </div> -->
     </div>
   </form>
   <div class="two-columns">
@@ -460,7 +417,7 @@
   // }
   .board {
     min-width: 36em;
-    width: 62vw;
+    width: max-content;
     padding: 1rem;
     border: 1px solid gray;
     border-radius: 8px;
@@ -474,13 +431,12 @@
       grid-column: span 2;
       flex-direction: column;
       margin: 0;
-      .two-inputs {
+      .inputs-title-priority {
         display: flex;
         display: inline-block;
         font-size: 1.1em;
         grid-column: 1/3;
         width: calc(100% - 5rem);
-        padding-left: 1rem;
         [type='number'] {
           width: 4rem;
           padding-left: 1rem;
@@ -488,14 +444,16 @@
       }
     }
   }
+
+  .button-spinners {
+    display: flex;
+    justify-content: flex-start;
+    align-items: baseline;
+    gap: 0.3rem;
+  }
   button {
     position: relative;
-    /* margin-top on app.scss class */
+    /* adjust margin-top from app.scss class */
     margin-top: 1rem !important;
-  }
-  .buttons-relative {
-    // position: relative;
-    display: flex;
-    gap: 1rem;
   }
 </style>

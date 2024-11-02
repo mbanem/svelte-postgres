@@ -68,7 +68,13 @@ Usage
 {/snippet}
 
 <p style='position:relative;margin:0;padding:0;'>
-	<button bind:this={bindTo as HTMLButtonElement} type='submit' class:hidden={hidden} {formaction} disabled={disabled} style:cursor={cursor?'pointer':'not-allowed'}>
+	<button bind:this={bindTo as HTMLButtonElement} 
+	type='submit' 
+	class:hidden={hidden} 
+	{formaction} 
+	disabled={disabled} 
+	style:cursor={cursor?'pointer':'not-allowed'}
+	>
 		{#if spinOn}
 			<!-- NOTE: must have ancestor with position relative to get proper position -->
 			{@render spinner(color)}

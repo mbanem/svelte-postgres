@@ -77,7 +77,7 @@ if(from ===to)return
 // function moveInnerDown(outer:Outer){
 // moveInner(outer,1)
 // }
-  function moveInner(outer: Outer, inner: Inner, shift: -1) {
+  function moveInner(outer: Outer, inner: Inner, shift: number) {
     const outerFrom = list.indexOf(outer);
     const innerFrom = outer.inners.indexOf(inner);
 
