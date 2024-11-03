@@ -1,13 +1,13 @@
 <script lang="ts">
 	// https://github.com/mbanem/svelte-postgres.git
 	import '$styles/app.scss'
-	import { navBars, navPath, navButtons } from '$utils/helpers.svelte.js'
+	// import { navBars, navPath, navButtons } from '$utils/helpers.svelte.js'
 	import { getNavButtons } from '$lib/utils/navButtons.svelte'
 	import NavBar from '$components/NavBar.svelte'
 	import '@fortawesome/fontawesome-free/css/all.min.css'
 
-	let classes = 'teal'
-	let styles = 'color: blue'
+	// let classes = 'teal'
+	// let styles = 'color: blue'
 
 	let { data, children } = $props()
 

@@ -284,7 +284,7 @@
 				<input type="hidden" name="bioId" bind:value={snap.bioId} />
 
 				<p class="buttons">
-					<ButtonSpinner bind:bindTo={btnCreate} spinOn={loading} caption='create' disabled={!snap.authorId}></ButtonSpinner>
+					<ButtonSpinner bind:bindTo={btnCreate} spinOn={loading} caption='create' disabled={!snap.authorId} hidden={false}></ButtonSpinner>
 					
 					{#if !wrongUser}
 					<ButtonSpinner bind:bindTo={btnUpdate} spinOn={loading} caption='update' formaction="?/update"></ButtonSpinner>
