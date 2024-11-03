@@ -16,7 +16,7 @@
 			selectedOptions.innerText = categoryIsRequired
 			utils.setTextColor('--MESSAGE-COLOR', 'lightgreen')
 		} else {
-			selectedOptions.innerText = selOptions
+			selectedOptions.innerText = selOptions.replaceAll(',', ', ')
 			utils.setTextColor('--MESSAGE-COLOR', 'yellow')
 		}
 		categories = categories.map((cat) => {
@@ -83,7 +83,7 @@
 		selectedCategoryIds = [...selectedIds].join(',')
 		// we place CSV string in selectedOptions HTML paragraph element
 		selectedOptions.innerText =
-			selectedNames.size > 0 ? [...selectedNames].join(', ') : categoryIsRequired
+			selectedNames.size > 0 ? [...selectedNames].join(',') : categoryIsRequired
 		scroll()
 	}
 	const scroll = () => {
@@ -128,7 +128,7 @@
 <style lang="scss">
 	.selected-cats {
 		width: 30rem;
-		height: 1.5rem; // more entries? 2.7rem
+		height: 2rem; // more entries? 2.7rem
 		line-height: 1.5rem;
 		padding: 4px 1rem;
 		margin: 5px 0;
@@ -138,6 +138,7 @@
 		font-weight: 300;
 		font-family: Arial, sans-serif;
 		overflow-y: auto;
+		height:auto;
 	}
 	.category-list {
 		margin: 8px 0 0 3rem;

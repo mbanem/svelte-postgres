@@ -3,7 +3,7 @@
 
 	type ARGS = {
 		postAuthors: PAuthor[]
-		deletePost: (event: MouseEvent | KeyboardEvent, id: string) => void
+		deletePost: (id: string) => void
 		toUpdatePost: (event: MouseEvent | KeyboardEvent, id: string) => void
 		selectedUserId: string
 	}
@@ -31,7 +31,7 @@
 			class={allowed ? 'ok-hover' : 'no-hover'}
 			onclick={(event: MouseEvent | KeyboardEvent) => {
 				event.preventDefault()
-				allowed && deletePost(event, pA.id)
+				allowed && deletePost(pA.id)
 			}}
 			aria-label="Delete Post"
 			aria-hidden={true}

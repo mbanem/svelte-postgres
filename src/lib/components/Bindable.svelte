@@ -45,7 +45,7 @@
 </script>
 
 <p class="inline">child local counter <span class="expression-highlighted">{childCount}</span></p>
-<p>CHILD SPACE: child count updated by parent {childCount}</p>
+<p style='margin-left:2rem;color:lightgreen;'>CHILD SPACE: child count updated by parent <span style='font-size:24px;color:yellow;'> {childCount}</span></p>
 <div class="wrapper">
 	<pre>This is child component.
 Child button clicked changing parent count<span class="expression-highlighted"> {count}</span>

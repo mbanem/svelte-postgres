@@ -31,6 +31,10 @@
     appended.pop();
   };
   onMount(() => {
+    const el = document.querySelector('#w') as HTMLInputElement;
+    if (el) {
+      el.focus();
+    }
     // @ts-expect-error
     [...5].forEach((n) => appendToFrozen());
   });
@@ -55,7 +59,7 @@
 
   <div class="dimensions">
     <label for="w"> rectangle width </label>
-    <input id="w" class="number" type="number" bind:value={width} autofocus />
+    <input id="w" class="number" type="number" bind:value={width} />
     <label for="h"> rectangle height </label>
     <input id="h" class="number" type="number" bind:value={height} />
     <label for="z"> parallelepiped height </label>

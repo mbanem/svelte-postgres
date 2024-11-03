@@ -1,5 +1,6 @@
 @import './mixins.scss';
 :root {
+
 	--BODY-COLOR: #e3e3e3;
 	--TEXT-COLOR: #e3e3e3;
 	--BODY-BACKGROUND-COLOR: #3e3e3e;
@@ -434,7 +435,8 @@ section ul[style^='margin'] li.list-item {
 
 input[type='text'],
 input[type='email'],
-input[type='password'] {
+input[type='password'],
+textarea {
 	display: inline-block;
 	height: 1.8rem;
 	margin-bottom: 10px;
@@ -448,6 +450,7 @@ input[type='password'] {
 	border-radius: 4px;
 	&::placeholder {
 		color: var(--PLACEHOLDER_COLOR);
+		opacity:0.6;
 	}
 	&:hover,
 	&:focus {

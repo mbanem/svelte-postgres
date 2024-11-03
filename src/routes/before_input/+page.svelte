@@ -2,6 +2,7 @@
   import { A } from 'flowbite-svelte';
   import { onMount } from 'svelte';
   import * as utils from '$utils';
+  import SummaryDetails from '$components/SummaryDetails.svelte';
   let message: HTMLDivElement;
   let inputEl: HTMLInputElement;
   // NOTE: Inserting letter with bigger font size in mesage div block moves it bellow
@@ -58,12 +59,7 @@
       return;
     });
   });
-</script>
-
-<svelte:head>
-  <title>Before Input</title>
-</svelte:head>
-<pre>
+  const details = `
   Input box keystrokes are monitored by 'beforeinput' event handler
   preventing non-numeric keystrokes allowing numbers with up to 10
   digits including up to two decimals.
@@ -72,8 +68,13 @@
     inputbox.selectionStart + inputbox.data + inputbox.selectionEnd
   and testing intended entry via the following regex
 		!/^-?(\d&lcub;0,10}|\d&lcub;0,8}\.?\d&lcub;0,2}|\d&lcub;0,9}\.?\d&lcub;0,1}|)$/
-</pre>
+  `;
+</script>
 
+<svelte:head>
+  <title>Before Input</title>
+</svelte:head>
+<SummaryDetails summary="How Does this Work" , {details}></SummaryDetails>
 <br />
 <label for="inbox">
   Expected up to 10 digits with optional up to 2 decimal places

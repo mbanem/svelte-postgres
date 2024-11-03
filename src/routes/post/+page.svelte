@@ -13,6 +13,7 @@
 	import PageTitleCombo from '$components/PageTitleCombo.svelte'
 	import MultiSelectBox, { setSelectedOptions } from '$components/MultiSelectBox.svelte'
 	import PostList from '$components/PostList.svelte'
+	import {hideButtonsExceptFirst} from '$utils'
 	import * as utils from '$utils'
 
 	type ARGS = {
@@ -36,6 +37,7 @@
 	let btnUpdate: HTMLButtonElement
 	let updateSpinner:typeof ButtonSpinner
 	const authorId = data?.user?.id
+	let hidden = $state(true);
 
 	let categoryIds: number[] = []
 	$effect(() => {
@@ -52,6 +54,7 @@
 			result = ''
 			categoryIsRequired = requiredCategory
 		}, 2000)
+		hideButtonsExceptFirst([btnCreate, btnUpdate, btnDelete]);
 		utils.setColor('lightgreen')
 	}
 
@@ -77,7 +80,7 @@
 
 	const categoryList = (arr: number[]) => {
 		// @ts-expect-error
-		return arr.map((n) => data.categories[n - 1].name).join(', ')
+		return arr.map((n) => data.categories[n - 1].name).join(',')
 	}
 	let selectedCategoryIds: () => string
 
@@ -97,7 +100,7 @@
 			utils.setColor('pink')
 			return
 		}
-		result = ''
+		
 		titleIsRequired = ''
 		ignoreFormMessage = false
 		contentIsRequired = ''
@@ -228,18 +231,22 @@
 		utils.setColor('lightgreen')
 	}
 
-	const deletePost = (event: MouseEvent | KeyboardEvent, id: string) => {
-		event.preventDefault()
+	const deletePost = async( id: string) => {
+		// event.preventDefault()
+		hideButtonsExceptFirst([btnDelete, btnCreate, btnUpdate]);
+		btnDelete.focus();
+		loading = true;
+		result = 'deleting post...';
 		// if (browser) {
-		;(document.querySelector("input[name='id']") as HTMLInputElement).value = id
-		utils.hideButtonsExceptFirst([btnDelete, btnUpdate, btnCreate])
-		result = 'deleting post...'
+		(document.querySelector("input[name='id']") as HTMLInputElement).value = id
+
 		btnDelete.click()
+		utils.sleep(2000)
 		// }
 	}
 
-	// let formMessage = ignoreFormMessage ? '' : form?.message || ''
-	let result = $state<string>(message || (form?.message as string))
+	let formMessage = ignoreFormMessage ? '' : form?.message || ''
+	let result = $state<string>(formMessage)
 	let wrongUser = $derived(selectedUserId !== data.locals.user.id)
 
 	type TSnap = {
@@ -311,7 +318,7 @@
 />
 {#snippet tooltip(title: string)}
 	<!-- NOTE the way to toggle string content based on a predicate -->
-	<Tooltip placement="top" defaultClass={`tooltip_default-update`} arrow={false}>
+	<Tooltip placement="top" defaultClass={'tooltip_default-update'} arrow={false}>
 		{title}
 	</Tooltip>
 {/snippet}
@@ -354,7 +361,7 @@
 				<span style="user-select:none">published</span>
 				{#if !wrongUser}
 					<ButtonSpinner bind:bindTo={btnCreate} spinOn={loading} caption='create' formaction='?/createPost' hidden={false}></ButtonSpinner>
-					<ButtonSpinner bind:bindTo={btnDelete} spinOn={loading} caption='delete' formaction='?/deletePost'></ButtonSpinner>
+					<ButtonSpinner bind:bindTo={btnDelete} spinOn={loading} caption='delete' formaction='?/deletePost' {hidden}></ButtonSpinner>
 					<ButtonSpinner bind:bindTo={btnUpdate} spinOn={loading} caption='update' formaction='?/updatePost'></ButtonSpinner>
 				{/if}
 				<button
@@ -383,14 +390,14 @@
 <style lang="scss">
 	.tooltip-wrapper {
 		position: relative;
-		p {
-			display: flex;
-			justify-content: space-between;
-			align-content: flex-start;
-			gap: 0.5rem;
-			padding: 0 0 0 5px;
-			margin: 0;
-		}
+		// p {
+		// 	display: flex;
+		// 	justify-content: space-between;
+		// 	align-content: flex-start;
+		// 	gap: 0.5rem;
+		// 	padding: 0 0 0 5px;
+		// 	margin: 0;
+		// }
 		&:hover {
 			cursor: pointer;
 		}
@@ -457,11 +464,11 @@
 		align-items: baseline;
 	}
 
-	label input {
-		display: inline-block;
-		width: 1rem;
-		height: 1rem;
-	}
+	// label input {
+	// 	display: inline-block;
+	// 	width: 1rem;
+	// 	height: 1rem;
+	// }
 	label {
 		display: flex;
 		gap: 1.5rem;

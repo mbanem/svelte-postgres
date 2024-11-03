@@ -45,7 +45,7 @@
   $effect(() => {
     setColor(
       form?.message
-        ? form.message.includes('successfully')
+        ? form.message.includes('successfully') || result === ''
           ? 'lightgreen'
           : 'pink'
         : 'lightgreen',
@@ -184,7 +184,6 @@
   };
 
   const deleteTodo = async (id: string) => {
-    console.log('deleteTodo', id);
     // snap.id = id
     hideButtonsExceptFirst([btnDelete, btnCreate, btnUpdate]);
     btnDelete.focus();
@@ -324,9 +323,9 @@
         rows={2}
         cols={80}
         name="content"
-        placeholder={contentIsRequired || 'enter todo content'}
+        placeholder={contentIsRequired || 'enter To Do content'}
         bind:value={snap.content}
-        style="width:100%;height:8rem;overflowY:auto"
+        style="width:98%;height:8rem;overflowY:auto"
       ></textarea>
     </div>
     <div class="button-spinners">
@@ -370,7 +369,7 @@
           <p>owner only permission</p>
         </Tooltip>
       {/if}
-      <button onclick={clearForm}>clear form</button>
+      <button onclick={clearForm}>clear</button>
     </div>
   </form>
   <div class="two-columns">
