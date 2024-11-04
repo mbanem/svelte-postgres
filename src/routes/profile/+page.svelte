@@ -85,10 +85,12 @@
 		result = ''
 		bioIsRequired = ''
 		ignoreFormMessage = false
-		let bio = formData.get('bio')
-		if (bio === '') {
-			bioIsRequired = 'Biography is required field'
-			return
+		if (action.search !== '?/delete'){
+			let bio = formData.get('bio')
+			if (bio === '') {
+				bioIsRequired = 'Biography is required field'
+				return
+			}
 		}
 		loading = true // start spinner animation
 		result =
@@ -119,6 +121,7 @@
 			// await invalidateAll()
 			loading = false // stop spinner animation
 			clearForm()
+			hideButtonsExceptFirst([btnCreate, btnUpdate, btnDelete])
 			clearMessage()
 		}
 	}
