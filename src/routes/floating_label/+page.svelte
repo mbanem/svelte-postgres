@@ -1,7 +1,6 @@
 <script lang="ts">
   import InputBox from '$components/InputBox.svelte';
   import * as cssUtils from '$lib/utils';
-  // import { validate } from 'uuid';
   type PROPS = {
     title: string;
     width: string;
@@ -34,9 +33,9 @@
   };
 
   const colorOnClick = () => {
-    //console.log('colorOnClick')
     elColor.value = '';
   };
+
   // any change in the color = $state('#223344') will trigger coloring the box
   // so setColor could be triggered from $effect or via button click event
   $effect(setColor);
@@ -47,7 +46,6 @@
 </svelte:head>
 <div class="grid-wrapper">
   <div class="families">
-    <!-- <dl> -->
     <details>
       <summary>The Koturs</summary>
       <p>Bojana</p>
@@ -76,7 +74,6 @@
       <p>MIrjana</p>
       <p>Sasa</p>
     </details>
-    <!-- </dl> -->
   </div>
   <div class="container">
     <InputBox title="First Name"></InputBox>
@@ -87,14 +84,16 @@
   <div>
     <canvas
       bind:this={canvas}
-      width="100"
-      height="100"
+      width="200"
+      height="200"
       style="border: 2px solid white"
     ></canvas>
 
     <div class="controls">
       <label>
-        <input type="range" bind:value={size} /> size
+        <input type="range" bind:value={size} min="30" max="200" /> size range
+        (30--200) currently
+        <span class="size-text">{size}</span>
       </label>
       <label>
         <input type="color" bind:value={color} onclick={colorOnClick} /> color
@@ -115,8 +114,6 @@
     align-items: flex-start;
     justify-content: center;
     margin-top: 7rem !important;
-    // grid-template-columns: repeat(1fr 1fr);
-    // width: 80vw;
     gap: 2rem;
   }
   .container {
@@ -124,7 +121,6 @@
     border-radius: 10px;
     width: max-content;
     padding: 1rem 3rem;
-    // margin: 5rem 0 0 15vw;
   }
   .families {
     background-color: skyblue;
@@ -132,32 +128,6 @@
     padding: 1rem 3rem;
     border-radius: 1rem;
   }
-  .fa {
-    width: max-content;
-    padding: 6px 1rem;
-    border: 1px solid gray;
-    border-radius: 6px;
-  }
-  dt {
-    color: white;
-    background-color: navy;
-    text-transform: capitalize;
-    padding: 2px 1rem;
-    border-radius: 4px;
-    margin-bottom: 4px;
-    &:not(:first-child) {
-      margin-top: 1rem;
-    }
-  }
-  dd {
-    color: black;
-    background-color: cornsilk;
-    padding: 0 1rem;
-  }
-  dt ~ dd:last-child {
-    color: red;
-  }
-  /* ------------------------------------- */
   .controls {
     border-top: 1px solid #ccc;
     padding: 1em 0;
@@ -179,10 +149,26 @@
     font-size: 2em;
     cursor: pointer;
     p {
-      color: brown;
+      color: crimson;
       margin: 0;
       padding: 0 0 0 2rem;
-      font-size: 1em !important;
+      font-size: 0.8em !important;
+      font-style: italic;
+    }
+  }
+  .size-text {
+    position: relative;
+    color: yellow;
+    font-size: 2em;
+    padding: 0 2rem 10px 0;
+    margin-right: 2rem;
+    &::after {
+      position: absolute;
+      color: #e3e3e3;
+      content: 'px';
+      font-size: 0.5em;
+      top: 14px;
+      left: auto;
     }
   }
 </style>
