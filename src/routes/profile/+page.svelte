@@ -285,7 +285,7 @@
 				<input type="hidden" name="authorId" bind:value={snap.authorId} />
 				<input type="hidden" name="bioId" bind:value={snap.bioId} />
 
-				<p class="buttons">
+				<div class="buttons">
 					<ButtonSpinner bind:button={btnCreate} spinOn={loading} caption='create' disabled={!snap.authorId} hidden={false}></ButtonSpinner>
 					
 					{#if !wrongUser}
@@ -293,7 +293,7 @@
 					<ButtonSpinner bind:button={btnDelete} spinOn={loading} caption='delete' formaction="?/delete"></ButtonSpinner>
 					{/if}
 					<button onclick={clearForm}>clear</button>
-				</p>
+				</div>
 			</form>
 		</div>
 	</div>

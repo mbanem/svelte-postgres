@@ -1,10 +1,11 @@
 <script lang="ts">
 	// https://github.com/mbanem/svelte-postgres.git
+	import {onMount} from 'svelte'
 	import '$styles/app.scss'
 	// import { navBars, navPath, navButtons } from '$utils/helpers.svelte.js'
 	import { getNavButtons } from '$lib/utils/navButtons.svelte'
 	import NavBar from '$components/NavBar.svelte'
-	import '@fortawesome/fontawesome-free/css/all.min.css'
+	// import '@fortawesome/fontawesome-free/css/all.min.css'
 
 	// let classes = 'teal'
 	// let styles = 'color: blue'
@@ -27,20 +28,23 @@
         }
     })
 */
+onMount(()=>{
+	document.querySelector('.hidden')?.classList.remove('hidden')
+})
 </script>
 
 <svelte:head>
 	<title>Users Layout</title>
 </svelte:head>
 <!-- <pre style="font-size:11px;">layout role {data?.locals?.user?.role}</pre> -->
-<div class="wrapper">
-	<!-- {#key data?.locals?.user?.role} -->
+<div class="wrapper hidden">
+	{#key data?.locals?.user?.role}
 		<div class="nav-fixed">
 			<NavBar bind:navButtonObjects role={data?.locals?.user?.role} />
 		</div>
-	<!-- {/key} -->
+		<main>{@render children()}</main>
+	{/key}
 
-	<main>{@render children()}</main>
 </div>
 
 <!-- <div class="footer"> -->
@@ -50,6 +54,9 @@
 
 <!-- svelte-ignore css_unused_selector -->
 <style lang="scss'">
+	.hidden{
+		display: none;
+	}
 	:global(body) {
 		color: var(--BODY-COLOR);
 		background-color: var(--BODY-BACKGROUND-COLOR);
