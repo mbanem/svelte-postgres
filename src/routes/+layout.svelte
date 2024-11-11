@@ -34,11 +34,11 @@
 </svelte:head>
 <!-- <pre style="font-size:11px;">layout role {data?.locals?.user?.role}</pre> -->
 <div class="wrapper">
-	{#key data?.locals?.user?.role}
+	<!-- {#key data?.locals?.user?.role} -->
 		<div class="nav-fixed">
 			<NavBar bind:navButtonObjects role={data?.locals?.user?.role} />
 		</div>
-	{/key}
+	<!-- {/key} -->
 
 	<main>{@render children()}</main>
 </div>

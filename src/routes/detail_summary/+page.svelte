@@ -6,8 +6,8 @@
 </script>
 
 <main class="main">
-  <section class="faq">
-    <div class="questions-and-answers">
+  <section>
+    <div>
       <details>
         <summary> Lorem ipsum dolor sit amet. </summary>
         <p>

@@ -28,7 +28,7 @@
 
   // $effect(...) runs onMount so the bind to canvas is already established
   $effect(() => {
-    if (!canvas) return;
+    if (!canvas || !ctx) return;
     // const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.textAlign = 'center';
@@ -166,7 +166,9 @@
 
   onMount(() => {
     ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
-    ctx2 = canvas2.getContext('2d') as CanvasRenderingContext2D;
+    if (canvas2) {
+      ctx2 = canvas2.getContext('2d') as CanvasRenderingContext2D;
+    }
     return () => {
       utils.setMrPath($page.url.pathname);
     };
