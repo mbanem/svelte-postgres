@@ -172,9 +172,10 @@ export function browserName() {
     return 'unknown';
   }
 }
-export let navBars:TNavBar[] = [];
+export let navBars: TNavBar[] = [];
 export let navPath = $state<string>('/');
-export const navButtons = $state<TNavButton[]>([]);
+export const navButtons: TNavButton[] = [];
+
 export let prevPath = $state('/');
 
 export const sixHash = () => {

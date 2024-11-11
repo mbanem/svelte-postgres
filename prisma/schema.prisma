@@ -158,4 +158,11 @@ model Todo {
 //  ('PostgreSQL'),
 //  ('GSAP'),
 //  ('Vite'),
-//  ('BCrypt');
+//  ('BCrypt'),
+//  ('Articles'),
+//  ('Comments'),
+//  ('Documents'),
+//  ('eMails'),
+//  ('Presentations'),
+//  ('Blogs'),
+//  ('Publications');

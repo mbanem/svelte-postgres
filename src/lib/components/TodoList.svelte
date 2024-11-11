@@ -185,10 +185,7 @@
 			gap: 0.5rem;
 			padding: 0 0 0 5px;
 			margin: 0;
-			.prop-value {
-				margin-bottom: 8px;
-				color: yellow;
-			}
+			
 		}
 		.tooltip-todo {
 			position: absolute;
@@ -201,6 +198,10 @@
 			cursor: pointer;
 		}
 	}
+	.prop-value {
+				margin-bottom: 8px;
+				color: yellow;
+			}
 	.caption {
 		border-bottom: 1px solid gray;
 		width: 90%;

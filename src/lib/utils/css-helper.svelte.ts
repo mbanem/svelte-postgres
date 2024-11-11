@@ -33,7 +33,7 @@ export const hsla2hex = (hsla: string) => {
     .map((s) => {
       let x = parseFloat(s);
       return x < 1 ? x * 100 : x;
-    });
+    }) as NumberArray; // this exclude ability to be undefined
   // .split(hsla.includes(',') ? ',' : ' ')
   // .map((n) => parseFloat(n));
   if (a === undefined) {
@@ -41,6 +41,8 @@ export const hsla2hex = (hsla: string) => {
   }
   // no negative numbers should be allowed
   if (h * s * l < 0 || a < 0) return;
+
+  // as members of NumberArray are not undefined so this is unambiguous
   s /= 100;
   l /= 100;
 

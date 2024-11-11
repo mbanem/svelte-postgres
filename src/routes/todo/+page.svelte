@@ -147,10 +147,11 @@
   // captionCreate must be #state but hiddenCreate must not
   let captionCreate = $state<string>('create');
   let hiddenCreate = false;
+
   const toggleCompleted = async (id: string) => {
     captionCreate = 'toggling';
     loading = true;
-    hiddenCreate = false;
+    hiddenCreate = false; // NOTE: changing captionCreate above turns button hidden?!
     const completed = (
       uTodos?.filter((uTodo) => uTodo.todoId === id)[0] as UTodo
     ).completed;
