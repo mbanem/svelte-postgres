@@ -287,12 +287,6 @@
 		}
 	}
 
-	span {
-		flex: 1;
-		padding-top: 2px;
-		justify-content: center;
-	}
-
 	button {
 		width: 2rem;
 		background-color: transparent;
