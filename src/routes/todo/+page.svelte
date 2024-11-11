@@ -144,9 +144,13 @@
       clearMessage();
     };
   };
-
+  // captionCreate must be #state but hiddenCreate must not
+  let captionCreate = $state<string>('create');
+  let hiddenCreate = false;
   const toggleCompleted = async (id: string) => {
+    captionCreate = 'toggling';
     loading = true;
+    hiddenCreate = false;
     const completed = (
       uTodos?.filter((uTodo) => uTodo.todoId === id)[0] as UTodo
     ).completed;
@@ -181,6 +185,7 @@
         return todo;
       });
     }
+    captionCreate = 'create';
   };
 
   const deleteTodo = async (id: string) => {
@@ -266,6 +271,9 @@
     snap.authorId = selectedUserId;
     authorId = selectedUserId;
     hideButtonsExceptFirst([btnCreate, btnUpdate, btnDelete]);
+    (
+      document.querySelector("input[name='title']") as HTMLInputElement
+    )?.focus();
     return () => {
       utils.setMrPath($page.url.pathname);
     };
@@ -307,7 +315,6 @@
         name="title"
         placeholder={titleIsRequired || 'enter todo title'}
         bind:value={snap.title}
-        autofocus
       />
 
       <!-- onmouseenter={tooltipMouseWheel} -->
@@ -330,14 +337,18 @@
     </div>
     <div class="button-spinners">
       <ButtonSpinner
-        bind:bindTo={btnUpdate}
+        bind:button={btnUpdate}
         spinOn={loading}
         caption="update"
         formaction="?/updateTodo"
         cursor={selectedUserId === authorId}
       ></ButtonSpinner>
 
-      <ButtonSpinner bind:bindTo={btnCreate} spinOn={loading} caption="create"
+      <ButtonSpinner
+        bind:button={btnCreate}
+        spinOn={loading}
+        hidden={hiddenCreate}
+        caption={captionCreate}
       ></ButtonSpinner>
 
       {#if selectedUserId !== authorId}
@@ -351,7 +362,7 @@
         </Tooltip>
       {/if}
       <ButtonSpinner
-        bind:bindTo={btnDelete}
+        bind:button={btnDelete}
         spinOn={loading}
         caption="delete"
         formaction="?/deleteTodo"

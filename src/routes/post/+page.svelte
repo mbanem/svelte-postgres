@@ -360,9 +360,9 @@
 				{@render toggle_published('Toggle the Published Flag')}
 				<span style="user-select:none">published</span>
 				{#if !wrongUser}
-					<ButtonSpinner bind:bindTo={btnCreate} spinOn={loading} caption='create' formaction='?/createPost' hidden={false}></ButtonSpinner>
-					<ButtonSpinner bind:bindTo={btnDelete} spinOn={loading} caption='delete' formaction='?/deletePost' {hidden}></ButtonSpinner>
-					<ButtonSpinner bind:bindTo={btnUpdate} spinOn={loading} caption='update' formaction='?/updatePost'></ButtonSpinner>
+					<ButtonSpinner bind:button={btnCreate} spinOn={loading} caption='create' formaction='?/createPost' hidden={false}></ButtonSpinner>
+					<ButtonSpinner bind:button={btnDelete} spinOn={loading} caption='delete' formaction='?/deletePost' {hidden}></ButtonSpinner>
+					<ButtonSpinner bind:button={btnUpdate} spinOn={loading} caption='update' formaction='?/updatePost'></ButtonSpinner>
 				{/if}
 				<button
 					formaction="?/clearForm"

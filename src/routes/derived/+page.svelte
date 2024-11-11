@@ -240,7 +240,7 @@
 <br />
 <label for="cnt" style="display: inline-block;margin-left:1rem;">
   Count up to
-  <input type="number" bind:value={maxCount} autofocus />
+  <input type="number" bind:value={maxCount} />
 </label>
 <h2 style="color:skyblue;">{count}</h2>
 clicking faster increases speed on every click

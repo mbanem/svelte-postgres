@@ -46,7 +46,7 @@
 	})
 	let bioIsRequired = ''
 	// form?.message cannot be cleared by code but could be ignored when required
-	let ignoreFormMessage = false
+	let ignoreFormMessage = $state(false)
 	let success = ''
 	let loading = $state<boolean>(false)
 	// let snap.authorId = '';
@@ -281,17 +281,16 @@
 					cols={35}
 					name="bio"
 					bind:value={snap_bio}
-					autofocus
 				></textarea>
 				<input type="hidden" name="authorId" bind:value={snap.authorId} />
 				<input type="hidden" name="bioId" bind:value={snap.bioId} />
 
 				<p class="buttons">
-					<ButtonSpinner bind:bindTo={btnCreate} spinOn={loading} caption='create' disabled={!snap.authorId} hidden={false}></ButtonSpinner>
+					<ButtonSpinner bind:button={btnCreate} spinOn={loading} caption='create' disabled={!snap.authorId} hidden={false}></ButtonSpinner>
 					
 					{#if !wrongUser}
-					<ButtonSpinner bind:bindTo={btnUpdate} spinOn={loading} caption='update' formaction="?/update"></ButtonSpinner>
-					<ButtonSpinner bind:bindTo={btnDelete} spinOn={loading} caption='delete' formaction="?/delete"></ButtonSpinner>
+					<ButtonSpinner bind:button={btnUpdate} spinOn={loading} caption='update' formaction="?/update"></ButtonSpinner>
+					<ButtonSpinner bind:button={btnDelete} spinOn={loading} caption='delete' formaction="?/delete"></ButtonSpinner>
 					{/if}
 					<button onclick={clearForm}>clear</button>
 				</p>

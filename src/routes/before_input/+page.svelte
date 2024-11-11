@@ -78,7 +78,7 @@
 <br />
 <label for="inbox">
   Expected up to 10 digits with optional up to 2 decimal places
-  <input bind:this={inputEl} id="inbox" class="controlled-input" autofocus />
+  <input bind:this={inputEl} id="inbox" class="controlled-input" />
 </label>
 <br />
 <div bind:this={message} class="message">%nbsp;</div>
