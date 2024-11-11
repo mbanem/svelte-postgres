@@ -165,12 +165,6 @@ export function browserName() {
       return 'Safari';
     } else if (navigator.userAgent.indexOf('Firefox') != -1) {
       return 'Firefox';
-    } else if (
-      navigator.userAgent.indexOf('MSIE') != -1 ||
-      !!document.documentMode == true
-    ) {
-      //IF IE > 10
-      return 'IE';
     } else {
       return 'unknown';
     }
@@ -178,7 +172,7 @@ export function browserName() {
     return 'unknown';
   }
 }
-export const navBars = $state<TNavBar[]>([]);
+export let navBars:TNavBar[] = [];
 export let navPath = $state<string>('/');
 export const navButtons = $state<TNavButton[]>([]);
 export let prevPath = $state('/');
