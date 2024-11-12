@@ -27,9 +27,9 @@ Component Ballon.svelte accepts
 </script>
 
 <div class="wrapper">
-  This is a child block This is a child block
   <button onclick={() => inflate(power)}>inflate</button>
   <button onclick={() => deflate(power)}>deflate</button>
+  <button onclick={() => inflate(51)}>explode</button>
 
   <pre>
 	We can change parent's pump power from the child
@@ -42,9 +42,19 @@ Component Ballon.svelte accepts
 <!-- svelte-ignore css_unused_selector -->
 <style lang="scss">
   .wrapper {
-    padding: 1rem;
+    display: flex;
+    align-items: flex-start;
+    padding: 0 1rem;
+    pre {
+      margin: 0;
+      padding: 0;
+    }
   }
   button {
     display: inline-block;
+
+    &:not(last-child) {
+      margin-right: 0.5rem;
+    }
   }
 </style>

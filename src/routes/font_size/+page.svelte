@@ -35,12 +35,15 @@
   </div>
   <div>
     <section class="input-section">
-      <!-- <pre style="margin:0;">Enter font size in selected units e.g. 16px, 2rem, 1em, 6ch</pre> -->
+      <pre style="margin:0;">
+    Enter font size in selected units e.g. 16px, 2rem, 1em, 6ch
+    and press the Enter key to apply the font size.
+  </pre>
       <input
         type="text"
         bind:this={inputFontSize}
         onkeyup={setFontSize}
-        placeholder="enter font size"
+        placeholder="enter font size and press Enter key"
         class="input-box"
         onfocus={() => {
           inputFontSize.select();
@@ -78,8 +81,8 @@
     text-align: center;
   }
   .input-box::placeholder {
-    color: black;
-    opacity: 1;
+    color: lightgreen;
+    opacity: 0.6;
   }
   .list-item {
     font-size: var(--FONT-SIZE);

@@ -1,117 +1,158 @@
 @mixin input-text($width: 5rem, $border-radius: 4px) {
-	width: $width;
+  width: $width;
 
-	display: block;
-	padding-left: 1rem;
-	margin-bottom: 1rem;
-	height: 2rem;
-	color: #e3e3e3;
-	font-size: 20px;
-	background-color: var(--INPUT-BACKGROUND-COLOR);
-	border: none;
-	outline: 1px solid gray;
-	border-radius: $border-radius;
-	&:focus {
-		color: var(--INPUT-FOCUS-COLOR);
-		background-color: #6e6e6e;
-	}
-	&::placeholder {
-		color: var(--PLACEHOLDER_COLOR);
-		font-weight: normal;
-	}
+  display: block;
+  padding-left: 1rem;
+  margin-bottom: 1rem;
+  height: 2rem;
+  color: #e3e3e3;
+  font-size: 20px;
+  background-color: var(--INPUT-BACKGROUND-COLOR);
+  border: none;
+  outline: 1px solid gray;
+  border-radius: $border-radius;
+  &:focus {
+    color: var(--INPUT-FOCUS-COLOR);
+    background-color: #6e6e6e;
+  }
+  &::placeholder {
+    color: var(--PLACEHOLDER_COLOR);
+    font-weight: normal;
+  }
 }
 
-@mixin rectangle($width:80px, $height:80px, $color:yellow, $background-color:royalblue, $border:2px solid pink, $border-radius:8px){
-	width: $width;
+@mixin rectangle(
+  $width: 80px,
+  $height: 80px,
+  $color: yellow,
+  $background-color: royalblue,
+  $border: 2px solid pink,
+  $border-radius: 8px
+) {
+  width: $width;
   height: $height;
-	color: $color;
+  color: $color;
   background-color: $background-color;
   border: $border;
-	border-radius:$border-radius;
-	font-size:18px;
-	text-align:center;
-	line-height:$height;
-	overflow:auto;
+  border-radius: $border-radius;
+  font-size: 18px;
+  text-align: center;
+  line-height: $height;
+  overflow: auto;
 }
+
+@mixin container(
+  $content: 'Container',
+  $padding: 1rem 2rem,
+  $head-color: #e3e3e3,
+  $background-color: #3e3e3e,
+  $border: 1px solid gray,
+  $border-radius: 10px,
+  $box-shadow: none,
+  $box-sizing: border-box,
+  $width: max-content,
+  $top: -10px,
+  $left: 2rem
+) {
+  position: relative;
+  width: $width;
+  padding: $padding;
+  background-color: $background-color;
+  border: $border;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
+  box-sizing: $box-sizing;
+  &::before {
+    position: absolute;
+    content: '\00a0 ' + $content + ' \00a0';
+    top: $top;
+    left: $left;
+    color: $head-color !important;
+    background-color: $background-color;
+    // border: $border;
+    // border-radius: 3px;
+  }
+}
+
 @mixin caterpillar-item($background-color) {
-	background-color: $background-color;
-	color: white;
-	border-radius: 5px;
-	border: 1px solid gray;
-	display: inline-block;
-	line-height: 50px;
-	text-align: center;
-	width: 50px;
-	&:hover {
-		color: yellow;
-		border-color: lightgreen;
-	}
-	&:target {
-		background-color: blue;
-	}
+  background-color: $background-color;
+  color: white;
+  border-radius: 5px;
+  border: 1px solid gray;
+  display: inline-block;
+  line-height: 50px;
+  text-align: center;
+  width: 50px;
+  &:hover {
+    color: yellow;
+    border-color: lightgreen;
+  }
+  &:target {
+    background-color: blue;
+  }
 }
 @mixin on-focus {
-	display: inline-block;
-	font-size: 16px;
-	text-decoration: none;
-	@content;
+  display: inline-block;
+  font-size: 16px;
+  text-decoration: none;
+  @content;
 }
 @mixin border-small($color: gray, $radius: 5px, $padding: 3px 1rem) {
-	border: 1px solid $color;
-	border-radius: $radius;
+  border: 1px solid $color;
+  border-radius: $radius;
 }
 @mixin border-large($color: gray, $radius: 10px, $padding: 1rem 2rem) {
-	border: 1px solid $color;
-	border-radius: $radius;
+  border: 1px solid $color;
+  border-radius: $radius;
 }
 @mixin cr-button($color: white, $background-color: navy) {
-	@extend inline-block;
-	color: $color;
-	background-color: $background-color;
+  @extend inline-block;
+  color: $color;
+  background-color: $background-color;
 }
-@mixin caterpillar-item($bgcolor) {
-	background-color: $bgcolor;
-	color: white;
-	border-radius: 5px;
-	border: 1px solid gray;
-	display: inline-block;
-	line-height: 50px;
-	text-align: center;
-	width: 50px;
-	&:hover {
-		color: yellow;
-		border-color: lightgreen;
-	}
-	&:target {
-		background-color: blue;
-	}
+@mixin caterpillar-item($background-color) {
+  background-color: $background-color;
+  color: white;
+  border-radius: 5px;
+  border: 1px solid gray;
+  display: inline-block;
+  line-height: 50px;
+  text-align: center;
+  width: 50px;
+  &:hover {
+    color: yellow;
+    border-color: lightgreen;
+  }
+  &:target {
+    background-color: blue;
+  }
 }
 
 @mixin on-focus {
-	display: inline-block;
-	font-size: 16px;
-	text-decoration: none;
-	@content;
+  display: inline-block;
+  font-size: 16px;
+  text-decoration: none;
+  @content;
 }
 @mixin border($w: 1, $r: 5) {
-	border: $w * 1px solid gray;
-	border-radius: $r * 1px;
+  border: $w * 1px solid gray;
+  border-radius: $r * 1px;
 }
 @mixin border-sm($color: gray, $radius: 5px, $padding: 3px 1rem) {
-	border: 1px solid $color;
-	border-radius: $radius;
+  border: 1px solid $color;
+  border-radius: $radius;
 }
 @mixin border-md($color: gray, $radius: 10px, $padding: 6px 1.5rem) {
-	border: 1px solid $color;
-	border-radius: $radius;
+  border: 1px solid $color;
+  border-radius: $radius;
 }
 @mixin border-lg($color: gray, $radius: 10px, $padding: 1rem 2rem) {
-	border: 1px solid $color;
-	border-radius: $radius;
+  border: 1px solid $color;
+  border-radius: $radius;
 }
 /* while defining a[title] using href */
 @mixin highlight($color: lightgreen, $cursor: pointer) {
-	color: $color;
-	border-color: $color;
-	cursor: $cursor;
+  color: $color;
+  border-color: $color;
+  cursor: $cursor;
 }

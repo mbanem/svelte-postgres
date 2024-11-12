@@ -66,7 +66,27 @@ with child click event:MouseEvent and value of delta bound in &lt;input type='nu
   </p>
 </div>
 
-<SummaryDetails summary="How Does it Work" {details}></SummaryDetails>
+<details>
+  <summary>How Does it Work</summary>
+  <pre>
+    The Count variable is defined at parent as a 
+        let count = 22 with no $state(22) and <i>bound</i> as a prop 
+to child 'Bindable' as
+	&lt;Bindable bind=&lcub;clickArg&rcub; so that
+parent has access to it and could change it via button 'parent click'
+It is accepted at child as a $bindable() count prop  as
+	let &lcub; count = $bindable() &rcub; = $props()
+so child can update parent's count with a button 'child click'
+To update the count by arbitrary delta we define parent function clickArg(event:MouseEvent, delta:number)
+and sent it to child component 'Bindable' as the second prop &lcub;clickArg&rcub;
+	&lt;Bindable bind:count  bind=&lcub;clickArg&rcub;
+which is accepted at child as clickArg = $bindable() as of a type Handler
+	type Handler = (event: MouseEvent, delta: number) =&gt; void;
+In child we set delta using input of type number and via  button 'update by delta = "delta"'
+we call child local function 'updateParentCount' which in turn calls parent's clickArg(event,delta)
+with child click event:MouseEvent and value of delta bound in &lt;input type='number' bind:value=&lcub;delta&rcub;
+  </pre>
+</details>
 <br />
 <button style="margin-left:2rem;" onclick={callChildCounter}>
   parent call child counter to increment its count

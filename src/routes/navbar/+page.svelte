@@ -16,6 +16,8 @@
 		{ color: 'Rebeccapurple', title: 'Themes', href: '/themes' },
 		{ color: 'Red', title: 'Floating Labels', href: '/floating_label' },
 		{ color: 'LightGreen', title: 'Before-Input', href: '/before_input' },
+		{ color: 'Pink', title: 'A-Button', href: '/a-button' },
+		{ color: 'Green', title: 'Box', href: '/box' },
 		{ color: 'Yellow', title: 'Flip', href: '/flip' }
 	]
 

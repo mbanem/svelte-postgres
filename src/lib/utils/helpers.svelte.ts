@@ -173,8 +173,8 @@ export function browserName() {
   }
 }
 export let navBars: TNavBar[] = [];
-export let navPath = $state<string>('/');
 export const navButtons: TNavButton[] = [];
+export let navPath = $state<string>('/');
 
 export let prevPath = $state('/');
 

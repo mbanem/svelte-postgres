@@ -59,50 +59,52 @@
       return;
     });
   });
-  const details = `
-  Input box keystrokes are monitored by 'beforeinput' event handler
-  preventing non-numeric keystrokes allowing numbers with up to 10
-  digits including up to two decimals.
-  The 'beforeinput' event handler verifies intended input as a whole
-  getting it via 
-    inputbox.selectionStart + inputbox.data + inputbox.selectionEnd
-  and testing intended entry via the following regex
-		!/^-?(\d&lcub;0,10}|\d&lcub;0,8}\.?\d&lcub;0,2}|\d&lcub;0,9}\.?\d&lcub;0,1}|)$/
-  `;
 </script>
 
 <svelte:head>
   <title>Before Input</title>
 </svelte:head>
-<SummaryDetails summary="How Does this Work" , {details}></SummaryDetails>
-<br />
-<label for="inbox">
-  Expected up to 10 digits with optional up to 2 decimal places
-  <input bind:this={inputEl} id="inbox" class="controlled-input" />
-</label>
-<br />
-<div bind:this={message} class="message">%nbsp;</div>
-<br />
-<pre>
+<div class="container">
+  <pre>
+Input box keystrokes are monitored by 'beforeinput' event handler
+  preventing non-numeric keystrokes while allowing numbers with 
+  up to 10 digits including up to two decimals.
+  The 'beforeinput' event handler verifies intended input as a whole
+  getting it via 
+    inputbox.selectionStart + inputbox.data + inputbox.selectionEnd
+  and testing intended entry via the following regex
+    !/^-?(\d&lcub;0,10}|\d&lcub;0,8}\.?\d&lcub;0,2}|\d&lcub;0,9}\.?\d&lcub;0,1}|)$/
+  </pre>
+
+  <br />
+  <label for="inbox">
+    Expected up to 10 digits with optional up to 2 decimal places
+    <input bind:this={inputEl} id="inbox" class="controlled-input" />
+  </label>
+  <br />
+  <div bind:this={message} class="message">%nbsp;</div>
+  <br />
+  <pre>
   input box type='number' with additional attribute inputmode='numeric'
   allows only numeric types to be accepted (at Oct 23<sup>rt</sup
-  > Firefox excluded)
+    > Firefox excluded)
 	{#if utils.browserName() === 'Firefox'}
-    <span style="color:pink;"
-      >Does not work in this browser -- it is Firefox.</span
-    >
-  {/if}
+      <span style="color:pink;"
+        >Does not work in this browser -- it is Firefox.</span
+      >
+    {/if}
 </pre>
-<br />
-<input
-  type="number"
-  class="inputmode-numeric"
-  inputmode="numeric"
-  pattern="[0-9]*"
-  value="1234"
-/>
+  <br />
+  <input
+    type="number"
+    class="inputmode-numeric"
+    inputmode="numeric"
+    pattern="[0-9]*"
+    value="1234"
+  />
+</div>
 
-<style>
+<style lang="scss">
   label {
     margin-left: 4rem;
   }
@@ -122,5 +124,9 @@
   .inputmode-numeric {
     width: 5rem;
     margin-left: 4rem;
+  }
+  .container {
+    @include container('How does this work', $head-color: lightgreen);
+    margin: 5rem auto;
   }
 </style>

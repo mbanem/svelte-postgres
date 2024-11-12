@@ -40,7 +40,7 @@ onMount(()=>{
 <div class="wrapper hidden">
 	{#key data?.locals?.user?.role}
 		<div class="nav-fixed">
-			<NavBar bind:navButtonObjects role={data?.locals?.user?.role} />
+			<NavBar bind:navButtonObjects role={data?.locals?.user?.role??'VISITOR'} />
 		</div>
 		<main>{@render children()}</main>
 	{/key}
