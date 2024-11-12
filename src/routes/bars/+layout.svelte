@@ -1,102 +1,157 @@
 <script lang="ts">
-	import NavBar from '$components/NavBar.svelte'
-	import NavContainer from '$components/NavContainer.svelte'
-	import type { TNotification } from '$lib/types/common'
-	import { type Snippet } from 'svelte'
-	import { Button, Modal, Label, Input, Checkbox } from 'flowbite-svelte'
+  import NavBar from '$components/NavBar.svelte';
+  import NavContainer from '$components/NavContainer.svelte';
+  import type { TNotification } from '$lib/types/common';
+  import { type Snippet } from 'svelte';
+  import { Button, Modal, Label, Input, Checkbox } from 'flowbite-svelte';
 
-	type ARGS = {
-		locals: App.Locals
-		notifications: TNotification
-		children: Snippet<[]>
-	}
-	let formModal = false
-	let firstName: string, lastName: string, email: string, password: string
+  type ARGS = {
+    locals: App.Locals;
+    notifications: TNotification;
+    children: Snippet<[]>;
+  };
 
-	let { locals, notifications, children }: ARGS = $props()
+  let formModal = false;
+  let firstName: string;
+  let lastName: string;
+  let email: string;
+  let password: string;
 
-	let navButtonObjects1: TNavButtonObject[] = [
-		{ position: 1, title: 'font_size', href: '/font_size', condition: 'VISITOR' },
-		{ position: 2, title: 'scroll', href: '/scroll', condition: 'VISITOR' }
-	]
-	let navButtonObjects2: TNavButtonObject[] = [
-		// { position: 4, title: 'news', href: '/news', condition: 'VISITOR' },
-		{ position: 4, title: 'pavlovci', href: '/bars/pavlovci', condition: 'VISITOR' },
-		{
-			position: 5,
-			title: 'notifications',
-			href: '/bars/notifications',
-			condition: 'VISITOR'
-		},
-		// has to be '/bars/filter' as 'bars/filter' with no forward slash will go in deeper
-		// level to incorrect route
-		{ position: 6, title: 'filter', href: '/bars/filter', condition: 'VISITOR' }
-	]
-	const getFormParams = () => {
-		let params = ''
-		//
-		;['firstName', 'lastName', 'email', 'password'].forEach((id) => {
-			const value = document.getElementById(id)
-			params += `${id}=${value}&`
-		})
-		return params.slice(0, -1)
-	}
-	//console.log(getFormParams())
+  let { locals, notifications, children }: ARGS = $props();
+
+  let navButtonObjects1: TNavButtonObject[] = [
+    {
+      position: 1,
+      title: 'font_size',
+      href: '/font_size',
+      condition: 'VISITOR',
+    },
+    { position: 2, title: 'scroll', href: '/scroll', condition: 'VISITOR' },
+  ];
+  let navButtonObjects2: TNavButtonObject[] = [
+    // { position: 4, title: 'news', href: '/news', condition: 'VISITOR' },
+    {
+      position: 4,
+      title: 'pavlovci',
+      href: '/bars/pavlovci',
+      condition: 'VISITOR',
+    },
+    {
+      position: 5,
+      title: 'notifications',
+      href: '/bars/notifications',
+      condition: 'VISITOR',
+    },
+    // has to be '/bars/filter' as 'bars/filter' with no forward slash will go in deeper
+    // level to incorrect route
+    {
+      position: 6,
+      title: 'filter',
+      href: '/bars/filter',
+      condition: 'VISITOR',
+    },
+  ];
+  const getFormParams = () => {
+    let params = '';
+    //
+    ['firstName', 'lastName', 'email', 'password'].forEach((id) => {
+      const value = document.getElementById(id);
+      params += `${id}=${value}&`;
+    });
+    return params.slice(0, -1);
+  };
+  //console.log(getFormParams())
 </script>
 
 <svelte:head>
-	<title>Bars Layout</title>
+  <title>Bars Layout</title>
 </svelte:head>
 <main>
-	<NavContainer>
-		<NavBar navButtonObjects={navButtonObjects1} role={locals?.user?.role ?? 'VISITOR'} />
-		<!-- The css class nav-bar-form, defined in the <NavContainer, a component wrapper for <NavBar,
+  <div class="wrapper">
+    <NavContainer>
+      <NavBar
+        z_index={2}
+        navButtonObjects={navButtonObjects1}
+        role={locals?.user?.role ?? 'VISITOR'}
+      />
+      <!-- The css class nav-bar-form, defined in the <NavContainer, a component wrapper for <NavBar,
 		should be wrapped by a <label> in order to make the whole form with a button responsive
 		to the mouse click and for cursor the be of type pointer over the whole structure
 	-->
-		<label>
-			<form class="nav-bar-form" method="GET" action="/register">
-				<input id="firstName" name="firstName" value="Filip" class="hidden" />
-				<input id="lastName" name="lastName" value="Isakovic" class="hidden" />
-				<input id="email" name="email" value="filip@isak.com" class="hidden" />
-				<input id="password" name="password" value="incorrect" class="hidden" />
-				<button type="submit" formaction="/register">Register</button>
-			</form>
-		</label>
-		<NavBar navButtonObjects={navButtonObjects2} role={locals?.user?.role ?? 'VISITOR'} />
-	</NavContainer>
-	<Modal bind:open={formModal} autoclose={false}>
-		<form class="nav-bar-form" method="POST" action={`/register?${getFormParams()}`}>
-			<!-- <form action="#"> -->
-			<Input
-				bind:value={firstName}
-				type="text"
-				name="firstName"
-				id="firstName"
-				placeholder="First Name"
-				required
-			/>
-			<Input
-				bind:value={lastName}
-				type="text"
-				name="lastName"
-				id="lastName"
-				placeholder="lastName"
-				required
-			/>
-			<Input bind:value={email} type="email" name="email" id="email" placeholder="email" required />
-			<Input
-				bind:value={password}
-				type="password"
-				name="password"
-				id="password"
-				placeholder="password"
-				required
-			/>
+      <label>
+        <form class="nav-bar-form" method="GET" action="/register">
+          <input id="firstName" name="firstName" value="Filip" class="hidden" />
+          <input
+            id="lastName"
+            name="lastName"
+            value="Isakovic"
+            class="hidden"
+          />
+          <input
+            id="email"
+            name="email"
+            value="filip@isak.com"
+            class="hidden"
+          />
+          <input
+            id="password"
+            name="password"
+            value="incorrect"
+            class="hidden"
+          />
+          <button type="submit" formaction="/register">Register</button>
+        </form>
+      </label>
+      <NavBar
+        z_index={2}
+        navButtonObjects={navButtonObjects2}
+        role={locals?.user?.role ?? 'VISITOR'}
+      />
+    </NavContainer>
+  </div>
+  <Modal bind:open={formModal} autoclose={false}>
+    <form
+      class="nav-bar-form"
+      method="POST"
+      action={`/register?${getFormParams()}`}
+    >
+      <!-- <form action="#"> -->
+      <Input
+        bind:value={firstName}
+        type="text"
+        name="firstName"
+        id="firstName"
+        placeholder="First Name"
+        required
+      />
+      <Input
+        bind:value={lastName}
+        type="text"
+        name="lastName"
+        id="lastName"
+        placeholder="lastName"
+        required
+      />
+      <Input
+        bind:value={email}
+        type="email"
+        name="email"
+        id="email"
+        placeholder="email"
+        required
+      />
+      <Input
+        bind:value={password}
+        type="password"
+        name="password"
+        id="password"
+        placeholder="password"
+        required
+      />
 
-			<!-- <button type="submit" class="bar-button">Register</button> -->
-		</form>
-	</Modal>
+      <!-- <button type="submit" class="bar-button">Register</button> -->
+    </form>
+  </Modal>
 </main>
 <!-- <pre style="font-size:11px;">data {JSON.stringify(data, null, 2)}</pre> -->
 <pre>
@@ -112,10 +167,14 @@
 {@render children()}
 
 <style lang="scss">
-	main {
-		margin-top: 0.5rem;
-	}
-	button {
-		background-color: rgb(5, 5, 153) !important;
-	}
+  main {
+    margin-top: 0.5rem;
+  }
+  button {
+    background-color: rgb(5, 5, 153) !important;
+  }
+  .wrapper {
+    background-color: var(--BODY-BACKGROUND-COLOR);
+    z-index: 4;
+  }
 </style>

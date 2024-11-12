@@ -1,24 +1,24 @@
 <script lang="ts">
-	import { type Snippet } from 'svelte'
-	// for items of different type embedded in <NavBar objects>
-	const makeCSSClass = (cssClassDef: string) => {
-		try {
-			if (!document) return
-			let s = document.createElement('style')
-			s.innerHTML = cssClassDef
-			document.head.appendChild(s)
-		} catch (err) {
-			console.log(err)
-		}
-	}
-	let { children }: { children: Snippet<[]> } = $props()
-	// const callMakeCSSClass = async () =>
-	// 	await
+  import { type Snippet } from 'svelte';
+  // for items of different type embedded in <NavBar objects>
+  const makeCSSClass = (cssClassDef: string) => {
+    try {
+      if (!document) return;
+      let s = document.createElement('style');
+      s.innerHTML = cssClassDef;
+      document.head.appendChild(s);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  let { children }: { children: Snippet<[]> } = $props();
+  // const callMakeCSSClass = async () =>
+  // 	await
 
-	// NOTE: /static/ global.scss contains navbar-button
-	// but @extend navbar-button does not work
-	makeCSSClass(
-		`.nav-bar-form {
+  // NOTE: /static/ global.scss contains navbar-button
+  // but @extend navbar-button does not work
+  makeCSSClass(
+    `.nav-bar-form {
 		display: inline-block;
 		background-color: rgb(5, 5, 153);
 		color: lightgreen;
@@ -56,19 +56,21 @@
 		font-family: inherit;
 		margin: 0;
 		padding: 0;
-	}`
-	)
+	}`,
+  );
 </script>
 
 <div class="container">
-	<!-- {callMakeCSSClass()} -->
-	{@render children()}
+  <!-- {callMakeCSSClass()} -->
+  {@render children()}
 </div>
 
 <style>
-	.container {
-		display: flex;
-		gap: 5px;
-		/* align-items: stretch; */
-	}
+  .container {
+    display: flex;
+    gap: 5px;
+    z-index: 1;
+    background-color: var(--BODY-BACKGROUND-COLOR);
+    /* align-items: stretch; */
+  }
 </style>

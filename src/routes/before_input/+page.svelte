@@ -79,7 +79,13 @@ Input box keystrokes are monitored by 'beforeinput' event handler
   <br />
   <label for="inbox">
     Expected up to 10 digits with optional up to 2 decimal places
-    <input bind:this={inputEl} id="inbox" class="controlled-input" />
+    <input
+      type="text"
+      bind:this={inputEl}
+      id="inbox"
+      class="controlled-input"
+      placeholder="Up to 10 digits with 2 decimals"
+    />
   </label>
   <br />
   <div bind:this={message} class="message">%nbsp;</div>
@@ -113,6 +119,10 @@ Input box keystrokes are monitored by 'beforeinput' event handler
     font-size: 18px;
     padding: 3px 0 0 1rem;
     margin: 1rem 0 0 5rem;
+    &::placeholder {
+      color: var(--PLACEHOLDER_COLOR);
+      // opacity: 0.6;
+    }
   }
   .message {
     display: inline-block;
