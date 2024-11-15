@@ -22,7 +22,7 @@ const ROLES = {
     'delete:comments',
   ],
   moderator: ['view:comments', 'create:comments', 'delete:comments'],
-  user: ['view:comments', 'create:comments'],
+  user: ['view:comments', 'create:comments', 'delete:ownComments'],
   visitor: ['view:comments'],
 } as const;
 
@@ -30,8 +30,18 @@ const ROLES = {
 // so Role[admin] is an array ["view:comments","create:comments" ...]
 // check if Role[admin] array (here Roles[user.role] as readonly Permission[])
 // includes given permission "create"comments
-export const hasPermission = (user: User, permission: Permission) => {
-  return (ROLES[user.role as Role] as readonly Permission[]).includes(
-    permission,
+
+export const hasPermission = (
+  user: User,
+  permission: Permission,
+  authorId?: string | number,
+) => {
+  const thePermission = ROLES[user.role as Role] as readonly Permission[];
+  const ownPermission = thePermission.map((c) => {
+    return c === ':' ? ':own' : c;
+  })[0] as string;
+  return (
+    thePermission.includes(permission) ||
+    (authorId === user.id && thePermission.includes(ownPermission))
   );
 };

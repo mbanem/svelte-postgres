@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { setCSSValue } from '$lib/utils';
   import { hasPermission } from './Permissions.svelte';
   /* 
 		we usually have value/text pairs for options but we can use 
@@ -22,9 +23,9 @@
 
   let selected_id = $state(2);
   let selected = $derived(options.find((o) => o.role === 'ADMIN'));
-
+  const authorId = 12345678;
   // --------------------------------------------------------------
-  let firstName = $state('filip');
+  let firstName = $state('');
   let permission = $state('view:comments');
 
   type TUser = {
@@ -54,7 +55,19 @@
       role: 'visitor',
     },
   } as const;
-  type TUsers = typeof users;
+  const firstNameOnChange = (event: KeyboardEvent) => {
+    if (event.target instanceof HTMLInputElement) {
+      if (Object.keys(users).includes(event.target.value)) {
+        // setCSSValue('--FIRST-NAME-BACKGROUND-COLOR', '#3e3e3e');
+        firstName = event.target.value;
+      } else {
+        // setCSSValue('--FIRST-NAME-BACKGROUND-COLOR', 'pink');
+        firstName = '';
+      }
+    } else {
+      console.error('event.target is not an HTMLInputElement');
+    }
+  };
 </script>
 
 <div class="wrapper">
@@ -63,7 +76,7 @@
   Users are defined as:
   const users = &lcub;
 		<span>matia</span>: &lcub;
-			id: '12345678',
+			id: '1740980519',
 			firstName: 'Filip',
 			lastName: 'Isakovic',
 			role: 'admin'
@@ -75,7 +88,7 @@
 			role: 'user'
 		&rcub;,
     <span>Marko</span>: &lcub;
-			id: '12345678',
+			id: '014789741',
 			firstName: 'Marko',
 			lastName: 'Milutinovic',
 			role: 'visitor'
@@ -99,14 +112,25 @@
 </pre>
   </div>
   <div class="container">
-    <p>
-      Does <span>{firstName}</span> has {permission}? {hasPermission(
-        users[firstName as keyof typeof users],
-        permission,
-      )}
-    </p>
-    <p><span>{firstName}</span></p>
-    <input type="text" bind:value={firstName} placeholder="enter firstName" />
+    {#if Object.keys(users).includes(firstName)}
+      <p>
+        Does <span>{firstName}</span> has permission for {permission}?
+        <span class="has-permission">
+          {hasPermission(
+            users[firstName as keyof typeof users],
+            permission,
+            authorId,
+          )}
+        </span>
+      </p>
+    {:else}
+      <p class="warning">Please enter proper first name</p>
+    {/if}
+    <input
+      type="text"
+      onkeyup={firstNameOnChange}
+      placeholder="enter firstName"
+    />
     <input
       type="text"
       bind:value={permission}
@@ -125,6 +149,9 @@
 </div>
 
 <style lang="scss">
+  // :root {
+  //   --FIRST-NAME-BACKGROUND-COLOR: #3e3e3e;
+  // }
   .wrapper {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -149,14 +176,20 @@
   }
   p {
     font-size: 16px;
-    // color: lightgreen;
     padding: 5px;
     margin: 0;
   }
   input {
-    width: 7rem;
+    width: 12rem;
+    background-color: var(--FIRST-NAME-BACKGROUND-COLOR);
   }
   span {
     color: yellow;
+  }
+  .has-permission {
+    color: lightgreen;
+  }
+  .warning {
+    color: pink;
   }
 </style>
