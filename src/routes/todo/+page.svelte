@@ -1,16 +1,15 @@
 <script lang="ts">
-  import type { Snapshot } from './$types';
   import type { PageData, ActionData } from './$types';
   import { enhance } from '$app/forms';
   import { page } from '$app/stores'; // for $age.status code on actions
-  import { invalidateAll } from '$app/navigation';
   import type { SubmitFunction } from '@sveltejs/kit';
+  import { invalidateAll } from '$app/navigation';
+  import { onMount, tick } from 'svelte';
+  import type { Snapshot } from './$types';
+
   import { Tooltip } from 'flowbite-svelte';
   import { setColor, hideButtonsExceptFirst } from '$utils';
-
   import ListsWrapper from './ListsWrapper.svelte';
-  import { onMount, tick } from 'svelte';
-  import CircleSpinner from '$components/CircleSpinner.svelte';
   import PageTitleCombo from '$components/PageTitleCombo.svelte';
   import ButtonSpinner from '$components/ButtonSpinner.svelte';
   import * as utils from '$utils';
@@ -20,17 +19,18 @@
     form: ActionData;
   };
   let { data, form }: ARGS = $props();
-  let { users } = data;
+
+  let { locals, users, uTodos } = data;
   let hidden = $state(true);
 
   // NOTE: When the page updates uTodos = $state<UTodos>() is not refreshed but data.uTodos are refreshed.
   // In order to have uTodos refreshed we need two steps: let uTodos = $state<UTodos>() like a definition
   // and $effect that get uTodos from refreshed data prop
-  let uTodos = $state<UTodos>();
-  $effect(() => {
-    uTodos = data.uTodos;
-  });
-  let selectedUserId = $state<string>(data.locals.user.id);
+  // let uTodos = $state<UTodos>();
+  // $effect(() => {
+  //   uTodos = data.uTodos;
+  // });
+  let selectedUserId = $state<string>(locals.user.id);
   let loading = $state<boolean>(false);
   // form?.message cannot be cleared by code but could be ignored when necessary
   let ignoreFormMessage = false;
@@ -203,9 +203,7 @@
 
   let todoIdEl: HTMLInputElement;
   const prepareDataForEdit = (todoId: string) => {
-    const uTodo = data.uTodos.filter(
-      (uTodo) => uTodo.todoId === todoId,
-    )[0] as UTodo;
+    const uTodo = uTodos.filter((uTodo) => uTodo.todoId === todoId)[0] as UTodo;
     // prevent ADMIN to update others todos
     selectedUserId = uTodo.id as string;
     snap.id = uTodo.todoId;
@@ -235,7 +233,7 @@
   // to clear the message after several seconds
   // let result = $derived(message || formMessage)
 
-  let authorId = $state<string>(data.locals.user.id);
+  let authorId = $state<string>(locals.user.id);
 
   export const snapshot: Snapshot<TodoFormData> = {
     capture: () => {
@@ -261,14 +259,10 @@
   // 	snap.priority = Number(tUser.priority);
   // };
   onMount(() => {
-    if (selectedUserId !== data.locals.user.id) {
+    if (selectedUserId !== locals.user.id) {
       return;
     }
-    const tUser = utils.selectRecordItems<UTodo>(
-      'id',
-      selectedUserId,
-      data.uTodos,
-    );
+    const tUser = utils.selectRecordItems<UTodo>('id', selectedUserId, uTodos);
     snap.authorId = selectedUserId;
     authorId = selectedUserId;
     hideButtonsExceptFirst([btnCreate, btnUpdate, btnDelete]);
@@ -283,19 +277,21 @@
 
 <!-- scroll to  onmouseenter={tooltipMouseWheel} where tooltip is activated-->
 <!-- <div class="tooltip-mouse-wheel hidden">focus & use mouse wheel</div> -->
+<pre>Todo Page selectedUserId {selectedUserId}</pre>
 <svelte:head>
   <title>To Do</title>
 </svelte:head>
+<!-- ------------------------------------------------- -->
 <PageTitleCombo
   PageName="Todo"
   bind:result
   bind:ignoreFormMessage
   bind:selectedUserId
   amendTrueFalseUserId={false}
-  user={data.locals.user}
-  users={data.users}
+  user={locals.user}
+  {users}
 />
-
+<!-- <pre>users {JSON.stringify(users, null, 2)}</pre> -->
 <div class="board">
   <form
     bind:this={theForm}
@@ -385,10 +381,12 @@
     </div>
   </form>
   <div class="two-columns">
+    <!-- ---------------------------------------------------------------- -->
     <ListsWrapper
-      id={data.locals.user.id}
-      role={data.locals.user.role}
-      uTodosProp={data.uTodos}
+      id={locals.user.id}
+      role={locals.user.role}
+      {users}
+      {uTodos}
       bind:selectedUserId
       {toggleCompleted}
       {prepareUpdate}

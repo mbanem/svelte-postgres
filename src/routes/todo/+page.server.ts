@@ -3,25 +3,13 @@ import { error, fail } from '@sveltejs/kit';
 import { v4 as uuidv4 } from 'uuid';
 import { db } from '$server/db';
 import * as utils from '$utils';
-// import type { User, Todo} from '@prisma/client'
-// in order to load uTodos we cannot use end point
-// +server.ts as it can only Respond on a request;
-// instead we should use this +page.server.ts as it
-// has +page in its name and so it has a load function
-// that can deliver data: PageData to +page.svelte
-// via export let data: PageData
-// also +layout.server.ts delivers data to +layout.svelte
+// import type { User, Todo} from '@prisma/client' in order to load uTodos we cannot use end point
+// +server.ts as it can only Respond on a request; instead we should use the sibling +page.server.ts as it
+// has +page in its name and so it has a load function that can deliver data: PageData to +page.svelte
+// via export let data: PageData also +layout.server.ts delivers data to +layout.svelte
 // using import type { LayoutData } from './$types'
 
-// admin should be able to see all uTodos of any user
-// so we have to load all uTodos with user info
-// type UTodos = ({
-// 	user: {
-// 		id: string;
-// 		firstName: string;
-// 		lastName: string;
-// 	};
-// } & Todo)[];
+// admin should be able to see but not to update uTodos of any user so we have to load all uTodos with user info
 
 export const load: PageServerLoad = (async ({ locals, cookies }) => {
   let uTodos: UTodos = [];
@@ -60,7 +48,8 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
 				t.created_at as "createdAt",
 				t.updated_at as "updatedAt"
 		from 	todo t
-		join 	users u on t.user_id = u.id
+		full outer join 	users u on t.user_id = u.id
+    where t.id is not null or u.role = 'ADMIN'
 		order by 		u.last_name ASC,
 								u.first_name ASC,
 								t.priority DESC;`) as UTodos;
@@ -93,13 +82,17 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
   };
 
   const users: UserPartial[] = await db.$queryRaw`select
-		 distinct t.user_id as "id",
+    distinct u.id,
 				u.first_name as "firstName",
-				u.last_name as "lastName"
+				u.last_name as "lastName",
+        u.role,
+        t.user_id as "todoUserId"
 				from todo t
-					join users u on u.id = t.user_id;`;
+					full outer join users u on u.id = t.user_id
+        where t.user_id is not null or u.role = 'ADMIN';`;
 
-  // console.log(uTodos, users)
+  // console.log(uTodos, user);
+
   return {
     uTodos, // as UTodos is important for TypeScript
     // user,		// user is in locals that is sent from root/+layout.server.ts
@@ -124,7 +117,6 @@ export const actions: Actions = {
       // @ts-expect-error
       await request.formData(),
     ) as InputData;
-    // console.log('addTodo', JSON.stringify(input_data, null, 2))
     input_data.priority = Number(input_data.priority);
     const { userId, title, content, priority } = input_data;
     if (title === '' || content === '' || userId === '') {
@@ -140,10 +132,6 @@ export const actions: Actions = {
 
     try {
       const upd = new Date();
-      // console.log(
-      // 	'db.todo.create',
-      // 	JSON.stringify({ title, content, priority, userId, updatedAt: upd }, null, 2)
-      // )
       const newTodo = await db.todo.create({
         data: {
           title,
@@ -167,7 +155,6 @@ export const actions: Actions = {
     };
   },
   updateTodo: async ({ request }) => {
-    console.log('updateTodo');
     const input_data = Object.fromEntries(
       // @ts-expect-error
       await request.formData(),
@@ -209,7 +196,6 @@ export const actions: Actions = {
     }
   },
   deleteTodo: async ({ request }) => {
-    //console.log('deleteTodo')
     const body = await request.formData();
     const id = body.get('id') as string;
 

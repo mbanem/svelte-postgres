@@ -67,7 +67,7 @@
   <title>Bars Layout</title>
 </svelte:head>
 <main>
-  <div class="wrapper">
+  <div class="navbar-wrapper">
     <NavContainer>
       <NavBar
         z_index={2}
@@ -154,7 +154,9 @@
   </Modal>
 </main>
 <!-- <pre style="font-size:11px;">data {JSON.stringify(data, null, 2)}</pre> -->
-<pre>
+<div class="grid-wrapper">
+  <div>
+    <pre>
 	This 'bars' page implements local +layout.svelte in which below the top navigatioin bar 
 	it adds another navigation bar with NavContainer component.
 	The NavContainer component in local +layout.svelte renders 
@@ -163,8 +165,12 @@
 		with a new 'register' button to submit to the register page, and then
 		3) new NavBar with TNavButtonObject[] array -- pavlovci, notifications and filter.
 	So NavContainer can mix form buttons between other navigation buttons
-</pre>
-{@render children()}
+		</pre>
+  </div>
+  <div>
+    {@render children()}
+  </div>
+</div>
 
 <style lang="scss">
   main {
@@ -173,8 +179,13 @@
   button {
     background-color: rgb(5, 5, 153) !important;
   }
-  .wrapper {
+  .navbar-wrapper {
     background-color: var(--BODY-BACKGROUND-COLOR);
     z-index: 4;
+  }
+  .grid-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: flex-start;
   }
 </style>

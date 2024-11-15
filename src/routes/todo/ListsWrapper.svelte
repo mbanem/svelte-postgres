@@ -10,30 +10,42 @@
     lastName: string;
     role: string;
   };
+
+  // id={locals.user.id}
+  // role={locals.user.role}
+  // {users}
+  // uTodosProp={uTodos}
+  // bind:selectedUserId
+  // {toggleCompleted}
+  // {prepareUpdate}
+  // {deleteTodo}
+
   type ARGS = {
-    id: string;
+    id: string; // user id
+    role: string; // USER or ADMIN, VISITOR has no ability to save todos
+    users: UserPartial[];
+    uTodos: UTodos;
     selectedUserId: string;
-    role: string;
-    uTodosProp: UTodos;
     toggleCompleted: (id: string) => void;
-    deleteTodo: (id: string) => void;
     prepareUpdate: (todoId: string) => void;
+    deleteTodo: (id: string) => void;
   };
   let {
     id,
-    selectedUserId = $bindable(),
     role,
-    uTodosProp,
+    users,
+    uTodos,
+    selectedUserId = $bindable(),
     toggleCompleted,
-    deleteTodo,
     prepareUpdate,
+    deleteTodo,
   }: ARGS = $props();
 
-  let uTodos: UTodos = $state<UTodos>(uTodosProp);
-  $effect(() => {
-    uTodos = uTodosProp;
-  });
-  const permission = 'owner only permission';
+  let stop_debugger = true;
+  // let uTodos= $state<UTodos>(uTodosProp);
+  // $effect(() => {
+  //   uTodos = uTodosProp;
+  // });
 
   const move = (item: string, from: string[], to: string[]) => {
     to.push(item);
@@ -51,8 +63,11 @@
   };
 </script>
 
+<!-- ===================  TodoList ===================== -->
 <TodoList
   {id}
+  {role}
+  {users}
   {uTodos}
   bind:selectedUserId
   {toggleCompleted}
