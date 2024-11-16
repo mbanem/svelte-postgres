@@ -28,7 +28,7 @@ model User {
   profile 			Profile?
 
   articles      Article[]
-  todos         Todo[]    //arrays are optional and can be empry
+  todos         Todo[]    // arrays are optional and could be empty
 
   createdAt DateTime @default(now())   @map("created_at")
   updatedAt DateTime? @updatedAt        @map("updated_at")

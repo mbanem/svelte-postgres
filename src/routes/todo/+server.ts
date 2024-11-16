@@ -10,45 +10,48 @@ import { db } from '$lib/server/db';
 // as export let data: PageData
 
 export const PATCH = (async ({ url }) => {
-	// PATCH searchParams id "2bf177d5-ceaa-4742-9a0d-89aed438c8c0"
-	const id = url.searchParams.get('id') as string;
-	try {
-		const c = await db.todo.findUnique({
-			where: {
-				id
-			},
-			select: {
-				completed: true
-			}
-		});
-		// we return  json({ toggled: true)} or
-		// on error json({ toggled: false, message: 'Internal error' });
-		if (c !== null) {
-			await db.todo.update({
-				where: {
-					id
-				},
-				data: {
-					completed: !c.completed
-				}
-			});
-		}
-	} catch (err) {
-		return json({ toggled: false, message: 'Internal error' });
-	}
-	return json({ toggled: true });
+  console.log('+server.ts PATCH');
+  // PATCH searchParams id "2bf177d5-ceaa-4742-9a0d-89aed438c8c0"
+  const id = url.searchParams.get('id') as string;
+  try {
+    const c = await db.todo.findUnique({
+      where: {
+        id,
+      },
+      select: {
+        completed: true,
+      },
+    });
+    // we return  json({ toggled: true)} or
+    // on error json({ toggled: false, message: 'Internal error' });
+    if (c !== null) {
+      await db.todo.update({
+        where: {
+          id,
+        },
+        data: {
+          completed: !c.completed,
+        },
+      });
+    }
+  } catch (err) {
+    return json({ toggled: false, message: 'Internal error' });
+  }
+  return json({ toggled: true });
 }) satisfies RequestHandler;
 
 export const DELETE = (async ({ url }) => {
-	await utils.sleep(2000);
-	try {
-		await db.todo.delete({
-			where: {
-				id: url.searchParams.get('id') as string
-			}
-		});
-	} catch (err) {
-		return json({ deleted: false });
-	}
-	return json({ deleted: true });
+  await utils.sleep(2000);
+  console.log('+server.ts DELETE');
+  console.log('+server.ts DELETE');
+  try {
+    await db.todo.delete({
+      where: {
+        id: url.searchParams.get('id') as string,
+      },
+    });
+  } catch (err) {
+    return json({ deleted: false });
+  }
+  return json({ deleted: true });
 }) satisfies RequestHandler;

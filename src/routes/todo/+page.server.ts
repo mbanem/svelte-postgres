@@ -184,7 +184,7 @@ export const actions: Actions = {
       await utils.sleep(2000);
 
       return {
-        todos: { id: 'some id', title: 'some title', content: 'some content' },
+        // todos: { id: 'some id', title: 'some title', content: 'some content' },
         success: true,
         message: 'Todo successfully updated',
       };

@@ -6,7 +6,6 @@
     PageName: string;
     user: UserPartial;
     users: UserPartial[] | [];
-    amendTrueFalseUserId: boolean;
     selectedUserId: string;
     result: string;
     ignoreFormMessage: boolean;
@@ -16,7 +15,6 @@
     result = $bindable(),
     ignoreFormMessage = $bindable(),
     selectedUserId = $bindable(),
-    amendTrueFalseUserId,
     user,
     users,
   }: ARGS = $props();
@@ -27,7 +25,7 @@
 
   let msgEl: HTMLSpanElement;
   let selectBox: HTMLSelectElement;
-  const clearMessage = () => {
+  const scheduleClearMessage = () => {
     setTimeout(() => {
       result = '';
       ignoreFormMessage = true;
@@ -37,7 +35,7 @@
     }, 2000);
   };
   const showResult = () => {
-    clearMessage();
+    scheduleClearMessage();
     return result;
   };
   let userName = $derived.by(() => {
@@ -52,39 +50,24 @@
   //   selectBox.value = selectedUserId.slice(0, -2);
   // });
 
-  const decorateUserId = (user: UserPartial) => {
-    const uid = user.id + (user.role === 'ADMIN' ? '-T' : '-F');
-    return uid;
-  };
   onMount(() => {
-    const t = amendTrueFalseUserId ? (user.role === 'ADMIN' ? '-T' : '-F') : '';
-    selectedUserId = `${user.id}${t}`;
-    if (selectBox) {
-      selectBox.value = selectedUserId; //.slice(0, -2);
-    }
+    selectedUserId = user.id;
+    // if (selectBox) {
+    //   selectBox.value = selectedUserId;
+    // }
   });
 </script>
 
-<pre
-  style="font-size:16px;">PageTitleCombo selectedUserId-T/-F {selectedUserId} {decorateUserId(
-    user,
-  )} {selectedUserId === decorateUserId(user)}</pre>
 <h1>
   {PageName} Page
   {#if user?.role === 'ADMIN'}
     <select bind:this={selectBox} bind:value={selectedUserId}>
       <!-- <option value="x" selected={true}>Select an Author</option> -->
       {#each users as the_user}
-        {@const ownerId = decorateUserId(user)}
-        <option
-          value={decorateUserId(the_user)}
-          selected={the_user.id === ownerId}
-        >
+        <option value={the_user.id}>
           {the_user.firstName}
           {the_user.lastName}
         </option>
-        <!-- {@debug the_user}
-        {@debug selectedUserId} -->
       {/each}
     </select>
   {/if}

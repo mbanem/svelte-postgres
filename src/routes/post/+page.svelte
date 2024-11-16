@@ -306,13 +306,11 @@
 </svelte:head>
 
 <!-- <pre style="font-size:13px;">data {JSON.stringify(data, null, 2)}</pre> -->
-<!-- amendTrueFalseUserId = {true} forced selectBox value userId to be prefixed with T=ADMIN, F=USER -->
 <PageTitleCombo
 	PageName="Post"
 	bind:result
 	bind:ignoreFormMessage
 	bind:selectedUserId
-	amendTrueFalseUserId={true}
 	user={data.locals.user}
 	users={data.users}
 />

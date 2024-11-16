@@ -264,7 +264,6 @@
 	bind:result
 	bind:ignoreFormMessage
 	bind:selectedUserId={snap.authorId}
-	amendTrueFalseUserId={true}
 	user={data.locals.user}
 	users={data.users}
 />
