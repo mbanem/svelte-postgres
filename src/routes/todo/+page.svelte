@@ -9,7 +9,7 @@
 
   import { Tooltip } from 'flowbite-svelte';
   import { setColor, hideButtonsExceptFirst } from '$utils';
-  import ListsWrapper from './ListsWrapper.svelte';
+  import TodoList from '$components/TodoList.svelte';
   import PageTitleCombo from '$components/PageTitleCombo.svelte';
   import ButtonSpinner from '$components/ButtonSpinner.svelte';
   import * as utils from '$utils';
@@ -20,18 +20,17 @@
   };
   let { data, form }: ARGS = $props();
 
-  let { locals, users, uTodos } = data;
   let hidden = $state(true);
 
   // NOTE: When the page updates uTodos = $state<UTodos>() is not refreshed but data.uTodos are refreshed.
   // In order to have uTodos refreshed we need two steps: let uTodos = $state<UTodos>() like a definition
   // and $effect that get uTodos from refreshed data prop
-  // let uTodos = $state<UTodos>();
   // $effect(() => {
   //   uTodos = data.uTodos;
   // });
-  let selectedUserId = $state<string>(locals.user.id);
+  let selectedUserId = $state<string>(data.locals.user.id);
   let loading = $state<boolean>(false);
+
   // form?.message cannot be cleared by code but could be ignored when necessary
   let ignoreFormMessage = false;
   let titleIsRequired = '';
@@ -65,8 +64,10 @@
     setTimeout(() => {
       ignoreFormMessage = false;
       result = '';
+      loading = false;
     }, 2000);
     hideButtonsExceptFirst([btnCreate, btnUpdate, btnDelete]);
+    utils.setColor('lightgreen');
   };
 
   // if form is filled with  data for update, but user chose other action, we
@@ -79,17 +80,13 @@
     (document.querySelector("input[type='number']") as HTMLInputElement).value =
       '0';
     titleIsRequired = contentIsRequired = '';
-    setColor('lightgreen');
-
-    await tick();
-    setColor('lightgreen');
   };
 
   // on update todo action we do not load todos again but we have to change
-  // uTodos list with the updated todo flag
+  // data.uTodos list with the updated todo flag
   const updateTodos = (formData: FormData) => {
-    if (uTodos) {
-      uTodos = uTodos.map((t) => {
+    if (data.uTodos) {
+      data.uTodos = data.uTodos.map((t) => {
         if (t.todoId === formData.get('id')) {
           t.title = formData.get('title') as string;
           t.content = formData.get('content') as string;
@@ -136,74 +133,69 @@
       } else if (action.search === '?/deleteTodo') {
         result = $page.status === 200 ? 'todo deleted' : 'delete failed';
       }
-
-      await invalidateAll();
-      loading = false; // turn the spinner off
+      await utils.sleep(1000);
+      invalidateAll();
+      clearForm(); // also set buttons
       ignoreFormMessage = true;
-      hideButtonsExceptFirst([btnCreate, btnUpdate, btnDelete]);
       clearMessage();
+      loading = false; // stop spinner animation
     };
   };
-  // captionCreate must be #state but hiddenCreate must not
+  // captionCreate must be #state but hiddenCreateButtonSpinner must not
   let captionCreate = $state<string>('create');
-  let hiddenCreate = false;
+  let hiddenCreateButtonSpinner = false;
 
-  const toggleCompleted = async (id: string) => {
+  const toggleCompleted = async (todo: UTodo) => {
     captionCreate = 'toggling';
     loading = true;
-    hiddenCreate = false; // NOTE: changing captionCreate above turns button hidden?!
-    const completed = (
-      uTodos?.filter((uTodo) => uTodo.todoId === id)[0] as UTodo
-    ).completed;
+    hiddenCreateButtonSpinner = false; // NOTE: changing captionCreate above turns button hidden?!
+    const completed = todo.completed;
     const currentState = completed ? 'completed' : 'active';
     const newState = completed ? 'active' : 'completed';
     result = `toggling ${currentState} into ${newState}...`;
     // if form fields are prepared for update but user
     // select different action we clear the form fields
-    clearForm();
     // instead of easier action in +page.server.ts we demonstrate
     // here endpoint HTML remote communication via fetch
-    const response = await fetch(`/todo?id=${id}`, {
+    const response = await fetch(`/todo?id=${todo.id}`, {
       method: 'PATCH',
-      body: id,
+      body: todo.id,
     });
     const data = await response.json();
     await utils.sleep(2000);
-    loading = false; // TODO: comment out for production
     result = `toggled into ${newState}`;
+    loading = false; // TODO: comment out for production
     // setting the message will dynamically set the result, which in turn will
     // show message for several seconds and then clear it out
 
     if (data.toggled) {
-      uTodos = (uTodos as UTodos).map((todo) => {
-        if (todo.todoId === id) {
-          todo.completed = !todo.completed;
-        }
-        invalidateAll();
-        setTimeout(() => {
-          result = '';
-        }, 2000);
-        return todo;
-      });
+      todo.completed = !todo.completed;
+      invalidateAll();
+
+      setTimeout(() => {
+        result = '';
+      }, 2000);
+      // return todo; // TODO: why we return todo here?
     }
     captionCreate = 'create';
   };
 
   const deleteTodo = async (id: string) => {
-    // snap.id = id
+    loading = true;
     hideButtonsExceptFirst([btnDelete, btnCreate, btnUpdate]);
     btnDelete.focus();
     todoIdEl.value = id;
-    loading = true;
     result = 'deleting todo...';
     btnDelete.click();
-
-    utils.sleep(2000);
+    await utils.sleep(2000);
+    result = 'todo deleted';
+    await utils.sleep(1000);
+    loading = false;
   };
 
   let todoIdEl: HTMLInputElement;
-  const prepareDataForEdit = (todoId: string) => {
-    const uTodo = uTodos.filter((uTodo) => uTodo.todoId === todoId)[0] as UTodo;
+
+  const prepareDataForEdit = (uTodo: UTodo) => {
     // prevent ADMIN to update others todos
     selectedUserId = uTodo.id as string;
     snap.id = uTodo.todoId;
@@ -219,8 +211,8 @@
   // and should be cleared if action other than click on the
   // update button is taken
 
-  const prepareUpdate = async (todoId: string) => {
-    prepareDataForEdit(todoId);
+  const prepareUpdate = async (todo: UTodo) => {
+    prepareDataForEdit(todo);
     updatePrepared = true;
     // hide create and delete buttons and show the update one
     hideButtonsExceptFirst([btnUpdate, btnCreate, btnDelete]);
@@ -233,7 +225,7 @@
   // to clear the message after several seconds
   // let result = $derived(message || formMessage)
 
-  let authorId = $state<string>(locals.user.id);
+  let authorId = $state<string>(data.locals.user.id);
 
   export const snapshot: Snapshot<TodoFormData> = {
     capture: () => {
@@ -245,7 +237,6 @@
   };
 
   // const tooltipMouseWheel = () => {  // do not work with input type=number
-  // 	console.log('tooltipMouseWheel')
   // 	document.querySelector('.tooltip-mouse-wheel')?.classList.toggle('hidden')
   // 	setTimeout(() => {
   // 		document.querySelector('.tooltip-mouse-wheel')?.classList.toggle('hidden')
@@ -259,10 +250,14 @@
   // 	snap.priority = Number(tUser.priority);
   // };
   onMount(() => {
-    if (selectedUserId !== locals.user.id) {
+    if (selectedUserId !== data.locals.user.id) {
       return;
     }
-    const tUser = utils.selectRecordItems<UTodo>('id', selectedUserId, uTodos);
+    const tUser = utils.selectRecordItems<UTodo>(
+      'id',
+      selectedUserId,
+      data.uTodos,
+    );
     snap.authorId = selectedUserId;
     authorId = selectedUserId;
     hideButtonsExceptFirst([btnCreate, btnUpdate, btnDelete]);
@@ -277,7 +272,7 @@
 
 <!-- scroll to  onmouseenter={tooltipMouseWheel} where tooltip is activated-->
 <!-- <div class="tooltip-mouse-wheel hidden">focus & use mouse wheel</div> -->
-<pre>Todo Page selectedUserId {selectedUserId}</pre>
+<!-- <pre>Todo Page selectedUserId {selectedUserId}</pre> -->
 <svelte:head>
   <title>To Do</title>
 </svelte:head>
@@ -287,9 +282,8 @@
   bind:result
   bind:ignoreFormMessage
   bind:selectedUserId
-  amendTrueFalseUserId={false}
-  user={locals.user}
-  {users}
+  user={data.locals.user}
+  users={data.users}
 />
 <!-- <pre>users {JSON.stringify(users, null, 2)}</pre> -->
 <div class="board">
@@ -344,7 +338,7 @@
       <ButtonSpinner
         bind:button={btnCreate}
         spinOn={loading}
-        hidden={hiddenCreate}
+        hidden={hiddenCreateButtonSpinner}
         caption={captionCreate}
       ></ButtonSpinner>
 
@@ -382,16 +376,16 @@
   </form>
   <div class="two-columns">
     <!-- ---------------------------------------------------------------- -->
-    <ListsWrapper
-      id={locals.user.id}
-      role={locals.user.role}
-      {users}
-      {uTodos}
+    <TodoList
+      id={data.locals.user.id}
+      role={data.locals.user.role}
+      users={data.users}
+      uTodos={data.uTodos}
       bind:selectedUserId
       {toggleCompleted}
       {prepareUpdate}
       {deleteTodo}
-    ></ListsWrapper>
+    ></TodoList>
   </div>
 </div>
 

@@ -91,8 +91,6 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
 					full outer join users u on u.id = t.user_id
         where t.user_id is not null or u.role = 'ADMIN';`;
 
-  // console.log(uTodos, user);
-
   return {
     uTodos, // as UTodos is important for TypeScript
     // user,		// user is in locals that is sent from root/+layout.server.ts
@@ -182,9 +180,7 @@ export const actions: Actions = {
         },
       });
       await utils.sleep(2000);
-
       return {
-        // todos: { id: 'some id', title: 'some title', content: 'some content' },
         success: true,
         message: 'Todo successfully updated',
       };
