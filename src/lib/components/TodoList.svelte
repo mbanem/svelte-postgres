@@ -12,7 +12,7 @@
   };
 
   type PROPS = {
-    id: string;
+    id: string; // logged in locals.user.id
     role: string;
     users: UserPartial[];
     selectedUserId: string;
@@ -110,7 +110,7 @@
     {/if}
     {#each todos as todo (todo)}
       <!-- tuSu -- todo of selected user -->
-      {@const tuSu = todo.id === selectedUserId}
+      {@const tuSu = todo.id === id}
       <li
         class:uncompleted={!todo.completed}
         animate:flip={{ delay: 500, duration: 1000 }}
@@ -193,11 +193,12 @@
   </div>
 {/snippet}
 <!-- <pre>id {id}, role {role}, selectedUserId {selectedUserId}, uTodos{JSON.stringify(
-    uTodos,
-    null,
-    2,
+  uTodos,
+  null,
+  2,
   )}</pre> -->
-<pre>todo list selectedUserId {selectedUserId}</pre>
+<!-- <pre>todo list selectedUserId {selectedUserId}</pre> -->
+<!-- <pre>loggedInUserId {loggedInUserId}</pre> -->
 <div class="container">
   {@render todos(
     td,

@@ -32,6 +32,8 @@
   // });
   let selectedUserId = $state<string>(locals.user.id);
   let loading = $state<boolean>(false);
+  $inspect(loading, `loading changed ${loading}`);
+
   // form?.message cannot be cleared by code but could be ignored when necessary
   let ignoreFormMessage = false;
   let titleIsRequired = '';
@@ -65,8 +67,10 @@
     setTimeout(() => {
       ignoreFormMessage = false;
       result = '';
+      loading = false;
     }, 2000);
     hideButtonsExceptFirst([btnCreate, btnUpdate, btnDelete]);
+    utils.setColor('lightgreen');
   };
 
   // if form is filled with  data for update, but user chose other action, we
@@ -119,6 +123,7 @@
 
     // turn on spinner before form submit
     loading = true;
+    console.log('enhanceTodo start loading', loading);
     // show the intent of the action that follows
     result =
       action.search === '?/addTodo'
@@ -136,13 +141,14 @@
       } else if (action.search === '?/deleteTodo') {
         result = $page.status === 200 ? 'todo deleted' : 'delete failed';
       }
-
-      await invalidateAll();
-      loading = false; // turn the spinner off
-      ignoreFormMessage = true;
-      hideButtonsExceptFirst([btnCreate, btnUpdate, btnDelete]);
-      clearMessage();
     };
+    await invalidateAll();
+    loading = false; // turn the spinner off
+    console.log('enhanceTodo end loading', loading);
+    clearForm();
+    ignoreFormMessage = true;
+    hideButtonsExceptFirst([btnCreate, btnUpdate, btnDelete]);
+    clearMessage();
   };
   // captionCreate must be #state but hiddenCreate must not
   let captionCreate = $state<string>('create');
@@ -151,6 +157,7 @@
   const toggleCompleted = async (id: string) => {
     captionCreate = 'toggling';
     loading = true;
+    console.log('toggleCompleted start loading', loading);
     hiddenCreate = false; // NOTE: changing captionCreate above turns button hidden?!
     const completed = (
       uTodos?.filter((uTodo) => uTodo.todoId === id)[0] as UTodo
@@ -160,7 +167,6 @@
     result = `toggling ${currentState} into ${newState}...`;
     // if form fields are prepared for update but user
     // select different action we clear the form fields
-    clearForm();
     // instead of easier action in +page.server.ts we demonstrate
     // here endpoint HTML remote communication via fetch
     const response = await fetch(`/todo?id=${id}`, {
@@ -169,8 +175,9 @@
     });
     const data = await response.json();
     await utils.sleep(2000);
-    loading = false; // TODO: comment out for production
     result = `toggled into ${newState}`;
+    loading = false; // TODO: comment out for production
+    console.log('toggleCompleted end loading', loading);
     // setting the message will dynamically set the result, which in turn will
     // show message for several seconds and then clear it out
 
@@ -180,6 +187,7 @@
           todo.completed = !todo.completed;
         }
         invalidateAll();
+
         setTimeout(() => {
           result = '';
         }, 2000);
@@ -187,6 +195,7 @@
       });
     }
     captionCreate = 'create';
+    console.log('exit toggle completed', loading);
   };
 
   const deleteTodo = async (id: string) => {
@@ -197,8 +206,8 @@
     loading = true;
     result = 'deleting todo...';
     btnDelete.click();
-
     utils.sleep(2000);
+    loading = false;
   };
 
   let todoIdEl: HTMLInputElement;
@@ -275,9 +284,16 @@
   });
 </script>
 
+<p>
+  loading {loading} result {result} uTodos to ListWrapper {JSON.stringify(
+    uTodos,
+    null,
+    2,
+  )}
+</p>
 <!-- scroll to  onmouseenter={tooltipMouseWheel} where tooltip is activated-->
 <!-- <div class="tooltip-mouse-wheel hidden">focus & use mouse wheel</div> -->
-<pre>Todo Page selectedUserId {selectedUserId}</pre>
+<!-- <pre>Todo Page selectedUserId {selectedUserId}</pre> -->
 <svelte:head>
   <title>To Do</title>
 </svelte:head>
@@ -287,7 +303,6 @@
   bind:result
   bind:ignoreFormMessage
   bind:selectedUserId
-  amendTrueFalseUserId={false}
   user={locals.user}
   {users}
 />

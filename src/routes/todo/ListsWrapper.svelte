@@ -41,7 +41,6 @@
     deleteTodo,
   }: ARGS = $props();
 
-  let stop_debugger = true;
   // let uTodos= $state<UTodos>(uTodosProp);
   // $effect(() => {
   //   uTodos = uTodosProp;
@@ -75,4 +74,9 @@
   {deleteTodo}
 ></TodoList>
 
-<!-- <pre style="font-size:11px;">TodoLists.svelte uTodos {JSON.stringify(uTodos, null, 2)}</pre> -->
+<pre
+  style="font-size:11px;">ListWrapper TodoLists.svelte uTodos {JSON.stringify(
+    uTodos,
+    null,
+    2,
+  )}</pre>
