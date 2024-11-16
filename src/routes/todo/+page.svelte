@@ -65,8 +65,10 @@
       ignoreFormMessage = false;
       result = '';
       loading = false;
+      loading = false;
     }, 2000);
     hideButtonsExceptFirst([btnCreate, btnUpdate, btnDelete]);
+    utils.setColor('lightgreen');
     utils.setColor('lightgreen');
   };
 
@@ -116,6 +118,7 @@
 
     // turn on spinner before form submit
     loading = true;
+    console.log('enhanceTodo start loading', loading);
     // show the intent of the action that follows
     result =
       action.search === '?/addTodo'
@@ -164,6 +167,7 @@
     const data = await response.json();
     await utils.sleep(2000);
     result = `toggled into ${newState}`;
+    result = `toggled into ${newState}`;
     loading = false; // TODO: comment out for production
     // setting the message will dynamically set the result, which in turn will
     // show message for several seconds and then clear it out
@@ -178,6 +182,7 @@
       // return todo; // TODO: why we return todo here?
     }
     captionCreate = 'create';
+    console.log('exit toggle completed', loading);
   };
 
   const deleteTodo = async (id: string) => {
@@ -270,8 +275,16 @@
   });
 </script>
 
+<p>
+  loading {loading} result {result} uTodos to ListWrapper {JSON.stringify(
+    uTodos,
+    null,
+    2,
+  )}
+</p>
 <!-- scroll to  onmouseenter={tooltipMouseWheel} where tooltip is activated-->
 <!-- <div class="tooltip-mouse-wheel hidden">focus & use mouse wheel</div> -->
+<!-- <pre>Todo Page selectedUserId {selectedUserId}</pre> -->
 <!-- <pre>Todo Page selectedUserId {selectedUserId}</pre> -->
 <svelte:head>
   <title>To Do</title>
