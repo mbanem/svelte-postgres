@@ -7,7 +7,7 @@ Component Ballon.svelte accepts
 		inflate: (n: number) => void
 		deflate: (n: number) => void
 	}
-	The inflate and deflate takes power to change balloon size
+	The inflate and deflate increment/decrement size for amount of  power to change the balloon size
 -->
 
 <script lang="ts">

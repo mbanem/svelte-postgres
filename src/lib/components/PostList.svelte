@@ -215,10 +215,9 @@
     margin-bottom: 8px;
     height: 1.6rem;
     padding: 4px 1rem 0 1rem;
-    background-color: black; // #3e3e3e;
+    background-color: vat(--BODY-BACKGROUND-COLOR); // #3e3e3e;
     opacity: 1;
     z-index: 5;
-    /*  $BACK-COLOR; */
     .count {
       font-size: 12px;
       margin-left: 1.5rem;

@@ -27,7 +27,6 @@
   let { postAuthors } = data;
   let message = '';
   let loading = $state<boolean>(false);
-  let ignoreFormMessage = $state<boolean>(false);
   const requiredCategory = 'Please select corresponding categories';
   let selectedUserId = $state<string>('');
   let titleIsRequired = '';
@@ -56,7 +55,6 @@
   const clearMessage = () => {
     setTimeout(() => {
       message = '';
-      ignoreFormMessage = false;
       result = '';
       categoryIsRequired = requiredCategory;
     }, 2000);
@@ -97,6 +95,7 @@
 	*/
   const enhancePost: SubmitFunction = ({ action, formData, cancel }) => {
     //console.log('enhancePost', action.search, formData.get('id'))
+    result = '';
     if (action.search === '?/clearForm') {
       return cancel();
     }
@@ -108,7 +107,6 @@
     }
 
     titleIsRequired = '';
-    ignoreFormMessage = false;
     contentIsRequired = '';
     // console.log('enhancePost1', action.search)
     for (const key of Object.keys(required)) {
@@ -140,7 +138,6 @@
     // console.log('enhancePost2 result', result)
     return async ({ update }) => {
       await update();
-      ignoreFormMessage = true;
       //console.log('enhancePost after action', action.search, $page.status)
       if (action.search === '?/createPost') {
         result = $page.status === 200 ? 'post created' : 'create failed';
@@ -257,8 +254,10 @@
     // }
   };
 
-  let result = $derived(ignoreFormMessage ? '' : form?.message || '');
-  // let result = $state<string>(formMessage)
+  // let result = $derived(
+  //   form?.message.includes('successfully') ? '' : form?.message,
+  // );
+  let result = $state<string>('');
   let wrongUser = $derived(selectedUserId !== data.locals.user.id);
 
   type TSnap = {
@@ -321,7 +320,6 @@
 <PageTitleCombo
   PageName="Post"
   {result}
-  bind:ignoreFormMessage
   bind:selectedUserId
   user={data.locals.user}
   users={data.users}

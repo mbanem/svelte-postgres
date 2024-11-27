@@ -1,13 +1,13 @@
 <!--
 @component
-	ButtonSpinner wraps an HTMLButtonObject named button, so it could be bound to a parent variable say
-  let btnCreate:HTMLButtonElement
+	ButtonSpinner wraps an HTMLButtonElement named button, so it could be bound to a parent variable say
+    let btnCreate:HTMLButtonElement
   <ButtonSpinner bind:button={btnCreate} ...><ButtonSpinner>
-  and it is the ony way to get reference to embedded button.
+  and it is the only way to get reference to the embedded button.
   There is no way for now to get reference via document.querySelector('ButtonSpinner')
   or document.getElementsByTagName('ButtonSpinner')[0]
 
-	Component features a 3/4 circle skyblue spinner. In order to start and stop spinning its spinOn
+	ButtonSpinner component features a 3/4 circle skyblue spinner. In order to start and stop spinning its spinOn
 	property should be bound to a parent boolean variable, e.g. let loading:boolean = false (not a $state rune)
 	Spin starts when loading is set to true and stops when it is false
 	Mandatory props are 
@@ -44,96 +44,97 @@
 										>
 										</ButtonSpinner>
 -->
-<script lang='ts'>
-	export type TButtonSpinner = HTMLButtonElement & ButtonSpinner;
-	
-	type ButtonSpinner = {
-		caption: string
-		button: HTMLButtonElement
-		spinOn: boolean
-		formaction?: string
-		hidden?:boolean
-		disabled?:boolean
-		cursor?: boolean
-		color?: string
-		duration?: string
-		spinnerSize?: string
-		top?: string
-		width?:string
-		height?:string
-	}
-	let {
-		caption='button',
-		button=$bindable(),
-		formaction,
-		spinOn,
-		hidden=$bindable(true),
-		disabled=$bindable(false),
-		cursor=$bindable(true),
-		color = `skyblue`,
-		duration = `1.5s`,
-		spinnerSize = `1em`,
-		top = `0`,
-		width='max-content',
-		height='2rem'
-	}: ButtonSpinner = $props()
+<script lang="ts">
+  export type TButtonSpinner = HTMLButtonElement & ButtonSpinner;
+
+  type ButtonSpinner = {
+    caption: string;
+    button: HTMLButtonElement;
+    spinOn: boolean;
+    formaction?: string;
+    hidden?: boolean;
+    disabled?: boolean;
+    cursor?: boolean;
+    color?: string;
+    duration?: string;
+    spinnerSize?: string;
+    top?: string;
+    width?: string;
+    height?: string;
+  };
+  let {
+    caption = 'button',
+    button = $bindable(),
+    formaction,
+    spinOn,
+    hidden = $bindable(true),
+    disabled = $bindable(false),
+    cursor = $bindable(true),
+    color = `skyblue`,
+    duration = `1.5s`,
+    spinnerSize = `1em`,
+    top = `0`,
+    width = 'max-content',
+    height = '2rem',
+  }: ButtonSpinner = $props();
 </script>
 
 {#snippet spinner(color: string)}
-	<!-- styling for a spinner itself -->
-	<div
-		class="spinner"
-		style:border-color='{color} transparent {color}
-		{color}'
-		style='--duration: {duration}'
-		style:text-wrap='nowrap !important'
-		style:width={spinnerSize}
-		style:height={spinnerSize}
-		style:top={Number(height)/2}
-	></div>
+  <!-- styling for a spinner itself -->
+  <div
+    class="spinner"
+    style:border-color="{color} transparent {color}
+    {color}"
+    style="--duration: {duration}"
+    style:text-wrap="nowrap !important"
+    style:width={spinnerSize}
+    style:height={spinnerSize}
+    style:top={Number(height) / 2}
+  ></div>
 {/snippet}
 
-<p style='position:relative;margin:0;padding:0;'>
-	<!-- styling for an embedded button -->
-	<button 
-		bind:this={button} 
-		type='submit' 
-		class:hidden={hidden} 
-		{formaction} 
-		disabled={disabled} 
-		style:cursor={cursor ? 'pointer' : 'not-allowed'}
-		style:width={width}
-		style:height={height}
-		style:top={Number(height)/2}
-		style:padding='4px 1.5rem'
-		>
-		{#if spinOn}
-			<!-- NOTE: must have ancestor with position relative to get proper position -->
-			{@render spinner(color)}
-		{/if}
-		{caption}
-	</button>
+<p style="position:relative;margin:0;padding:0;">
+  <!-- styling for an embedded button -->
+  <button
+    bind:this={button}
+    type="submit"
+    class:hidden
+    {formaction}
+    {disabled}
+    style:cursor={cursor ? 'pointer' : 'not-allowed'}
+    style:width
+    style:height
+    style:top={Number(height) / 2}
+    style:padding="4px 1.5rem"
+  >
+    {#if spinOn}
+      <!-- NOTE: must have ancestor with position relative to get proper position -->
+      {@render spinner(color)}
+    {/if}
+    {caption}
+  </button>
 </p>
+
 <style>
-	.spinner {
-		position:absolute;
-		display: inline-block;
-		vertical-align: middle;
-		margin: 0 4pt;
-		border-width: calc(1em / 4);
-		border-style: solid;
-		border-radius: 50%;
-		animation: var(--duration) infinite rotate;
-		position: absolute;
-		left: 0;
-		/* top: 0.5rem !important; */
-	}
-	@keyframes rotate {
-		100% {
-			transform: rotate(360deg);
-		}
-	}
-	.hidden{
-		display:none;
-	}
+  .spinner {
+    position: absolute;
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0 4pt;
+    border-width: calc(1em / 4);
+    border-style: solid;
+    border-radius: 50%;
+    animation: var(--duration) infinite rotate;
+    position: absolute;
+    left: 0;
+    /* top: 0.5rem !important; */
+  }
+  @keyframes rotate {
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  .hidden {
+    display: none;
+  }
 </style>

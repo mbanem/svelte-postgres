@@ -12,20 +12,24 @@
     power: number;
     burst: boolean;
   };
-  const spb = $state<SizePowerBurst>({ size: 15, power: 5, burst: false });
+  const sizePowerBurst = $state<SizePowerBurst>({
+    size: 15,
+    power: 5,
+    burst: false,
+  });
 
   const reset = async () => {
-    spb.size = 1;
-    spb.burst = false;
+    sizePowerBurst.size = 1;
+    sizePowerBurst.burst = false;
     for (let i = 0; i < 15; i++) {
-      spb.size += 1;
+      sizePowerBurst.size += 1;
       await sleep(50);
     }
   };
 
   // bindable parent and child have access to the same function
 
-  let array = $state([0, 1, 2, 3]);
+  let array = $state([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
 
   const addNew = () => {
     array.push(array.length);
@@ -34,9 +38,9 @@
     array.pop();
   };
   const inflate = (power: number) => {
-    spb.size += power;
-    if (spb.size > 50) {
-      spb.burst = true;
+    sizePowerBurst.size += power;
+    if (sizePowerBurst.size > 50) {
+      sizePowerBurst.burst = true;
       setTimeout(() => {
         reset();
       }, 1000);
@@ -51,27 +55,31 @@
   <div class="parent-container">
     <button onclick={addNew}>add next</button>
     <button onclick={removeLast}>remove the last</button>
+    <button onclick={() => inflate(sizePowerBurst.power)}>inflate</button>
+    <button onclick={() => inflate(-sizePowerBurst.power)}>deflate</button>
     <pre>We can change pump power in parent
-			Pump power: {spb.power} <button onclick={() => spb.power--}>-</button> <button
-        onclick={() => spb.power++}>+</button
-      >
+			Pump power: {sizePowerBurst.power} <button
+        onclick={() => sizePowerBurst.power--}>-</button
+      > <button onclick={() => sizePowerBurst.power++}>+</button>
 		</pre>
   </div>
   <div class="child-container">
-    <div>
+    <div style="position:relative;">
       <Balloon
-        bind:size={spb.size}
-        bind:power={spb.power}
+        bind:size={sizePowerBurst.size}
+        bind:power={sizePowerBurst.power}
         {inflate}
         deflate={(power: number) => {
-          if (spb.size > 0) spb.size -= power;
+          if (sizePowerBurst.size > 0) sizePowerBurst.size -= power;
         }}
       />
-      {#if spb.burst}
+      {#if sizePowerBurst.burst}
         <!-- <button onclick={reset} class="new-balloon">new balloon</button> -->
         <span class="boom">💥</span>
       {:else}
-        <span class="balloon" style="scale: {0.01 * spb.size}"> 🎈 </span>
+        <span class="balloon" style="scale: {0.01 * sizePowerBurst.size}">
+          🎈
+        </span>
       {/if}
     </div>
     <Child bind:array />
@@ -110,10 +118,16 @@
   }
 
   .balloon {
+    position: absolute;
+    top: 18rem;
+    left: -30rem;
     transition: scale 0.2s;
   }
 
   .boom {
+    position: absolute;
+    top: 18rem;
+    left: -30rem;
     animation: boom 0.5s forwards;
   }
 

@@ -62,7 +62,7 @@ export const hsla2hex = (hsla: string) => {
   ];
   let [r, g, b] = rgb[ix] as NumberArray;
 
-  // NOTE: could not use if (n===0) return '' as join('') looses valid entry
+  // NOTE: could not use if (n===0) return '' as join('') looses some valid entry
   const hex = (n: number, _m: number) => {
     return ('0' + Math.round((n + _m) * 255).toString(16)).slice(-2);
   };

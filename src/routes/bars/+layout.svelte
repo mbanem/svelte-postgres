@@ -157,7 +157,7 @@
 <div class="grid-wrapper">
   <div>
     <pre>
-	This 'bars' page implements local +layout.svelte in which below the top navigatioin bar 
+	This 'bars' page implements local +layout.svelte in which below the top navigation bar 
 	it adds another navigation bar with NavContainer component.
 	The NavContainer component in local +layout.svelte renders 
 		1) NavBar, which gets $props() of TNavButtonObject[] array -- font_size, scroll, 

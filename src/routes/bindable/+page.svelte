@@ -55,10 +55,8 @@ with child click event:MouseEvent and value of delta bound in &lt;input type='nu
 <svelte:head>
   <title>Bindable</title>
 </svelte:head>
-<div>
-  <p class="label-title">
-    This is parent block with count managed by its bindable component.
-  </p>
+<div class="container">
+  <p>parent count managed by its bindable component.</p>
 
   <button onclick={click}>parent count {count} </button>
   <p style="display:inline-block">
@@ -98,14 +96,10 @@ with child click event:MouseEvent and value of delta bound in &lt;input type='nu
 -->
 <Bindable bind:count {clickArg}></Bindable>
 
-<style>
+<style lang="scss">
   button {
     display: inline-block;
   }
-  .label-title {
-    margin: 6px 0 0 2rem;
-  }
-
   details * {
     margin: 0;
   }
@@ -139,19 +133,23 @@ with child click event:MouseEvent and value of delta bound in &lt;input type='nu
       opacity: 1;
     }
   }
+  .container {
+    @include container($content: 'Parent Estate', $head-color: skyblue);
+    margin: 5rem 0 0 2rem;
+  }
   summary {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     color: hsl(0 0% 85%);
-    background-color: hsl(0 0% 35%);
+    /* background-color: hsl(0 0% 35%); */
     margin-inline-start: 1rem;
     /* should be instead of margin-left in above details > p */
     list-style-position: outside;
     margin-left: 3rem;
     cursor: pointer;
     width: max-content;
-    padding: 2px 3rem;
+    padding: 0 0.5rem;
     /* border: 1px solid lightgray; */
-    border-radius: 8px;
+    /* border-radius: 8px; */
   }
   /* color of the triangle marker */
   summary::marker {

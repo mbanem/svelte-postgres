@@ -55,5 +55,14 @@
     "prisma": "^5.22.0",
     "svelte-multiselect": "^10.3.0",
     "uuid": "^11.0.3"
+  },
+  "cspell": {
+    "version": "0.2",
+    "ignorePaths": [],
+    "dictionaryDefinitions": [],
+    "dictionaries": [],
+    "words": [],
+    "ignoreWords": [],
+    "import": []
   }
 }

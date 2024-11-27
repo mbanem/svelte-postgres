@@ -5,7 +5,7 @@
   import SummaryDetails from '$components/SummaryDetails.svelte';
   let message: HTMLDivElement;
   let inputEl: HTMLInputElement;
-  // NOTE: Inserting letter with bigger font size in mesage div block moves it bellow
+  // NOTE: Inserting letter with bigger font size in message div block moves it bellow
   // for font size increment, so we put leading hidden large font char to keep div ready
   // to accept chars of bigger size with not jerking the message div block down
   const BL = '<span style="font-size:30px;visibility:hidden">&nbsp;</span>'; // big letter

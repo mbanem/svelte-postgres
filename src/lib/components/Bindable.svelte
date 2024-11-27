@@ -1,7 +1,7 @@
 <!-- 
 @component
 	Bindable component accept props and make them bindable so
-	parent component can be bound them to have full access to them
+	parent component can bound them to have full access to them
 		type Handler = (delta: number, event?: MouseEvent) => void
 		type ARGS = {
 			count: number
@@ -13,82 +13,90 @@
 -->
 
 <script lang="ts" module>
-	// in order to export a function to parent we need a script with context module
-	// beside the regular script block
+  // in order to export a function to parent we need a script with context module
+  // beside the regular script block
 
-	// child component local childCount variable when called from parent
-	let childCount = $state<number>(0)
-	export const counter = (delta: number) => {
-		childCount += delta
-		// console.log('parent call ', delta)
-	}
+  // child component local childCount variable when called from parent
+  let childCount = $state<number>(0);
+  export const counter = (delta: number) => {
+    childCount += delta;
+    // console.log('parent call ', delta)
+  };
 </script>
 
 <script lang="ts">
-	type Handler = (delta: number, event?: MouseEvent) => void
+  type Handler = (delta: number, event?: MouseEvent) => void;
 
-	// parent sent props numeric variable and a handler function
-	type ARGS = {
-		count: number
-		clickArg: Handler
-	}
-	let { count = $bindable(0), clickArg = $bindable() }: ARGS = $props()
+  // parent sent props numeric variable and a handler function
+  type ARGS = {
+    count: number;
+    clickArg: Handler;
+  };
+  let { count = $bindable(0), clickArg = $bindable() }: ARGS = $props();
 
-	const increment = () => {
-		count += 1
-	}
-	let delta = $state<number>(-3)
-	const updateParentCount = (event: MouseEvent) => {
-		// call parent function with incremental value
-		clickArg(delta, event)
-	}
+  const increment = () => {
+    count += 1;
+  };
+  let delta = $state<number>(-3);
+  const updateParentCount = (event: MouseEvent) => {
+    // call parent function with incremental value
+    clickArg(delta, event);
+  };
 </script>
 
-<p class="inline">child local counter <span class="expression-highlighted">{childCount}</span></p>
-<p style='margin-left:2rem;color:lightgreen;'>CHILD SPACE: child count updated by parent <span style='font-size:24px;color:yellow;'> {childCount}</span></p>
+<p class="inline">
+  child local counter <span class="expression-highlighted">{childCount}</span>
+</p>
+<p style="margin-left:2rem;color:lightgreen;">
+  CHILD SPACE: child count updated by parent <span
+    style="font-size:24px;color:yellow;"
+  >
+    {childCount}</span
+  >
+</p>
 <div class="wrapper">
-	<pre>This is child component.
-Child button clicked changing parent count<span class="expression-highlighted"> {count}</span>
+  <pre>This is child component.
+Child button clicked changing parent count<span
+      class="expression-highlighted"> {count}</span
+    >
 </pre>
-	<!-- the pre css rules change button css rules dramatically
+  <!-- the pre css rules change button css rules dramatically
 		so as the first line of defense get otu of pre as parent
 -->
-	<button style="display:block;" onclick={increment}>
-		child click changing sharable bound count variable</button
-	>
-	Parents clickArg (_:number)=&gt; void updates parent's count calling parent's function
-	<label for="delta"
-		>Delta
-		<input id="delta" type="number" bind:value={delta} />
-	</label>
-	<button class="update-parent-button" onclick={updateParentCount}>
-		call parent to update its count by delta={delta}
-	</button>
+  <button style="display:block;" onclick={increment}>
+    child click changing sharable bound count variable</button
+  >
+  Parents clickArg (_:number)=&gt; void updates parent's count calling parent's function
+  <label for="delta"
+    >Delta
+    <input id="delta" type="number" bind:value={delta} />
+  </label>
+  <button class="update-parent-button" onclick={updateParentCount}>
+    call parent to update its count by delta={delta}
+  </button>
 </div>
 
 <!-- svelte-ignore css_unused_selector -->
 <style lang="scss">
-	.expression-highlighted {
-		font-size: 24px;
-		color: yellow;
-	}
-	.wrapper {
-		// display: inline-block;
-		width: 60.5vw;
-		margin: 0 0 0 2rem;
-		padding: 0 1rem;
-		border: 1px solid gray;
-		border-radius: 8px;
-		p {
-			color: skyblue;
-			border: 0;
-			padding: 0;
-		}
-	}
-	.inline {
-		display: inline-block;
-	}
-	pre {
-		font-size: 15px;
-	}
+  .expression-highlighted {
+    font-size: 24px;
+    color: yellow;
+  }
+  .wrapper {
+    // display: inline-block;
+    @include container($content: 'Child Estate', $head-color: skyblue);
+    width: 60.5vw;
+    margin: 0 0 0 2rem;
+    p {
+      color: skyblue;
+      border: 0;
+      padding: 0;
+    }
+  }
+  .inline {
+    display: inline-block;
+  }
+  pre {
+    font-size: 15px;
+  }
 </style>

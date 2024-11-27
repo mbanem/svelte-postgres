@@ -8,12 +8,10 @@
     users: UserPartial[] | [];
     selectedUserId: string;
     result: string;
-    ignoreFormMessage: boolean;
   };
   let {
     PageName,
     result = $bindable(),
-    ignoreFormMessage = $bindable(),
     selectedUserId = $bindable(),
     user,
     users,
@@ -25,10 +23,17 @@
 
   let msgEl: HTMLSpanElement;
   let selectBox: HTMLSelectElement;
+  let timer: ReturnValue<typeof setTimeout>;
+  const killTimer = () => {
+    if (timer) {
+      clearTimeout(timer);
+      timer = undefined;
+    }
+  };
   const scheduleClearMessage = () => {
-    setTimeout(() => {
+    killTimer();
+    timer = setTimeout(() => {
       result = '';
-      ignoreFormMessage = true;
       if (msgEl) {
         msgEl.innerText = '';
       }

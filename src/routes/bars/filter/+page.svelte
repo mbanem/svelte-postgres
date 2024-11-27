@@ -34,9 +34,9 @@
 <style>
   .row {
     display: grid;
-    width: 51rem;
+    width: 74rem;
     align-items: center;
-    grid-template-columns: 4em 16rem 8rem 20rem 20rem;
+    grid-template-columns: 10em 16rem 8rem 20rem 20rem;
     /* gap: 1em; */
     /* padding: 0.1em; */
     background: var(--bg-1);
@@ -66,6 +66,7 @@
   .color {
     aspect-ratio: 1;
     height: 30px;
+    width: 9.5rem;
     border-radius: 0.1em;
   }
 
@@ -76,7 +77,8 @@
 
   @media (min-width: 40rem) {
     .row {
-      grid-template-columns: 2em 4fr 3fr 3fr;
+      grid-template-columns: 10rem 4fr 3fr 3fr;
+      margin-right: 0;
     }
 
     .rgb {
@@ -86,7 +88,7 @@
 
   @media (min-width: 60rem) {
     .row {
-      grid-template-columns: 2em 4fr 3fr 3fr 3fr;
+      grid-template-columns: 10rem 4fr 3fr 3fr 3fr;
     }
 
     .hsl {
