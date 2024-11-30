@@ -28,7 +28,7 @@
 <style lang="scss">
   .child-container {
     @include container(
-      $content: 'Child Real Estate',
+      $title: 'Child Real Estate',
       $width: 43.4rem // $border: 1px solid lightgreen
     );
   }

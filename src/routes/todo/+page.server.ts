@@ -12,7 +12,7 @@ import * as utils from '$utils';
 // admin should be able to see but not to update uTodos of any user so we have to load all uTodos with user info
 
 export const load: PageServerLoad = (async ({ locals, cookies }) => {
-  let uTodos: UTodos = [];
+  let uTodos: UTodo[] = [];
 
   let userAuthToken = cookies.get('session') ?? '';
   if (!userAuthToken) {
@@ -52,7 +52,7 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
     where t.id is not null or u.role = 'ADMIN'
 		order by 		u.last_name ASC,
 								u.first_name ASC,
-								t.priority DESC;`) as UTodos;
+								t.priority DESC;`) as UTodo[];
   } else {
     uTodos = (await db.$queryRaw`select
 					u.id,
@@ -71,7 +71,7 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
 			where u.id = ${user.id}
 			order by 		u.last_name ASC,
 									u.first_name ASC,
-									t.priority DESC;`) as UTodos;
+									t.priority DESC;`) as UTodo[];
   }
   const getUser = (id: string) => {
     for (let i = 0; i < uTodos.length; i++) {
@@ -92,7 +92,7 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
         where t.user_id is not null or u.role = 'ADMIN';`;
 
   return {
-    uTodos, // as UTodos is important for TypeScript
+    uTodos, // as UTodo[] is important for TypeScript
     // user,		// user is in locals that is sent from root/+layout.server.ts
     users,
   };
@@ -198,13 +198,38 @@ export const actions: Actions = {
     if (id === '') {
       return fail(400, {
         data: id,
-        message: 'id not provided',
+        message: 'id is not provided',
       });
     }
     await utils.sleep(2000);
     await db.todo.delete({
       where: {
         id,
+      },
+    });
+    return {
+      success: 'todo deleted successfully',
+    };
+  },
+  toggleCompleted: async ({ request }) => {
+    const body = await request.formData();
+    const id = body.get('id') as string;
+    const completed = body.get('completed') as string;
+
+    if (id === '') {
+      return fail(400, {
+        data: id,
+        message: 'id is not provided',
+      });
+    }
+    await utils.sleep(2000);
+    await db.todo.update({
+      where: {
+        id,
+      },
+      data: {
+        completed: completed === 't' ? true : false,
+        updatedAt: new Date(),
       },
     });
     return {

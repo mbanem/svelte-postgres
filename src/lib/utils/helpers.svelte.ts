@@ -330,6 +330,8 @@ export const shallowCopy = (source: Object, target: Object): Object => {
 
 type T = Record<string | number, unknown>;
 // NOTE: filter returns array
+// based on the keyName we select property value arr[keyName] and compare to a given key
+// so functions needs keyName, keyValue and the array itself
 export const selectRecordItems = <T extends unknown>(
   keyName: keyof T,
   key: string,

@@ -58,7 +58,7 @@
     }
   }
   .wrapper {
-    @include container($content: 'Button Component', $head-color: lightgreen);
+    @include container($title: 'Button Component', $head-color: lightgreen);
     width: 51rem;
     margin-top: 4rem;
   }

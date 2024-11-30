@@ -16,7 +16,7 @@
     role: string;
     users: UserPartial[];
     selectedUserId: string;
-    uTodos: UTodos;
+    uTodos: UTodo[];
     toggleCompleted: (todo: UTodo) => void;
     deleteTodo: (id: string) => void;
     prepareUpdate: (todo: UTodo) => void;
@@ -47,11 +47,11 @@
   };
   // for Flip we need two areas, usually le3ft and right, for flipping between
   // so we make left and right from uTodos based on completed left=false, right=true
-  // let left = $state<UTodos>([])
-  // let right = $state<UTodos>([])
+  // let left = $state<UTodo[]>([])
+  // let right = $state<UTodo[]>([])
   // $effect(() => {
-  // 	left = uTodos.filter((t) => t.completed === false) as UTodos
-  // 	right = uTodos.filter((t) => t.completed === true) as UTodos
+  // 	left = uTodos.filter((t) => t.completed === false) as UTodo[]
+  // 	right = uTodos.filter((t) => t.completed === true) as UTodo[]
   // })
 
   const move = (item: UTodo, from: UTodo[], to: UTodo[]) => {
@@ -101,7 +101,7 @@
   {/if}
 {/snippet}
 
-{#snippet todos(td: TSnippet, todos: UTodos, completed: boolean)}
+{#snippet todos(td: TSnippet, todos: UTodo[], completed: boolean)}
   <div>
     {#if completed}
       <p class="caption">Completed</p>
@@ -202,12 +202,12 @@
 <div class="container">
   {@render todos(
     td,
-    listTodos().filter((t) => t.completed === false) as UTodos,
+    listTodos().filter((t) => t.completed === false) as UTodo[],
     false,
   )}
   {@render todos(
     td,
-    listTodos().filter((t) => t.completed === true) as UTodos,
+    listTodos().filter((t) => t.completed === true) as UTodo[],
     true,
   )}
 </div>

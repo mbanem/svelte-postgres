@@ -42,7 +42,7 @@
 }
 
 @mixin container(
-  $content: 'container',
+  $title: 'container',
   $padding: 1rem 2rem,
   $head-color: #e3e3e3,
   $background-color: #3e3e3e,
@@ -64,7 +64,7 @@
   box-sizing: $box-sizing;
   &::before {
     position: absolute;
-    content: '\00a0 ' + $content + ' \00a0';
+    content: '\00a0 ' + $title + ' \00a0';
     top: $top;
     left: $left;
     color: $head-color !important;
