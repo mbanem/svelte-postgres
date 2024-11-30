@@ -25,7 +25,7 @@
   let { data, form }: ARGS = $props();
 
   let { postAuthors } = data;
-  let message = '';
+  let message = ''; // too exclude successful form messages and include only errors
   let loading = $state<boolean>(false);
   const requiredCategory = 'Please select corresponding categories';
   let selectedUserId = $state<string>('');
@@ -36,9 +36,11 @@
   let btnCreate: HTMLButtonElement;
   let btnDelete: HTMLButtonElement;
   let btnUpdate: HTMLButtonElement;
-  let updateSpinner: typeof ButtonSpinner;
-  const authorId = data?.user?.id;
+
+  let updateSpinner: typeof ButtonSpinner; //TODO work with new spinner button
   let hidden = $state(true);
+
+  const authorId = data?.user?.id;
 
   let categoryIds: number[] = [];
   $effect(() => {
@@ -54,7 +56,7 @@
   // keep message displayed for several seconds
   const clearMessage = () => {
     setTimeout(() => {
-      message = '';
+      message = ''; // we cannot clear form?.message as Svelte holds them read-only
       result = '';
       categoryIsRequired = requiredCategory;
     }, 2000);
@@ -66,11 +68,7 @@
     event?.preventDefault();
     utils.shallowCopy(initialSnap, snap);
     snap.authorId = data.locals.user.id;
-    // const els = ['id', 'title', 'content', 'categoryIds'];
-    // els.forEach((k) => {
-    // 	(document.querySelector(`input[name='${k}']`) as HTMLInputElement).value = '';
-    // });
-    // (document.querySelector(`input[name='published']`) as HTMLInputElement).checked = false;
+
     setSelectedOptions([], requiredCategory);
     utils.setColor('lightgreen');
     utils.hideButtonsExceptFirst([btnCreate, btnUpdate, btnDelete]);
@@ -83,8 +81,7 @@
   };
 
   const categoryList = (arr: number[]) => {
-    // @ts-expect-error
-    return arr.map((n) => data.categories[n - 1].name).join(',');
+    return arr.map((n) => data?.categories[n - 1]?.name).join(',');
   };
   let selectedCategoryIds: () => string;
 
@@ -299,7 +296,7 @@
     // if (data.postAuthors[0]) {
     // 	utils.shallowCopy(data.postAuthors[0], snap);
     // }
-    snap.authorId = authorId as string;
+    // snap.authorId = authorId as string;
     boardBlock.classList.toggle('hidden');
     selectedUserId = data.user.id as string;
     adminSelected = data.locals.user.role === 'ADMIN';

@@ -18,6 +18,7 @@
     height?: string;
     fontsize?: string;
     type?: string;
+    value?: string;
   };
   let {
     title,
@@ -25,6 +26,7 @@
     height = '2.5rem',
     fontsize = '16px',
     type,
+    value = $bindable(),
   }: PROPS = $props();
   if (width) utils.setCSSValue('--INPUT-COMRUNNER-WIDTH', width as string);
   if (height) utils.setCSSValue('--INPUT-COMRUNNER-HEIGHT', height as string);
@@ -43,7 +45,7 @@
 </script>
 
 <div class="input-wrapper">
-  <input type={type ? type : 'text'} required />
+  <input type={type ? type : 'text'} required bind:value />
   <label for="">{title}</label>
 </div>
 

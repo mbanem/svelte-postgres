@@ -87,11 +87,11 @@ declare global {
     role: string;
   };
   type UserPartial = {
-    id: string;
-    firstName: string;
-    lastName: string;
-    role: string;
-    todoUserId?: string;
+    id: string | null;
+    firstName: string | null;
+    lastName: string | null;
+    role: string | null;
+    todoUserId?: string | null;
   };
 
   type Category = {
@@ -125,7 +125,7 @@ declare global {
     lastName: string;
     role: string;
   };
-  type UserProfile = Profile & PartialUser;
+  type UserProfile = Profile & UserPartial;
   // type Categories = Category[];
 
   type UTodo = {
@@ -141,7 +141,7 @@ declare global {
     createdAt: Date;
     updatedAt: Date;
   };
-  type UTodos = UTodo[];
+  // type UTodo[] = UTodo[];
 
   type TodoFormData = {
     id: string;
@@ -197,13 +197,14 @@ declare global {
     VISITOR = 'VISITOR',
   }
 
-  type Profile = {
-    id: string;
-    bio: string | null;
-    userId: string;
-    createdAt: Date;
-    updatedAt: Date;
-  };
+  type Profile =
+    | ({
+        id: string | null;
+        bio: string | null;
+        createdAt: Date | null;
+        updatedAt: Date | null;
+      } & undefined)
+    | null;
 
   // type Category = {
   // 	id: number;
@@ -383,7 +384,7 @@ declare global {
     createdAt: Date;
     updatedAt: Date;
   };
-  type UTodos = UTodo[];
+  // type UTodo[] = UTodo[];
 
   type TodoFormData = {
     id: string;

@@ -18,6 +18,7 @@
     { color: 'LightGreen', title: 'Before-Input', href: '/before_input' },
     { color: 'Pink', title: 'A-Button', href: '/a-button' },
     { color: 'Green', title: 'Box', href: '/box' },
+    { color: 'Purple', title: 'Float Inputs', href: '/floating-inputs' },
     { color: 'Pink', title: 'Perm Handler', href: '/permissions' },
     { color: 'Yellow', title: 'Flip', href: '/flip' },
   ];

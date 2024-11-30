@@ -84,7 +84,7 @@ Child button clicked changing parent count<span
   }
   .wrapper {
     // display: inline-block;
-    @include container($content: 'Child Estate', $head-color: skyblue);
+    @include container($head: 'Child Estate', $head-color: skyblue);
     width: 60.5vw;
     margin: 0 0 0 2rem;
     p {

@@ -23,7 +23,7 @@
 
   let msgEl: HTMLSpanElement;
   let selectBox: HTMLSelectElement;
-  let timer: ReturnValue<typeof setTimeout>;
+  let timer: NodeJS.Timeout | string | number | undefined; //ReturnValue<typeof setTimeout>;
   const killTimer = () => {
     if (timer) {
       clearTimeout(timer);

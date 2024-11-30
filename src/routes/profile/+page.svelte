@@ -5,7 +5,7 @@
   import type { SubmitFunction } from '@sveltejs/kit';
   import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
-  import { page } from '$app/stores'; // for $age.status code on actions
+  import { page } from '$app/stores'; // for $page.status code on actions
   import { setColor, hideButtonsExceptFirst } from '$utils';
   import { Tooltip } from 'flowbite-svelte';
 
@@ -13,84 +13,104 @@
   import PageTitleCombo from '$components/PageTitleCombo.svelte';
   import * as utils from '$utils';
 
+  type Bio = {
+    id: string | undefined;
+    bio: string;
+    createdAt: Date | undefined;
+    updatedAt: Date | undefined;
+    userId: string;
+    user: UserPartial | undefined;
+  };
   type ARGS = {
     data: PageData;
     form: ActionData;
   };
 
-  // data is refresh when form is submitted but let part = $store<TPart>(data.part) is not
-  // se note at the top part of todo/+page.svelte for details
+  // props data is refreshed when form is submitted but let part = $store<TPart>(data.part) is not
+  // see note at the top part of todo/+page.svelte for details
   let { data, form }: ARGS = $props();
+  let oldUserId = data.locals.user.id;
+  let selectedUserId = $state<string>(data.locals.user.id);
+  let wrongUser = $derived(selectedUserId !== data.locals.user.id);
 
-  type UserWithBio = {
-    id: string;
-    bio: string;
-    createdAt: Date;
-    updatedAt: Date;
-    user: User;
+  const getBio = (userId: string): Bio | undefined => {
+    userId = userId ?? data.locals.user.id;
+    const pro = data.userProfiles;
+    for (let i = 0; i < pro.length; i++) {
+      const p = pro[i];
+      if (p) {
+        if (p.userId === userId) {
+          return {
+            id: p.id,
+            bio: p.bio as string,
+            createdAt: p.createdAt,
+            updatedAt: p.updatedAt as Date,
+            userId: p.userId,
+            user: p.user,
+          };
+        }
+      }
+    }
+    // there could be many users with no profile so do not rely on index i
+    // when exiting from the previous loop but find user form the users list
+    for (let i = 0; i < data.users.length; i++) {
+      if (data.users[i]?.id === userId) {
+        return {
+          id: undefined,
+          bio: 'there is no profile for this user',
+          createdAt: undefined,
+          updatedAt: undefined,
+          userId: (data.users[i] as UserPartial).id,
+          user: data.users[i] as UserPartial,
+        };
+      }
+    }
   };
-  type Snap = {
-    bioId: string;
-    bio: string;
-    authorId: string;
-  };
-  const initialSnap = {
-    bioId: '',
+
+  // as UI depends on bio and bio could change on update/delete where oMount does not fire
+  // we need to define vio as responsive variable
+  let bio = $state<Bio>({
+    id: '',
     bio: '',
-    authorId: '',
-  };
-  let snap = $state<Snap>({
-    bioId: '',
-    bio: '',
-    authorId: '',
+    createdAt: undefined,
+    updatedAt: undefined,
+    userId: '',
+    user: undefined,
+  });
+
+  // when executing the $effect remember all reactive variables it depends on
+  //
+  $effect(() => {
+    bio = getBio(selectedUserId) as Bio;
   });
   let bioIsRequired = '';
   // form?.message cannot be cleared by code but could be ignored when required
-  let ignoreFormMessage = $state(false);
-  let success = '';
-  let loading = $state<boolean>(false);
-  // let snap.authorId = '';
-
+  let loading = $state<boolean>(false); // TODO spinner
+  let bioTextArea: HTMLTextAreaElement;
   let btnCreate: HTMLButtonElement;
   let btnUpdate: HTMLButtonElement;
   let btnDelete: HTMLButtonElement;
   let iconDelete: HTMLSpanElement;
 
-  $effect(() =>
-    setColor(
-      form?.message
-        ? form.message.includes('successfully')
-          ? 'lightgreen'
-          : 'pink'
-        : 'lightgreen',
-    ),
-  );
-
   // keep message displayed for several seconds
   const clearMessage = () => {
     setTimeout(() => {
-      ignoreFormMessage = false;
       result = '';
-      // selectedUserWithBio = getUserWithBio(snap.authorId) as UserWithBio
     }, 2000);
   };
 
-  const clearForm = () => {
-    // bioTextArea.value =''	// using querySelector on attribute name and value
-    (
-      document.querySelector("textarea[name='bio']") as HTMLTextAreaElement
-    ).value = '';
+  const clearForm = (event?: MouseEvent | KeyboardEvent) => {
+    event?.preventDefault();
+    snap_bio = '';
     hideButtonsExceptFirst([btnCreate, btnUpdate, btnDelete]);
-    // change bioId only when snap.authorId changes
-    // selectedUserWithBio = getUserWithBio(snap.authorId) as UserWithBio
   };
+
   const enhanceProfile: SubmitFunction = async ({ action, formData }) => {
     if (wrongUser) {
       return;
     }
     result = '';
     bioIsRequired = '';
-    ignoreFormMessage = false;
     if (action.search !== '?/delete') {
       let bio = formData.get('bio');
       if (bio === '') {
@@ -106,12 +126,10 @@
           ? 'updating profile...'
           : 'deleting profile...';
     if (action.search === '?/delete') {
-      //console.log('action is delete', action.search)
       hideButtonsExceptFirst([btnDelete, btnCreate, btnUpdate]);
     }
     return async ({ update }) => {
       await update();
-      ignoreFormMessage = true;
 
       if (action.search === '?/create') {
         result = $page.status === 200 ? 'Profile created' : 'create failed';
@@ -132,80 +150,37 @@
       clearMessage();
     };
   };
-  let adminSelected: boolean;
-  let selectedUserName: string;
 
-  const getUserWithBio = (id: string): UserWithBio | undefined => {
-    if (bioTextArea) {
-      bioTextArea.value = '';
-    }
-
-    try {
-      for (let i = 0; i < data.userProfiles.length; i++) {
-        if (data.userProfiles[i]?.user?.id === id) {
-          const { id, bio, createdAt, updatedAt, user } = data.userProfiles[
-            i
-          ] as UserProfile;
-          snap.bioId = id;
-          // snap.bio = bio as string;
-          snap.authorId = user.id;
-          return { id, bio, createdAt, updatedAt, user } as UserWithBio;
-        }
-      }
-      // no profile for selected user, but they could create one so set authorId
-    } catch (err) {
-      console.log(err);
-    }
-    // utils.shallowCopy(initialSnap, snap);
-  };
-
-  // let selectedUserWithBio = $state<UserWithBio>()
-
-  let bioTextArea: HTMLTextAreaElement;
-  let bioUpdateAllowed = false;
   const canBeUpdated = (event: MouseEvent) => {
-    // if (wrongUser) {
-    // 	bioTextArea.value = '';
-    // 	return;
-    // }
-    bioUpdateAllowed = true;
-    const divEl = event.currentTarget as HTMLDivElement;
-    if (data.locals.user.id !== divEl.dataset.userId) return;
-    // instead of taking id easier way as selectedUserWithBio?.user.id
-    // we use here data attribute data-user-id as divEl.dataset.userId -- a string
+    const pEl = event.currentTarget as HTMLParagraphElement;
+    if (data.locals.user.id !== pEl.dataset.userId) return;
+    // instead of taking id easier way as snap?.user.id
+    // we use here data attribute data-user-id as pEl.dataset.userId -- a string
+    bio = getBio(pEl.dataset.userId) as Bio;
+    snap_bio = bio.bio;
 
-    // NOTE: in order to say divEl.dataset.userId HTML name must be data-user-id
-    // as DOMStringMap capitalize every occurrence of dash user-new-id --> userNewId
-    // console.log('user.id', user.id, 'dataset.userId', divEl.dataset.userId);
-    bioTextArea.value = selectedUserWithBio?.bio as string;
+    // NOTE: in order to say pEl.dataset.userId HTML name must be data-user-id
+    // as DOMStringMap capitalize every occurrence of dash e.g. user-new-id --> userNewId
+    // console.log('user.id', user.id, 'dataset.userId', pEl.dataset.userId);
+    // bioTextArea.value = snap?.bio as string;
     hideButtonsExceptFirst([btnUpdate, btnCreate, btnDelete]);
     // iconDelete.classList.toggle('hidden');
   };
 
-  let selectedUserWithBio = $derived(
-    getUserWithBio(snap.authorId) as UserWithBio,
-  );
-  let formMessage = ignoreFormMessage ? '' : form?.message || '';
-  let result = $state<string>(formMessage);
-  let wrongUser = $derived(snap.authorId !== data.locals.user.id);
-  $effect(() => {
-    snap.bio = snap_bio;
-    if (selectedUserWithBio?.id) {
-      hideButtonsExceptFirst([btnUpdate, btnCreate, btnDelete]);
-    }
-  });
-  export const snapshot: Snapshot = {
-    capture: () => {
-      return snap;
-    },
-    restore: (value) => {
-      if (value.authorId !== data.locals.user.id) {
-        utils.shallowCopy(initialSnap, snap);
-      } else {
-        snap = value;
-      }
-    },
-  };
+  let result = $state<string>('');
+
+  // export const snapshot: Snapshot = {
+  //   capture: () => {
+  //     return snap;
+  //   },
+  //   restore: (value) => {
+  //     if (value.authorId !== data.locals.user.id) {
+  //       utils.shallowCopy(initialSnap, snap);
+  //     } else {
+  //       snap = value;
+  //     }
+  //   },
+  // };
 
   // NOTE: binding sna.bio to TextArea element clears complete snap when
   // any character is entered, though there is no event listener attached to
@@ -213,37 +188,20 @@
   let snap_bio = $state<string>('');
 
   onMount(() => {
-    // utils.shallowCopy(initialSnap, snap);
-    // snap.authorId = data.locals.user.id;
-    if (data.locals.user.role === 'USER') {
-      if (data.userProfiles[0]) {
-        utils.copyPairingAttributes(data.userProfiles[0], snap, {
-          id: 'bioId',
-          bio: 'bio',
-          userId: 'authorId',
-        });
-        // snap_bio = data.userProfiles[0].bio as string;
-        // snap.authorId = data.userProfiles[0].userId
-        // selectedUserWithBio = getUserWithBio(snap.authorId) as UserWithBio
-      }
-    }
-    snap.authorId = data.locals.user.id;
-    adminSelected = data.locals.user.role === 'ADMIN';
-    selectedUserName = `${data.locals.user.firstName} ${data.locals.user.lastName}`;
-    // selectedUserWithBio = getUserWithBio(data.locals.user.id) as UserWithBio
-
     return () => {
       utils.setMrPath($page.url.pathname);
     };
   });
 </script>
 
+<!-- <pre>wrongUser {wrongUser} {JSON.stringify(data, null, 2)}</pre> -->
+<!-- <pre>{JSON.stringify(snap, null, 2)}</pre> -->
+<!-- <pre style="font-size:14px;">snap-Page {JSON.stringify(bio, null, 2)}</pre> -->
 <svelte:head>
   <title>Profile</title>
 </svelte:head>
-<!-- <pre style="font-size:14px;">selectedUserWithBio-Page {JSON.stringify(selectedUserWithBio, null, 2)}
-	</pre> -->
-{#snippet tooltipBio(userWithBio: UserWithBio)}
+
+{#snippet tooltipBio(bio: Bio)}
   <Tooltip
     placement="top"
     defaultClass="tooltip-profile"
@@ -253,13 +211,13 @@
     <p>
       <span style="color:lightgreen;margin:0 1rem 0 0;"> created at</span>
       <span class="property-value">
-        {userWithBio.createdAt.toLocaleString()}
+        {bio.createdAt?.toLocaleString()}
       </span>
     </p>
     <p>
       <span style="color:lightgreen;margin:0 1rem 0 0;"> updated at</span>
       <span class="property-value">
-        {userWithBio.updatedAt.toLocaleString()}
+        {bio.updatedAt?.toLocaleString()}
       </span>
     </p>
   </Tooltip>
@@ -288,8 +246,7 @@
 <PageTitleCombo
   PageName="Profile"
   bind:result
-  bind:ignoreFormMessage
-  bind:selectedUserId={snap.authorId}
+  bind:selectedUserId
   user={data.locals.user}
   users={data.users}
 />
@@ -307,15 +264,15 @@
           name="bio"
           bind:value={snap_bio}
         ></textarea>
-        <input type="hidden" name="authorId" bind:value={snap.authorId} />
-        <input type="hidden" name="bioId" bind:value={snap.bioId} />
+        <input type="hidden" name="authorId" bind:value={bio.userId} />
+        <input type="hidden" name="bioId" bind:value={bio.id} />
 
         <div class="buttons">
           <ButtonSpinner
             bind:button={btnCreate}
             spinOn={loading}
             caption="create"
-            disabled={!snap.authorId}
+            disabled={!bio.userId}
             hidden={false}
           ></ButtonSpinner>
 
@@ -339,27 +296,26 @@
     </div>
   </div>
 
-  {#if selectedUserWithBio}
+  {#if bio.bio}
     <div class="right-column">
-      <!-- <p>{selectedUserWithBio.user.firstName} {selectedUserWithBio.user.lastName}</p> -->
+      <!-- <p>{bio.user.firstName} {bio.user.lastName}</p> -->
       <div class="relative">
         <!-- see NOTE above for data-user-id -->
         {#if wrongUser}
-          <p>{selectedUserWithBio.bio ?? ''}</p>
-          {@render tooltipBio(selectedUserWithBio)}
-
+          <p class:not-allowed={wrongUser}>{bio.bio ?? ''}</p>
+          {@render tooltipBio(bio)}
           <span class="icon-delete">X</span>
           {@render ownerOnly()}
         {:else}
           <p
             class="bio"
             onclick={canBeUpdated}
-            data-user-id={selectedUserWithBio.user.id}
+            data-user-id={bio.userId}
             aria-hidden={true}
           >
-            {selectedUserWithBio.bio ?? ''}
+            {bio.bio ?? ''}
           </p>
-          {@render tooltipBio(selectedUserWithBio)}
+          {@render tooltipBio(bio)}
           <span
             bind:this={iconDelete}
             onclick={() => {
@@ -431,5 +387,8 @@
   .pink {
     color: pink !important;
     border-color: pink !important;
+  }
+  .not-allowed:hover {
+    cursor: not-allowed;
   }
 </style>

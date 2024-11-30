@@ -20,19 +20,20 @@
   };
   let { data, form }: ARGS = $props();
 
-  let hidden = $state(true);
+  let hiddenBtnDelete = $state(true);
 
-  // NOTE: When the page updates uTodos = $state<UTodos>() is not refreshed but data.uTodos are refreshed.
-  // In order to have uTodos refreshed we need two steps: let uTodos = $state<UTodos>() like a definition
-  // and $effect that get uTodos from refreshed data prop
-  // $effect(() => {
-  //   uTodos = data.uTodos;
-  // });
+  // NOTE: When the page updates uTodos = $state<UTodo[]>() is not refreshed but props data.uTodos are refreshed.
+  // In order to have uTodos refreshed we need two steps:
+  //        let uTodos = $state<UTodo[]>() like a definition, and
+  // $effect that get uTodos from refreshed data prop
+  //        $effect(() => {
+  //          uTodos = data.uTodos;
+  //        });
   let selectedUserId = $state<string>(data.locals.user.id);
   let loading = $state<boolean>(false);
 
   // form?.message cannot be cleared by code but could be ignored when necessary
-  let ignoreFormMessage = false;
+  // let ignoreFormMessage = false;
   let titleIsRequired = '';
   let contentIsRequired = '';
   let updatePrepared = false;
@@ -51,6 +52,7 @@
     );
   });
 
+  // data for filling form inputs
   let snap = $state<TodoFormData>({
     id: '',
     authorId: '',
@@ -62,18 +64,15 @@
   // keep message displayed for several seconds
   const clearMessage = () => {
     setTimeout(() => {
-      ignoreFormMessage = false;
       result = '';
-      loading = false;
       loading = false;
     }, 2000);
     hideButtonsExceptFirst([btnCreate, btnUpdate, btnDelete]);
     utils.setColor('lightgreen');
-    utils.setColor('lightgreen');
   };
 
-  // if form is filled with  data for update, but user chose other action, we
-  // clear the form input elements
+  // if form is filled with  data for update, but user chose other action,
+  // we clear the form input elements
   const clearForm = async () => {
     hideButtonsExceptFirst([btnCreate, btnUpdate, btnDelete]);
     (document.querySelector("input[name='title']") as HTMLInputElement).value =
@@ -87,6 +86,7 @@
   // on update todo action we do not load todos again but we have to change
   // data.uTodos list with the updated todo flag
   const updateTodos = (formData: FormData) => {
+    console.log('updateTodos');
     if (data.uTodos) {
       data.uTodos = data.uTodos.map((t) => {
         if (t.todoId === formData.get('id')) {
@@ -95,15 +95,16 @@
           t.priority = Number(formData.get('priority'));
         }
         return t;
-      }) as UTodos;
+      }) as UTodo[];
     }
   };
 
   // get params action for URL and formData to check on required fields
   const enhanceTodo: SubmitFunction = async ({ action, formData }) => {
+    console.log('enhanceTodo action', action.search);
     titleIsRequired = '';
     contentIsRequired = '';
-    ignoreFormMessage = false;
+    // ignoreFormMessage = false;
 
     if (action.search !== '?/deleteTodo') {
       if (formData.get('title') === '') {
@@ -118,7 +119,7 @@
 
     // turn on spinner before form submit
     loading = true;
-    console.log('enhanceTodo start loading', loading);
+    // console.log('enhanceTodo start loading', loading);
     // show the intent of the action that follows
     result =
       action.search === '?/addTodo'
@@ -137,36 +138,38 @@
         result = $page.status === 200 ? 'todo deleted' : 'delete failed';
       }
       await utils.sleep(1000);
-      invalidateAll();
+      // invalidateAll();
       clearForm(); // also set buttons
-      ignoreFormMessage = true;
+      // ignoreFormMessage = true;
       clearMessage();
       loading = false; // stop spinner animation
     };
   };
   // captionCreate must be #state but hiddenCreateButtonSpinner must not
   let captionCreate = $state<string>('create');
-  let hiddenCreateButtonSpinner = false;
+  let hiddenCreateButtonSpinner = false; // bound variable to control whether <ButtonSpinner> is hidden or not
 
   const toggleCompleted = async (todo: UTodo) => {
     captionCreate = 'toggling';
     loading = true;
     hiddenCreateButtonSpinner = false; // NOTE: changing captionCreate above turns button hidden?!
-    const completed = todo.completed;
-    const currentState = completed ? 'completed' : 'active';
-    const newState = completed ? 'active' : 'completed';
+    const currentState = todo.completed ? 'completed' : 'active';
+    const newState = todo.completed ? 'active' : 'completed';
     result = `toggling ${currentState} into ${newState}...`;
+    const completed = todo.completed ? 'false' : 'true';
     // if form fields are prepared for update but user
     // select different action we clear the form fields
     // instead of easier action in +page.server.ts we demonstrate
     // here endpoint HTML remote communication via fetch
-    const response = await fetch(`/todo?id=${todo.id}`, {
-      method: 'PATCH',
-      body: todo.id,
-    });
+    const response = await fetch(
+      `api/patch/?id=${todo.todoId}&completed=${completed}`,
+      {
+        method: 'PATCH',
+        body: todo.todoId,
+      },
+    );
     const data = await response.json();
     await utils.sleep(2000);
-    result = `toggled into ${newState}`;
     result = `toggled into ${newState}`;
     loading = false; // TODO: comment out for production
     // setting the message will dynamically set the result, which in turn will
@@ -223,8 +226,8 @@
     hideButtonsExceptFirst([btnUpdate, btnCreate, btnDelete]);
   };
 
-  let formMessage = ignoreFormMessage ? '' : form?.message || '';
-  let result = $state<string>(formMessage);
+  // let formMessage = ignoreFormMessage ? '' : form?.message || '';
+  let result = $state<string>('');
 
   // setting result will call showMessage and this one will setTimeout
   // to clear the message after several seconds
@@ -258,6 +261,7 @@
     if (selectedUserId !== data.locals.user.id) {
       return;
     }
+    // UTodo for the selected user
     const tUser = utils.selectRecordItems<UTodo>(
       'id',
       selectedUserId,
@@ -269,23 +273,24 @@
     (
       document.querySelector("input[name='title']") as HTMLInputElement
     )?.focus();
+
     return () => {
       utils.setMrPath($page.url.pathname);
     };
   });
 </script>
 
-<p>
+<!-- <p>
   loading {loading} result {result} uTodos to ListWrapper {JSON.stringify(
-    uTodos,
+    data.uTodos,
     null,
     2,
   )}
-</p>
+</p> -->
 <!-- scroll to  onmouseenter={tooltipMouseWheel} where tooltip is activated-->
 <!-- <div class="tooltip-mouse-wheel hidden">focus & use mouse wheel</div> -->
 <!-- <pre>Todo Page selectedUserId {selectedUserId}</pre> -->
-<!-- <pre>Todo Page selectedUserId {selectedUserId}</pre> -->
+<!-- <pre>Todo Page data {JSON.stringify(data, null, 2)}</pre> -->
 <svelte:head>
   <title>To Do</title>
 </svelte:head>
@@ -293,7 +298,6 @@
 <PageTitleCombo
   PageName="Todo"
   bind:result
-  bind:ignoreFormMessage
   bind:selectedUserId
   user={data.locals.user}
   users={data.users}
@@ -332,7 +336,7 @@
     <div class="two-columns">
       <textarea
         rows={2}
-        cols={80}
+        cols={60}
         name="content"
         placeholder={contentIsRequired || 'enter To Do content'}
         bind:value={snap.content}
@@ -371,7 +375,7 @@
         caption="delete"
         formaction="?/deleteTodo"
         cursor={selectedUserId === authorId}
-        {hidden}
+        hidden={hiddenBtnDelete}
       ></ButtonSpinner>
 
       {#if selectedUserId !== authorId}
@@ -436,7 +440,7 @@
   // }
   .board {
     min-width: 36em;
-    width: max-content;
+    max-width: 90vw;
     padding: 1rem;
     border: 1px solid gray;
     border-radius: 8px;

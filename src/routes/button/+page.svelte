@@ -49,7 +49,7 @@ adjust with changing the delta via input box of type number
   }
   .container {
     @include container(
-      $content: 'Using Button Child Component',
+      $head: 'Using Button Child Component',
       $head-color: lightgreen
     );
     margin-top: 2rem;

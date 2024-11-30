@@ -134,7 +134,7 @@ with child click event:MouseEvent and value of delta bound in &lt;input type='nu
     }
   }
   .container {
-    @include container($content: 'Parent Estate', $head-color: skyblue);
+    @include container($head: 'Parent Estate', $head-color: skyblue);
     margin: 5rem 0 0 2rem;
   }
   summary {

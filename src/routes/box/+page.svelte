@@ -38,7 +38,7 @@
     // $border: 1px solid yellow;
     // @include container('Parent Real Estate', $border: $border);
     @include container(
-      $content: 'Parent Real Estate',
+      $head: 'Parent Real Estate',
       // $border: 1px solid tomato
     );
     margin-top: 2rem;
