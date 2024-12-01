@@ -6,7 +6,7 @@ export const PATCH = async ({ url }) => {
   const id = url.searchParams.get('id') as string;
   const completed = url.searchParams.get('completed') as string;
 
-  console.log('PATCH', id, completed);
+  // console.log('PATCH', id, completed);
   if (id === '') {
     return new Response(
       JSON.stringify({ message: 'fail id or completed is missing' }),
@@ -25,5 +25,5 @@ export const PATCH = async ({ url }) => {
       updatedAt: new Date(),
     },
   });
-  return new Response(JSON.stringify({ message: 'success' }), { status: 204 });
+  return new Response(JSON.stringify({ message: 'success' }), { status: 200 });
 };

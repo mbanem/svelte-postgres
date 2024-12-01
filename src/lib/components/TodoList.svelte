@@ -54,6 +54,9 @@
   // 	right = uTodos.filter((t) => t.completed === true) as UTodo[]
   // })
 
+  let left = uTodos.filter((t) => t.completed === false) as UTodo[];
+  let right = uTodos.filter((t) => t.completed === true) as UTodo[];
+
   const move = (item: UTodo, from: UTodo[], to: UTodo[]) => {
     to.push(item);
     return [from.filter((i) => i !== item), to];
@@ -112,6 +115,7 @@
       <!-- tuSu -- todo of selected user -->
       {@const tuSu = todo.id === id}
       <li
+        style:width={'40vw'}
         class:uncompleted={!todo.completed}
         animate:flip={{ delay: 500, duration: 1000 }}
         in:send={{ key: todo.todoId }}
@@ -215,6 +219,7 @@
 <style lang="scss">
   .container {
     display: grid;
+    width: 98vw;
     grid-template-columns: 1fr 1fr;
   }
   .tooltip-wrapper {
@@ -244,7 +249,7 @@
   }
   .caption {
     border-bottom: 1px solid gray;
-    width: 90%;
+    width: 40vw;
   }
   .list-item {
     padding: 2px 6px;

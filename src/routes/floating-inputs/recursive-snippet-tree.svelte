@@ -52,10 +52,8 @@
   let generation = -1;
   const incrementGeneration = (itemName: string): void => {
     if (itemName === '' || itemName.slice(-2) === "'s") {
-      console.log('generation', itemName, generation);
       generation = 0;
     } else {
-      console.log('child', itemName, generation);
       generation = generation + 1;
     }
   };

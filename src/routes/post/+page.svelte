@@ -218,7 +218,6 @@
     ];
 
     utils.hideButtonsExceptFirst([btnUpdate, btnCreate, btnDelete]);
-    console.log(btnUpdate.classList);
     // NOTE: in TypeScript Playground instead of using nested loops as we use below,
     // the spread operators works, but here does not
     // for (const [k,v] of Object.entries([...els])) { code here }

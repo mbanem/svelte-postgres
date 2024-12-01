@@ -86,7 +86,7 @@
   // on update todo action we do not load todos again but we have to change
   // data.uTodos list with the updated todo flag
   const updateTodos = (formData: FormData) => {
-    console.log('updateTodos');
+    // console.log('updateTodos');
     if (data.uTodos) {
       data.uTodos = data.uTodos.map((t) => {
         if (t.todoId === formData.get('id')) {
@@ -101,7 +101,6 @@
 
   // get params action for URL and formData to check on required fields
   const enhanceTodo: SubmitFunction = async ({ action, formData }) => {
-    console.log('enhanceTodo action', action.search);
     titleIsRequired = '';
     contentIsRequired = '';
     // ignoreFormMessage = false;
@@ -168,24 +167,18 @@
         body: todo.todoId,
       },
     );
-    const data = await response.json();
+    const resp = await response.json();
     await utils.sleep(2000);
     result = `toggled into ${newState}`;
     loading = false; // TODO: comment out for production
     // setting the message will dynamically set the result, which in turn will
     // show message for several seconds and then clear it out
 
-    if (data.toggled) {
+    if (resp.message === 'success') {
       todo.completed = !todo.completed;
       invalidateAll();
-
-      setTimeout(() => {
-        result = '';
-      }, 2000);
-      // return todo; // TODO: why we return todo here?
     }
     captionCreate = 'create';
-    console.log('exit toggle completed', loading);
   };
 
   const deleteTodo = async (id: string) => {
