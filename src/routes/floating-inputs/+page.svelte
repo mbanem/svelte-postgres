@@ -6,7 +6,8 @@
   import Tree from './recursive-snippet-tree.svelte';
   import SnippetTable from './snippet/snippet-table.svelte';
 
-  const Ids = ['firstName', 'lastName', 'birthday', 'color'] as const; // read-only array
+  let elInputBox: any;
+  const Ids = ['firstName', 'lastName', 'birthday', 'color', 'end'] as const; // read-only array
   type TId = (typeof Ids)[number]; // literal type "color" | "firstName" | "lastName" | "birthday"
 
   type TQuestion = {
@@ -26,6 +27,7 @@
     error: '',
   });
 
+  let serFocus: () => void;
   // $inspect(formState.step);
 
   const QUESTIONS = [
@@ -49,9 +51,19 @@
       question: 'Favorite color',
       type: 'color',
     },
+    {
+      id: 'end',
+      question: '',
+      type: '',
+    },
   ];
 
   const nextStep = (id: TId) => {
+    if (id === 'end') {
+      userDetailsContainer.innerHTML = '';
+      formState.answers = {};
+      formState.step = 0;
+    }
     if (formState.answers[id as TId]) {
       formState.step += 1;
       formState.error = '';
@@ -59,7 +71,22 @@
       formState.error = 'Please fill out the form input';
     }
   };
+  const setActive = () => {
+    if (formState.step < 2) {
+      elInputBox.setFocus();
+    } else if (formState.step) {
+      try {
+        elInputBox.setFocus();
+        elInputBox.click();
+      } finally {
+      }
+    }
+  };
   let userDetailsContainer: HTMLDivElement;
+  let buttonNext: HTMLButtonElement;
+  const onButtonNext = () => {
+    buttonNext.click();
+  };
   onMount(() => {
     userDetailsContainer = document.querySelector(
       '.form-answers-container',
@@ -99,11 +126,20 @@
       <label for={id}></label>
       {#if type == 'text'}
         <div class="inputbox-wrapper">
-          <InputBox title={id} bind:value={formState.answers[id as TId]}
+          <InputBox
+            title={id}
+            bind:this={elInputBox}
+            bind:value={formState.answers[id as TId]}
+            {onButtonNext}
           ></InputBox>
         </div>
       {:else}
-        <input {type} {id} bind:value={formState.answers[id as TId]} />
+        <input
+          {type}
+          {id}
+          bind:this={elInputBox}
+          bind:value={formState.answers[id as TId]}
+        />
       {/if}
     </div>
   </article>
@@ -123,6 +159,7 @@
           class="item"
           in:fly={{ x: 200, y: 0, duration: 1000, opacity: 0, delay: 300 }}
           out:fly={{ x: -500, y: 0, duration: 800, opacity: 0 }}
+          onoutroend={setActive}
         >
           {@render formStep(question)}
         </div>
@@ -131,6 +168,7 @@
 
     <div>
       <button
+        bind:this={buttonNext}
         class="button-next"
         onclick={() =>
           nextStep((QUESTIONS[formState.step] as TQuestion).id as TId)}

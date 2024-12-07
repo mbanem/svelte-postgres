@@ -356,7 +356,6 @@
         <Tooltip
           placement="top"
           defaultClass="tooltip-update-false"
-          class="master-todo"
           arrow={false}
         >
           <p>owner only permission</p>
@@ -375,7 +374,6 @@
         <Tooltip
           placement="top"
           defaultClass="tooltip-update-button"
-          class="master-todo"
           arrow={false}
         >
           <p>owner only permission</p>

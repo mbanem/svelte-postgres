@@ -10,6 +10,7 @@
 -->
 
 <script lang="ts">
+  import { onMount } from 'svelte';
   import Error from '$routes/+error.svelte';
   import * as utils from '$utils';
   type PROPS = {
@@ -19,6 +20,7 @@
     fontsize?: string;
     type?: string;
     value?: string;
+    onButtonNext?: () => void;
   };
   let {
     title,
@@ -27,11 +29,23 @@
     fontsize = '16px',
     type,
     value = $bindable(),
+    onButtonNext,
   }: PROPS = $props();
+
+  let inputEl: HTMLInputElement;
+  export const setFocus = () => {
+    inputEl.focus();
+  };
   if (width) utils.setCSSValue('--INPUT-COMRUNNER-WIDTH', width as string);
   if (height) utils.setCSSValue('--INPUT-COMRUNNER-HEIGHT', height as string);
   if (fontsize)
     utils.setCSSValue('--INPUT-COMRUNNER-FONT-SIZE', fontsize as string);
+
+  const inputCompleted = (event: KeyboardEvent) => {
+    if (event.key === 'Enter' && onButtonNext) {
+      onButtonNext();
+    }
+  };
 
   // const test = async () => {
   // 	const [error, user] = await utils.catchError(getUser(1))
@@ -45,7 +59,13 @@
 </script>
 
 <div class="input-wrapper">
-  <input type={type ? type : 'text'} required bind:value />
+  <input
+    bind:this={inputEl}
+    type={type ? type : 'text'}
+    required
+    bind:value
+    onkeyup={inputCompleted}
+  />
   <label for="">{title}</label>
 </div>
 

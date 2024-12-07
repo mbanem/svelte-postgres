@@ -86,6 +86,12 @@
     {/if}
   </div>
 {/snippet}
+<pre>
+This is a recursive snippet tree
+where items are prefixed with
+a zer0-base indent number, each
+incremented starts new ul list
+</pre>
 <div class="main">
   {@render tree(families)}
 </div>

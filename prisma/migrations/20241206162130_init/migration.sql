@@ -75,7 +75,9 @@ CREATE TABLE "todo" (
 -- CreateTable
 CREATE TABLE "_CategoryToPost" (
     "A" INTEGER NOT NULL,
-    "B" TEXT NOT NULL
+    "B" TEXT NOT NULL,
+
+    CONSTRAINT "_CategoryToPost_AB_pkey" PRIMARY KEY ("A","B")
 );
 
 -- CreateIndex
@@ -86,9 +88,6 @@ CREATE UNIQUE INDEX "users_first_name_last_name_email_key" ON "users"("first_nam
 
 -- CreateIndex
 CREATE UNIQUE INDEX "profile_user_id_key" ON "profile"("user_id");
-
--- CreateIndex
-CREATE UNIQUE INDEX "_CategoryToPost_AB_unique" ON "_CategoryToPost"("A", "B");
 
 -- CreateIndex
 CREATE INDEX "_CategoryToPost_B_index" ON "_CategoryToPost"("B");

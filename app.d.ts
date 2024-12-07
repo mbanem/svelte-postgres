@@ -106,6 +106,7 @@ declare global {
     published: boolean;
     createdAt: Date;
     updatedAt: Date;
+    categoryNames: string;
     firstName: string;
     lastName: string;
     author: boolean;
