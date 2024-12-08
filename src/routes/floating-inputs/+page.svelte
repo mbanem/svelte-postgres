@@ -5,9 +5,10 @@
   import InputBox from '$lib/components/InputBox.svelte';
   import Tree from './recursive-snippet-tree.svelte';
   import SnippetTable from './snippet/snippet-table.svelte';
+  import * as utils from '$utils';
 
-  let elInputBox: any;
-  const Ids = ['firstName', 'lastName', 'birthday', 'color', 'end'] as const; // read-only array
+  let inputEl: any;
+  const Ids = ['firstName', 'lastName', 'birthday', 'color'] as const; // read-only array
   type TId = (typeof Ids)[number]; // literal type "color" | "firstName" | "lastName" | "birthday"
 
   type TQuestion = {
@@ -21,8 +22,9 @@
     step: number;
     error: string;
   };
+
   let formState = $state<TState>({
-    answers: {}, // NOTE: how to put initial value form Record<TId, string>
+    answers: {} as TRecord,
     step: 0,
     error: '',
   });
@@ -51,40 +53,59 @@
       question: 'Favorite color',
       type: 'color',
     },
-    {
-      id: 'end',
-      question: '',
-      type: '',
-    },
   ];
 
-  const nextStep = (id: TId) => {
-    if (id === 'end') {
-      userDetailsContainer.innerHTML = '';
-      formState.answers = {};
-      formState.step = 0;
+  const nextStep = (q?: TQuestion) => {
+    if (buttonNext.innerText === 'reset') {
+      buttonNext.innerText = 'Next';
     }
-    if (formState.answers[id as TId]) {
+    if (!q) {
+      formCompleted();
+      return;
+    }
+    if (formState.answers[q?.id as TId]) {
       formState.step += 1;
       formState.error = '';
     } else {
       formState.error = 'Please fill out the form input';
     }
   };
+
+  const formCompleted = () => {
+    formState.step = 0;
+    userDetailsContainer.innerHTML = '';
+    formState.answers = {} as TRecord;
+  };
+
+  const openColorPicker = async () => {
+    // await utils.sleep(3000);
+    console.log('CLICK', inputEl);
+    inputEl.focus();
+    inputEl.click();
+  };
   const setActive = () => {
-    if (formState.step < 2) {
-      elInputBox.setFocus();
-    } else if (formState.step) {
-      try {
-        elInputBox.setFocus();
-        elInputBox.click();
-      } finally {
-      }
+    switch (formState.step) {
+      case 0:
+        inputEl.setFocus();
+        break;
+      case 1:
+        inputEl.setFocus();
+        break;
+      case 2:
+        inputEl.showPicker();
+        break;
+      case 3:
+        inputEl.focus();
+        inputEl.click();
+        break;
+      default:
     }
   };
+
   let userDetailsContainer: HTMLDivElement;
   let buttonNext: HTMLButtonElement;
   const onButtonNext = () => {
+    console.log(formState.step);
     buttonNext.click();
   };
   onMount(() => {
@@ -108,9 +129,13 @@
         userDetailsContainer.innerHTML += `<p style='color:${color}'>Favorite Color: ${color}</p>`;
         break;
       default:
+        formCompleted();
         break;
     }
   });
+  const closed = () => {
+    buttonNext.click();
+  };
 </script>
 
 {#snippet formStep({
@@ -128,7 +153,7 @@
         <div class="inputbox-wrapper">
           <InputBox
             title={id}
-            bind:this={elInputBox}
+            bind:this={inputEl}
             bind:value={formState.answers[id as TId]}
             {onButtonNext}
           ></InputBox>
@@ -137,7 +162,8 @@
         <input
           {type}
           {id}
-          bind:this={elInputBox}
+          onchange={closed}
+          bind:this={inputEl}
           bind:value={formState.answers[id as TId]}
         />
       {/if}
@@ -151,6 +177,7 @@
     <div>
       {#if formState.step >= QUESTIONS.length}
         <p>Form is completed</p>
+        {(buttonNext.innerText = 'reset')}
       {/if}
     </div>
     {#each QUESTIONS as question, index (question.id)}
@@ -170,10 +197,10 @@
       <button
         bind:this={buttonNext}
         class="button-next"
-        onclick={() =>
-          nextStep((QUESTIONS[formState.step] as TQuestion).id as TId)}
-        >Next</button
+        onclick={() => nextStep(QUESTIONS[formState.step] as TQuestion)}
       >
+        Next
+      </button>
     </div>
     <div>
       {#if formState.error}
