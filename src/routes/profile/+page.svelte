@@ -202,12 +202,7 @@
 </svelte:head>
 
 {#snippet tooltipBio(bio: Bio)}
-  <Tooltip
-    placement="top"
-    defaultClass="tooltip-profile"
-    class="master-profile"
-    arrow={false}
-  >
+  <Tooltip defaultClass="tooltip-profile">
     <p>
       <span style="color:lightgreen;margin:0 1rem 0 0;"> created at</span>
       <span class="property-value">
@@ -223,22 +218,12 @@
   </Tooltip>
 {/snippet}
 {#snippet deleteIcon()}
-  <Tooltip
-    placement="top"
-    defaultClass="tooltip-label"
-    class="tooltip-profile"
-    arrow={false}
-  >
+  <Tooltip class="tooltip-profile">
     <p>delete the profile</p>
   </Tooltip>
 {/snippet}
 {#snippet ownerOnly()}
-  <Tooltip
-    placement="top"
-    defaultClass="tooltip-label"
-    class="tooltip-profile"
-    arrow={false}
-  >
+  <Tooltip class="tooltip-profile">
     <p class="pink">Owner only permission</p>
   </Tooltip>
 {/snippet}

@@ -11,15 +11,11 @@
     $props();
 </script>
 
-<!-- <pre>{selectedUserId} {JSON.stringify(postAuthors[0], null, 2)}</pre> -->
+<!-- <pre>{selectedUserId} {JSON.stringify(postAuthors, null, 2)}</pre> -->
 
 {#snippet tooltip(allowed: boolean, title: string)}
   <!-- NOTE the way to toggle string content based on a predicate -->
-  <Tooltip
-    placement="top"
-    defaultClass={`tooltip_default-${allowed ? 'delete' : 'false'}`}
-    arrow={false}
-  >
+  <Tooltip defaultClass={`tooltip_default-${allowed ? 'delete' : 'false'}`}>
     <p>
       {allowed ? title : 'owner only permission'}
     </p>
@@ -85,7 +81,7 @@
   <div class="tooltip-wrapper">
     <!-- <p class="content">{pA.content}</p> -->
     {@render title_with_content(allowed, pA)}
-    <Tooltip placement="top" defaultClass="tooltip_default" arrow={false}>
+    <Tooltip defaultClass="tooltip_default">
       <p>published</p>
       <p>{pA.published ? 'YES' : 'Not Yet'}</p>
       <p>created at</p>
@@ -93,6 +89,7 @@
       <p>updated at</p>
       <p>{pA.updatedAt.toLocaleString()}</p>
       <p>categories</p>
+      <p>{pA.categoryNames.replace(/,/g, ', ')}</p>
     </Tooltip>
   </div>
 {/snippet}
@@ -124,8 +121,6 @@
 </div>
 
 <style lang="scss">
-  /* ready for app.scss */
-  /* wraps title and content*/
   .tooltip-wrapper {
     position: relative;
     p {
@@ -136,76 +131,7 @@
       cursor: pointer;
     }
   }
-  // .prop-value,
-  // .category-names {
-  // 	display: inline-block;
-  // 	width: fit-content(5rem) !important;
-  // 	padding: 0;
-  // 	margin: 0;
-  // 	text-align: left;
-  // 	border: none;
-  // 	outline: none;
-  // 	text-wrap: nowrap;
-  // }
-  // .category-names {
-  // 	height: auto !important;
-  // 	padding-bottom: 3px;
-  // 	width: max-content;
-  // 	text-wrap: wrap !important;
-  // 	grid-auto-rows: minmax(4rem, auto) !important;
-  // }
-  /* ready for app.scss */
-  :global(.tooltip_default) {
-    position: absolute;
-    left: 10rem !important;
-    top: -4rem !important;
-    display: grid;
-    grid-template-columns: max-content 12rem !important;
-    // grid-auto-rows: max-content !important;
-    // grid-template-columns: 5rem 15rem !important;
-    // row-gap: 6px;
-    justify-content: flex-start;
-    width: 20rem !important;
-    // height: auto !important;
-    color: skyblue !important;
-    font-size: 14px;
-    line-height: 14px;
-    font-weight: 400;
-    padding: 3px 1rem !important;
-    text-align: left;
-    background-color: var(--TOOLTIP-BACKGROUND-COLOR);
-    border: 1px solid pink !important;
-    border-radius: 8px;
-    z-index: 6;
-    p:nth-child(even) {
-      color: yellow;
-      text-align: left;
-      width: 15rem;
-      padding: 2px 6px !important;
-    }
-  }
 
-  :global(.tooltip_default-update),
-  :global(.tooltip_default-delete),
-  :global(.tooltip_default-false) {
-    position: absolute;
-    // top: -2rem !important;
-    left: -2rem !important;
-    width: max-content !important;
-    grid-template-columns: 5rem 15rem !important;
-    // height: auto !important;
-    color: lightblue !important;
-    border: 1px solid lightblue;
-    background-color: var(--TOOLTIP-BACKGROUND-COLOR);
-    border-radius: 6px;
-    padding: 0 1rem;
-    text-align: left;
-    z-index: 6;
-  }
-  :global(.tooltip_default-false) {
-    color: pink !important;
-    border-color: pink;
-  }
   .author_name {
     position: sticky;
     top: -5px;

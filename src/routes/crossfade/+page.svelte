@@ -138,12 +138,7 @@
     <br style="margin-top:4rem" />
     <div class="tooltip-wrapper">
       <button style="width:100%">Post content is here having a tooltip</button>
-      <Tooltip
-        placement="top"
-        defaultClass="local-tooltip"
-        class="local-master"
-        arrow={false}
-      >
+      <Tooltip defaultClass="tooltip_default">
         <p>created on</p>
         <p class="prop-value">{createdAt.toLocaleString()}</p>
         <p>updated on</p>

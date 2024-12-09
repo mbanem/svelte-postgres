@@ -84,11 +84,11 @@
 <!-- css can be dynamically changed via style:rule={value} and class:class_name={predicate} -->
 {#snippet tooltip(tf: boolean, title: string)}
   {#if !tf}
-    <Tooltip placement="top" defaultClass="tooltip-todo-false" arrow={false}>
+    <Tooltip defaultClass="tooltip-todo-false">
       <p>{permission}</p>
     </Tooltip>
   {:else}
-    <Tooltip placement="top" defaultClass="tooltip-todo-delete" arrow={false}>
+    <Tooltip defaultClass="tooltip-todo-delete">
       <p>{title}</p>
     </Tooltip>
   {/if}
@@ -131,7 +131,7 @@
               {todo.title}
             </p>
             {todo.content}
-            <Tooltip placement="top" defaultClass="tooltip-todo" arrow={false}>
+            <Tooltip defaultClass="tooltip-todo">
               <p>priority</p>
               <p>{todo.priority}</p>
               <p>created on</p>
@@ -265,34 +265,7 @@
       color: yellow;
     }
   }
-  :global(.tooltip-todo-update),
-  :global(.tooltip-todo-delete),
-  :global(.tooltip-todo-false) {
-    position: absolute;
-    left: -2rem !important;
-    top: -2rem !important;
-    width: 6rem !important;
-    color: yellow !important;
-    border: 1px solid yellow;
-    background-color: var(--TOOLTIP-BACKGROUND-COLOR);
-    border-radius: 6px;
-    padding: 4px 1rem;
-    text-align: center;
-  }
-  :global(.tooltip-todo-update) {
-    width: 9rem !important;
-  }
-  :global(.tooltip-todo-false) {
-    color: pink !important;
-    border-color: pink;
-  }
-  // :global(.master-todo) {
-  //   position: absolute;
-  //   top: -4rem !important;
-  //   left: 8rem;
-  //   font-size: 14px;
-  //   font-weight: 400;
-  // }
+
   .blue {
     color: skyblue;
     margin-bottom: 6px !important;

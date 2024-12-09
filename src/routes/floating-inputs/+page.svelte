@@ -7,13 +7,14 @@
   import SnippetTable from './snippet/snippet-table.svelte';
   import * as utils from '$utils';
 
+  // cannot define the type of inputEl
   let inputEl: any;
   const Ids = ['firstName', 'lastName', 'birthday', 'color'] as const; // read-only array
   type TId = (typeof Ids)[number]; // literal type "color" | "firstName" | "lastName" | "birthday"
 
-  type TQuestion = {
+  type Labels = {
     id: string;
-    question: string;
+    label: string;
     type: string;
   };
   type TRecord = Record<TId, string>;
@@ -32,30 +33,30 @@
   let serFocus: () => void;
   // $inspect(formState.step);
 
-  const QUESTIONS = [
+  const Fields = [
     {
       id: 'firstName',
-      question: 'First Name?',
+      label: 'First Name?',
       type: 'text',
     },
     {
       id: 'lastName',
-      question: 'Last Name?',
+      label: 'Last Name?',
       type: 'text',
     },
     {
       id: 'birthday',
-      question: 'Birthday',
+      label: 'Birthday',
       type: 'date',
     },
     {
       id: 'color',
-      question: 'Favorite color',
+      label: 'Favorite color',
       type: 'color',
     },
   ];
 
-  const nextStep = (q?: TQuestion) => {
+  const nextStep = (q?: Labels) => {
     if (buttonNext.innerText === 'reset') {
       buttonNext.innerText = 'Next';
     }
@@ -77,12 +78,6 @@
     formState.answers = {} as TRecord;
   };
 
-  const openColorPicker = async () => {
-    // await utils.sleep(3000);
-    console.log('CLICK', inputEl);
-    inputEl.focus();
-    inputEl.click();
-  };
   const setActive = () => {
     switch (formState.step) {
       case 0:
@@ -95,10 +90,14 @@
         inputEl.showPicker();
         break;
       case 3:
-        inputEl.focus();
-        inputEl.click();
+        // cannot make it
+        setTimeout(() => {
+          inputEl.focus();
+          inputEl.click();
+        }, 3000);
         break;
       default:
+        buttonNext.innerText = 'reset';
     }
   };
 
@@ -136,16 +135,10 @@
   const closed = () => {
     buttonNext.click();
   };
+  let btnOpen: HTMLButtonElement;
 </script>
 
-{#snippet formStep({
-  id,
-  type,
-}: {
-  type: string;
-  id: string;
-  question: string;
-})}
+{#snippet formStep({ id, type }: { type: string; id: string; label: string })}
   <article>
     <div>
       <label for={id}></label>
@@ -175,12 +168,11 @@
   <div class="left-column">
     <div class="form-answers-container"></div>
     <div>
-      {#if formState.step >= QUESTIONS.length}
+      {#if formState.step >= Fields.length}
         <p>Form is completed</p>
-        {(buttonNext.innerText = 'reset')}
       {/if}
     </div>
-    {#each QUESTIONS as question, index (question.id)}
+    {#each Fields as label, index (label.id)}
       {#if formState.step === index}
         <div
           class="item"
@@ -188,7 +180,7 @@
           out:fly={{ x: -500, y: 0, duration: 800, opacity: 0 }}
           onoutroend={setActive}
         >
-          {@render formStep(question)}
+          {@render formStep(label)}
         </div>
       {/if}
     {/each}
@@ -197,7 +189,7 @@
       <button
         bind:this={buttonNext}
         class="button-next"
-        onclick={() => nextStep(QUESTIONS[formState.step] as TQuestion)}
+        onclick={() => nextStep(Fields[formState.step] as Labels)}
       >
         Next
       </button>
@@ -256,7 +248,7 @@
       );
       margin-bottom: 1rem;
       width: 19rem;
-      height: 21.5rem;
+      height: 23.5rem;
     }
     .button-next {
       position: absolute;

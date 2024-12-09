@@ -182,6 +182,7 @@
           lastName,
           role,
           author,
+          categoryNames,
         } = post;
         arr.push({
           id,
@@ -193,6 +194,7 @@
           firstName: `${firstName}${role === 'ADMIN' ? 'T' : ''}`,
           lastName,
           author,
+          categoryNames,
         });
       }
     });
@@ -321,11 +323,7 @@
 />
 {#snippet tooltip(title: string)}
   <!-- NOTE the way to toggle string content based on a predicate -->
-  <Tooltip
-    placement="top"
-    defaultClass={'tooltip_default-update'}
-    arrow={false}
-  >
+  <Tooltip defaultClass={'tooltip_default-update'}>
     {title}
   </Tooltip>
 {/snippet}

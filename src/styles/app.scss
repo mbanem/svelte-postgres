@@ -134,26 +134,86 @@
   border: 1px solid gray;
   z-index: 5;
 }
-.tooltip-label {
-  position: absolute;
-  top: 0 !important;
-  right: 1rem !important;
-  display: inline-block;
-  width: max-content !important;
-  padding: 0 1rem;
-  line-height: 1px;
-  font-weight: 400;
-  border-radius: 5px;
-  font-size: 14px; /* works here but not in tooltip-master*/
-  color: skyblue;
-  background-color: #3e3e3e;
-  border: 1px solid gray;
-  p {
-    display: inline-block;
-    width: max-content;
-    color: lightblue;
+.tooltip_default {
+    position: absolute;
+    left: 10rem !important;
+    top: -4rem !important;
+    display: grid;
+    grid-template-columns: max-content max-content !important;
+    grid-template-rows: 1.5rem;
+    // grid-auto-rows: max-content !important;
+    // grid-template-columns: 5rem 15rem !important;
+    // row-gap: 6px;
+    justify-content: flex-start;
+    align-items: baseline;
+    row-gap:0;
+    text-wrap: wrap;
+    // width: max-content !important;
+    // padding: 6px 1.5rem !important;
+    // height: auto !important;
+    color: skyblue !important;
+    font-size: 14px;
+    line-height: 14px;
+    font-weight: 400;
+    text-align: left;
+    background-color: var(--TOOLTIP-BACKGROUND-COLOR);
+    border: 1px solid pink !important;
+    border-radius: 8px;
+    z-index: 6;
+    // p:nth-child(even){
+    //   width:100%;
+    //   overflow-y:auto;
+    //   background-color:royalblue;
+    // }
+    p:nth-child(even) {
+      color: yellow;
+      text-align: left;
+      max-width: 100%;
+      margin:0;
+      padding: 2px 6px !important;
+    }
   }
-}
+  .tooltip-todo-update,
+  .tooltip-todo-delete,
+  .tooltip-todo-false {
+    position: absolute;
+    left: -2rem !important;
+    top: -2rem !important;
+    width: 6rem !important;
+    color: yellow !important;
+    border: 1px solid yellow;
+    background-color: var(--TOOLTIP-BACKGROUND-COLOR);
+    border-radius: 6px;
+    padding: 4px 1rem;
+    text-align: center;
+  }
+  .tooltip-todo-update {
+    width: 9rem !important;
+  }
+  .tooltip-todo-false {
+    color: pink !important;
+    border-color: pink;
+  }
+// .tooltip-label {
+//   position: absolute;
+//   top: 0 !important;
+//   right: 1rem !important;
+//   display: inline-block;
+//   width: max-content !important;
+//   padding: 0 1rem;
+//   line-height: 1px;
+//   font-weight: 400;
+//   border-radius: 5px;
+//   font-size: 14px; /* works here but not in tooltip-master*/
+//   color: skyblue;
+//   background-color: #3e3e3e;
+//   border: 1px solid gray;
+//   p {
+//     display: inline-block;
+//     width: max-content;
+//     color: lightblue;
+//   }
+// }
 :global(.master-profile) {
   text-align: center;
   display: inline-block;

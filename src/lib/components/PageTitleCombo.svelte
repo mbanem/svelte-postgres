@@ -56,13 +56,14 @@
   // });
 
   onMount(() => {
-    selectedUserId = user.id;
+    selectedUserId = user.id as string;
     // if (selectBox) {
     //   selectBox.value = selectedUserId;
     // }
   });
 </script>
 
+<!-- <pre>{JSON.stringify(users, null, 2)}</pre> -->
 <h1>
   {PageName} Page
   {#if user?.role === 'ADMIN'}

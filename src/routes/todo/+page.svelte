@@ -237,19 +237,6 @@
     },
   };
 
-  // const tooltipMouseWheel = () => {  // do not work with input type=number
-  // 	document.querySelector('.tooltip-mouse-wheel')?.classList.toggle('hidden')
-  // 	setTimeout(() => {
-  // 		document.querySelector('.tooltip-mouse-wheel')?.classList.toggle('hidden')
-  // 	}, 1500)
-  // }
-  // const todoUserToSnap = (tUser: UTodo, snap: TodoFormData) => {
-  // 	snap.id = tUser.todoId;
-  // 	snap.authorId = tUser.id;
-  // 	snap.title = tUser.title;
-  // 	snap.content = tUser.content;
-  // 	snap.priority = Number(tUser.priority);
-  // };
   onMount(() => {
     if (selectedUserId !== data.locals.user.id) {
       return;
@@ -273,21 +260,10 @@
   });
 </script>
 
-<!-- <p>
-  loading {loading} result {result} uTodos to ListWrapper {JSON.stringify(
-    data.uTodos,
-    null,
-    2,
-  )}
-</p> -->
-<!-- scroll to  onmouseenter={tooltipMouseWheel} where tooltip is activated-->
-<!-- <div class="tooltip-mouse-wheel hidden">focus & use mouse wheel</div> -->
-<!-- <pre>Todo Page selectedUserId {selectedUserId}</pre> -->
-<!-- <pre>Todo Page data {JSON.stringify(data, null, 2)}</pre> -->
 <svelte:head>
   <title>To Do</title>
 </svelte:head>
-<!-- ------------------------------------------------- -->
+
 <PageTitleCombo
   PageName="Todo"
   bind:result
@@ -295,7 +271,7 @@
   user={data.locals.user}
   users={data.users}
 />
-<!-- <pre>users {JSON.stringify(users, null, 2)}</pre> -->
+
 <div class="board">
   <form
     bind:this={theForm}
@@ -318,7 +294,6 @@
         bind:value={snap.title}
       />
 
-      <!-- onmouseenter={tooltipMouseWheel} -->
       <input
         type="number"
         name="priority"
@@ -353,11 +328,7 @@
       ></ButtonSpinner>
 
       {#if selectedUserId !== authorId}
-        <Tooltip
-          placement="top"
-          defaultClass="tooltip-update-false"
-          arrow={false}
-        >
+        <Tooltip defaultClass="tooltip-update-false">
           <p>owner only permission</p>
         </Tooltip>
       {/if}
@@ -371,11 +342,7 @@
       ></ButtonSpinner>
 
       {#if selectedUserId !== authorId}
-        <Tooltip
-          placement="top"
-          defaultClass="tooltip-update-button"
-          arrow={false}
-        >
+        <Tooltip defaultClass="tooltip-update-button">
           <p>owner only permission</p>
         </Tooltip>
       {/if}
@@ -398,8 +365,8 @@
 </div>
 
 <style lang="scss">
-  :global(.tooltip-update-button),
-  :global(.tooltip-update-false) {
+  .tooltip-update-button,
+  .tooltip-update-false {
     position: absolute;
     left: 8rem !important;
     top: 1.1rem !important;
@@ -413,22 +380,10 @@
     border: 1px solid gray;
     border-radius: 6px;
   }
-  :global(.tooltip-update-false) {
+  .tooltip-update-false {
     color: pink !important;
     border-color: pink;
   }
-  // .tooltip-mouse-wheel {
-  // 	position: fixed;
-  // 	width: 12rem;
-  // 	text-align: center;
-  // 	color: lightgreen;
-  // 	background-color: #3e3e3e;
-  // 	border: 1px solid lightgreen;
-  // 	border-radius: 5px;
-  // 	top: 4.3rem;
-  // 	left: 35rem;
-  // 	cursor: progress;
-  // }
   .board {
     min-width: 36em;
     max-width: 90vw;
