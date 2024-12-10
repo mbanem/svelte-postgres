@@ -89,7 +89,7 @@
       <p>updated at</p>
       <p>{pA.updatedAt.toLocaleString()}</p>
       <p>categories</p>
-      <p>{pA.categoryNames.replace(/,/g, ', ')}</p>
+      <p class="category-names">{pA.categoryNames}</p>
     </Tooltip>
   </div>
 {/snippet}
@@ -131,7 +131,11 @@
       cursor: pointer;
     }
   }
-
+  .category-names {
+    width: 10rem;
+    text-wrap: wrap;
+    // overflow-x: auto;
+  }
   .author_name {
     position: sticky;
     top: -5px;

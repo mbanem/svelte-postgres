@@ -96,13 +96,9 @@
 
 {#snippet todos(td: TSnippet, todos: UTodo[], completed: boolean)}
   <div>
-    {#if completed}
-      <p class="caption">Completed</p>
-    {:else}
-      <p class="caption">Not Completed</p>
-    {/if}
+    <p class="caption">{completed ? 'Completed' : 'Not Completed'}</p>
     {#each todos as todo (todo)}
-      <!-- tuSu -- todo of selected user -->
+      <!-- tuSu -- flag true this is the selected user todo-->
       {@const tuSu = todo.id === id}
       <li
         style:width={'40vw'}
@@ -113,9 +109,9 @@
       >
         <label>
           <input
+            type="checkbox"
             in:receive={{ key: todo.todoId }}
             out:send={{ key: todo.todoId }}
-            type="checkbox"
             class={tuSu ? 'ok-hover' : 'no-hover'}
             checked={todo.completed}
             disabled={!tuSu}
@@ -125,12 +121,12 @@
             }}
           />
           <div class="tooltip-wrapper">
-            <p
+            <div
               class={`${todo.id === id ? 'blue' : 'gray'} ${tuSu ? 'ok-hover' : 'no-hover'}`}
             >
               {todo.title}
-            </p>
-            {todo.content}
+              <p class="todo-content">{todo.content}</p>
+            </div>
             <Tooltip defaultClass="tooltip-todo">
               <p>priority</p>
               <p>{todo.priority}</p>
@@ -224,6 +220,9 @@
       top: -5rem !important;
       background-color: black !important;
       opacity: 1 !important;
+    }
+    .todo-content {
+      color: yellow;
     }
     &:hover {
       cursor: pointer;
