@@ -29,14 +29,14 @@ calling snippets as functions as they are such.
 The parent send snippets as component content, i.e. specifying them
 between the component tags
 &lt;ContactCard&gt;
-	&lcub;#snippet name()&rcub;
-		P. Sherman
-	&lcub;/snippet&rcub;
+  &lcub;#snippet name()&rcub;
+    P. Sherman
+  &lcub;/snippet&rcub;
 
-	&lcub;#snippet address()&rcub;
-		42 Wallaby Way
-		Sydney
-	&lcub;/snippet&rcub;
+  &lcub;#snippet address()&rcub;
+    42 Wallaby Way
+    Sydney
+  &lcub;/snippet&rcub;
 &lt;/ContactCard&gt;
 		</pre>
 

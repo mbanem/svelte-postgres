@@ -59,7 +59,8 @@
   const addAnotherName = (event: MouseEvent | KeyboardEvent) => {
     if (event instanceof KeyboardEvent) {
       if (event.key !== 'Enter') return;
-      messages.push(input_message.value);
+      // @ts-expect-error
+      messages.push(input_message.value.capitalize());
       scroll();
       input_message.value = '';
     }
@@ -293,7 +294,7 @@
 				$effect.pre does not work on adding messages to the div element
 				so we can use scrollTo inside the addListedName method instead
 			</pre>
-    <p>Enter a name to the input below and press Enter to add it t the list</p>
+    <p>Enter a name and press Enter -- we capitalize it and add to the list</p>
     <input
       type="text"
       bind:this={input_message}

@@ -16,7 +16,7 @@
 
   // InputBox props
   let F = $state({
-    ibFirstName: 'Filip',
+    ibFirstName: '',
     ibLastName: '',
     email: '',
     password: '',
@@ -110,8 +110,14 @@
       </label>
     </div>
     <label for="c">
-      Color hsa code
-      <input type="text" id="c" bind:this={elColor} class="input-hsa" />
+      Enter color in some format and press set color
+      <input
+        type="text"
+        id="c"
+        bind:this={elColor}
+        class="input-hsa"
+        value="rgba(48, 223, 32, 0.855)"
+      />
       <!-- setColor based on the above input string -->
       <button onclick={setColor}>set color</button>
     </label>
@@ -152,7 +158,7 @@
   }
   .input-hsa {
     width: 15rem;
-    color: hsla(66, 75%, 50%, 0.855);
+    color: hwb(115 13% 13% / 0.855);
   }
   details {
     color: navy;

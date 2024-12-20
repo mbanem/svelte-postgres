@@ -9,11 +9,20 @@
  * const hex = rgba2hex('rgba(255, 0, 0, 0.5)');
  * ```
  */
-export const rgba2hex = (rgb: string) => {
+const rgba2hex = (rgba: string) => {
+  const getHex = (n: string) => {
+    // in rgba alpha chanel is less then 1 so we parseFloat and then
+    // turn the float into integer by the or operator |
+    // for other numbers we keep is in 255 range using module %
+    let c = parseFloat(n) < 1 ? (parseFloat(n) * 255) | 0 : Number(n) % 255
+    // as the numbers are up to 255 toString(16) could have only one hex digit
+    // so we prepend the number with 0 and return the last two hex digits
+    return ('0'+c.toString(16)).slice(-2)
+  }
   return (
-    '#' +
-    (rgb.replace(/(\s*\/\s*)|[, ]/g, ',').match(/(\d+)/g) as string[])
-      .map((n) => Number(n).toString(16))
+    '#'+
+    (rgba.replace(/(\s*\/\s*)|[, ]/g, ',').match(/(0?\.?\d+)/g) as string[])
+      .map((n) => getHex(n))
       .join('')
   );
 };
@@ -76,7 +85,7 @@ export const hsla2hex = (hsla: string) => {
 export const convertToHexColor = (color: string) => {
   if (color.startsWith('#')) {
     return color;
-  } else if (color.startsWith('rgba')) {
+  } else if (color.startsWith('rgb') || color.startsWith('rgba') ) {
     return rgba2hex(color);
   } else if (color.startsWith('hsla')) {
     return hsla2hex(color);
