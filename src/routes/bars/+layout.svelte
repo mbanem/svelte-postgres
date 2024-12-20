@@ -1,9 +1,11 @@
 <script lang="ts">
+  import { type Snippet } from 'svelte';
+  import { page } from '$app/stores';
   import NavBar from '$components/NavBar.svelte';
   import NavContainer from '$components/NavContainer.svelte';
   import type { TNotification } from '$lib/types/common';
-  import { type Snippet } from 'svelte';
   import { Button, Modal, Label, Input, Checkbox } from 'flowbite-svelte';
+  import * as utils from '$utils';
 
   type ARGS = {
     locals: App.Locals;
@@ -18,7 +20,16 @@
   let password: string;
 
   let { locals, notifications, children }: ARGS = $props();
-
+  let pageName = $state<string>('');
+  $effect(() => {
+    pageName = $page.url.pathname.substring(
+      $page.url.pathname.lastIndexOf('/') + 1,
+    );
+    utils.setCSSValue(
+      '--GRID-LEFT-SIDE-WIDTH',
+      pageName === 'scroll' ? '0' : '40rem',
+    );
+  });
   let navButtonObjects1: TNavButtonObject[] = [
     {
       position: 1,
@@ -160,7 +171,7 @@
 </main>
 <!-- <pre style="font-size:11px;">data {JSON.stringify(data, null, 2)}</pre> -->
 <div class="grid-wrapper">
-  <div>
+  <div class:hidden={pageName === 'scroll'}>
     <pre>
 This 'bars' page implements local +layout.svelte in which 
 below the top navigation bar it adds another navigation bar 
@@ -186,6 +197,9 @@ other navigation buttons
 </div>
 
 <style lang="scss">
+  :root {
+    --GRID-LEFT-SIDE-WIDTH: 40rem;
+  }
   main {
     margin-top: 0.5rem;
   }
@@ -198,7 +212,10 @@ other navigation buttons
   }
   .grid-wrapper {
     display: grid;
-    grid-template-columns: 40rem 1fr;
+    grid-template-columns: var(--GRID-LEFT-SIDE-WIDTH) 1fr;
     align-items: flex-start;
+  }
+  .hidden {
+    display: none;
   }
 </style>
