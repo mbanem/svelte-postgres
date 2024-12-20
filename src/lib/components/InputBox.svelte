@@ -20,7 +20,7 @@
     fontsize?: string;
     type?: string;
     value?: string;
-    err: string[] | undefined;
+    err?: string[] | undefined;
     onButtonNext?: () => void;
   };
   let {

@@ -1,45 +1,53 @@
 <script lang="ts">
-	import { page } from '$app/stores'
-	import { onMount } from 'svelte'
-	import * as utils from '$utils'
+  import { page } from '$app/stores';
+  import { onMount } from 'svelte';
+  import * as utils from '$utils';
 
-	export let callParent: (name: string) => void
-	export const getRandomNumber = () => {
-		return Math.floor(Math.random() * 1000000)
-	}
-	// resize is exported to parent to bind to its
-	// variable and to call on it
-	// it is const function (str) => void
-	export const resize = (msg: string) => {
-		pElement.innerText = pElement.innerText === txt ? msg : txt
-	}
+  export let callParent: (name: string) => void;
+  export const getRandomNumber = () => {
+    return Math.floor(Math.random() * 1000000);
+  };
+  // resize is exported to parent to bind to its
+  // variable and to call on it
+  // it is const function (str) => void
+  export const resize = (msg: string) => {
+    pElement.innerText = pElement.innerText === txt ? msg : txt;
+  };
 
-	let pElement: HTMLParagraphElement
-	let txt =
-		'waiting for parent to trigger greeting from child via resize button or to resize window....'
-	let b = true
+  let pElement: HTMLParagraphElement;
+  let txt =
+    'waiting for parent to trigger greeting from child via resize button or to resize window....';
+  let b = true;
 
-	const getMessage = () => {
-		const msg = b ? 'Greeting from Filip Isakovic' : txt
-		b = !b
-		return msg
-	}
+  const getMessage = () => {
+    const msg = b ? 'Greeting from Filip Isakovic' : txt;
+    b = !b;
+    return msg;
+  };
 
-
-	onMount(() => {
-		return () => {
-			utils.setMrPath($page.url.pathname)
-		}
-	})
+  onMount(() => {
+    return () => {
+      utils.setMrPath($page.url.pathname);
+    };
+  });
 </script>
 
-<button onclick={() => callParent(getMessage())}>child button to call parent</button>
-<p class="info" bind:this={pElement}>{txt}</p>
+<div class="container">
+  <button onclick={() => callParent(getMessage())}
+    >child button to call parent</button
+  >
+  <p class="info" bind:this={pElement}>{txt}</p>
+</div>
 
 <style lang="scss">
-	.info {
-		font-size: 14px;
-		font-style: italic;
-		color: skyblue;
-	}
+  .info {
+    font-size: 14px;
+    font-style: italic;
+    color: skyblue;
+  }
+  .container {
+    @include container('Child Estate', $head-color: lightgreen);
+    margin-top: 1rem;
+    width: 38rem;
+  }
 </style>
