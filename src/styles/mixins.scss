@@ -16,7 +16,7 @@
     background-color: #6e6e6e;
   }
   &::placeholder {
-    color: var(--PLACEHOLDER_COLOR);
+    color: var(--PLACEHOLDER-COLOR);
     font-weight: normal;
   }
 }
@@ -27,7 +27,8 @@
   $color: yellow,
   $background-color: royalblue,
   $border: 2px solid pink,
-  $border-radius: 8px
+  $border-radius: 8px,
+  $font-size:18px
 ) {
   width: $width;
   height: $height;
@@ -35,7 +36,7 @@
   background-color: $background-color;
   border: $border;
   border-radius: $border-radius;
-  font-size: 18px;
+  font-size: $font-size;
   text-align: center;
   line-height: $height;
   overflow: auto;

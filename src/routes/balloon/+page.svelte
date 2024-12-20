@@ -2,11 +2,7 @@
   import Balloon from '$components/Balloon.svelte';
   import Child from '$components/Child.svelte';
   import { sleep } from '$utils';
-  // import { splitColor } from 'gsap';
 
-  // let size = $state(15);
-  // let power = $state(5);
-  // let burst = $state(false);
   type SizePowerBurst = {
     size: number;
     power: number;

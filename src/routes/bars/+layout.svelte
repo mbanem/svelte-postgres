@@ -75,9 +75,9 @@
         role={locals?.user?.role ?? 'VISITOR'}
       />
       <!-- The css class nav-bar-form, defined in the <NavContainer, a component wrapper for <NavBar,
-		should be wrapped by a <label> in order to make the whole form with a button responsive
-		to the mouse click and for cursor the be of type pointer over the whole structure
-	-->
+        should be wrapped by a <label> in order to make the whole form with a button responsive
+        to the mouse click and for cursor to be of type pointer over the whole structure
+      -->
       <label>
         <form class="nav-bar-form" method="GET" action="/register">
           <input id="firstName" name="firstName" value="Filip" class="hidden" />

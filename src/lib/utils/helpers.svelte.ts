@@ -198,7 +198,7 @@ export const id = () => {
 // change placeholder color to red on required messages
 export const setColor = (color: string) => {
   if (browser) {
-    document.documentElement.style.setProperty('--PLACEHOLDER_COLOR', color);
+    document.documentElement.style.setProperty('--PLACEHOLDER-COLOR', color);
     setTextColor('--MESSAGE-COLOR', color === 'red' ? 'pink' : color);
   }
 };

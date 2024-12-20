@@ -14,6 +14,14 @@
   let elColor: HTMLInputElement;
   let canvas: HTMLCanvasElement;
 
+  // InputBox props
+  let F = $state({
+    ibFirstName: 'Filip',
+    ibLastName: '',
+    email: '',
+    password: '',
+  });
+
   /*
   As setColor could be triggered by $effect(setColor) or via button click event
   it has to find the way it is triggered as via event it should read the value
@@ -41,6 +49,7 @@
   $effect(setColor);
 </script>
 
+<pre>{JSON.stringify(F, null, 2)}</pre>
 <svelte:head>
   <title>Floating Label</title>
 </svelte:head>
@@ -76,10 +85,11 @@
     </details>
   </div>
   <div class="container">
-    <InputBox title="First Name"></InputBox>
-    <InputBox title="Last Name"></InputBox>
-    <InputBox title="Email"></InputBox>
-    <InputBox title="Password" type="password"></InputBox>
+    <InputBox title="First Name" bind:value={F.ibFirstName}></InputBox>
+    <InputBox title="Last Name" bind:value={F.ibLastName}></InputBox>
+    <InputBox title="Email" bind:value={F.email}></InputBox>
+    <InputBox title="Password" type="password" bind:value={F.password}
+    ></InputBox>
   </div>
   <div>
     <canvas

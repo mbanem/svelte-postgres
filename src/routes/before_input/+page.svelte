@@ -120,7 +120,7 @@ Input box keystrokes are monitored by 'beforeinput' event handler
     padding: 3px 0 0 1rem;
     margin: 1rem 0 0 5rem;
     &::placeholder {
-      color: var(--PLACEHOLDER_COLOR);
+      color: var(--PLACEHOLDER-COLOR);
       // opacity: 0.6;
     }
   }

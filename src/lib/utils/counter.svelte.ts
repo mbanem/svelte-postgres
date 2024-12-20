@@ -19,7 +19,7 @@ export const getGlobalCounter = () => {
 	return counter
 }
 
-const createGlobalVolume = () => {
+const volumeStore = () => {
 	let volume = $state(0)
 	return {
 		get volume() {
@@ -31,7 +31,7 @@ const createGlobalVolume = () => {
 	}
 }
 
-export const globalVolume = createGlobalVolume()
+export const globalVolume = volumeStore()
 
 // @ts-expect-error
 Number.prototype[Symbol.iterator] = function* () {

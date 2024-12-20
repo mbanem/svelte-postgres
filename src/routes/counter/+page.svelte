@@ -43,6 +43,7 @@
 <svelte:head>
   <title>Counter</title>
 </svelte:head>
+
 <div class="wrapper">
   <pre>
 	Counter component is defined in $lib-utils.counter.svelte.ts
@@ -54,17 +55,6 @@
       onclick={() => (gCounter.count -= 1)}>-</button
     >
 	</pre>
-
-  <Area {width} {height} {pHeight} />
-
-  <div class="dimensions">
-    <label for="w"> rectangle width </label>
-    <input id="w" class="number" type="number" bind:value={width} />
-    <label for="h"> rectangle height </label>
-    <input id="h" class="number" type="number" bind:value={height} />
-    <label for="z"> parallelepiped height </label>
-    <input id="z" class="number" type="number" bind:value={pHeight} />
-  </div>
 
   <pre>
 	We define <span style="color:yellow;">raw</span
@@ -82,21 +72,57 @@
       data-prepend
       onclick={removeFromToFrozen}>remove last from raw</button
     >
-</pre>
+  </pre>
 </div>
 
-<!-- svelte-ignore css_unused_selector -->
+<Area {width} {height} {pHeight} />
+<div class="horizontal-block">
+  <div class="dimensions">
+    <label for="w"> rectangle width </label>
+    <input id="w" class="number" type="number" bind:value={width} />
+    <label for="h"> rectangle height </label>
+    <input id="h" class="number" type="number" bind:value={height} />
+    <label for="z"> parallelepiped height </label>
+    <input id="z" class="number" type="number" bind:value={pHeight} />
+  </div>
+  <div>
+    <pre>
+        const volumeStore = () =&gt; &lcub;
+        let volume = $state(0)
+        return &lcub;
+        get volume() &lcub;
+        return volume
+        &rcub;,
+        set volume(val: number) &lcub;
+        volume = val
+        &rcub;
+        &rcub;
+        &rcub;
+        
+        export const globalVolume = volumeStore()
+    </pre>
+  </div>
+  <div>
+    <pre>
+        The volumeStore is a closure holding volume as a local $store variable.
+        Upon call it returns an object with volume getter and setter.
+        The width,height and pHeight are $props send by parent component,
+        the area is set via $derived(width * height) and the volume closure is set
+        via $effect(() =&gt; &lcub; globalVolume.volume = area * pHeight; &rcub;);
+        It is imported here and an $effect sets globalVolume.volume = area * pHeight;
+		</pre>
+  </div>
+</div>
+
 <style lang="scss'">
   .wrapper {
-    margin: 8px 1rem;
     background-color: #4e4e5e;
     color: white;
-    padding-left: 2rem;
     border-radius: 1rem;
-    /* width: 90vw;
-		height: 80vh;
-		margin: 0;
-		border: none; */
+    width: 90vw;
+    height: 30vh;
+    margin: 0 auto;
+    border: none;
     a {
       text-decoration: none;
       margin: 1rem 0 0 1rem;
@@ -118,6 +144,8 @@
     display: grid;
     width: 13.5rem;
     grid-template-columns: 10rem 3rem;
+    grid-template-rows: 2rem 2rem;
+    margin: 2rem 0 0 2rem;
   }
   .highlighted-array {
     font-size: 20px;
@@ -127,19 +155,12 @@
   [data-prepend] {
     width: 12rem;
   }
-  /* .number, */
-  /* input[type='number'] {
-		width: 3.5rem;
-		height: 1.2rem;
-		font-size: 16px;
-		padding: 4px 0 4px 8px;
-		font-weight: 400;
-		border-radius: 4px;
-		color: lightgreen;
-		background-color: #3e3e3e;
-		&:focus {
-			color: yellow;
-			background-color: #3e3e3e;
-		}
-	} */
+  .horizontal-block {
+    display: grid;
+    grid-template-columns: 15rem 23rem 30rem;
+    width: 90vw;
+    margin-left: 6rem;
+    background-color: #4e4e5e;
+    border-radius: 12px;
+  }
 </style>

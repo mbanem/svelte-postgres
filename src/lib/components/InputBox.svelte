@@ -20,6 +20,7 @@
     fontsize?: string;
     type?: string;
     value?: string;
+    err: string[] | undefined;
     onButtonNext?: () => void;
   };
   let {
@@ -29,6 +30,7 @@
     fontsize = '16px',
     type,
     value = $bindable(),
+    err = undefined,
     onButtonNext,
   }: PROPS = $props();
 
@@ -56,6 +58,9 @@
   // 	}
   // }
   // test()
+  const forward = () => {
+    inputEl.focus();
+  };
 </script>
 
 <div class="input-wrapper">
@@ -65,8 +70,11 @@
     required
     bind:value
     onkeyup={inputCompleted}
+    disabled={false}
   />
-  <label for="">{title}</label>
+  <label for="" onclick={forward} aria-hidden={true}
+    >{title} <span class="err">{err ? ` - ${err}` : ''}</span></label
+  >
 </div>
 
 <style lang="scss">
@@ -99,5 +107,11 @@
         opacity: 1;
       }
     }
+  }
+  .err {
+    color: pink;
+    // border: 1px solid #808080;
+    // border-radius: 3px;
+    padding: 1px 0.5rem;
   }
 </style>

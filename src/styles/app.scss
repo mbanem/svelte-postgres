@@ -10,7 +10,7 @@
   --INPUT-COLOR: #e3e3e3;
   --INPUT-BACKGROUND-COLOR: #3e3e3e;
   --INPUT-FOCUS-COLOR: lightgreen;
-  --PLACEHOLDER_COLOR: #8e8e8e;
+  --PLACEHOLDER-COLOR: #8e8e8e;
 
   --BUTTON-COLOR: #e3e3e3;
   --BUTTON-HOVER-COLOR: rgb(222, 206, 141);
@@ -510,7 +510,7 @@ textarea {
   border: 1px solid gray;
   border-radius: 4px;
   &::placeholder {
-    color: var(--PLACEHOLDER_COLOR);
+    color: var(--PLACEHOLDER-COLOR);
     opacity: 0.6;
   }
   &:hover,
