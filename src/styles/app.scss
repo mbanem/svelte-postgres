@@ -727,9 +727,9 @@ nav a:any-link {
 
 	// EM/REM conversion using px as base
 	@if index(em rem, unit($input)) {
-		$input: floor(strip-unit($input)) * $base-font_size * 1px; // * $base-font-size / 1px;
+		$input: floor(strip-unit($input)) * $base-font-size * 1px; // * $base-font-size / 1px;
 	} @else if index(em rem, $unit) and not unitless($input) {
-		$input: floor(strip-unit($input)) * $base-font_size * 1px;
+		$input: floor(strip-unit($input)) * $base-font-size * 1px;
 	}
 
 	// Bug fix – resolution units seems to be flipped

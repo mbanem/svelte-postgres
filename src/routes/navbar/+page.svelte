@@ -4,7 +4,7 @@
   const items = [
     { color: 'Pink', title: 'Home', href: '/' },
     { color: 'Blue', title: 'Derived', href: '/derived' },
-    { title: 'Scroll', href: '/scroll' }, // make one with no color to use default color -- red
+    { title: 'Scroll', href: '/bars/scroll' }, // make one with no color to use default color -- red
     { color: 'Tomato', title: 'Caterpillar', href: '/caterpillar' },
     { color: 'Green', title: 'Balloon', href: '/balloon' },
     { color: 'Purple', title: 'Render', href: '/render' },

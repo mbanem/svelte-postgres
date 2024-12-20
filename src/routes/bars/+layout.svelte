@@ -22,11 +22,16 @@
   let navButtonObjects1: TNavButtonObject[] = [
     {
       position: 1,
-      title: 'font_size',
-      href: '/font_size',
+      title: 'font size',
+      href: '/bars/font-size',
       condition: 'VISITOR',
     },
-    { position: 2, title: 'scroll', href: '/scroll', condition: 'VISITOR' },
+    {
+      position: 2,
+      title: 'scroll',
+      href: '/bars/scroll',
+      condition: 'VISITOR',
+    },
   ];
   let navButtonObjects2: TNavButtonObject[] = [
     // { position: 4, title: 'news', href: '/news', condition: 'VISITOR' },
@@ -157,14 +162,22 @@
 <div class="grid-wrapper">
   <div>
     <pre>
-	This 'bars' page implements local +layout.svelte in which below the top navigation bar 
-	it adds another navigation bar with NavContainer component.
-	The NavContainer component in local +layout.svelte renders 
-		1) NavBar, which gets $props() of TNavButtonObject[] array -- font_size, scroll, 
-		2) next, the local +layout.svelte inserts a form method='POST' action="/register"
-		with a new 'register' button to submit to the register page, and then
-		3) new NavBar with TNavButtonObject[] array -- pavlovci, notifications and filter.
-	So NavContainer can mix form buttons between other navigation buttons
+This 'bars' page implements local +layout.svelte in which 
+below the top navigation bar it adds another navigation bar 
+with NavContainer component.
+The NavContainer component in local +layout.svelte renders 
+  1) NavBar, getting $props() of TNavButtonObject[] array 
+     -- fontsize, scroll, 
+  2) the local +layout.svelte inserts a form method='POST' 
+     action="/register"
+     with a new 'register' button to submit to the register 
+     page, and then
+  3) new NavBar with TNavButtonObject[] 
+      -- pavlovci, notifications and filter.
+  4) a Font Size button for searchable font list 
+      with values in different formats
+So NavContainer can mix form buttons among 
+other navigation buttons
 		</pre>
   </div>
   <div>
@@ -185,7 +198,7 @@
   }
   .grid-wrapper {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 40rem 1fr;
     align-items: flex-start;
   }
 </style>
