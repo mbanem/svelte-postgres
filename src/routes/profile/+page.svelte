@@ -82,6 +82,9 @@
   //
   $effect(() => {
     bio = getBio(selectedUserId) as Bio;
+    if (wrongUser) {
+      snap_bio = '';
+    }
   });
   let bioIsRequired = '';
   // form?.message cannot be cleared by code but could be ignored when required
