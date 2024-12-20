@@ -50,6 +50,11 @@
           : 'pink'
         : 'lightgreen',
     );
+    if (wrongUser) {
+      setTimeout(() => {
+        clearForm();
+      }, 300);
+    }
   });
 
   // keep message displayed for several seconds
@@ -67,10 +72,9 @@
     event?.preventDefault();
     utils.shallowCopy(initialSnap, snap);
     snap.authorId = data.locals.user.id;
-
+    utils.hideButtonsExceptFirst([btnCreate, btnUpdate, btnDelete]);
     setSelectedOptions([], requiredCategory);
     utils.setColor('lightgreen');
-    utils.hideButtonsExceptFirst([btnCreate, btnUpdate, btnDelete]);
   };
 
   const required = {
