@@ -68,6 +68,9 @@
       console.error('event.target is not an HTMLInputElement');
     }
   };
+  let thePermission = $derived(
+    hasPermission(users[firstName as keyof typeof users], permission, authorId),
+  );
 </script>
 
 <div class="wrapper">
@@ -115,12 +118,11 @@
     {#if Object.keys(users).includes(firstName)}
       <p>
         Does <span>{firstName}</span> has permission for {permission}?
-        <span class="has-permission">
-          {hasPermission(
-            users[firstName as keyof typeof users],
-            permission,
-            authorId,
-          )}
+        <span
+          class:has-permission={thePermission}
+          class:warning={!thePermission}
+        >
+          {thePermission}
         </span>
       </p>
     {:else}
@@ -159,7 +161,7 @@
   .container {
     @include container(
       'Handling Permissions -- Web Dev Simplified',
-      $head-color: lightgreen
+      $head-color: skyblue
     );
     height: 10rem;
     margin: 4rem 0 0 3rem;
