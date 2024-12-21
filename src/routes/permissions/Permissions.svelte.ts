@@ -1,4 +1,4 @@
-type User = {
+type TUser = {
   id: string;
   firstName: string;
   lastName: string;
@@ -32,7 +32,7 @@ const ROLES = {
 // includes given permission "create"comments
 
 export const hasPermission = (
-  user: User,
+  user: TUser,
   permission: Permission,
   authorId?: string | number,
 ) => {

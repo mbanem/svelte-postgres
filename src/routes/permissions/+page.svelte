@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { setCSSValue } from '$lib/utils';
   import { hasPermission } from './Permissions.svelte';
   /* 
 		we usually have value/text pairs for options but we can use 
@@ -8,21 +7,21 @@
 		but then, like here, we can use additional properties to set
 		condition for selected option attribute, e.g. ADMIN
 	*/
-  type Option = {
-    id: number;
-    value: string;
-    role: string;
-  };
+  // type TRole = 'VISITOR' | 'USER' | 'ADMIN';
+  // type Option = {
+  //   id: number;
+  //   value: string;
+  //   role: TRole[];
+  // };
 
-  let options: Option[] = [
-    { id: 4, value: '2019', role: 'USER' },
-    { id: 3, value: '2018', role: 'USER' },
-    { id: 2, value: '2023', role: 'USER' },
-    { id: 1, value: '2016', role: 'ADMIN' },
-  ];
+  // let options: Option[] = [
+  //   { id: 4, value: '2019', role: ['VISITOR', 'ADMIN'] },
+  //   { id: 3, value: '2018', role: ['VISITOR', 'ADMIN'] },
+  //   { id: 2, value: '2023', role: ['VISITOR', 'ADMIN'] },
+  //   { id: 1, value: '2024', role: ['VISITOR', 'USER', 'ADMIN'] },
+  // ];
 
   let selected_id = $state(2);
-  let selected = $derived(options.find((o) => o.role === 'ADMIN'));
   const authorId = 12345678;
   // --------------------------------------------------------------
   let firstName = $state('');
@@ -34,11 +33,12 @@
     lastName: string;
     role: string;
   };
-  type Users = { name: keyof typeof users; user: TUser };
-  const users = {
+  // type Users = { name: keyof typeof users; user: TUser };
+
+  const users: Record<string, TUser> = {
     matia: {
       id: '12345678',
-      firstName: 'Filip',
+      firstName: 'Matia',
       lastName: 'Isakovic',
       role: 'admin',
     },
@@ -54,25 +54,39 @@
       lastName: 'MIlutinovic',
       role: 'visitor',
     },
+    Mia: {
+      id: '12345678',
+      firstName: 'Mia',
+      lastName: 'MIlutinovic',
+      role: 'moderator',
+    },
   } as const;
-  const firstNameOnChange = (event: KeyboardEvent) => {
-    if (event.target instanceof HTMLInputElement) {
-      if (Object.keys(users).includes(event.target.value)) {
-        // setCSSValue('--FIRST-NAME-BACKGROUND-COLOR', '#3e3e3e');
-        firstName = event.target.value;
-      } else {
-        // setCSSValue('--FIRST-NAME-BACKGROUND-COLOR', 'pink');
-        firstName = '';
-      }
-    } else {
-      console.error('event.target is not an HTMLInputElement');
-    }
-  };
-  let thePermission = $derived(
-    hasPermission(users[firstName as keyof typeof users], permission, authorId),
+  // let selected = $derived(options.find((o) => o.role === 'ADMIN'));
+  let selected = $derived(
+    Object.values(users).filter(
+      (u) => u.firstName.toLowerCase() === firstName.toLowerCase(),
+    )[0],
   );
+
+  let thePermission = $derived(
+    hasPermission(
+      users[firstName as keyof typeof users] as TUser,
+      permission,
+      authorId,
+    ),
+  );
+  const checkPermission = (event: MouseEvent) => {
+    const span = event.target as HTMLSpanElement;
+    const spans = span.parentNode?.childNodes;
+    spans?.forEach((span) => {
+      (span as HTMLSpanElement).style.backgroundColor = 'navy';
+    });
+    (span as HTMLSpanElement).style.backgroundColor = 'blue';
+    permission = (event.target as HTMLSpanElement)?.innerText;
+  };
 </script>
 
+<!-- <p>{firstName}</p> -->
 <div class="wrapper">
   <div>
     <pre>
@@ -115,45 +129,65 @@
 </pre>
   </div>
   <div class="container">
-    {#if Object.keys(users).includes(firstName)}
-      <p>
-        Does <span>{firstName}</span> has permission for {permission}?
-        <span
-          class:has-permission={thePermission}
-          class:warning={!thePermission}
-        >
-          {thePermission}
-        </span>
-      </p>
-    {:else}
-      <p class="warning">Please enter proper first name</p>
-    {/if}
-    <input
-      type="text"
-      onkeyup={firstNameOnChange}
-      placeholder="enter firstName"
-    />
-    <input
-      type="text"
-      bind:value={permission}
-      placeholder="enter permission as action:object"
-    />
+    <div>
+      {#if Object.keys(users).includes(firstName)}
+        <p>
+          Does <span>{firstName}</span> has permission for {permission}?
+          <span
+            class:has-permission={thePermission}
+            class:warning={!thePermission}
+          >
+            {thePermission}
+          </span>
+        </p>
+      {:else}
+        <p class="warning">Please select a User</p>
+      {/if}
+      <!-- <input
+        type="text"
+        onkeyup={firstNameOnChange}
+        placeholder="enter firstName"
+      /> -->
+      <select bind:value={firstName}>
+        <option value="">Select a User</option>
+        {#each Object.entries(users) as [k, v]}
+          <option value={k}>{v.firstName} {v.lastName}</option>
+        {/each}
+      </select>
+      <input
+        type="text"
+        bind:value={permission}
+        placeholder="enter permission as action:object"
+      />
 
-    <select bind:value={selected_id}>
-      {#each options as option}
-        <option value={option.id}>{option.value}</option>
-      {/each}
-    </select>
-    <p>
-      Selected {JSON.stringify(selected)}
-    </p>
+      <!-- <select bind:value={selected_id}>
+        {#each options as option}
+          <option value={option.id}>{option.value}</option>
+        {/each}
+      </select> -->
+    </div>
+    <pre><p
+        onclick={checkPermission}
+        aria-hidden={true}
+        class="permission-block"
+        style={`display:${firstName ? 'block' : 'none'}`}><span
+          style="background-color:blue">view:comments</span
+        ><span>create:comments</span><span>update:comments</span><span
+          >delete:comments</span
+        ></p>
+    </pre>
+    <div class="json-block">
+      {#if selected}
+        <pre>
+Permissions (click permission button below to check for that permission)
+{JSON.stringify(selected, null, 2)}
+        </pre>
+      {/if}
+    </div>
   </div>
 </div>
 
 <style lang="scss">
-  // :root {
-  //   --FIRST-NAME-BACKGROUND-COLOR: #3e3e3e;
-  // }
   .wrapper {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -163,9 +197,8 @@
       'Handling Permissions -- Web Dev Simplified',
       $head-color: skyblue
     );
-    height: 10rem;
-    margin: 4rem 0 0 3rem;
-    padding: 1rem;
+    height: 22rem;
+    margin: 1rem 0 0 3rem;
   }
   select {
     width: max-content;
@@ -183,7 +216,7 @@
   }
   input {
     width: 12rem;
-    background-color: var(--FIRST-NAME-BACKGROUND-COLOR);
+    background-color: #3e3e3e;
   }
   span {
     color: yellow;
@@ -193,5 +226,27 @@
   }
   .warning {
     color: pink;
+  }
+  .json-block {
+    margin-top: -5rem;
+  }
+  .permission-block {
+    span {
+      border: 1px solid gray;
+      border-radius: 5px;
+      padding: 2px 0.5rem;
+      cursor: pointer;
+      color: white;
+      /* big line-height to cover all area for mouse click to be detected
+        as with small values click must be done over the text itself
+        not outside text as padding make area bigger
+      */
+      line-height: 2rem;
+      background-color: navy;
+      margin-top: -3rem;
+    }
+  }
+  .blue-background {
+    background-color: blue;
   }
 </style>
