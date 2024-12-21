@@ -36,13 +36,13 @@
   // type Users = { name: keyof typeof users; user: TUser };
 
   const users: Record<string, TUser> = {
-    matia: {
+    Matia: {
       id: '12345678',
       firstName: 'Matia',
       lastName: 'Isakovic',
       role: 'admin',
     },
-    filip: {
+    Filip: {
       id: '12345678',
       firstName: 'Filip',
       lastName: 'Isakovic',
@@ -131,8 +131,9 @@
   <div class="container">
     <div>
       {#if Object.keys(users).includes(firstName)}
-        <p>
-          Does <span>{firstName}</span> has permission for {permission}?
+        <p class="user-permission-line">
+          Does <span>{firstName}</span> has permission for
+          <span>{permission}?</span>
           <span
             class:has-permission={thePermission}
             class:warning={!thePermission}
@@ -248,5 +249,14 @@ Permissions (click permission button below to check for that permission)
   }
   .blue-background {
     background-color: blue;
+  }
+  .user-permission-line {
+    line-height: 2rem;
+    span {
+      font-size: 1.3rem;
+      &:last-child {
+        font-size: 1.6rem;
+      }
+    }
   }
 </style>
