@@ -110,7 +110,7 @@
 			lastName: 'Milutinovic',
 			role: 'visitor'
 		&rcub;,
-	} as const;
+	&rcub; as const;
   So to access role of the first user we use:
     users[item as keyof typeof users].role
   where item is either 'filip','matia' or 'Marko' taking care of case-sensitivity
@@ -126,7 +126,7 @@
   as <i>keyof typeof users</i> is <span>"filip" | "Marko" | "matia"</span
       > and only those strings are acceptable 
   no matter what string we enter in the input box 
-</pre>
+    </pre>
   </div>
   <div class="container">
     <div>
@@ -182,7 +182,7 @@
         <pre>
 Permissions (click permission button below to check for that permission)
 {JSON.stringify(selected, null, 2)}
-        </pre>
+      </pre>
       {/if}
     </div>
   </div>
