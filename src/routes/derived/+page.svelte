@@ -252,7 +252,7 @@ clicking faster increases speed on every click
 <button style="width:8rem" onclick={toggleCounter}>stop&nbsp;counter</button>
 
 <!-- svelte-ignore css_unused_selector -->
-<style lang="scss'">
+<style lang="scss">
   .absolute {
     /* position: absolute;
 		top: 4rem;

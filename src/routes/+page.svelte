@@ -48,7 +48,8 @@
 
 <!-- <pre style="font-size:11px;">data {JSON.stringify(data, null, 2)}</pre> -->
 <div class="wrapper">
-  <pre>
+  <div>
+    <pre>
     the Counter component is defined in /$lib-utils/counter.svelte.ts.
 		Its constructor function createCounter() is exposed and can be called 
 		to deliver an instance of the counter, which is then in a local scope 
@@ -67,28 +68,44 @@
 		In this app in the Counter page (click on Counter in navigation bar) we use
 		the same counter there, and as it is global both pages could change its count
 		and navigating anywhere will preserve the count in this global counter.
-  </pre>
-  <button onclick={counter.increment}>
-    clicks: {counter.count}
-  </button>
-  <button onclick={counter.decrement}> decrement </button>
+    </pre>
+    <div style="margin-left:10rem;">
+      {#each todos.asArray() as todo}
+        <p>{todo.text} {todo.done}</p>
+      {/each}
+    </div>
+  </div>
 
-  <p>Global counter {gCounter.count} is equal across the pages</p>
-  <button onclick={() => (gCounter.count += 1)}>+</button>
-  <button onclick={() => (gCounter.count -= 1)}>-</button>
-  {#each todos.asArray() as todo}
-    <p>{todo.text} {todo.done}</p>
-  {/each}
+  <div>
+    <div class="local-counter">
+      <button onclick={counter.increment}>
+        clicks: {counter.count}
+      </button>
+      <button onclick={counter.decrement}> decrement </button>
+    </div>
+    <div class="global-counter">
+      Global counter <span
+        style="font-size: 24px;color: yellow;font-family:helvetica;"
+        >{gCounter.count}</span
+      >
+      is equal across the pages<br />
+      <button onclick={() => (gCounter.count += 1)}>+</button>
+      <button onclick={() => (gCounter.count -= 1)}>-</button>
+    </div>
+  </div>
 </div>
 
 <!-- svelte-ignore css_unused_selector -->
-<style lang="scss'">
+<style lang="scss">
   .wrapper {
-    margin: 2rem 3rem 0 3rem;
+    /* margin: 0 3rem 0 3rem;
     background-color: #4e4e5e;
     color: white;
-    padding: 1rem 0 1rem 3rem;
-    border-radius: 1rem;
+    padding: 0 0 1rem 3rem;
+    border-radius: 1rem; */
+    width: 80vw;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
     /* width: 90vw;
 		height: 80vh;
 		margin: 0;
@@ -106,5 +123,16 @@
         border-color: yellow;
       }
     }
+  }
+  .local-counter {
+    @include container($head: 'Local Counter', $head-color: skyblue);
+    margin: 2rem 0 0 2rem;
+  }
+  .global-counter {
+    @include container($head: 'Global Counter', $head-color: lightgreen);
+    margin: 2rem 0 0 2rem;
+  }
+  pre {
+    padding: 0;
   }
 </style>

@@ -50,12 +50,13 @@
 	and can be used across the app, here in /counter/+page.svelte
 		<button onclick={counter.increment}>clicks: {counter.count}</button> <button
       onclick={counter.decrement}> decrement </button>
-	Global counter {gCounter.count} is equal across the pages
+  <div class="global-container">
+    Global counter <span>{gCounter.count}</span> is equal across the pages
 		<button onclick={() => (gCounter.count += 1)}>+</button> <button
-      onclick={() => (gCounter.count -= 1)}>-</button
-    >
+        onclick={() => (gCounter.count -= 1)}>-</button
+      >
+  </div>
 	</pre>
-
   <pre>
 	We define <span style="color:yellow;">raw</span
     > = $state.raw([100, 101, 102]) that could only be reassigned/replaced
@@ -114,7 +115,7 @@
   </div>
 </div>
 
-<style lang="scss'">
+<style lang="scss">
   .wrapper {
     background-color: #4e4e5e;
     color: white;
@@ -123,19 +124,19 @@
     height: 30vh;
     margin: 0 auto;
     border: none;
-    a {
-      text-decoration: none;
-      margin: 1rem 0 0 1rem;
-      padding: 5px 1rem;
-      border: 1px solid transparent;
-      border-radius: 5px;
-      color: white;
-      background-color: #6e6e8e;
-      &:hover {
-        color: yellow;
-        border-color: yellow;
-      }
-    }
+    // a {
+    //   text-decoration: none;
+    //   margin: 1rem 0 0 1rem;
+    //   padding: 5px 1rem;
+    //   border: 1px solid transparent;
+    //   border-radius: 5px;
+    //   color: white;
+    //   background-color: #6e6e8e;
+    //   &:hover {
+    //     color: yellow;
+    //     border-color: yellow;
+    //   }
+    // }
   }
   button {
     display: inline-block;
@@ -162,5 +163,14 @@
     margin-left: 6rem;
     background-color: #4e4e5e;
     border-radius: 12px;
+  }
+  .global-container {
+    @include container($head: 'Global Container', $head-color: lightgreen);
+    margin: 0;
+    padding: 0 2rem 0 0;
+    span {
+      font-size: 24px;
+      color: yellow;
+    }
   }
 </style>

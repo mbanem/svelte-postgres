@@ -12,7 +12,12 @@ const navButtonObjects = [
   { position: '15', title: 'profile', condition: 'USER' },
   { position: '20', title: 'todo', condition: 'USER' },
   { position: '21', title: 'post', condition: 'USER' },
-  { position: '25', title: 'scroll', condition: 'VISITOR' },
+  {
+    position: '25',
+    title: 'scroll',
+    href: '/bars/scroll',
+    condition: 'VISITOR',
+  },
   { position: '30', title: 'flip', condition: 'USER' },
   { position: '32', title: 'snippet', condition: 'VISITOR' },
   { position: '33', title: 'render', condition: 'VISITOR' },

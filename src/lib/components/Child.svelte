@@ -18,7 +18,7 @@
 </div>
 
 <!-- svelte-ignore css_unused_selector -->
-<style lang="scss'">
+<style lang="scss">
   .wrapper {
     display: flex;
     gap: 4px;

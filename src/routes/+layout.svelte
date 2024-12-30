@@ -55,7 +55,7 @@
 <!-- </div> -->
 
 <!-- svelte-ignore css_unused_selector -->
-<style lang="scss'">
+<style lang="scss">
   .hidden {
     display: none;
   }

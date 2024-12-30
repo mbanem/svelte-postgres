@@ -15,7 +15,7 @@
     { color: 'Yellow', title: 'Duck-Goose', href: '/duck-goose' },
     { color: 'Rebeccapurple', title: 'Themes', href: '/themes' },
     { color: 'Red', title: 'Floating Labels', href: '/floating-label' },
-    { color: 'LightGreen', title: 'Before-Input', href: '/beforeinput' },
+    { color: 'LightGreen', title: 'Before-Input', href: '/before-input' },
     { color: 'Pink', title: 'A-Button', href: '/a-button' },
     { color: 'Green', title: 'Box', href: '/box' },
     { color: 'Yellow', title: 'Detail Summary', href: '/detail-summary' },
