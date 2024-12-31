@@ -1,6 +1,8 @@
 <script lang="ts">
   import { flip } from 'svelte/animate';
   import { crossfade } from 'svelte/transition';
+  import InsetButtons from './inset-buttons.svelte';
+
   const [send, receive] = crossfade({ duration: 1000 });
 
   let left = ['red', 'orange', 'green', 'purple'];
@@ -26,8 +28,13 @@
   <title>Opposite Lists</title>
 </svelte:head>
 <main class="main-class">
-  <p>Click a button to move it to the opposite list.</p>
+  <div>
+    <InsetButtons></InsetButtons>
+  </div>
   <div class="grid-block">
+    <div class="first-grid-row">
+      Click a button to move it<br /> to the opposite list.
+    </div>
     <div class="list">
       {#each left as item (item)}
         <button
@@ -62,18 +69,26 @@
 
 <style lang="scss">
   .main-class {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
     border: 1px solid gray;
     border-radius: 8px;
-    width: 20rem;
+    width: 44rem;
     margin: 0 auto;
     margin-top: 3rem;
     text-align: center;
   }
   .grid-block {
     display: grid;
-    margin: 0 auto;
-    margin-left: 4rem;
+    // margin: 0 auto;
+    // margin-left: 4rem;
+    width: max-content;
     grid-template-columns: 1fr 1fr;
+    margin-left: 3rem;
+    .first-grid-row {
+      grid-column: 1/3;
+      margin: 1rem 2rem 1rem 0;
+    }
   }
   button {
     // background-color: cornflowerblue;

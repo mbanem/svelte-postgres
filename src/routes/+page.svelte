@@ -142,7 +142,7 @@
     color: white;
     padding: 0 0 1rem 3rem;
     border-radius: 1rem; */
-    width: 80vw;
+    width: 60vw;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     // margin: 0;
