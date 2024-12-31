@@ -70,16 +70,20 @@
             <li>parents</li>
             <ul>
               <li>
-                father: {members['parents']['father']}
+                father: &nbsp; <span style="color:lightgreen"
+                  >{members['parents']['father']}</span
+                >
               </li>
               <li>
-                mother: {members['parents']['mother']}
+                mother: <span style="color:lightgreen"
+                  >{members['parents']['mother']}</span
+                >
               </li>
             </ul>
             <li>children</li>
             <ul>
               {#each members['children'] as child}
-                <li>{child}</li>
+                <li style="color:skyblue;">{child}</li>
               {/each}
             </ul>
           </ul>
