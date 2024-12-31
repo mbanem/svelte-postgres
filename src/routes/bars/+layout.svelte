@@ -85,15 +85,10 @@
 <main>
   <div class="navbar-wrapper">
     <NavContainer>
-      <NavBar
-        z_index={2}
-        navButtonObjects={navButtonObjects1}
-        role={locals?.user?.role ?? 'VISITOR'}
-      />
       <!-- The css class nav-bar-form, defined in the <NavContainer, a component wrapper for <NavBar,
-        should be wrapped by a <label> in order to make the whole form with a button responsive
+      should be wrapped by a <label> in order to make the whole form with a button responsive
         to the mouse click and for cursor to be of type pointer over the whole structure
-      -->
+        -->
       <label>
         <form class="nav-bar-form" method="GET" action="/register">
           <input id="firstName" name="firstName" value="Filip" class="hidden" />
@@ -115,9 +110,18 @@
             value="incorrect"
             class="hidden"
           />
-          <button type="submit" formaction="/register">Register</button>
+          <button
+            style="padding:0;margin-top:2px;height:08.rem !important;"
+            type="submit"
+            formaction="/register">Register</button
+          >
         </form>
       </label>
+      <NavBar
+        z_index={2}
+        navButtonObjects={navButtonObjects1}
+        role={locals?.user?.role ?? 'VISITOR'}
+      />
       <NavBar
         z_index={2}
         navButtonObjects={navButtonObjects2}
@@ -178,11 +182,11 @@ below the top navigation bar it adds another navigation bar
 with NavContainer component.
 The NavContainer component in local +layout.svelte renders 
   1) NavBar, getting $props() of TNavButtonObject[] array 
-     -- fontsize, scroll, 
+    -- fontsize, scroll, 
   2) the local +layout.svelte inserts a form method='POST' 
-     action="/register"
-     with a new 'register' button to submit to the register 
-     page, and then
+    action="/register"
+    with a new 'register' button to submit to the register 
+    page, and then
   3) new NavBar with TNavButtonObject[] 
       -- pavlovci, notifications and filter.
   4) a Font Size button for searchable font list 

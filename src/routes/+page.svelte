@@ -24,29 +24,70 @@
 
   const gCounter = getGlobalCounter();
 
-  // local todos destroyed on page unmount
-  // const todos = new Todos();
-  const todos = getGlobalTodos();
-  if (todos.length == 0) {
-    const family = [
-      'Filip Isakovic',
-      'Matia Isakovic',
-      'Ljubomir Isakovic',
-      'Snezana Isakovic',
-      'Marko Milutinovic',
-      'Mia Milutinovic',
-      'Tanja Milutinovic',
-      'Ljuban Milutinovic',
-    ];
-    family.forEach((member, index) => {
-      todos.set(index, member, Math.random() < 0.5);
-    });
-  }
+  const family = {
+    Isakovic: {
+      parents: {
+        father: 'Ljubomir',
+        mother: 'Snezana',
+      },
+      children: ['Matia', 'Filip'],
+    },
+    Milutinovic: {
+      parents: {
+        father: 'Ljuban',
+        mother: 'Tanja',
+      },
+      children: ['Mia', 'Marko'],
+    },
+    Kotur: {
+      parents: {
+        father: 'Zeljko',
+        mother: 'Dragana',
+      },
+      children: ['Bojana', 'Nikola'],
+    },
+    Krsmanovic: {
+      parents: {
+        father: 'Sasa',
+        mother: 'Mirjana',
+      },
+      children: ['Jovana', 'Milica'],
+    },
+  };
+
   // const arr = todos.asArray();
   // arr.forEach((member) => console.log(member));
 </script>
 
 <!-- <pre style="font-size:11px;">data {JSON.stringify(data, null, 2)}</pre> -->
+{#snippet listFamily()}
+  <div class="family-container">
+    <ul>
+      <div>
+        {#each Object.entries(family) as [lastName, members]}
+          <li class="last-name">{`The ${lastName}'s`}</li>
+          <ul>
+            <li>parents</li>
+            <ul>
+              <li>
+                father: {members['parents']['father']}
+              </li>
+              <li>
+                mother: {members['parents']['mother']}
+              </li>
+            </ul>
+            <li>children</li>
+            <ul>
+              {#each members['children'] as child}
+                <li>{child}</li>
+              {/each}
+            </ul>
+          </ul>
+        {/each}
+      </div>
+    </ul>
+  </div>
+{/snippet}
 <div class="wrapper">
   <div>
     <pre>
@@ -69,11 +110,6 @@
 		the same counter there, and as it is global both pages could change its count
 		and navigating anywhere will preserve the count in this global counter.
     </pre>
-    <div style="margin-left:10rem;">
-      {#each todos.asArray() as todo}
-        <p>{todo.text} {todo.done}</p>
-      {/each}
-    </div>
   </div>
 
   <div>
@@ -84,32 +120,29 @@
       <button onclick={counter.decrement}> decrement </button>
     </div>
     <div class="global-counter">
-      Global counter <span
-        style="font-size: 24px;color: yellow;font-family:helvetica;"
-        >{gCounter.count}</span
-      >
+      Global counter <span class="counter-line">{gCounter.count}</span>
       is equal across the pages<br />
       <button onclick={() => (gCounter.count += 1)}>+</button>
       <button onclick={() => (gCounter.count -= 1)}>-</button>
     </div>
+    {@render listFamily()}
   </div>
+  <!-- {@render listFamily()} -->
 </div>
 
 <!-- svelte-ignore css_unused_selector -->
 <style lang="scss">
   .wrapper {
-    /* margin: 0 3rem 0 3rem;
-    background-color: #4e4e5e;
+    margin: 4rem 2rem 0 3rem;
+    /*background-color: #4e4e5e;
     color: white;
     padding: 0 0 1rem 3rem;
     border-radius: 1rem; */
     width: 80vw;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    /* width: 90vw;
-		height: 80vh;
-		margin: 0;
-		border: none; */
+    // margin: 0;
+
     a {
       text-decoration: none;
       margin: 1rem 0 0 1rem;
@@ -126,13 +159,38 @@
   }
   .local-counter {
     @include container($head: 'Local Counter', $head-color: skyblue);
-    margin: 2rem 0 0 2rem;
+    margin: 0 0 0 3rem;
+    width: 25rem;
+  }
+  .family-container {
+    @include container($head: 'Our Family', $head-color: skyblue);
+    margin: 1rem 0 0 3rem;
+    width: 25rem;
   }
   .global-counter {
     @include container($head: 'Global Counter', $head-color: lightgreen);
-    margin: 2rem 0 0 2rem;
+    margin: 2rem 0 0 3rem;
+    width: 25rem !important;
   }
   pre {
     padding: 0;
+    margin: 0;
+  }
+  .counter-line {
+    display: inline-block;
+    margin-bottom: 10px;
+    font-size: 24px;
+    color: yellow;
+    font-family: helvetica;
+  }
+  ul {
+    list-style: none;
+    // padding: 0;
+    margin: 0;
+  }
+  .last-name {
+    font-size: 20px;
+    font-style: italic;
+    color: yellowgreen;
   }
 </style>
