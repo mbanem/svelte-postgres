@@ -84,6 +84,14 @@
     (span as HTMLSpanElement).style.backgroundColor = 'blue';
     permission = (event.target as HTMLSpanElement)?.innerText;
   };
+  let viewSpanButton: HTMLSpanElement;
+  const clearSelectedPermission = () => {
+    let spans = document.querySelector('.permission-block')?.childNodes;
+    spans?.forEach((span) => {
+      (span as HTMLSpanElement).style.backgroundColor = 'navy';
+    });
+    viewSpanButton.click();
+  };
 </script>
 
 <!-- <p>{firstName}</p> -->
@@ -149,7 +157,7 @@
         onkeyup={firstNameOnChange}
         placeholder="enter firstName"
       /> -->
-      <select bind:value={firstName}>
+      <select bind:value={firstName} onchange={clearSelectedPermission}>
         <option value="">Select a User</option>
         {#each Object.entries(users) as [k, v]}
           <option value={k}>{v.firstName} {v.lastName}</option>
@@ -172,6 +180,7 @@
         aria-hidden={true}
         class="permission-block"
         style={`display:${firstName ? 'block' : 'none'}`}><span
+          bind:this={viewSpanButton}
           style="background-color:blue">view:comments</span
         ><span>create:comments</span><span>update:comments</span><span
           >delete:comments</span
