@@ -10,9 +10,9 @@
 -->
 
 <script lang="ts">
+  import * as utils from '$utils';
   import { onMount } from 'svelte';
   import Error from '$routes/+error.svelte';
-  import * as utils from '$utils';
   type PROPS = {
     title: string;
     width?: string;
@@ -34,6 +34,8 @@
     onButtonNext,
   }: PROPS = $props();
 
+  const topPosition = `${-1 * Math.floor(parseInt(fontsize) / 3)}px`;
+  utils.setCSSValue('--INPUT-BOX-LABEL-TOP-POS', topPosition);
   let inputEl: HTMLInputElement;
   export const setFocus = () => {
     inputEl.focus();
@@ -86,6 +88,7 @@
       transform: translateY(-50%);
       top: calc(var(--INPUT-COMRUNNER-HEIGHT) * 0.5);
       left: 15px;
+      font-size: var(--INPUT-COMRUNNER-FONT-SIZE);
       color: var(--INPUT-COLOR);
       background-color: var(--INPUT-BACKGROUND-COLOR);
       opacity: 0.5;
@@ -102,8 +105,8 @@
       }
       &:focus ~ label,
       &:valid ~ label {
-        top: -2px;
-        font-size: 14px;
+        top: var(--INPUT-BOX-LABEL-TOP-POS);
+        font-size: var(--INPUT-COMRUNNER-FONT-SIZE);
         opacity: 1;
       }
     }

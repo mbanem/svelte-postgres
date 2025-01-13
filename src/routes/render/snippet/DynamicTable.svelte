@@ -5,8 +5,10 @@
   // );
   // Snippet is a construct that is imported from svelte
   import type { Snippet } from 'svelte';
+  import * as utils from '$utils';
 
   // snippets could accept parameters so we define their types
+  // we render two tables Fruit and Employees
   type Fruit = {
     name: string;
     quantity: number;
@@ -20,6 +22,8 @@
   };
 
   type Data = Fruit | Employee;
+  let fruitUrl: SvelteURL;
+  let employeeUrl: SvelteURL;
   // header snippet gets no parameters so it is of type Snippet
   // while row snippet works on Fruit or Employee and is so
   // defined as Snippet<Fruit|Employee>
@@ -30,8 +34,17 @@
     s_url?: string;
   };
   let { data, header, row, s_url }: PROPS = $props();
-  let url = $derived(s_url === undefined ? '' : new SvelteURL(s_url));
-  //
+  let url = $derived(
+    s_url === undefined ? '' : new SvelteURL(s_url),
+  ) as SvelteURL;
+
+  // if (utils.isKeyOf('price', data[0])) {
+  if (Object.keys(data[0] as Data).includes('price')) {
+    fruitUrl = url;
+  } else {
+    employeeUrl = url;
+  }
+
   let table = Object.keys(data[0] as Fruit | Employee).includes('price')
     ? 'table-fruit'
     : 'table-employee';
@@ -39,20 +52,28 @@
 
 <div class={table}>
   {@render header()}
-  {#each data as item}
-    {@render row(item)}
-  {/each}
+  <!-- {#each data as item} -->
+  {@render row(data)}
+  <!-- {/each} -->
 </div>
 
-{#if url}
-  <p>href</p>
-  <input bind:value={url.href} /><br />
-  <p>protocol</p>
-  <input bind:value={url.protocol} /><br />
-  <p>hostname</p>
-  <input bind:value={url.hostname} /><br />
-  <p>pathname</p>
-  <input bind:value={url.pathname} /><br />
+{#snippet snippet_url(url: SvelteURL)}
+  <div style="margin-top:2rem;">
+    <p>href</p>
+    <input bind:value={url.href} /><br />
+    <p>protocol</p>
+    <input bind:value={url.protocol} /><br />
+    <p>hostname</p>
+    <input bind:value={url.hostname} /><br />
+    <p>pathname</p>
+    <input bind:value={url.pathname} /><br />
+  </div>
+{/snippet}
+
+{#if Object.keys(data[0] as Data).includes('price')}
+  {@render snippet_url(fruitUrl)}
+{:else}
+  {@render snippet_url(employeeUrl)}
 {/if}
 
 <style lang="scss">

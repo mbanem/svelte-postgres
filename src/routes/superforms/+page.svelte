@@ -1,6 +1,6 @@
 <script lang="ts">
   import { superForm } from 'sveltekit-superforms/client';
-  import SuperDebug from 'sveltekit-superforms/client/SuperDebug.svelte';
+  // import SuperDebug from 'sveltekit-superforms/client/SuperDebug.svelte';
   import { z } from 'zod';
   import type { PageData } from './$types';
   import InputBox from '$components/InputBox.svelte';
@@ -49,7 +49,7 @@
   };
 </script>
 
-<SuperDebug data={$form} />
+<!-- <SuperDebug data={$form} /> -->
 
 <!-- <p>constraints {JSON.stringify($constraints, null, 2)}</p> -->
 <article>
@@ -78,7 +78,7 @@
   </form>
 </article>
 
-<pre>{JSON.stringify($form, null, 2)}</pre>
+<!-- <pre>{JSON.stringify($form, null, 2)}</pre> -->
 
 <style>
   article {

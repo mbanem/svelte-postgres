@@ -64,6 +64,7 @@ between the component tags
     width: 80vw;
     grid-template-columns: 1fr 1fr;
     margin-left: 4rem;
+    column-gap: 3rem;
   }
   .parent,
   .child {

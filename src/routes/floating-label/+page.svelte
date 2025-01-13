@@ -80,7 +80,7 @@
       <summary>The Kuzmanovics</summary>
       <p>Jovana</p>
       <p>Milica</p>
-      <p>MIrjana</p>
+      <p>Mirjana</p>
       <p>Sasa</p>
     </details>
   </div>

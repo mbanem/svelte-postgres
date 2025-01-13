@@ -66,6 +66,12 @@
       href: '/bars/filter',
       condition: 'VISITOR',
     },
+    {
+      position: 7,
+      title: 'tasks',
+      href: '/bars/tasks',
+      condition: 'VISITOR',
+    },
   ];
   const getFormParams = () => {
     let params = '';

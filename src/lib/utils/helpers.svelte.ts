@@ -260,7 +260,7 @@ export const setCSSValue = (varName: string, value: string) => {
       root.style.setProperty(varName, value);
     }
   } catch (err) {
-    // $1.log('setCSSValue', err)
+    console.log('setCSSValue', err);
   }
 };
 export const setTextColor = (varName: string, color: string) => {
@@ -308,7 +308,10 @@ String.prototype.capitalize = function () {
   return capitalize(this as string);
 };
 
-const isKeyOf = <T extends Object>(key: keyof T, obj: T): key is keyof T => {
+export const isKeyOf = <T extends Object>(
+  key: keyof T,
+  obj: T,
+): key is keyof T => {
   return key in obj;
 };
 
