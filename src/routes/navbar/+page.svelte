@@ -7,7 +7,7 @@
     { title: 'Scroll', href: '/bars/scroll' }, // make one with no color to use default color -- red
     { color: 'Tomato', title: 'Caterpillar', href: '/caterpillar' },
     { color: 'Green', title: 'Balloon', href: '/balloon' },
-    { color: 'Purple', title: 'Render', href: '/render' },
+    { color: 'Purple', title: 'Prop-Class', href: '/prop-class' },
     { color: 'LightGreen', title: 'Bars', href: '/bars' },
     { color: 'Pink', title: 'Bindable', href: '/bindable' },
     { color: 'SkyBlue', title: 'Communicate', href: '/communicate' },

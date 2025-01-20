@@ -45,8 +45,10 @@
     {/each}
   {/snippet}
 </DynamicTable>
-<p style="margin: 2rem 0 0 0; padding:0;">
-  we render two dynamic table components: Fruit and Employees
+<p
+  style="margin: 2rem 0 -2rem 0; padding:0;color:pink;font-size:19px;font-style:italic;"
+>
+  We render two dynamic table components: Fruit and Employees
 </p>
 <DynamicTable
   data={employees as Employee[]}
@@ -72,8 +74,7 @@
 Not able to define the type for row(item) &lcub; @render row(item) &rcub; though the item accepts
 only Fruit | Employee but no avail... Could no make first grid data row margin-top: 1px solid gray;
 buy margin-bottom is OK as the row separator line.
-</pre>
-<pre>
+
 The problem with DynamicTable.svelte component is that it uses th same variables for props, which have
 different values for different component instances. So, when we render several instances the props from
 the latest one overwrite the values already rendered in the previous components and so all components

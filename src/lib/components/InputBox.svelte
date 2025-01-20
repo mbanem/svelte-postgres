@@ -23,6 +23,9 @@
     err?: string[] | undefined;
     onButtonNext?: () => void;
   };
+  const capitalize = (title: string): string => {
+    return title[0]?.toUpperCase() + title.slice(1).replace(/([A-Z])/, ' $1');
+  };
   let {
     title,
     width = '16rem',
@@ -33,13 +36,16 @@
     err = undefined,
     onButtonNext,
   }: PROPS = $props();
-
+  title = capitalize(title);
   const topPosition = `${-1 * Math.floor(parseInt(fontsize) / 3)}px`;
   utils.setCSSValue('--INPUT-BOX-LABEL-TOP-POS', topPosition);
   let inputEl: HTMLInputElement;
+
   export const setFocus = () => {
+    console.log('InputBox setFocus');
     inputEl.focus();
   };
+
   if (width) utils.setCSSValue('--INPUT-COMRUNNER-WIDTH', width as string);
   if (height) utils.setCSSValue('--INPUT-COMRUNNER-HEIGHT', height as string);
   if (fontsize)
@@ -49,6 +55,7 @@
     if (event.key === 'Enter' && onButtonNext) {
       onButtonNext();
     }
+    value = utils.capitalize(value as string);
   };
 
   // const test = async () => {

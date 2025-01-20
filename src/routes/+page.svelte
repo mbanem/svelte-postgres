@@ -18,7 +18,7 @@
 
   import { Todos, getGlobalTodos } from '$lib/utils/todos.svelte';
   // Outside .svelte components, runes can only be used in .svelte.js and .svelte.ts modules.
-  import { createCounter, getGlobalCounter } from '$lib/utils/counter.svelte';
+  import { createCounter, getGlobalCounter } from '$utils/counter.svelte';
   let { data } = $props();
   const counter = createCounter();
 
@@ -95,24 +95,43 @@
 <div class="wrapper">
   <div>
     <pre>
-    the Counter component is defined in /$lib-utils/counter.svelte.ts.
+    the Counter component is defined in /$utils/counter.svelte.ts.
 		Its constructor function createCounter() is exposed and can be called 
 		to deliver an instance of the counter, which is then in a local scope 
 		like here in this /+page.svelte. 
 		The counter will be destroyed by navigating out of page and on returning
 		to the page a new local instance could be obtain by calling createCounter()
 
-		On the other hand a getGlobalCounter() is exposed from the same $lib-utils
-		but it return an instance of the counter created in $lib-utils, so that
-		instance is out of this page and navigating out of this page cannot destroyed
-		it, so it is in global scope looking from this page. Changing the count value
-		but incrementing/decrementing using +/- button below will keep the count
-		stable when navigating out of this page and returning back. Try changing the
-		count, navigate out of and return back to see that count is preserved.
+		On the other hand a $utils/getGlobalCounter() returns an instance of the counter
+    created in $utils scope, so that the instance is out of this page and navigating 
+    out of this page cannot destroy it, so it is in the global scope looking from this 
+    page. Changing the count value by incrementing/decrementing using +/- button below
+    will keep the count stable when navigating out of this page and returning back.
+    Try changing the count, navigate out of and return back to see that count is preserved.
 
-		In this app in the Counter page (click on Counter in navigation bar) we use
-		the same counter there, and as it is global both pages could change its count
+		In this app in the next, Counter page (click on Counter in navigation bar) where we use
+		the same counter there, and as it is global -- both pages could change its count
 		and navigating anywhere will preserve the count in this global counter.
+
+    A snippet listFamily has direct access to locally defined family TS object
+
+      const family = &lcub;
+        Isakovic: &lcub;
+          parents: &lcub;
+            father: 'Ljubomir',
+            mother: 'Snezana',
+          &rcub;,
+          children: ['Matia', 'Filip'],
+        &rcub;,
+        ...
+      &rcub;
+
+      It renders that family list turning the family TS object into iterable list via
+      Object.entries(family) list
+
+        &lcub;#each Object.entries(family) as [lastName, members]&rcub;
+        
+      styling &lt;ul&gt; and  &lt;li&gt; elements accordingly
     </pre>
   </div>
 

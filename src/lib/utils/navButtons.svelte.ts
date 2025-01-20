@@ -20,7 +20,12 @@ const navButtonObjects = [
   },
   { position: '30', title: 'flip', condition: 'USER' },
   { position: '32', title: 'snippet', condition: 'VISITOR' },
-  { position: '33', title: 'render', condition: 'VISITOR' },
+  {
+    position: '33',
+    title: 'prop-class',
+    href: '/prop-class',
+    condition: 'VISITOR',
+  },
   { position: '35', title: 'balloon', href: '/balloon', condition: 'USER' },
   { position: '40', title: 'button', condition: 'VISITOR' },
   { position: '45', title: 'caterpillar', condition: 'ADMIN' },

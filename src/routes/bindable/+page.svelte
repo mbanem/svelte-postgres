@@ -96,6 +96,18 @@ with child click event:MouseEvent and value of delta bound in &lt;input type='nu
 -->
 <Bindable bind:count {clickArg}></Bindable>
 
+<SummaryDetails
+  summary="About Svelte 5"
+  details="
+The latest version that become reactive. It has compiler that monitor all the activities, 
+while the language itself is a superset of HTML having blocks of &lt;script&gt;, markup and
+&lt;style&gt; blocks. Inside the markup it implements JavaScript/TypeScript blocks wrapped
+inside a curly brackets. Language i very compact and the app is composed of folders that
+represent URL routes and hold spacial type of pages that run only on server like 
++layout.server.ts, +server.ts, on both server and client like +page.ts or only on the client
+side like +page.svelte. It is component oriented and the main app it component as well. "
+></SummaryDetails>
+
 <style lang="scss">
   button {
     display: inline-block;

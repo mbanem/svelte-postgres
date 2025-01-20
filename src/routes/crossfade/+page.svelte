@@ -44,29 +44,33 @@
   let createdAt = new Date('2/18/2006').toLocaleString();
   let updatedAt = new Date('8/22/2007').toLocaleString();
 
-  const add_ShadowDom = (str: string) => {
-    const list = document.getElementById('beveragesList');
-    if (list && list.firstChild?.textContent === str) {
-      list.firstChild.remove();
-      return;
-    }
-    const newNode = document.createElement('li');
-    const textNode = document.createTextNode('Water');
-    newNode.appendChild(textNode);
-
-    // Insert before existing child:
-    if (list != null && list.children[0]) {
-      list.insertBefore(newNode, list.children[0]);
-    }
-  };
   const addShadowDOM = (event: MouseEvent) => {
-    add_ShadowDom('Water');
     const el = event.target as HTMLButtonElement;
     if (el.innerText.startsWith('add')) {
       el.innerText = el.innerText.replace(/^add/, 'remove');
     } else {
       el.innerText = el.innerText.replace(/^remove/, 'add');
     }
+    add_ShadowDOM();
+  };
+  const add_ShadowDOM = () => {
+    const arr = ['Water', 'Sugar', 'Milk', 'Cacao'];
+    const list = document.getElementById(
+      'beveragesList',
+    ) as HTMLDataListElement;
+    const remove = list.children.length > 2;
+    const color = utils.randomColor();
+    arr.forEach((el) => {
+      if (remove) {
+        list.lastChild?.remove();
+      } else {
+        const newNode = document.createElement('li');
+        const textNode = document.createTextNode(el);
+        newNode.style.color = color;
+        newNode.appendChild(textNode);
+        list.append(newNode);
+      }
+    });
   };
   const insertShadowDom = (event: MouseEvent) => {
     const el = event.target as HTMLButtonElement;
@@ -155,7 +159,7 @@
   <div>
     <pre>On click an option to a list box is added and on succeeding click is removed
 		</pre>
-    <button onclick={addShadowDOM}> add list element </button>
+    <button onclick={addShadowDOM}> add 4 list elements </button>
     <ul id="beveragesList">
       <li>Coffee</li>
       <li>Tea</li>

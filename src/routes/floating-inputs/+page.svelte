@@ -81,23 +81,47 @@
   const setActive = () => {
     switch (formState.step) {
       case 0:
+        console.log('step-0');
         inputEl.setFocus();
         break;
       case 1:
+        console.log('step-1');
         inputEl.setFocus();
         break;
       case 2:
-        inputEl.showPicker();
+        console.log('step-2');
+        inputEl.focus();
+        inputEl.value = '2005-03-03';
+        // setTimeout(() => {
+        //   utils.keyPress('Enter', inputEl);
+        // }, 2000);
+        setTimeout(() => {
+          utils.keyPress('Tab', inputEl);
+          // utils.keyPress('Enter', inputEl);
+        }, 1000);
         break;
       case 3:
+        console.log('step-3');
         // cannot make it
+        inputEl.value = utils.randomColor();
+        inputEl.showPicker();
         setTimeout(() => {
-          inputEl.focus();
+          utils.keyPress('Tab');
+          utils.keyPress('Tab');
+          utils.keyPress('Enter');
+          inputEl.blur();
+        }, 200);
+        setTimeout(() => {
           inputEl.click();
-        }, 3000);
+        }, 2000);
         break;
       default:
         buttonNext.innerText = 'reset';
+        setTimeout(() => {
+          if (inputEl) {
+            inputEl.setFocus();
+          }
+        }, 4000);
     }
   };
 
@@ -111,6 +135,9 @@
     userDetailsContainer = document.querySelector(
       '.form-answers-container',
     ) as HTMLDivElement;
+    setTimeout(() => {
+      inputEl.setFocus();
+    }, 1000);
   });
   $effect(() => {
     switch (formState.step) {

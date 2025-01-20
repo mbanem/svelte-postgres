@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { page } from '$app/stores';
   import { SvelteURL } from 'svelte/reactivity';
   // const url = new SvelteURL(
   //   'https://translate.google.com/#view=home&op=translate&sl=en&tl=sr',
@@ -7,6 +8,7 @@
   import type { Snippet } from 'svelte';
   import * as utils from '$utils';
 
+  // console.log($page.url.pathname);
   // snippets could accept parameters so we define their types
   // we render two tables Fruit and Employees
   type Fruit = {
@@ -50,6 +52,9 @@
     : 'table-employee';
 </script>
 
+{#if $page.url.pathname === '/prop-class/snippet'}
+  <a href="/prop-class">Back</a>
+{/if}
 <div class={table}>
   {@render header()}
   <!-- {#each data as item} -->
