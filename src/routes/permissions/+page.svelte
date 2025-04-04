@@ -100,6 +100,7 @@
   // };
   // call InputBox function to set focus and value in <input box element
   let input_box: InputBox;
+  let name_box: InputBox;
   // const setInputBoxValue: (_: string) => void = getContext('setInputBoxValue');
   let defaultValue = 'view:comments';
   const checkPermission = (event: MouseEvent) => {
@@ -121,6 +122,7 @@
       (span as HTMLSpanElement).style.backgroundColor = 'navy';
     });
     viewSpanButton.click();
+    name_box.setValue(firstName);
   };
 
   // Ask <InputBox to call this function when input is ready.
@@ -150,7 +152,6 @@
 <!-- <p>{firstName}</p> -->
 <div class="wrapper">
   <div>
-    <pre class="users-info">
     <pre class="users-info">
   Users are defined as:
   const users = &lcub;
@@ -192,8 +193,8 @@
   &rcub; as const;
   NOTE: type Users = &lcub; name: keyof typeof users; user: TUser &rcub;
   has big impact on &lt;input type="text" bind:value=&lcub;firstName&rcub; placeholder="enter firstName" /&gt;
-  as <i>keyof typeof users</i> is <span
-        >"Filip" | "Marko" | "Matia" | "Mia"</span
+  as <i>keyof typeof users</i> is 
+  <span>"Filip" | "Marko" | "Matia" | "Mia"</span>
   as <i>keyof typeof users</i> is <span
         >"Filip" | "Marko" | "Matia" | "Mia"</span
       > and only those strings are acceptable 
@@ -220,6 +221,7 @@
       {/if}
       <div class="select-user-block">
         <InputBox
+          bind:this={name_box}
           title="Enter First Name & press Enter key"
           height="2rem"
           margin="10px 0 5px 0"

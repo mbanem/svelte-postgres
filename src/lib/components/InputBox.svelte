@@ -101,6 +101,9 @@
     inputEl.focus();
     inputValue = str;
   };
+  export const setValue = (val: string) => {
+    inputValue = val;
+  };
   // setContext('setInputBoxValue', setInputBoxValue);
 </script>
 
