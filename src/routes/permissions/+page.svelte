@@ -44,11 +44,13 @@
   const users: Record<string, TUser> = {
     Matia: {
       id: '46565416',
+      id: '46565416',
       firstName: 'Matia',
       lastName: 'Isakovic',
       role: 'admin',
     },
     Filip: {
+      id: '65487',
       id: '65487',
       firstName: 'Filip',
       lastName: 'Isakovic',
@@ -56,11 +58,13 @@
     },
     Marko: {
       id: '62877812',
+      id: '62877812',
       firstName: 'Marko',
       lastName: 'Milutinovic',
       role: 'visitor',
     },
     Mia: {
+      id: '1684849',
       id: '1684849',
       firstName: 'Mia',
       lastName: 'Milutinovic',
@@ -147,6 +151,7 @@
 <div class="wrapper">
   <div>
     <pre class="users-info">
+    <pre class="users-info">
   Users are defined as:
   const users = &lcub;
 		<span>{ma.firstName}</span>: &lcub;
@@ -177,6 +182,7 @@
   So to access role of the first user we use:
     users[item as keyof typeof users].role
   where item is either 'Filip','Matia', 'Marko' or 'Mia' taking care of case-sensitivity
+  where item is either 'Filip','Matia', 'Marko' or 'Mia' taking care of case-sensitivity
 
   const ROLES = &lcub;
     admin: ['view:comments', 'create:comments', 'update:comments', 'delete:comments'],
@@ -186,6 +192,8 @@
   &rcub; as const;
   NOTE: type Users = &lcub; name: keyof typeof users; user: TUser &rcub;
   has big impact on &lt;input type="text" bind:value=&lcub;firstName&rcub; placeholder="enter firstName" /&gt;
+  as <i>keyof typeof users</i> is <span
+        >"Filip" | "Marko" | "Matia" | "Mia"</span
   as <i>keyof typeof users</i> is <span
         >"Filip" | "Marko" | "Matia" | "Mia"</span
       > and only those strings are acceptable 
