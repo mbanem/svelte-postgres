@@ -1,6 +1,6 @@
 <script lang="ts">
   import * as utils from '$utils';
-  // import { page } from '$app/stores' // for $age.status code on actions
+  // import { page } from '$app/state' // for $age.status code on actions
 
   import { onMount } from 'svelte';
   type TButtons = {

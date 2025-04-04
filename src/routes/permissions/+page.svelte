@@ -61,6 +61,10 @@
       role: 'moderator',
     },
   } as const;
+  const ma = users.Matia as TUser;
+  const fi = users.Filip as TUser;
+  const mr = users.Marko as TUser;
+  const mi = users.Mia as TUser;
   // let selected = $derived(options.find((o) => o.role === 'ADMIN'));
   let selected = $derived(
     Object.values(users).filter(
@@ -76,6 +80,7 @@
     ),
   );
   const checkPermission = (event: MouseEvent) => {
+    event.preventDefault();
     const span = event.target as HTMLSpanElement;
     const spans = span.parentNode?.childNodes;
     spans?.forEach((span) => {
@@ -100,23 +105,29 @@
     <pre>
   Users are defined as:
   const users = &lcub;
-		<span>matia</span>: &lcub;
-			id: '1740980519',
-			firstName: 'Filip',
-			lastName: 'Isakovic',
-			role: 'admin'
+		<span>{ma.firstName}</span>: &lcub;
+			id: {ma.id},
+			firstName: {ma.firstName},
+			lastName: {ma.lastName},
+			role: '{ma.role}
 		&rcub;,
-		filip: &lcub;<span>filip</span>: &lcub;
-			id: '12345678',
-			firstName: 'Filip',
-			lastName: 'Isakovic',
-			role: 'user'
+		<span>{fi.firstName}</span>: &lcub;
+			id: {fi.id},
+			firstName: {fi.firstName},
+			lastName: {fi.lastName},
+			role: '{fi.role}
 		&rcub;,
-    <span>Marko</span>: &lcub;
-			id: '014789741',
-			firstName: 'Marko',
-			lastName: 'Milutinovic',
-			role: 'visitor'
+		<span>{mr.firstName}</span>: &lcub;
+			id: {mr.id},
+			firstName: {mr.firstName},
+			lastName: {mr.lastName},
+			role: '{mr.role}
+		&rcub;,
+		<span>{mi.firstName}</span>: &lcub;
+			id: {mi.id},
+			firstName: {mi.firstName},
+			lastName: {mi.lastName},
+			role: '{mi.role}
 		&rcub;,
 	&rcub; as const;
   So to access role of the first user we use:
@@ -175,13 +186,14 @@
         {/each}
       </select> -->
     </div>
-    <pre><p
+    <pre>
+      <p
         onclick={checkPermission}
         aria-hidden={true}
         class="permission-block"
         style={`display:${firstName ? 'block' : 'none'}`}><span
           bind:this={viewSpanButton}
-          style="background-color:blue">view:comments</span
+          style="background-color:blue;">view:comments</span
         ><span>create:comments</span><span>update:comments</span><span
           >delete:comments</span
         ></p>
@@ -200,7 +212,7 @@ Permissions (click permission button below to check for that permission)
 <style lang="scss">
   .wrapper {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1.5fr;
   }
   .container {
     @include container(
@@ -208,7 +220,8 @@ Permissions (click permission button below to check for that permission)
       $head-color: skyblue
     );
     height: 22rem;
-    margin: 1rem 0 0 3rem;
+    margin: 1rem 0 0 0;
+    width: 40rem;
   }
   select {
     width: max-content;
@@ -218,6 +231,7 @@ Permissions (click permission button below to check for that permission)
   pre {
     tab-size: 1rem;
     margin-top: 0;
+    font-size: 14px;
   }
   p {
     font-size: 16px;
@@ -242,6 +256,7 @@ Permissions (click permission button below to check for that permission)
   }
   .permission-block {
     span {
+      height: 1.4rem;
       border: 1px solid gray;
       border-radius: 5px;
       padding: 2px 0.5rem;

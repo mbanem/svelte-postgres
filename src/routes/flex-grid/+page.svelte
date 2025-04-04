@@ -87,13 +87,14 @@ last 3-row block
   .main {
     display: grid;
     grid-template-columns: 1fr 1fr;
+    gap: 1rem;
     width: 90vw;
-    margin: 4rem auto;
+    margin: 3rem auto;
     .left-side,
     .right-side {
       border: 1px solid yellow;
       border-radius: 1rem;
-      padding: 1rem;
+      padding: 0.5rem;
     }
   }
   .item.x {
@@ -111,7 +112,7 @@ last 3-row block
     // grid-row: auto;
     border: 1px solid gray;
     border-radius: 1rem;
-    width: 50vw;
+    width: 40vw;
     margin: 0 auto;
   }
   .cell {
@@ -177,7 +178,7 @@ last 3-row block
     flex-direction: row;
     justify-content: flex-end;
     align-items: flex-end;
-    height: 7rem;
+    height: 6rem;
   }
   .cell7 {
     flex-direction: row;
@@ -210,7 +211,7 @@ last 3-row block
   .flex-col {
     display: flex;
     flex-direction: column;
-    height: 9rem;
+    height: 6rem;
     &:nth-child(3n + 2) {
       align-items: center;
       justify-content: flex-end;

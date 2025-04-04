@@ -5,6 +5,9 @@
 <script lang="ts">
 </script>
 
+<svelte:head>
+  <title>Detail Summary</title>
+</svelte:head>
 <main class="main">
   <pre>
   Detail-Summary
@@ -84,13 +87,15 @@
   }
   details * {
     margin: 0;
+    cursor: pointer;
   }
   /* despite working in youtube demo https://www.youtube.com/watch?v=Vzj3jSUbMtI&t=36s
-    it does not work 
+  it does not work 
   */
   details::details-content {
     // font-size: 2rem;
     background: skyblue;
+    cursor: pointer;
   }
   details {
     background-color: hsl(0 0% 25%);

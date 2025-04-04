@@ -252,6 +252,23 @@ export const arrStringToNumArr = (arr: string[]): Number[] => {
 export const csvToNumArr = (s: string): number[] => {
   return s.split(',').map((el) => Number(el));
 };
+// export const getCSSValue = (varName: string):string => {
+  //   try {
+    //     const root = document.querySelector(':root');
+    //     if (root) {
+      //       // @ts-expect-error
+      //       return root.style.getProperty(varName);
+      //     }
+      //   } catch (err) {
+        //     console.log('getCSSValue', err);
+        //   }
+        //   console.log('returning default 16rem')
+        //   return '16rem'
+        // }
+export const getCSSValue = (varName: string): string => {
+    const declaration = ((document.styleSheets[0]?.cssRules as CSSRuleList)[0] as CSSStyleRule).style;
+    return declaration.getPropertyValue(varName) as string
+}
 export const setCSSValue = (varName: string, value: string) => {
   try {
     const root = document.querySelector(':root');

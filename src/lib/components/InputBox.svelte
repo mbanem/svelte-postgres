@@ -10,8 +10,8 @@
 -->
 
 <script lang="ts">
+  import { browser } from '$app/environment';
   import * as utils from '$utils';
-  import { onMount } from 'svelte';
   import Error from '$routes/+error.svelte';
   type PROPS = {
     title: string;
@@ -36,21 +36,25 @@
     err = undefined,
     onButtonNext,
   }: PROPS = $props();
-  title = capitalize(title);
+  // NOTE: enter non breaking unicode space: type 00A0 and press Alt + X
+  // here we held between apostrophes three non breaking spaces
+  title = '   ' + capitalize(title);
   const topPosition = `${-1 * Math.floor(parseInt(fontsize) / 3)}px`;
-  utils.setCSSValue('--INPUT-BOX-LABEL-TOP-POS', topPosition);
+
   let inputEl: HTMLInputElement;
 
   export const setFocus = () => {
     console.log('InputBox setFocus');
     inputEl.focus();
   };
-
-  if (width) utils.setCSSValue('--INPUT-COMRUNNER-WIDTH', width as string);
-  if (height) utils.setCSSValue('--INPUT-COMRUNNER-HEIGHT', height as string);
-  if (fontsize)
-    utils.setCSSValue('--INPUT-COMRUNNER-FONT-SIZE', fontsize as string);
-
+  if (browser) {
+    utils.setCSSValue('--INPUT-BOX-LABEL-TOP-POS', topPosition);
+    if (width) utils.setCSSValue('--INPUT-COMRUNNER-WIDTH', width as string);
+    if (height) utils.setCSSValue('--INPUT-COMRUNNER-HEIGHT', height as string);
+    if (fontsize)
+      utils.setCSSValue('--INPUT-COMRUNNER-FONT-SIZE', fontsize as string);
+    width = utils.getCSSValue('--INPUT-COMRUNNER-WIDTH') as string;
+  }
   const inputCompleted = (event: KeyboardEvent) => {
     if (event.key === 'Enter' && onButtonNext) {
       onButtonNext();
@@ -70,9 +74,13 @@
   const forward = () => {
     inputEl.focus();
   };
+  const focusMe = (event: MouseEvent) => {
+    event.preventDefault();
+    inputEl.focus();
+  };
 </script>
 
-<div class="input-wrapper">
+<div class="input-wrapper" onclick={focusMe} aria-hidden={true}>
   <input
     bind:this={inputEl}
     type={type ? type : 'text'}
@@ -80,16 +88,24 @@
     bind:value
     onkeyup={inputCompleted}
     disabled={false}
+    onclick={forward}
   />
-  <label for="" onclick={forward} aria-hidden={true}
-    >{title} <span class="err">{err ? ` - ${err}` : ''}</span></label
-  >
+  <label for="" aria-hidden={true}>
+    {title}
+    <span class="err">
+      {err ? ` - ${err}` : ''}
+    </span>
+  </label>
 </div>
 
 <style lang="scss">
+  :root {
+    --INPUT-COMRUNNER-WIDTH: 16rem;
+  }
   .input-wrapper {
     margin: 1rem 0;
     position: relative;
+    width: max-content;
     label {
       position: absolute;
       transform: translateY(-50%);
@@ -102,6 +118,7 @@
       transition: 0.5s;
     }
     input {
+      display: inline-block;
       width: var(--INPUT-COMRUNNER-WIDTH);
       height: var(--INPUT-COMRUNNER-HEIGHT);
       font-size: var(--INPUT-COMRUNNER-FONT-SIZE);

@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { PageData, ActionData } from './$types';
   import { enhance } from '$app/forms';
-  import { page } from '$app/stores'; // for $age.status code on actions
+  import { page } from '$app/state'; // for $age.status code on actions
   import type { SubmitFunction } from '@sveltejs/kit';
   import { invalidateAll } from '$app/navigation';
   import { onMount, tick } from 'svelte';

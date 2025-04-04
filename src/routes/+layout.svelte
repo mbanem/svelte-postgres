@@ -5,6 +5,7 @@
   // import { navBars, navPath, navButtons } from '$utils/helpers.svelte.js'
   import { getNavButtons } from '$lib/utils/navButtons.svelte';
   import NavBar from '$components/NavBar.svelte';
+  import NavContainer from '$components/NavContainer.svelte';
   // import '@fortawesome/fontawesome-free/css/all.min.css'
 
   // let classes = 'teal'
@@ -38,15 +39,15 @@
 </svelte:head>
 <!-- <pre style="font-size:11px;">layout role {data?.locals?.user?.role}</pre> -->
 <div class="wrapper hidden">
-  {#key data?.locals?.user?.role}
-    <div class="nav-fixed">
-      <NavBar
-        bind:navButtonObjects
-        role={data?.locals?.user?.role ?? 'VISITOR'}
-      />
-    </div>
-    <main>{@render children()}</main>
-  {/key}
+  <!-- {#key data?.locals?.user?.role} -->
+  <div class="nav-fixed">
+    <!-- <p>This should be navigation bar</p> -->
+    <NavBar {navButtonObjects} role={data?.locals?.user?.role ?? 'VISITOR'}
+    ></NavBar>
+  </div>
+  <main>{@render children()}</main>
+
+  <!-- {/key} -->
 </div>
 
 <!-- <div class="footer"> -->
@@ -66,7 +67,7 @@
   .wrapper {
     padding: 0;
     width: 100vw;
-    height: 100vh;
+    height: 89vh;
     /* cannot help scrolling when selecting button Two or Three */
     overflow-anchor: none;
     background-color: var(--BODY-BACKGROUND-COLOR);

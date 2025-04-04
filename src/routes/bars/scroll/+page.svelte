@@ -5,16 +5,41 @@
   import { flip } from 'svelte/animate';
   import { fade } from 'svelte/transition';
 
+  //import {bounceInOut} from 'svelte/easing';
+  let horizontal = $state(false);
+  let horizontalLabel = $derived(
+    horizontal ? 'to vertical  ' : 'to horizontal',
+  );
+  let list: Array<number> = $state([]);
+  let next = 1;
+  let list_info = $derived(
+    list.length === 0
+      ? 'Click Add to add item to the list'
+      : 'Click on an item to remove from the list',
+  );
+  // to make animation we insert new element as leading
+  // so the animation should move all existing items in
+  // order to make room for a new item
+  const addItem = () => (list = [next++, ...list]);
+  const removeItem = (num: number) => {
+    list = list.filter((n) => n !== num);
+    if (list.length === 0) {
+      next = 1;
+    }
+  };
+  //const options = {delay: 200, duration: 1000, easing: bounceInOut};
+  const options = { delay: 0, duration: 1000 };
+
   let max_range = 5;
   let startInt = $state(0);
   let delta = $state(3);
   let digits = $derived(
-    Array(5)
+    Array(max_range)
       .fill(null)
       .map((_, i) => i + startInt),
   );
-  let delay_fade = $derived(delta === max_range ? 0 : 1000);
-  let dd_animate = $derived(delta === max_range ? 0 : 500);
+  let delay_fade = $derived(delta === max_range ? 200 : 50);
+  let dd_animate = $derived(delta === max_range ? 500 : 0);
   const scrollToTheRight = () => {
     startInt = startInt + delta;
   };
@@ -94,10 +119,10 @@
 
   type P = keyof typeof params;
 
-  const animate = (es: MouseEvent | String) => {
+  const animate = (event_str: MouseEvent | String) => {
     let className = 'a';
-    if (es instanceof MouseEvent) {
-      className = (es.currentTarget as HTMLDivElement)?.className.slice(
+    if (event_str instanceof MouseEvent) {
+      className = (event_str.currentTarget as HTMLDivElement)?.className.slice(
         4,
         5,
       ) as P;
@@ -176,15 +201,15 @@
       );
   };
   // buttons and tooltip text when hover over them
-  type ButtonCaption = 'a' | 'b' | 'c' | 'd';
+  type ButtonCaption = 'A' | 'B' | 'C' | 'D';
   let ttEl = $state<HTMLDivElement>();
   const where = 'Will animate in<br/>';
   const when_visible = '<br/>when it gets visible';
   const tooltips: Record<ButtonCaption, String> = {
-    a: `${where}this page`,
-    b: `${where}the page below`,
-    c: `${where}the second page below`,
-    d: `${where}the third page below`,
+    A: `${where}this page`,
+    B: `${where}the page below`,
+    C: `${where}the second page below`,
+    D: `${where}the third page below`,
   };
   const setTooltipText = (el: HTMLButtonElement | HTMLInputElement) => {
     if (!ttEl) return;
@@ -226,6 +251,15 @@
 <svelte:head>
   <title>Scroll</title>
 </svelte:head>
+{#snippet allDigits()}
+  <div class="all-digits">
+    {#each digits as digit (digit)}
+      <p style="padding:0;margin:0;color:yellow;">
+        {digit}
+      </p>
+    {/each}
+  </div>
+{/snippet}
 <!-- === BEGIN squares in separate pages ====
     so we have to scroll and bring them
     into view in order to trigger the animation
@@ -247,16 +281,29 @@
       &nbsp; element{delta === 1 ? '' : 's'}
     </p>
     <div id="wrapper">
-      {#each digits as digit (digit)}
-        <div
-          class="display-element"
-          animate:flip={{ delay: dd_animate, duration: 1000 }}
-          in:fade={{ delay: delay_fade, duration: 1000 }}
-          out:fade={{ duration: 0 }}
-        >
-          {digit}
-        </div>
-      {/each}
+      {#if delta < max_range}
+        {#each digits as digit (digit)}
+          <div
+            class="display-element"
+            animate:flip={{ delay: dd_animate, duration: 1000 }}
+            in:fade={{ delay: delay_fade, duration: 1000 }}
+            out:fade={{ duration: 0 }}
+          >
+            {digit}
+          </div>
+        {/each}
+      {:else}
+        {#each [1] as d (d)}
+          <div
+            class="all-digits"
+            animate:flip={{ delay: dd_animate, duration: 1000 }}
+            in:fade={{ delay: delay_fade, duration: 1000 }}
+            out:fade={{ duration: 0 }}
+          >
+            {@render allDigits()}
+          </div>
+        {/each}
+      {/if}
     </div>
     <button class="scroll-button" onclick={scrollToTheLeft}
       >scroll to the left</button
@@ -264,6 +311,22 @@
     <button class="scroll-button" onclick={scrollToTheRight}
       >scroll to the right</button
     >
+    <div class="flip-container">
+      <p class:remove-info={list.length}>{list_info}</p>
+      <label style="cursor:pointer;width:7rem;display:inline-block;">
+        {horizontalLabel}
+        <input type="checkbox" class="checkbox" bind:checked={horizontal} />
+      </label>
+      <button onclick={addItem}>Add</button>
+      {#each list as n (n)}
+        <div animate:flip={options} class:horizontal class="fixed-width">
+          <button
+            style="padding: 0 5px;margin: 0;"
+            onclick={() => removeItem(n)}>{n}</button
+          >
+        </div>
+      {/each}
+    </div>
     <p>
       Animation starts when square come in the view -- when it becomes visible:
     </p>
@@ -389,6 +452,10 @@
     border-radius: 4px;
     overflow-y: auto;
     padding: 0.5rem;
+    p{
+      margin:0;
+      padding:0;
+    }
   }
   p {
     margin: 0;
@@ -424,7 +491,8 @@
     line-height: 5rem;
     cursor: pointer;
   }
-  @for $j from 1 through 5 {
+  $max_range: 5;
+  @for $j from 1 through $max_range {
     .#{'' + list.nth($cls,$j)} {
       @extend .boxS;
       background-color: list.nth($cls, $j);
@@ -461,6 +529,7 @@
   }
   p {
     color: lightgreen;
+    margin: 0 0 0 1rem;
   }
   /* grid last column must be fixed e.g. 12rem otherwise
 		it slightly change the width on content animation
@@ -511,7 +580,18 @@
   }
   .display-element {
     display: inline-block;
+    color: yellow;
+    padding: 0;
+    margin: 0;
     // margin: 0 0 1rem 1.4rem;
+  }
+  .all-digits {
+    display: flex;
+    justify-content: space-between;
+    gap: 3.91rem;
+    height: 1.15rem;
+    padding: 0;
+    margin: 0;
   }
   .scroll-button {
     width: 10rem;
@@ -519,4 +599,37 @@
   /* to position tooltip label it must have absolute position
 		so the wrapper class must have position relative
 	*/
+  .horizontal {
+    display: inline-block;
+    margin: 0;
+  }
+  .fixed-width {
+    width: 24px;
+  }
+  .flip-container {
+    width: max-content;
+    padding: 0 1rem 1rem 1rem;
+    border: 1px solid yellow;
+    border-radius: 6px;
+    margin-top: 0.5rem;
+  }
+  .remove-info,
+  p {
+    // margin: 0;
+    // padding: 0;
+    height: 1rem;
+    color: yellow;
+    font-style: italic;
+    font-weight: 300;
+    margin: 1rem 0 1rem 0;
+  }
+  p {
+    height: 1rem;
+    color: lightgreen;
+    font-style: normal;
+    margin: 1rem 0 1rem 0;
+  }
+  .checkbox {
+    float: right;
+  }
 </style>

@@ -1,8 +1,13 @@
 <script lang="ts">
   import { gsap } from 'gsap';
   import { onMount } from 'svelte';
-
+  import { page } from '$app/state';
+  import { data } from '$lib/news_articles';
   let timeline: gsap.core.Timeline;
+  const {
+    data: { locals },
+    data: { notifications },
+  } = page;
   onMount(() => {
     /*
 		gsap.from('.header', {
@@ -46,7 +51,7 @@
       .fromTo(
         '.footer',
         { opacity: 0, width: 0 },
-        { opacity: 1, width: '40vw', ease: 'power1', duration: 2 },
+        { opacity: 1, width: '50vw', ease: 'power1', duration: 2 },
       )
       .fromTo(
         '.button',
@@ -85,6 +90,8 @@
   <div class="footer">&#169; ComRUNNER Software Inc.</div>
 </main>
 
+<!-- <pre>$app/state/page{JSON.stringify(page, null, 2)}</pre> -->
+
 <style lang="scss">
   main {
     display: flex;
@@ -95,10 +102,10 @@
     overflow: hidden;
     /* set border opacity as an898 alpha channel */
     border: 1px solid rgba(128, 128, 128, 0);
-    .border {
+    /*.border {
       border: 1px solid rgba(128, 128, 128, 0.8);
       height: 65vh;
-    }
+    }*/
   }
   .header {
     height: 3rem;

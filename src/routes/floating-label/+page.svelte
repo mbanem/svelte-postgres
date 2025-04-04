@@ -47,39 +47,62 @@
   // any change in the color = $state('#223344') will trigger coloring the box
   // so setColor could be triggered from $effect or via button click event
   $effect(setColor);
+
+  const toggleExpand = (event: MouseEvent) => {
+    const el = event.target as HTMLButtonElement;
+    const expand = el.innerText === 'expand all';
+    // if (document.querySelector('details')) {
+    // Fetch all the details elements
+    const details = document.querySelectorAll('details');
+    // Add onclick listeners
+    if (details) {
+      el.innerText = expand ? 'collapse all' : 'expand all';
+      details.forEach((detail) => {
+        detail.addEventListener('click', () => {
+          details.forEach((detail) => {
+            detail.open = true;
+          });
+        });
+        detail.open = expand;
+      });
+    }
+  };
 </script>
 
-<pre>{JSON.stringify(F, null, 2)}</pre>
+<!-- <pre>{JSON.stringify(F, null, 2)}</pre> -->
 <svelte:head>
   <title>Floating Label</title>
 </svelte:head>
 <div class="grid-wrapper">
   <div class="families">
+    <p onclick={toggleExpand} aria-hidden={true} class="expand-button">
+      expand all
+    </p>
     <details>
       <summary>The Koturs</summary>
-      <p>Bojana</p>
-      <p>Nikola</p>
+      <p class="child">Bojana</p>
+      <p class="child">Nikola</p>
       <p>Dragana</p>
       <p>Zeljko</p>
     </details>
     <details>
       <summary>The Milutinovics</summary>
-      <p>Mia</p>
-      <p>Marko</p>
+      <p class="child">Mia</p>
+      <p class="child">Marko</p>
       <p>Tanja</p>
       <p>Ljuban</p>
     </details>
     <details>
       <summary>The Isakovics</summary>
-      <p>Matia</p>
-      <p>Filip</p>
+      <p class="child">Matia</p>
+      <p class="child">Filip</p>
       <p>Snezana</p>
       <p>Ljubomir</p>
     </details>
     <details>
       <summary>The Kuzmanovics</summary>
-      <p>Jovana</p>
-      <p>Milica</p>
+      <p class="child">Jovana</p>
+      <p class="child">Milica</p>
       <p>Mirjana</p>
       <p>Sasa</p>
     </details>
@@ -129,7 +152,7 @@
     display: flex;
     align-items: flex-start;
     justify-content: center;
-    margin-top: 7rem !important;
+    margin-top: 4rem !important;
     gap: 2rem;
   }
   .container {
@@ -162,7 +185,7 @@
   }
   details {
     color: navy;
-    font-size: 2em;
+    font-size: 1.5em;
     cursor: pointer;
     p {
       color: crimson;
@@ -186,5 +209,17 @@
       top: 14px;
       left: auto;
     }
+  }
+  .child {
+    color: forestgreen;
+  }
+  .expand-button {
+    color: white;
+    padding: 3px 1rem;
+    border: 1px solid gray;
+    border-radius: 5px;
+    text-align: center;
+    cursor: pointer;
+    background-color: royalblue;
   }
 </style>

@@ -1,6 +1,6 @@
 import type { PageLoad } from './$types';
 // as the top in load hierarchy +layout.server/ts sends some data
-// we could get that data from the $app/stores and pipe it to
+// we could get that data from the $app/state and pipe it to
 // the final destination, which is the +page.svelte
 export const load: PageLoad = (async ({ data }) => {
 	return {

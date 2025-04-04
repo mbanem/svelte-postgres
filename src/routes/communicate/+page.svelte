@@ -1,6 +1,6 @@
 <script lang="ts">
   // https://svelte.dev/repl/ba7f569af4a44553b201a9efd8dc6ec2?version=4.2.14
-  import { page } from '$app/stores';
+  import { page } from '$app/state';
   import { onMount } from 'svelte';
   import Child from './Child.svelte';
   import * as utils from '$utils';
@@ -22,7 +22,7 @@
 
   onMount(() => {
     return () => {
-      utils.setMrPath($page.url.pathname);
+      utils.setMrPath(page.url.pathname);
     };
   });
 </script>
@@ -90,9 +90,10 @@ render here 'Hello Filip' or 'Window resized' respectively
   main {
     display: grid;
     /* make child also 38rem to be of equal with this main block */
-    grid-template-columns: 45rem 55rem;
+    grid-template-columns: 1fr 1.5fr;
     margin: 3rem auto;
-    width: 80vw;
+    // width: 80vw;
+    padding: 0;
 
     // margin-left: calc(80vw - 50%);
     .right-side {
@@ -100,6 +101,7 @@ render here 'Hello Filip' or 'Window resized' respectively
       border-radius: 8px;
       height: 15rem;
       margin-top: 1rem;
+      width: 54rem;
     }
   }
   .resize {

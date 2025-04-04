@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
   type PROPS = {
     summary: string;
     details: string;

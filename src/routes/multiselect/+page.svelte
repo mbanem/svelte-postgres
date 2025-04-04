@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { page } from '$app/stores';
-  import { onMount, getContext } from 'svelte';
+  import { page } from '$app/state';
+  import { onMount } from 'svelte';
   import type { PageData } from './$types';
   import SelectBox from '$lib/components/MultiSelectBox.svelte';
   import * as utils from '$utils';
@@ -68,7 +68,7 @@
 
   onMount(() => {
     return () => {
-      utils.setMrPath($page.url.pathname);
+      utils.setMrPath(page.url.pathname);
     };
   });
   let selectedCategoryIds = '';

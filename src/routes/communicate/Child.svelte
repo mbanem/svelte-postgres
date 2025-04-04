@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { page } from '$app/stores';
+  import { page } from '$app/state';
   import { onMount } from 'svelte';
   import * as utils from '$utils';
 
@@ -27,7 +27,7 @@
 
   onMount(() => {
     return () => {
-      utils.setMrPath($page.url.pathname);
+      utils.setMrPath(page.url.pathname);
     };
   });
 </script>

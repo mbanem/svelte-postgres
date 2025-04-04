@@ -19,7 +19,7 @@
     { color: 'Pink', title: 'A-Button', href: '/a-button' },
     { color: 'Green', title: 'Box', href: '/box' },
     { color: 'Yellow', title: 'Detail Summary', href: '/detail-summary' },
-    { color: 'Purple', title: 'Float Inputs', href: '/floating-inputs' },
+    { color: 'Purple', title: 'Floating Inputs', href: '/floating-inputs' },
     { color: 'Pink', title: 'Permissions', href: '/permissions' },
     { color: 'LightGreen', title: 'Flex Grid', href: '/flex-grid' },
     { color: 'Yellow', title: 'Flip', href: '/flip' },

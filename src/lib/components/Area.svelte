@@ -69,9 +69,10 @@ with last line rendering the total
   }
   .horizontal-block {
     display: grid;
-    grid-template-columns: 44rem 20rem 30rem;
+    grid-template-columns: 39rem 15rem 30rem;
     width: 90vw;
     margin: 1rem auto;
+    margin-top: 2rem;
     background-color: #4e4e5e !important;
     border-radius: 10px;
   }

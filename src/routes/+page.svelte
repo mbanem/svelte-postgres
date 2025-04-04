@@ -18,7 +18,10 @@
 
   import { Todos, getGlobalTodos } from '$lib/utils/todos.svelte';
   // Outside .svelte components, runes can only be used in .svelte.js and .svelte.ts modules.
-  import { createCounter, getGlobalCounter } from '$utils/counter.svelte';
+  import {
+    createCounter,
+    getGlobalCounter,
+  } from '../../src/lib/utils/counter.svelte';
   let { data } = $props();
   const counter = createCounter();
 
@@ -67,25 +70,24 @@
         {#each Object.entries(family) as [lastName, members]}
           <li class="last-name">{`The ${lastName}'s`}</li>
           <ul>
-            <li>parents</li>
-            <ul>
-              <li>
-                father: &nbsp; <span style="color:lightgreen"
-                  >{members['parents']['father']}</span
-                >
-              </li>
-              <li>
-                mother: <span style="color:lightgreen"
-                  >{members['parents']['mother']}</span
-                >
-              </li>
-            </ul>
-            <li>children</li>
-            <ul>
-              {#each members['children'] as child}
-                <li style="color:skyblue;">{child}</li>
+            <li>
+              father: &nbsp; <span style="color:lightgreen"
+                >{members['parents']['father']}</span
+              >
+            </li>
+            <li>
+              mother: <span style="color:lightgreen"
+                >{members['parents']['mother']}</span
+              >
+            </li>
+            <li class="children-title">children</li>
+            <!-- <ul> -->
+            <li class="children">
+              {#each members['children'] as child, ix}
+                {child}{#if ix < members['children'].length - 1},{/if}
               {/each}
-            </ul>
+            </li>
+            <!-- </ul> -->
           </ul>
         {/each}
       </div>
@@ -93,8 +95,8 @@
   </div>
 {/snippet}
 <div class="wrapper">
-  <div>
-    <pre>
+  <div style="margin:0;padding:0;">
+    <pre style="font-size:14px;">
     the Counter component is defined in /$utils/counter.svelte.ts.
 		Its constructor function createCounter() is exposed and can be called 
 		to deliver an instance of the counter, which is then in a local scope 
@@ -156,7 +158,7 @@
 <!-- svelte-ignore css_unused_selector -->
 <style lang="scss">
   .wrapper {
-    margin: 4rem 2rem 0 3rem;
+    margin: 3rem 2rem 0 3rem;
     /*background-color: #4e4e5e;
     color: white;
     padding: 0 0 1rem 3rem;
@@ -187,12 +189,12 @@
   }
   .family-container {
     @include container($head: 'Our Family', $head-color: skyblue);
-    margin: 1rem 0 0 3rem;
+    margin: 2rem 0 0 3rem;
     width: 25rem;
   }
   .global-counter {
     @include container($head: 'Global Counter', $head-color: lightgreen);
-    margin: 2rem 0 0 3rem;
+    margin: 1rem 0 0 3rem;
     width: 25rem !important;
   }
   pre {
@@ -211,8 +213,18 @@
     // padding: 0;
     margin: 0;
   }
+  .children {
+    display: inline-block;
+    color: skyblue;
+  }
+  .children-title {
+    color: yellow;
+    opacity: 0.7;
+    font-style: italic;
+    margin-left: -1rem;
+  }
   .last-name {
-    font-size: 20px;
+    font-size: 18px;
     font-style: italic;
     color: yellowgreen;
   }

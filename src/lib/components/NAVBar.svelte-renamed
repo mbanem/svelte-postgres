@@ -116,7 +116,7 @@
 
   const fromButtonObjects = () => {
     getNavBarItemOfName();
-    // console.log('navButtonObjects.forEach', navButtonObjects);
+    // console.log('entry navButtonObjects.length', navButtonObjects.length);
     // nav bar contains objects defined via list of TNavButtonObjects
     navButtonObjects.forEach((button: TXNavButtonObject) => {
       // console.log('button', button);
@@ -140,6 +140,7 @@
         ) as string;
       }
     });
+    // console.log('exit navButtonObjects.length', navButtonObjects.length);
     return navButtonObjects;
   };
   // TODO here we test only via className, but many classes do not have
@@ -189,7 +190,7 @@
     // addLogButton(role);
     fromButtonObjects(); // create button objects
     // navButtonObjects.sort((a, b) => Number(a.position) - Number(b.position));
-    // console.log('navButtonObjects', navButtonObjects);
+    // console.log('navButtonObjects', navButtonObjects.length, navButtonObjects);
     return navButtonObjects;
   };
 
@@ -213,7 +214,6 @@
   getButtonObjects();
 </script>
 
-<!-- <pre>navBar role {role}</pre> -->
 <nav
   class="nav"
   style:z-index={z_index}
@@ -224,6 +224,8 @@
     {#if isButtonAllowed(button)}
       <label for={`cb${button.ix}`}>
         <input type="checkbox" id={`cb${button.ix}`} class="hidden" />
+        <!-- <p>className {button.className}</p> -->
+        <!-- <p class={button.className}>CR10 class {button.className}</p> -->
         <div
           class={button.className}
           onclick={() => goto(button.href ?? `/${button.title}`)}
@@ -235,21 +237,18 @@
     {:else}
       <label for={`cb${button.ix}`} class="hidden">
         <input type="checkbox" id={`cb${button.ix}`} class="hidden" />
-        <div
+        <!-- <div
           class={button.className}
           onclick={() => goto(button.href ?? `/${button.title}`)}
           aria-hidden={true}
-        >
-          {button.title}
-        </div>
+        > -->
+        {button.title}
+        <!-- </div> -->
       </label>
     {/if}
   {/each}
 </nav>
 
-<!-- <pre>{JSON.stringify(navButtonObjects, null, 2)}</pre> -->
-
-<!-- svelte-ignore css_unused_selector -->
 <style lang="scss">
   .hidden {
     display: none;

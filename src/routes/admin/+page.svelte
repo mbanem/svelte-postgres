@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { onMount, getContext } from 'svelte';
-  import { page } from '$app/stores'; // for $age.status code on actions
+  import { onMount } from 'svelte';
+  import { page } from '$app/state'; // for $age.status code on actions
   import * as utils from '$utils';
 
   import type { PageData } from './$types';
@@ -9,7 +9,7 @@
 
   onMount(() => {
     return () => {
-      utils.setMrPath($page.url.pathname);
+      utils.setMrPath(page.url.pathname);
     };
   });
 </script>
@@ -27,8 +27,8 @@ this is an empty page just to show it is protected and accessible only by ADMIN
   </div>
   <div class="container-right">
     <pre
-      style="font-size:14px;">$page content holds data as well {JSON.stringify(
-        $page,
+      style="font-size:14px;">page content holds data as well {JSON.stringify(
+        page,
         null,
         2,
       )}</pre>

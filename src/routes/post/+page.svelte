@@ -5,7 +5,7 @@
   import type { SubmitFunction } from '@sveltejs/kit';
   import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
-  import { page } from '$app/stores'; // for $age.status code on actions
+  import { page } from '$app/state'; // for $age.status code on actions
   import { onMount } from 'svelte';
   import { Tooltip } from 'flowbite-svelte';
   import ButtonSpinner from '$components/ButtonSpinner.svelte';
@@ -91,7 +91,7 @@
   /*
 		After processing the request (for example, logging the user in by setting a cookie),
 		the action can respond with data that will be available through the form property on
-		the corresponding page and through $page.form app-wide until the next update.
+		the corresponding page and through page.form app-wide until the next update.
 	*/
   const enhancePost: SubmitFunction = ({ action, formData, cancel }) => {
     //console.log('enhancePost', action.search, formData.get('id'))
@@ -138,13 +138,13 @@
     // console.log('enhancePost2 result', result)
     return async ({ update }) => {
       await update();
-      //console.log('enhancePost after action', action.search, $page.status)
+      //console.log('enhancePost after action', action.search, page.status)
       if (action.search === '?/createPost') {
-        result = $page.status === 200 ? 'post created' : 'create failed';
+        result = page.status === 200 ? 'post created' : 'create failed';
       } else if (action.search === '?/deletePost') {
-        result = $page.status === 200 ? 'post deleted' : 'delete failed';
+        result = page.status === 200 ? 'post deleted' : 'delete failed';
       } else if (action.search === '?/updatePost') {
-        result = $page.status === 200 ? 'post updated' : 'update failed';
+        result = page.status === 200 ? 'post updated' : 'update failed';
       }
       invalidateAll();
       clearForm(); // also set buttons
@@ -308,7 +308,7 @@
     snap.authorId = data.locals.user.id;
     setSelectedOptions([], categoryIsRequired);
     return () => {
-      utils.setMrPath($page.url.pathname);
+      utils.setMrPath(page.url.pathname);
     };
   });
 </script>

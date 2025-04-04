@@ -7,46 +7,56 @@ const getUniqueId = (): string => {
 }
 
 export const handle: Handle = (async ({ event, resolve }) => {
-	// getting cookie from the browser
-	const session = event.cookies.get('session') as string
-	// if (!session) {
-	// 	return await resolve(event);
-	// }
-	if (!session) {
-		event.locals.user = {
-			id: '',
-			firstName: '',
-			lastName: '',
-			role: 'VISITOR'
+	// console.log('hooks')
+	let session='empty session'
+	try {
+		// getting cookie from the browser
+		session = event.cookies.get('session') as string
+		// if (!session) {
+		// 	return await resolve(event);
+		// }
+		if (!session) {
+			event.locals.user = {
+				id: '',
+				firstName: '',
+				lastName: '',
+				role: 'VISITOR'
+			}
+			// prohibit access to 'ADMIN', 'USER' allowed pages
+			if ('|fetch|news|store|comments|'.includes(`|${event.url.pathname.slice(1)}|`)) {
+				throw redirect(303, '/login')
+			}
+			event.url.pathname = '/'
+			// console.log('hooks no session', event)
+			return await resolve(event)
 		}
-		// prohibit access to 'ADMIN', 'USER' allowed pages
-		if ('|fetch|news|store|comments|'.includes(`|${event.url.pathname.slice(1)}|`)) {
-			throw redirect(303, '/login')
-		}
-		event.url.pathname = '/'
-		return await resolve(event)
+	} catch (error) {
+		console.log('event.cookies.getSession', error)
 	}
-
-	// we can now authenticate user if logged in
-	const user = await db.user.findUnique({
-		where: {
-			userAuthToken: session
-		},
-		select: {
-			id: true,
-			firstName: true,
-			lastName: true,
-			role: true
+	try {
+		// we can now authenticate user if logged in
+		const user = await db.user.findUnique({
+			where: {
+				userAuthToken: session
+			},
+			select: {
+				id: true,
+				firstName: true,
+				lastName: true,
+				role: true
+			}
+		})
+		if (user) {
+			event.locals.user = {
+				id: user.id,
+				firstName: user.firstName,
+				lastName: user.lastName,
+				role: user.role
+			}
 		}
-	})
-	if (user) {
-		event.locals.user = {
-			id: user.id,
-			firstName: user.firstName,
-			lastName: user.lastName,
-			role: user.role
-		}
+	} catch (err) {
+		console.log('hook getUser', err)
 	}
-
+	// console.log('hooks user',event.locals.user)
 	return await resolve(event)
 }) satisfies Handle

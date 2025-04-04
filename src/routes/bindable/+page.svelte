@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
+  import { sleep } from '$utils';
   import Bindable, { counter } from '$components/Bindable.svelte';
   import SummaryDetails from '$components/SummaryDetails.svelte';
   let count = 12; //$state(22);
@@ -50,6 +52,38 @@ In child we set delta using input of type number and via  button 'update by delt
 we call child local function 'updateParentCount' which in turn calls parent's clickArg(event,delta)
 with child click event:MouseEvent and value of delta bound in &lt;input type='number' bind:value=&lcub;delta&rcub;
 `;
+
+  onMount(() => {
+    if (document.querySelector('details')) {
+      // Fetch all the details elements
+      const details = document.querySelectorAll('details');
+      // Add onclick listeners
+      details.forEach((targetDetail) => {
+        targetDetail.addEventListener('click', () => {
+          // Close all details that are not targetDetail
+          details.forEach((detail) => {
+            if (detail !== targetDetail) {
+              detail.removeAttribute('open');
+            }
+            // else {
+            //   const sum = detail.getElementsByTagName(
+            //     'summary',
+            //   )[0] as HTMLElement;
+            //   if (sum.innerHTML == 'About Svelte 5') {
+            //     console.log(detail.getElementsByTagName('summary')[0]);
+            //     sleep(1500);
+            //     window.scrollTo(
+            //       0,
+            //       detail.open ? 50 : document.body.scrollHeight,
+            //     );
+            //     window.scrollTo(0, 5000);
+            //   }
+            // }
+          });
+        });
+      });
+    }
+  });
 </script>
 
 <svelte:head>
@@ -95,17 +129,16 @@ with child click event:MouseEvent and value of delta bound in &lt;input type='nu
 	no more <ChildComponent bind:this={X}> and calling X.func()
 -->
 <Bindable bind:count {clickArg}></Bindable>
-
 <SummaryDetails
   summary="About Svelte 5"
   details="
-The latest version that become reactive. It has compiler that monitor all the activities, 
-while the language itself is a superset of HTML having blocks of &lt;script&gt;, markup and
+The latest version that become reactive. It has a compiler that monitor all the activities, 
+while the language itself is a superset of HTML having blocks of &lt;script&gt;, a markup and
 &lt;style&gt; blocks. Inside the markup it implements JavaScript/TypeScript blocks wrapped
-inside a curly brackets. Language i very compact and the app is composed of folders that
-represent URL routes and hold spacial type of pages that run only on server like 
-+layout.server.ts, +server.ts, on both server and client like +page.ts or only on the client
-side like +page.svelte. It is component oriented and the main app it component as well. "
+inside a curly brackets. Language is very compact and the app is composed of folders that
+represent URL routes and hold special type of pages that run only on server -- like 
++layout.server.ts, +server.ts, while +page.js/ts runs on both server and client or only on the 
+client side like +page.svelte. It is component oriented and the main app it a component as well. "
 ></SummaryDetails>
 
 <style lang="scss">
@@ -147,7 +180,7 @@ side like +page.svelte. It is component oriented and the main app it component a
   }
   .container {
     @include container($head: 'Parent Estate', $head-color: skyblue);
-    margin: 5rem 0 0 2rem;
+    margin: 3rem 0 0 2rem;
   }
   summary {
     font-size: 1.2rem;

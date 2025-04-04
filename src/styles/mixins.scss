@@ -47,6 +47,7 @@
   $padding: 1rem 2rem,
   $head-color: #e3e3e3,
   $background-color: #3e3e3e,
+  $head-background-color:#3e3e3e,
   $border: 1px solid gray,
   $border-radius: 10px,
   $box-shadow: none,
@@ -65,13 +66,14 @@
   box-sizing: $box-sizing;
   &::before {
     position: absolute;
-    content: '\00a0 ' + $head + ' \00a0';
+    content: '\00a0 \00a0' + $head + '\00a0 \00a0';
     top: $top;
     left: $left;
-    color: $head-color !important;
-    background-color: $background-color;
-    // border: $border;
-    // border-radius: 3px;
+    color: $head-color !important;;
+    background-color: $head-background-color;
+    // border-top: 1px solid gray;
+    // border-top-left-radius: 4px;
+    // border-top-right-radius: 4px;
   }
 }
 
@@ -110,23 +112,6 @@
   @extend inline-block;
   color: $color;
   background-color: $background-color;
-}
-@mixin caterpillar-item($background-color) {
-  background-color: $background-color;
-  color: white;
-  border-radius: 5px;
-  border: 1px solid gray;
-  display: inline-block;
-  line-height: 50px;
-  text-align: center;
-  width: 50px;
-  &:hover {
-    color: yellow;
-    border-color: lightgreen;
-  }
-  &:target {
-    background-color: blue;
-  }
 }
 
 @mixin on-focus {

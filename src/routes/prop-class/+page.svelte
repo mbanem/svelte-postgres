@@ -11,6 +11,7 @@
 <svelte:head>
   <title>Visit Cards</title>
 </svelte:head>
+
 <a href="/prop-class/snippet">Snippet</a>
 <div class="container">
   <div>
@@ -51,6 +52,7 @@ from 1 and should render them @render name(), @render address()
 calling snippets as functions as they are such.
 The parent send snippets as component content, i.e. specifying them
 between the component tags
+<p class="contact-card-code">
 &lt;ContactCard&gt;
   &lcub;#snippet name()&rcub;
     P. Sherman
@@ -61,32 +63,35 @@ between the component tags
     Sydney
   &lcub;/snippet&rcub;
 &lt;/ContactCard&gt;
+</p>
 		</pre>
+      <div class="contact-card-wrapper">
+        <ContactCard>
+          {#snippet name()}
+            P. Sherman
+          {/snippet}
 
-      <ContactCard>
-        {#snippet name()}
-          P. Sherman
-        {/snippet}
-
-        {#snippet address()}
-          42 Wallaby Way <br />
-          Sydney
-        {/snippet}
-      </ContactCard>
+          {#snippet address()}
+            42 Wallaby Way <br />
+            Sydney
+          {/snippet}
+        </ContactCard>
+      </div>
     </div>
   </div>
-  <div class="snippet-component">
+  <!-- <div class="snippet-component">
     <SnippetComponent></SnippetComponent>
-  </div>
+  </div> -->
 </div>
 
 <!-- sending a CSS class to child component -->
 <style lang="scss">
   .container {
+    position: relative;
     display: grid;
-    width: 80vw;
+    width: 50rem;
     grid-template-columns: 1fr 1fr;
-    margin-left: 4rem;
+    margin: 0 auto;
     column-gap: 3rem;
   }
   .components-wrapper {
@@ -140,5 +145,20 @@ between the component tags
     margin: 5px 0 0 4rem;
     border: 1px solid gray;
     border-radius: 8px;
+    .contact-card-code {
+      color: gray;
+      padding: 0;
+      margin: 0;
+    }
+  }
+  pre {
+    padding: 0;
+    margin: 0.5rem 0;
+    font-size: 14px;
+  }
+  .contact-card-wrapper {
+    position: absolute;
+    top: 25rem;
+    left: 20rem;
   }
 </style>

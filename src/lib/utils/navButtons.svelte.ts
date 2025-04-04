@@ -5,7 +5,7 @@ export const setRole = (role_: string) => {
 };
 
 // console.log('utils/navButtons.svelte.ts getNavButtons', role);
-const navButtonObjects = [
+const navButtonObjects: TNavButtonObject[] = [
   { position: '0', title: 'home', condition: 'VISITOR' },
   { position: '5', title: 'counter', href: '/counter', condition: 'VISITOR' },
   { position: '10', title: 'derived', condition: 'VISITOR' },

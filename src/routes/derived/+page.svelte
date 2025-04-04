@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import RandomCanvas from '$lib/components/RandomCanvas.svelte';
-  import { page } from '$app/stores'; // for $age.status code on actions
+  import { page } from '$app/state'; // for $age.status code on actions
   import * as utils from '$utils';
 
   let numbers = $state([1, 2, 3]);
@@ -170,7 +170,7 @@
       ctx2 = canvas2.getContext('2d') as CanvasRenderingContext2D;
     }
     return () => {
-      utils.setMrPath($page.url.pathname);
+      utils.setMrPath(page.url.pathname);
     };
   });
 </script>

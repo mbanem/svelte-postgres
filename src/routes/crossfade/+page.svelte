@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { page } from '$app/stores';
+  import { page } from '$app/state';
   import { onMount } from 'svelte';
   import { crossfade } from 'svelte/transition';
   import CircleSpinner from '$lib/components/CircleSpinner.svelte';
@@ -94,7 +94,7 @@
   };
   onMount(() => {
     return () => {
-      utils.setMrPath($page.url.pathname);
+      utils.setMrPath(page.url.pathname);
     };
   });
 </script>

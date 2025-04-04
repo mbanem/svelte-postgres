@@ -54,4 +54,7 @@ adjust with changing the delta via input box of type number
     );
     margin-top: 2rem;
   }
+  pre {
+    padding: 0;
+  }
 </style>

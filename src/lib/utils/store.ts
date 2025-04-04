@@ -17,7 +17,7 @@ export const setNavBars = (navId: string, Ix: number, startIx: number) => {
 // 	$navBars.push({ navId, Ix, startIx })
 // }
 export const getNavBars = () => {
-	return getContext<TBarContext>(NAV_BARS);
+	return $state(getContext<TBarContext>(NAV_BARS));
 };
 
 export const setNavButtons = (
@@ -32,5 +32,5 @@ export const setNavButtons = (
 	setContext(NAV_BUTTONS, navButtons);
 };
 export const getNavButtons = () => {
-	return getContext<TNavButtonContext>(NAV_BUTTONS);
+	return $state(getContext<TBarContext>(NAV_BARS));
 };

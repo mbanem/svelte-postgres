@@ -31,19 +31,17 @@
   {/snippet}
 </FilterableList>
 
-<style>
+<style lang="scss">
   .row {
     display: grid;
-    width: 74rem;
-    align-items: center;
-    grid-template-columns: 10em 16rem 8rem 20rem 20rem;
-    /* gap: 1em; */
-    /* padding: 0.1em; */
-    background: var(--bg-1);
+    width: 47rem;
+    align-items: flex-start;
+    grid-template-columns: 6rem 9rem 6rem 12rem 12rem;
+    gap: 1em;
     border-radius: 0.2em;
-    color: lightgreen;
+    color: navy;
     font-family: Georgia, 'Times New Roman', Times, serif;
-    font-size: 18px;
+    font-size: 16px;
     border-top: 1px solid gray;
     border-bottom: 1px solid gray;
     height: 1.6rem;
@@ -55,6 +53,7 @@
   header {
     font-weight: normal;
     text-transform: capitalize;
+    background-color: cornsilk;
   }
 
   .row:not(header):hover {
@@ -66,7 +65,7 @@
   .color {
     aspect-ratio: 1;
     height: 30px;
-    width: 9.5rem;
+    width: 6rem;
     border-radius: 0.1em;
   }
 
@@ -75,9 +74,9 @@
     display: none;
   }
 
-  @media (min-width: 40rem) {
+  @media (min-width: 50rem) {
     .row {
-      grid-template-columns: 10rem 4fr 3fr 3fr;
+      grid-template-columns: 6rem 9rem 6rem 12rem 12rem;
       margin-right: 0;
     }
 
@@ -88,7 +87,7 @@
 
   @media (min-width: 60rem) {
     .row {
-      grid-template-columns: 10rem 4fr 3fr 3fr 3fr;
+      grid-template-columns: 6rem 9rem 6rem 12rem 12rem;
     }
 
     .hsl {

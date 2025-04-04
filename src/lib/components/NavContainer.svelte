@@ -1,9 +1,10 @@
 <script lang="ts">
+  import { browser } from '$app/environment';
   import { type Snippet } from 'svelte';
   // for items of different type embedded in <NavBar objects>
   const makeCSSClass = (cssClassDef: string) => {
     try {
-      if (!document) return;
+      if (!browser || !document) return;
       let s = document.createElement('style');
       s.innerHTML = cssClassDef;
       document.head.appendChild(s);

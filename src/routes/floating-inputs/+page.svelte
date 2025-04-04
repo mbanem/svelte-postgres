@@ -165,6 +165,9 @@
   let btnOpen: HTMLButtonElement;
 </script>
 
+<svelte:head>
+  <title>Floating Inputs</title>
+</svelte:head>
 {#snippet formStep({ id, type }: { type: string; id: string; label: string })}
   <article>
     <div>
@@ -176,6 +179,7 @@
             bind:this={inputEl}
             bind:value={formState.answers[id as TId]}
             {onButtonNext}
+            width="15rem"
           ></InputBox>
         </div>
       {:else}
@@ -248,8 +252,9 @@
   }
   main {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1.5fr;
-    width: 70vw;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    width: 90vw;
+    gap: 0;
     // margin-left: 15vw;
   }
 
@@ -263,7 +268,7 @@
   .left-column,
   .middle-column {
     width: 100%;
-    padding: 1rem 2rem;
+    padding: 0.5rem;
   }
   .left-column {
     position: relative;
@@ -280,12 +285,12 @@
     .button-next {
       position: absolute;
       top: 20rem;
-      left: 3rem;
+      left: 2rem;
     }
   }
   .inputbox-wrapper {
     position: absolute;
     top: 13rem;
-    margin-left: 3rem;
+    margin-left: 2rem;
   }
 </style>

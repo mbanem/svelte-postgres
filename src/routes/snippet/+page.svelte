@@ -53,9 +53,13 @@
     imgWidth += 1;
     scroll();
   };
-  const removeImage = () => {
+  const removeImage = (event: MouseEvent) => {
     //console.log('removeImage')
-    images = images.slice(0, -1);
+    if ((event.target as HTMLButtonElement).innerText.includes('last')) {
+      images = images.slice(0, -1);
+    } else {
+      images = images.slice(1);
+    }
     imgWidth -= 1;
     scroll();
   };
@@ -106,6 +110,7 @@
     {@render countdown(20)}
     <div class="buttons">
       <button onclick={addImage}>add image</button>
+      <button onclick={removeImage}>remove first</button>
       <button onclick={removeImage}>remove last</button>
       <pre>click on an image to remove it</pre>
     </div>
@@ -170,7 +175,7 @@
     grid-template-columns: repeat(6, 1fr);
     row-gap: px;
     column-gap: 1rem;
-    height: 75vh;
+    height: 70vh;
     width: 80vw;
     margin: 0 3rem 0 7rem;
     overflow: auto;

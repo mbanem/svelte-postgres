@@ -1,6 +1,6 @@
 <script lang="ts">
   import { type Snippet } from 'svelte';
-  import { page } from '$app/stores';
+  import { page } from '$app/state';
   import NavBar from '$components/NavBar.svelte';
   import NavContainer from '$components/NavContainer.svelte';
   import type { TNotification } from '$lib/types/common';
@@ -22,8 +22,8 @@
   let { locals, notifications, children }: ARGS = $props();
   let pageName = $state<string>('');
   $effect(() => {
-    pageName = $page.url.pathname.substring(
-      $page.url.pathname.lastIndexOf('/') + 1,
+    pageName = page.url.pathname.substring(
+      page.url.pathname.lastIndexOf('/') + 1,
     );
     utils.setCSSValue(
       '--GRID-LEFT-SIDE-WIDTH',

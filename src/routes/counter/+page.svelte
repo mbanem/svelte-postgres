@@ -45,7 +45,7 @@
 </svelte:head>
 
 <div class="wrapper">
-  <pre>
+  <pre class="pre-class">
 	Counter component is defined in $lib-utils.counter.svelte.ts
 	and can be used across the app, here in /counter/+page.svelte
 		<button onclick={counter.increment}>clicks: {counter.count}</button> <button
@@ -57,7 +57,7 @@
       >
   </div>
 	</pre>
-  <pre>
+  <pre class="pre-class">
 	We define <span style="color:yellow;">raw</span
     > = $state.raw([100, 101, 102]) that could only be reassigned/replaced
 	completely, say this way: raw = [...raw, new+item]
@@ -65,8 +65,8 @@
 		&lcub;raw.reduce((a, b) =&gt; a + b, 0)&rcub; which should give 303=100+101+103
 
 	For instance &lcub;(raw = [300, 400, 500]).reduce((a, b) =&gt; a + b, 0)&rcub;
-	raw [<span class="highlighted-array">{appended.join(', ')}</span>]
-	gives total 	<span class="expression-highlighted"
+	raw array [<span class="highlighted-array">{appended.join(', ')}</span>]
+	reduce gives total 	<span class="expression-highlighted"
       >{raw.reduce((a, b) => a + b, 0)}</span
     >
 	<button data-append onclick={appendToFrozen}>append to raw</button> <button
@@ -87,24 +87,24 @@
     <input id="z" class="number" type="number" bind:value={pHeight} />
   </div>
   <div>
-    <pre>
+    <pre class="pre-class">
         const volumeStore = () =&gt; &lcub;
-        let volume = $state(0)
-        return &lcub;
-        get volume() &lcub;
-        return volume
-        &rcub;,
-        set volume(val: number) &lcub;
-        volume = val
-        &rcub;
-        &rcub;
+          let volume = $state(0)
+          return &lcub;
+            get volume() &lcub;
+              return volume
+            &rcub;,
+            set volume(val: number) &lcub;
+              volume = val
+            &rcub;
+          &rcub;
         &rcub;
         
         export const globalVolume = volumeStore()
     </pre>
   </div>
   <div>
-    <pre>
+    <pre class="pre-class">
         The volumeStore is a closure holding volume as a local $store variable.
         Upon call it returns an object with volume getter and setter.
         The width,height and pHeight are $props send by parent component,
@@ -121,7 +121,7 @@
     color: white;
     border-radius: 1rem;
     width: 90vw;
-    height: 30vh;
+    height: 13rem;
     margin: 0 auto;
     border: none;
     // a {
@@ -146,10 +146,10 @@
     width: 13.5rem;
     grid-template-columns: 10rem 3rem;
     grid-template-rows: 2rem 2rem;
-    margin: 2rem 0 0 2rem;
+    margin: 1rem 0 0 2rem;
   }
   .highlighted-array {
-    font-size: 20px;
+    font-size: 16px;
     color: pink;
   }
   [data-append],
@@ -160,17 +160,26 @@
     display: grid;
     grid-template-columns: 15rem 23rem 30rem;
     width: 90vw;
-    margin-left: 6rem;
+    height: 14rem;
+    margin-left: 5rem;
     background-color: #4e4e5e;
     border-radius: 12px;
+    padding-top: 0;
   }
   .global-container {
-    @include container($head: 'Global Container', $head-color: lightgreen);
+    @include container(
+      $head: 'Global Container',
+      $head-color: lightgreen // $head-background-color: #4e4e5e
+    );
     margin: 0;
     padding: 0 2rem 0 0;
     span {
       font-size: 24px;
       color: yellow;
     }
+  }
+  .pre-class {
+    margin-top: 0;
+    font-size: 12px;
   }
 </style>

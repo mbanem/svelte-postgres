@@ -86,7 +86,8 @@
     {/if}
   </div>
 {/snippet}
-<pre>
+
+<pre style="padding:0;margin:0 0 2rem 0.5rem;">
 This is a recursive snippet tree
 where items are prefixed with
 a zer0-base indent number, each
@@ -108,6 +109,7 @@ incremented starts new ul list
   .main {
     @include container($head: 'Families', $head-color: lightgreen);
     width: 20rem;
+    margin: 0;
   }
   .ul-children {
     list-style: none;
@@ -121,5 +123,6 @@ incremented starts new ul list
     font-weight: 400;
     font-size: 20px;
     font-style: italic;
+    margin: 0;
   }
 </style>

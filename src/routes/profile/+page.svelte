@@ -5,7 +5,7 @@
   import type { SubmitFunction } from '@sveltejs/kit';
   import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
-  import { page } from '$app/stores'; // for $page.status code on actions
+  import { page } from '$app/state'; // for page.status code on actions
   import { setColor, hideButtonsExceptFirst } from '$utils';
   import { Tooltip } from 'flowbite-svelte';
 
@@ -135,13 +135,13 @@
       await update();
 
       if (action.search === '?/create') {
-        result = $page.status === 200 ? 'Profile created' : 'create failed';
+        result = page.status === 200 ? 'Profile created' : 'create failed';
       } else if (action.search === '?/delete') {
-        result = $page.status === 200 ? 'Profile deleted' : 'delete failed';
+        result = page.status === 200 ? 'Profile deleted' : 'delete failed';
       } else if (action.search === '?/update') {
-        result = $page.status === 200 ? 'Profile updated' : 'update failed';
+        result = page.status === 200 ? 'Profile updated' : 'update failed';
       } else if (action.search === '?/delete') {
-        result = $page.status === 200 ? 'Profile deleted' : 'delete failed';
+        result = page.status === 200 ? 'Profile deleted' : 'delete failed';
         iconDelete.classList.toggle('hidden');
         hideButtonsExceptFirst([btnCreate, btnUpdate, btnDelete]);
       }
@@ -192,7 +192,7 @@
 
   onMount(() => {
     return () => {
-      utils.setMrPath($page.url.pathname);
+      utils.setMrPath(page.url.pathname);
     };
   });
 </script>
