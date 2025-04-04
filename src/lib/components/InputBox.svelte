@@ -1,29 +1,26 @@
-<!--
-@component
--- InputBox.svelte accept the following properties
-	type PROPS = {
-		title: string
-		width: string     - (e.g., '100px', '50%')
-		height: string    - (e.g., '100px', '50%')
-		fontsize: string  - (e.g., '16px', '1rem')
-	}
--->
-
 <script lang="ts">
+  type TExportValueOn = 'keypress' | 'enter';
   import { browser } from '$app/environment';
   import * as utils from '$utils';
-  import Error from '$routes/+error.svelte';
+  // import { setContext } from 'svelte';
+
   type PROPS = {
     title: string;
     width?: string;
     height?: string;
     fontsize?: string;
+    margin?: string;
     type?: string;
     value?: string;
+    defaultValue?: string;
+    capitalize?: boolean;
     err?: string[] | undefined;
     onButtonNext?: () => void;
+    exportValueOn?: TExportValueOn;
+    inputIsReady?: () => void; // call parent when inputIsReady for 'enter', otherwise on every key
   };
-  const capitalize = (title: string): string => {
+  // make capitalizes as capital is already defined in $Props()
+  const capitalizes = (title: string): string => {
     return title[0]?.toUpperCase() + title.slice(1).replace(/([A-Z])/, ' $1');
   };
   let {
@@ -31,22 +28,23 @@
     width = '16rem',
     height = '2.5rem',
     fontsize = '16px',
+    margin = '1rem 0',
     type,
     value = $bindable(),
+    defaultValue,
     err = undefined,
     onButtonNext,
+    exportValueOn = 'keypress',
+    inputIsReady = undefined,
+    capitalize = false,
   }: PROPS = $props();
   // NOTE: enter non breaking unicode space: type 00A0 and press Alt + X
   // here we held between apostrophes three non breaking spaces
-  title = '   ' + capitalize(title);
+  title = '   ' + capitalizes(title);
   const topPosition = `${-1 * Math.floor(parseInt(fontsize) / 3)}px`;
 
-  let inputEl: HTMLInputElement;
+  let inputValue = $state('');
 
-  export const setFocus = () => {
-    console.log('InputBox setFocus');
-    inputEl.focus();
-  };
   if (browser) {
     utils.setCSSValue('--INPUT-BOX-LABEL-TOP-POS', topPosition);
     if (width) utils.setCSSValue('--INPUT-COMRUNNER-WIDTH', width as string);
@@ -55,11 +53,23 @@
       utils.setCSSValue('--INPUT-COMRUNNER-FONT-SIZE', fontsize as string);
     width = utils.getCSSValue('--INPUT-COMRUNNER-WIDTH') as string;
   }
-  const inputCompleted = (event: KeyboardEvent) => {
-    if (event.key === 'Enter' && onButtonNext) {
-      onButtonNext();
+  const onKeyUpHandler = (event: KeyboardEvent) => {
+    if (exportValueOn === 'enter' && event.key !== 'Enter') return;
+    if (!'keypress|enter'.includes(exportValueOn)) {
+      console.log("exportValueOn should be 'keypress' | 'enter'");
+      return;
     }
-    value = utils.capitalize(value as string);
+    if (inputValue && inputValue[0]) {
+      if (capitalize) {
+        value = inputValue[0].toUpperCase() + inputValue.slice(1).toLowerCase();
+        inputValue = value;
+      } else {
+        value = inputValue;
+      }
+    }
+    if (inputIsReady) {
+      inputIsReady();
+    }
   };
 
   // const test = async () => {
@@ -71,26 +81,39 @@
   // 	}
   // }
   // test()
-  const forward = () => {
+
+  // input box has a label text instead of a placeholder in order to
+  // move it up on focus, but the text does not set focus on input
+  // element on click -- so we have to set the focus when the label
+  // text is selected
+  let inputEl: HTMLInputElement;
+  const setFocus = () => {
     inputEl.focus();
+    if (defaultValue) {
+      inputValue = defaultValue;
+    } else {
+      inputValue = value as string;
+    }
   };
-  const focusMe = (event: MouseEvent) => {
-    event.preventDefault();
+  // parent call to set input box value
+  export const setInputBoxValue = (str: string) => {
+    console.log('inside setInputBoxValue');
     inputEl.focus();
+    inputValue = str;
   };
+  // setContext('setInputBoxValue', setInputBoxValue);
 </script>
 
-<div class="input-wrapper" onclick={focusMe} aria-hidden={true}>
+<div class="input-wrapper" style="margin:{margin}">
   <input
     bind:this={inputEl}
     type={type ? type : 'text'}
     required
-    bind:value
-    onkeyup={inputCompleted}
+    bind:value={inputValue}
+    onkeyup={onKeyUpHandler}
     disabled={false}
-    onclick={forward}
   />
-  <label for="" aria-hidden={true}>
+  <label for="" onclick={setFocus} aria-hidden={true}>
     {title}
     <span class="err">
       {err ? ` - ${err}` : ''}
@@ -103,7 +126,6 @@
     --INPUT-COMRUNNER-WIDTH: 16rem;
   }
   .input-wrapper {
-    margin: 1rem 0;
     position: relative;
     width: max-content;
     label {

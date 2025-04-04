@@ -1,31 +1,37 @@
 <script lang="ts">
+  import { getContext } from 'svelte';
   import { hasPermission } from './Permissions.svelte';
-  /* 
+  import InputBox from '$components/InputBox.svelte';
+  // import { onMount } from 'svelte';
+
+  type TExportValueOn = 'keypress' | 'enter';
+  /*  
 		we usually have value/text pairs for options but we can use 
 		objects with more properties, though we still bindle pairs
 		of value/text for presenting the options in a select box,
 		but then, like here, we can use additional properties to set
 		condition for selected option attribute, e.g. ADMIN
 	*/
-  // type TRole = 'VISITOR' | 'USER' | 'ADMIN';
-  // type Option = {
-  //   id: number;
-  //   value: string;
-  //   role: TRole[];
-  // };
+  type TRole = 'VISITOR' | 'USER' | 'ADMIN' | 'MODERATOR';
+  type Option = {
+    id: number;
+    value: string;
+    role: TRole[];
+  };
 
-  // let options: Option[] = [
-  //   { id: 4, value: '2019', role: ['VISITOR', 'ADMIN'] },
-  //   { id: 3, value: '2018', role: ['VISITOR', 'ADMIN'] },
-  //   { id: 2, value: '2023', role: ['VISITOR', 'ADMIN'] },
-  //   { id: 1, value: '2024', role: ['VISITOR', 'USER', 'ADMIN'] },
-  // ];
+  let options: Option[] = [
+    { id: 1684849, value: '2019', role: ['USER', 'MODERATOR'] },
+    { id: 62877812, value: '2018', role: ['VISITOR'] },
+    { id: 65487, value: '2023', role: ['VISITOR', 'USER'] },
+    { id: 46565416, value: '2024', role: ['VISITOR', 'USER', 'ADMIN'] },
+  ];
 
-  let selected_id = $state(2);
+  let selected_id = $state('');
   const authorId = 46565416;
   // --------------------------------------------------------------
   let firstName = $state('');
   let permission = $state('view:comments');
+  let viewSpanButton: HTMLSpanElement;
 
   type TUser = {
     id: string;
@@ -51,13 +57,13 @@
     Marko: {
       id: '62877812',
       firstName: 'Marko',
-      lastName: 'MIlutinovic',
+      lastName: 'Milutinovic',
       role: 'visitor',
     },
     Mia: {
       id: '1684849',
       firstName: 'Mia',
-      lastName: 'MIlutinovic',
+      lastName: 'Milutinovic',
       role: 'moderator',
     },
   } as const;
@@ -79,6 +85,19 @@
       authorId,
     ),
   );
+  let inputFirstName = $state('');
+  // const firstNameOnChange = (event: KeyboardEvent) => {
+  //   if (event.key !== 'Enter') return;
+  //   inputFirstName =
+  //     inputFirstName[0]?.toUpperCase() + inputFirstName.slice(1).toLowerCase();
+  //   if (users[inputFirstName]) {
+  //     firstName = (users[inputFirstName] as TUser).firstName;
+  //   }
+  // };
+  // call InputBox function to set focus and value in <input box element
+  let input_box: InputBox;
+  // const setInputBoxValue: (_: string) => void = getContext('setInputBoxValue');
+  let defaultValue = 'view:comments';
   const checkPermission = (event: MouseEvent) => {
     event.preventDefault();
     const span = event.target as HTMLSpanElement;
@@ -88,14 +107,39 @@
     });
     (span as HTMLSpanElement).style.backgroundColor = 'blue';
     permission = (event.target as HTMLSpanElement)?.innerText;
+    console.log('before setInputBoxValue');
+    input_box.setInputBoxValue(permission);
   };
-  let viewSpanButton: HTMLSpanElement;
+
   const clearSelectedPermission = () => {
     let spans = document.querySelector('.permission-block')?.childNodes;
     spans?.forEach((span) => {
       (span as HTMLSpanElement).style.backgroundColor = 'navy';
     });
     viewSpanButton.click();
+  };
+
+  // Ask <InputBox to call this function when input is ready.
+  // When TExportValueOn is 'enter' it is called when InputBox
+  // detects Enter key, while for 'keypress' it does no every keypress
+  const inputIsReady = () => {
+    console.log('inputIsReady');
+    viewSpanButton.click();
+  };
+  // onMount(() => {
+  //   // this will trigger <select box to show Marko Milutinovic
+  //   firstName = 'Marko';
+  // });
+
+  // fired when input box for permission enters e.g. update:comments
+  // program should highlight corresponding button which also can
+  // select permission to see if user has such permission
+  const selectPermissionButton = () => {
+    let spans = document.querySelector('.permission-block')?.childNodes;
+    spans?.forEach((span) => {
+      const found = (span as HTMLSpanElement).innerText === permission;
+      (span as HTMLSpanElement).style.backgroundColor = found ? 'blue' : 'navy';
+    });
   };
 </script>
 
@@ -162,32 +206,48 @@
           </span>
         </p>
       {:else}
-        <p class="warning">Please select a User</p>
+        <p class="select-user-info">
+          Select a User by entering First Name or via select box Select a User
+        </p>
       {/if}
-      <!-- <input
-        type="text"
-        onkeyup={firstNameOnChange}
-        placeholder="enter firstName"
-      /> -->
-      <select bind:value={firstName} onchange={clearSelectedPermission}>
-        <option value="">Select a User</option>
-        {#each Object.entries(users) as [k, v]}
-          <option value={k}>{v.firstName} {v.lastName}</option>
-        {/each}
-      </select>
-      <input
-        type="text"
-        bind:value={permission}
-        placeholder="enter permission as action:object"
-      />
-
-      <!-- <select bind:value={selected_id}>
-        {#each options as option}
-          <option value={option.id}>{option.value}</option>
-        {/each}
-      </select> -->
+      <div class="select-user-block">
+        <InputBox
+          title="Enter First Name & press Enter key"
+          height="2rem"
+          margin="10px 0 5px 0"
+          bind:value={firstName}
+          exportValueOn="enter"
+          capitalize={true}
+          {inputIsReady}
+        ></InputBox>
+        <select bind:value={firstName} onchange={clearSelectedPermission}>
+          <option value="" style="color:navy;font-weight:400 !important;"
+            >Select a User</option
+          >
+          {#each Object.entries(users) as [k, v]}
+            <option value={k}>{v.firstName} {v.lastName}</option>
+          {/each}
+        </select>
+      </div>
+      <div class="select-user-block">
+        <InputBox
+          bind:this={input_box}
+          title="Enter permission as action:object to test"
+          type="text"
+          bind:value={permission}
+          width="18rem"
+          {defaultValue}
+          inputIsReady={selectPermissionButton}
+        ></InputBox>
+        <select bind:value={selected_id} style="margin-top:1.2rem;width:12rem;">
+          <option value="" selected={true}>Select Year</option>
+          {#each options as option}
+            <option value={option.id}>{option.value}</option>
+          {/each}
+        </select>
+      </div>
     </div>
-    <pre>
+    <pre style="margin:0; padding:0;">
       <p
         onclick={checkPermission}
         aria-hidden={true}
@@ -220,7 +280,7 @@ Permissions (click permission button below to check for that permission)
       'Handling Permissions -- Web Dev Simplified',
       $head-color: skyblue
     );
-    height: 22rem;
+    height: 28rem;
     margin: 1rem 0 0 0;
     width: 40rem;
   }
@@ -251,15 +311,20 @@ Permissions (click permission button below to check for that permission)
   }
   .warning {
     color: pink;
+    margin: 0;
+    padding: 0;
+  }
+  .select-user-info {
+    color: skyblue;
   }
   .json-block {
-    margin: -5rem 0 0 -1rem;
+    margin: -3rem 0 0 -1rem;
     // pre {
     //   margin-left: -1rem;
     // }
   }
   .permission-block {
-    margin-left: -1rem;
+    margin: -1rem 0 0 -5px;
     span {
       display: inline-block;
       // height: 1.4rem;
@@ -291,5 +356,17 @@ Permissions (click permission button below to check for that permission)
   }
   .users-info {
     font-size: 12px;
+  }
+  .select-user-block {
+    display: flex;
+    gap: 1rem;
+    justify-content: baseline;
+    font-weight: 400;
+    select {
+      height: 2rem;
+      margin-top: 1rem;
+      font-size: 16px;
+      font-weight: 400 !important;
+    }
   }
 </style>

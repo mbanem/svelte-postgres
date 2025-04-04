@@ -35,6 +35,7 @@
     // render background first, otherwise it goes over the text
     ctx.fillStyle = backColor;
     ctx.fillRect(0, 0, size, size);
+    // @ts-expect-error
     lblColor.style.backgroundColor = backColor;
 
     // render text after filling background to get on top
