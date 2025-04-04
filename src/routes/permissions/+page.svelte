@@ -22,7 +22,7 @@
   // ];
 
   let selected_id = $state(2);
-  const authorId = 12345678;
+  const authorId = 46565416;
   // --------------------------------------------------------------
   let firstName = $state('');
   let permission = $state('view:comments');
@@ -37,25 +37,25 @@
 
   const users: Record<string, TUser> = {
     Matia: {
-      id: '12345678',
+      id: '46565416',
       firstName: 'Matia',
       lastName: 'Isakovic',
       role: 'admin',
     },
     Filip: {
-      id: '12345678',
+      id: '65487',
       firstName: 'Filip',
       lastName: 'Isakovic',
       role: 'user',
     },
     Marko: {
-      id: '12345678',
+      id: '62877812',
       firstName: 'Marko',
       lastName: 'MIlutinovic',
       role: 'visitor',
     },
     Mia: {
-      id: '12345678',
+      id: '1684849',
       firstName: 'Mia',
       lastName: 'MIlutinovic',
       role: 'moderator',
@@ -102,7 +102,7 @@
 <!-- <p>{firstName}</p> -->
 <div class="wrapper">
   <div>
-    <pre>
+    <pre class="users-info">
   Users are defined as:
   const users = &lcub;
 		<span>{ma.firstName}</span>: &lcub;
@@ -132,7 +132,7 @@
 	&rcub; as const;
   So to access role of the first user we use:
     users[item as keyof typeof users].role
-  where item is either 'filip','matia' or 'Marko' taking care of case-sensitivity
+  where item is either 'Filip','Matia', 'Marko' or 'Mia' taking care of case-sensitivity
 
   const ROLES = &lcub;
     admin: ['view:comments', 'create:comments', 'update:comments', 'delete:comments'],
@@ -142,7 +142,8 @@
   &rcub; as const;
   NOTE: type Users = &lcub; name: keyof typeof users; user: TUser &rcub;
   has big impact on &lt;input type="text" bind:value=&lcub;firstName&rcub; placeholder="enter firstName" /&gt;
-  as <i>keyof typeof users</i> is <span>"filip" | "Marko" | "matia"</span
+  as <i>keyof typeof users</i> is <span
+        >"Filip" | "Marko" | "Matia" | "Mia"</span
       > and only those strings are acceptable 
   no matter what string we enter in the input box 
     </pre>
@@ -252,14 +253,19 @@ Permissions (click permission button below to check for that permission)
     color: pink;
   }
   .json-block {
-    margin-top: -5rem;
+    margin: -5rem 0 0 -1rem;
+    // pre {
+    //   margin-left: -1rem;
+    // }
   }
   .permission-block {
+    margin-left: -1rem;
     span {
-      height: 1.4rem;
+      display: inline-block;
+      // height: 1.4rem;
       border: 1px solid gray;
       border-radius: 5px;
-      padding: 2px 0.5rem;
+      padding: 0 5px;
       cursor: pointer;
       color: white;
       /* big line-height to cover all area for mouse click to be detected
@@ -268,7 +274,7 @@ Permissions (click permission button below to check for that permission)
       */
       line-height: 2rem;
       background-color: navy;
-      margin-top: -3rem;
+      margin-right: 2px;
     }
   }
   .blue-background {
@@ -282,5 +288,8 @@ Permissions (click permission button below to check for that permission)
         font-size: 1.6rem;
       }
     }
+  }
+  .users-info {
+    font-size: 12px;
   }
 </style>
