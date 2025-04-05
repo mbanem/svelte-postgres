@@ -650,9 +650,9 @@ export const keyPress = (
   // console.log('dispatch', keyEvent);
   if (el !== undefined) {
     el.dispatchEvent(keyEvent);
-    console.log('using el', el);
+    // console.log('using el', el);
   } else {
-    console.log('using active element', document.activeElement);
+    // console.log('using active element', document.activeElement);
     (
       document.activeElement as HTMLInputElement | HTMLButtonElement
     ).dispatchEvent(keyEvent);

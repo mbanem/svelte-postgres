@@ -23,8 +23,8 @@
 <div class="main">
   <DynamicTable data={familyMembers}>
     {#snippet header()}
-      <p class="header first">First Name</p>
-      <p class="header second">Last Name</p>
+      <p class="header first">Family Members</p>
+      <p class="header second"></p>
     {/snippet}
     {#snippet row(member: FamilyMember)}
       <p class="member-name">

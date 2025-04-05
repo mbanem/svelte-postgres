@@ -21,11 +21,11 @@ export const load = async () => {
 export const actions = {
   default: async ({ request }) => {
     const form = await superValidate(request, zod(schema));
-    console.log(form);
+    // console.log(form);
 
     if (!form.valid) {
       if (form.data.firstName.length < 3) {
-        console.log('first name is too short');
+        // console.log('first name is too short');
         setError(form, 'firstName', 'At least 3 characters');
       }
       // Again, return { form } and things will just work.

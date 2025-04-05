@@ -81,15 +81,15 @@
   const setActive = () => {
     switch (formState.step) {
       case 0:
-        console.log('step-0');
+        // console.log('step-0');
         inputEl.setFocus();
         break;
       case 1:
-        console.log('step-1');
+        // console.log('step-1');
         inputEl.setFocus();
         break;
       case 2:
-        console.log('step-2');
+        // console.log('step-2');
         inputEl.focus();
         inputEl.value = '2005-03-03';
         // setTimeout(() => {
@@ -101,7 +101,7 @@
         }, 1000);
         break;
       case 3:
-        console.log('step-3');
+        // console.log('step-3');
         // cannot make it
         inputEl.value = utils.randomColor();
         inputEl.showPicker();
@@ -128,7 +128,7 @@
   let userDetailsContainer: HTMLDivElement;
   let buttonNext: HTMLButtonElement;
   const onButtonNext = () => {
-    console.log(formState.step);
+    // console.log(formState.step);
     buttonNext.click();
   };
   onMount(() => {
@@ -238,10 +238,10 @@
       step={formState.step}
     ></Header>
   </div>
-  <div class="right-column">
+  <div class="third-column">
     <Tree></Tree>
   </div>
-  <div>
+  <div class="right-column">
     <SnippetTable></SnippetTable>
   </div>
 </main>
@@ -287,6 +287,12 @@
       top: 20rem;
       left: 2rem;
     }
+  }
+  .third-column {
+    margin: 0;
+  }
+  .right-column {
+    margin-top: -3rem;
   }
   .inputbox-wrapper {
     position: absolute;

@@ -42,7 +42,7 @@
 <p>updating any and anywhere is visible at bot sides child and parent</p>
 <div class="car-container">
   <p></p>
-  <p>Car Details at Child</p>
+  <p class="list-header">Car Details at Child</p>
   <p>Make</p>
   <input type="text" bind:value={car.make} />
   <p>Year</p>
@@ -58,40 +58,53 @@
   input {
     padding: 0;
     margin: 0;
+    border: none;
+    outline: none;
     color: lightgreen;
   }
   .car-container {
     display: grid;
     width: max-content;
     grid-template-columns: 4rem 10rem;
+    grid-auto-rows: 1.4rem;
+    align-items: baseline;
     border: 1px solid gray;
     border-radius: 8px;
     padding: 0 2rem;
     margin: 1rem 0 0 4rem;
+    font-size: 14px;
+  }
+  .list-header {
+    grid-column: 1/3;
+    border-bottom: 1px solid gray;
+    color: yellow;
+    font-size: 18px;
   }
   input {
     width: 6rem !important;
     color: lightgreen !important;
+    font-size: 14px;
   }
   .child-estate,
   .child-parent-estate {
     position: relative;
-    margin: 1rem 0 0 4rem;
+    margin: 1rem 0 0 0;
     width: max-content;
     padding: 6px 2rem;
     border: var(--BLOCK-BORDER);
     border-radius: var(--BLOCK-BORDER-RADIUS);
-    &::before {
-      position: absolute;
-      top: -0.6rem;
-      background-color: var(--BODY-BACKGROUND-COLOR);
-      content: ' child estate ';
-    }
+    @include container(
+      $head: 'Child Estate',
+      $head-color: skyblue,
+      $padding: 10px 1rem
+    );
   }
   .child-parent-estate {
-    &::before {
-      content: ' child estate using parent ';
-    }
+    @include container(
+      $head: 'Child Estate Using Parent',
+      $head-color: skyblue,
+      $padding: 10px 1rem
+    );
   }
   .lightgreen,
   .yellow {

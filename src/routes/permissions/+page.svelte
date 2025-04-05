@@ -112,7 +112,7 @@
     });
     (span as HTMLSpanElement).style.backgroundColor = 'blue';
     permission = (event.target as HTMLSpanElement)?.innerText;
-    console.log('before setInputBoxValue');
+    // console.log('before setInputBoxValue');
     input_box.setInputBoxValue(permission);
   };
 
@@ -129,7 +129,7 @@
   // When TExportValueOn is 'enter' it is called when InputBox
   // detects Enter key, while for 'keypress' it does no every keypress
   const inputIsReady = () => {
-    console.log('inputIsReady');
+    // console.log('inputIsReady');
     viewSpanButton.click();
   };
   // onMount(() => {

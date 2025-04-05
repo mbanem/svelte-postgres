@@ -26,7 +26,7 @@
 </script>
 
 <svelte:head>
-  <title>Comp Comp</title>
+  <title>Parent calls child</title>
 </svelte:head>
 <div class="grid-wrapper">
   <div>
@@ -54,7 +54,7 @@
 
     <div class="car-container">
       <p></p>
-      <p>Car Details at Parent</p>
+      <p class="list-header">Car Details at Parent</p>
       <p>Make</p>
       <input type="text" bind:value={cadillac.make} />
       <p>Year</p>
@@ -68,8 +68,7 @@
   <div>
     <pre>
   Child defines and exports childCounter and getChildCount from its module 
-  <code>
-      &lt;script module lang='ts'&gt;
+  <code>      &lt;script module lang='ts'&gt;
         let count = $state(0)
         export const childCounter = (delta: number) =&gt; &lcub; count += delta &rcub;
         export const getChildCount = () =&gt; &lcub;
@@ -81,24 +80,22 @@
       <code
         >imports Child, &lcub;childCounter, getChildCount&rcub; from './Child.svelte'</code
       >
-  and uses them <code>
-  Parent defines an object 
-        let cadillac: Car = &lcub;
-          make: 'Cadillac',
-          year: 2009,
-          mileage: 102000,
-          price: 40000.0
-        &rcub;</code
+  and uses them
+<code>    Parent defines an object 
+    let cadillac: Car = &lcub;
+      make: 'Cadillac',
+      year: 2009,
+      mileage: 102000,
+      price: 40000.0
+    &rcub;</code
       >
   and export is to child but requires two way communication on changing object properties
   by issuing bind:car
     <code
         >&lt;Child &lcub;parentCounter&rcub; &lcub;getParentCount&rcub; bind:car=&lcub;cadillac&rcub;&gt;&lt;/Child&gt;</code
       >
-  
   Child creates regular script section and gets all prompts from parent as
-  <code>
-    &lt;script lang="ts"&gt;
+  <code>    &lt;script lang="ts"&gt;
       type Car = &lcub;
         make: string
         year: number
@@ -111,8 +108,8 @@
         car: Car
       &rcub;
       let &lcub; parentCounter, getParentCount, car = $bindable() &rcub;: PROPS = $props()
-    &lt;/script&gt;
-    </code>
+    &lt;/script&gt;</code
+      >
   On both sides child and parent input box values are bound to car.PROPERTIES so two way 
   communication ensures update at any side is propagated to the other side
   Values in Child are in lightgreen and in parent in yellow
@@ -127,12 +124,19 @@
     width: 90vw;
     margin-left: 5%;
   }
+  .list-header {
+    grid-column: 1/3;
+    border-bottom: 1px solid gray;
+    color: lightgreen;
+    margin-bottom: 10px;
+    font-size: 18px;
+  }
   pre {
     // position: absolute;
     // top: 3rem;
     // left: 40vw;
     tab-size: 2;
-    font-size: 15px;
+    font-size: 14px;
     color: skyblue;
     border: 1px solid gray;
     border-radius: 10px;
@@ -156,28 +160,33 @@
     display: grid;
     width: max-content;
     grid-template-columns: 4rem 10rem;
+    grid-auto-rows: 1.4rem;
+    align-items: baseline;
     border: 1px solid gray;
     border-radius: 8px;
+    font-size: 14px;
     padding: 0 2rem;
     margin: 6px 0 0 4rem;
   }
   input {
     width: 6rem !important;
     color: yellow !important;
+    border: none;
+    outline: none;
+    font-size: 14px;
   }
   .parent-estate {
     position: relative;
-    margin: 3rem 0 0 4rem;
+    margin-top: 1rem;
     width: max-content;
-    padding: 6px 2rem;
+    // padding: 6px 2rem;
     border: var(--BLOCK-BORDER);
     border-radius: var(--BLOCK-BORDER-RADIUS);
-    &::before {
-      position: absolute;
-      top: -0.6rem;
-      background-color: var(--BODY-BACKGROUND-COLOR);
-      content: ' parent estate ';
-    }
+    @include container(
+      $head: 'Parent Estate',
+      $head-color: skyblue,
+      $padding: 10px 1rem
+    );
   }
   .lightgreen,
   .yellow {
@@ -189,5 +198,6 @@
   }
   .info {
     margin: 0 0 0 4rem;
+    font-size: 14px;
   }
 </style>

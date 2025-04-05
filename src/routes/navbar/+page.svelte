@@ -1,7 +1,9 @@
 <script lang="ts">
+  import InputBox from '$lib/components/InputBox.svelte';
   import NavButton from '$lib/components/NavButton.svelte';
 
-  const items = [
+  type TButtonProp = { color: string; title: string; href: string };
+  const buttonsList = [
     { color: 'Pink', title: 'Home', href: '/' },
     { color: 'Blue', title: 'Derived', href: '/derived' },
     { title: 'Scroll', href: '/bars/scroll' }, // make one with no color to use default color -- red
@@ -21,35 +23,50 @@
     { color: 'Yellow', title: 'Detail Summary', href: '/detail-summary' },
     { color: 'Purple', title: 'Floating Inputs', href: '/floating-inputs' },
     { color: 'Pink', title: 'Permissions', href: '/permissions' },
+    {
+      color: 'Purple',
+      title: 'Parent call child func',
+      href: '/parent-call-child',
+    },
     { color: 'LightGreen', title: 'Flex Grid', href: '/flex-grid' },
     { color: 'Yellow', title: 'Flip', href: '/flip' },
   ];
 
   // using $effect
   import { tick } from 'svelte';
-  let inputBox: HTMLInputElement;
-  let div: HTMLDivElement;
+  let inputBox: InputBox;
+  let ulEl: HTMLUListElement;
   let messages = $state<string[]>([]);
 
+  let inputBoxEntry = $state('');
+  const inputIsReady = () => {
+    const para = document.createElement('p');
+    para.innerHTML = `${inputBoxEntry}`;
+    para.style.setProperty('color', 'yellow');
+    para.style.setProperty('margin', 0);
+    ulEl.appendChild(para);
+    ulEl.scrollTo(0, ulEl.scrollHeight);
+    inputBox.setInputBoxValue('', true); // true to blur as well
+  };
   $effect.pre(() => {
-    if (!div) return; // not yet mountedChip
+    if (!ulEl) return; // not yet mountedChip
     // reference `messages` array length so that this code re-runs whenever it changes
     messages.length;
     // auto scroll when new messages are added
-    if (div.offsetHeight + div.scrollTop > div.scrollHeight - 20) {
+    if (ulEl.offsetHeight + ulEl.scrollTop > ulEl.scrollHeight - 20) {
       tick().then(() => {
-        div?.scrollTo(0, div.scrollHeight);
+        ulEl?.scrollTo(0, ulEl.scrollHeight);
       });
     }
   });
 
-  const change = (event: KeyboardEvent) => {
-    const char = event.key;
-    // console.log(char)
-    if (event.key !== 'Enter') return;
-    if (event.target) {
-      messages.push(inputBox.value as string);
-      inputBox.value = '';
+  let buttonListIndex = $state(0);
+  const buttonsLength = buttonsList.length;
+
+  const addNavButtonToList = () => {
+    if (buttonListIndex < buttonsLength) {
+      ulEl.innerHTML += `<p style='margin:0;color:lightgreen;'>${(buttonsList[buttonListIndex++] as TButtonProp).title}</p>`;
+      ulEl.scrollTo(0, ulEl.scrollHeight);
     }
   };
 </script>
@@ -74,16 +91,12 @@
 {/snippet}
 {@render snippetName()}
 <!-- <NavButton label="home" title="Home" href="/" {snippetName}></NavButton> -->
-{#each items as item}
+{#each buttonsList as btn}
   <p>
-    <NavButton
-      colorName={item.color ?? 'Red'}
-      title={item.title}
-      href={item.href}
-    >
+    <NavButton colorName={btn.color ?? 'Red'} title={btn.title} href={btn.href}>
       {#snippet media()}
-        {#if item.color}
-          {@render icon(`${item.color}`)}
+        {#if btn.color}
+          {@render icon(`${btn.color}`)}
         {:else}
           {@render icon()}
         {/if}
@@ -106,24 +119,46 @@
 </NavButton>
 
 <pre>Using $effect based on messages.length to render
-	a list of values entered in the below input box
+	a list of values entered in this input box
 </pre>
-<input
-  type="text"
-  placeholder="Enter item for the list and press Enter key"
-  size="20"
-  class="input-box"
-  bind:this={inputBox}
-  onkeydown={change}
-/>
-<div bind:this={div}>
-  {#each messages as message, index}
-    <p class="names">{index > 0 ? ', ' : ''} {message}</p>
-  {/each}
+
+<div class="select-user-block">
+  <InputBox
+    bind:this={inputBox}
+    title="Enter item for the list and press Enter key"
+    height="2rem;"
+    width="20rem"
+    margin="10px 0 5px 0"
+    bind:value={inputBoxEntry}
+    exportValueOn="enter"
+    capitalize={true}
+    {inputIsReady}
+  ></InputBox>
+  <p style="display:block;width:12rem;border:none;">
+    The List with {buttonListIndex} button{buttonListIndex == 1 ? '' : 's'}
+  </p>
+  <ul bind:this={ulEl} class="message-container">
+    {#each messages as message, index}
+      <li class="names">{index > 0 ? ', ' : ''} {message}</li>
+    {/each}
+  </ul>
 </div>
+<button onclick={addNavButtonToList} class="add-button-to-list"
+  >add nav button to the list</button
+>
 
 <!-- using $effect -->
-<style>
+<style lang="scss">
+  .message-container {
+    @include border-small();
+    width: 10rem;
+    padding-left: 1rem;
+    height: 7.76rem;
+    overflow-y: auto;
+  }
+  .add-button-to-list {
+    display: block;
+  }
   .input-box {
     width: 20rem;
   }
@@ -140,11 +175,11 @@
     border-top: 1px solid gray;
     border-bottom: 1px solid gray;
   }
-  p.names {
-    color: yellow;
-    padding: 0;
-    margin: 0;
-  }
+  // p.names {
+  //   color: yellow;
+  //   padding: 0;
+  //   margin: 0;
+  // }
   :global(.greeting) {
     font-style: italic;
     :hover {

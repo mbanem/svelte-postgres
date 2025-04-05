@@ -12,16 +12,15 @@
     margin?: string;
     type?: string;
     value?: string;
-    defaultValue?: string;
     capitalize?: boolean;
     err?: string[] | undefined;
     onButtonNext?: () => void;
     exportValueOn?: TExportValueOn;
     inputIsReady?: () => void; // call parent when inputIsReady for 'enter', otherwise on every key
   };
-  // make capitalizes as capital is already defined in $Props()
+  // make capitalizes as capitalize is already defined in $Props()
   const capitalizes = (title: string): string => {
-    return title[0]?.toUpperCase() + title.slice(1).replace(/([A-Z])/, ' $1');
+    return utils.capitalize(title);
   };
   let {
     title,
@@ -31,7 +30,6 @@
     margin = '1rem 0',
     type,
     value = $bindable(),
-    defaultValue,
     err = undefined,
     onButtonNext,
     exportValueOn = 'keypress',
@@ -56,12 +54,11 @@
   const onKeyUpHandler = (event: KeyboardEvent) => {
     if (exportValueOn === 'enter' && event.key !== 'Enter') return;
     if (!'keypress|enter'.includes(exportValueOn)) {
-      console.log("exportValueOn should be 'keypress' | 'enter'");
       return;
     }
     if (inputValue && inputValue[0]) {
       if (capitalize) {
-        value = inputValue[0].toUpperCase() + inputValue.slice(1).toLowerCase();
+        value = utils.capitalize(inputValue);
         inputValue = value;
       } else {
         value = inputValue;
@@ -69,6 +66,7 @@
     }
     if (inputIsReady) {
       inputIsReady();
+      inputValue = '';
     }
   };
 
@@ -89,20 +87,16 @@
   let inputEl: HTMLInputElement;
   const setFocus = () => {
     inputEl.focus();
-    if (defaultValue) {
-      inputValue = defaultValue;
-    } else {
-      inputValue = value as string;
-    }
   };
   // parent call to set input box value
-  export const setInputBoxValue = (str: string) => {
-    console.log('inside setInputBoxValue');
+  export const setInputBoxValue = (str: string, blur: boolean = false) => {
+    if (blur) {
+      setTimeout(() => {
+        inputEl.blur();
+      }, 1000);
+    }
     inputEl.focus();
     inputValue = str;
-  };
-  export const setValue = (val: string) => {
-    inputValue = val;
   };
   // setContext('setInputBoxValue', setInputBoxValue);
 </script>
