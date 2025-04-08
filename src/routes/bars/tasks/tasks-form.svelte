@@ -22,7 +22,12 @@
 
 <form onsubmit={formSubmitted}>
   <label>
-    <InputBox {...inputBoxProps} bind:value={newTaskTitle}></InputBox>
+    <InputBox
+      {...inputBoxProps}
+      bind:value={newTaskTitle}
+      capitalize={true}
+      exportValueOn="keypress"
+    ></InputBox>
   </label>
   <div class="button-container">
     <button>Add</button>

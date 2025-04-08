@@ -102,7 +102,6 @@
   let input_box: InputBox;
   let name_box: InputBox;
   // const setInputBoxValue: (_: string) => void = getContext('setInputBoxValue');
-  let defaultValue = 'view:comments';
   const checkPermission = (event: MouseEvent) => {
     event.preventDefault();
     const span = event.target as HTMLSpanElement;
@@ -122,14 +121,14 @@
       (span as HTMLSpanElement).style.backgroundColor = 'navy';
     });
     viewSpanButton.click();
-    name_box.setValue(firstName);
+    name_box.setInputBoxValue(firstName);
   };
 
   // Ask <InputBox to call this function when input is ready.
   // When TExportValueOn is 'enter' it is called when InputBox
   // detects Enter key, while for 'keypress' it does no every keypress
-  const inputIsReady = () => {
-    // console.log('inputIsReady');
+  const onInputIsReadyCallback = () => {
+    // console.log('onInputIsReadyCallback');
     viewSpanButton.click();
   };
   // onMount(() => {
@@ -224,11 +223,12 @@
           bind:this={name_box}
           title="Enter First Name & press Enter key"
           height="2rem"
+          width="19rem"
           margin="10px 0 5px 0"
           bind:value={firstName}
           exportValueOn="enter"
           capitalize={true}
-          {inputIsReady}
+          {onInputIsReadyCallback}
         ></InputBox>
         <select bind:value={firstName} onchange={clearSelectedPermission}>
           <option value="" style="color:navy;font-weight:400 !important;"
@@ -245,9 +245,9 @@
           title="Enter permission as action:object to test"
           type="text"
           bind:value={permission}
-          width="18rem"
-          {defaultValue}
-          inputIsReady={selectPermissionButton}
+          width="19rem"
+          onInputIsReadyCallback={selectPermissionButton}
+          exportValueOn="keypress"
         ></InputBox>
         <select bind:value={selected_id} style="margin-top:1.2rem;width:12rem;">
           <option value="" selected={true}>Select Year</option>

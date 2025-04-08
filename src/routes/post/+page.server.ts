@@ -221,7 +221,7 @@ export const actions: Actions = {
 		}
 		/* NOTE: +page.svelte checks for word successfully to set lightgreen or pink color
 				$effect(() => {
-					utils.setColor(
+					utils.setPlaceholderColor(
 						form?.message
 							? form.message.includes('successfully')
 								? 'lightgreen'

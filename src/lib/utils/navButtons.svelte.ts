@@ -28,6 +28,7 @@ const navButtonObjects: TNavButtonObject[] = [
   },
   { position: '35', title: 'balloon', href: '/balloon', condition: 'USER' },
   { position: '40', title: 'button', condition: 'VISITOR' },
+  { position: '40', title: 'superforms', condition: 'VISITOR' },
   { position: '45', title: 'caterpillar', condition: 'ADMIN' },
   {
     position: '46',

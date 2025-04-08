@@ -19,8 +19,8 @@
   <title>Duck - Goose</title>
 </svelte:head>
 <div class="wrapper">
-  <InputBox title="First Name" />
-  <InputBox title="LastName" />
+  <InputBox title="First Name" exportValueOn="keypress" capitalize={true} />
+  <InputBox title="LastName" exportValueOn="keypress" capitalize={true} />
   {#if bird}
     <img src={bird} alt="" />
   {/if}

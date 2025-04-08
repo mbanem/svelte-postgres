@@ -31,9 +31,9 @@
 
   $effect(() => {
     if (Object.keys($errors).length > 0) {
-      utils.setColor('pink');
+      utils.setPlaceholderColor('pink');
     } else {
-      utils.setColor('#8e8e8e');
+      utils.setPlaceholderColor('#8e8e8e');
     }
   });
   // let F = $state({
@@ -61,14 +61,24 @@
       title="First Name"
       bind:value={$form.firstName}
       err={error($errors.firstName)}
+      exportValueOn="keypress"
+      capitalize={true}
     />
     <InputBox
       title="Last Name"
       bind:value={$form.lastName}
       err={$errors.lastName}
+      exportValueOn="keypress"
+      capitalize={true}
     />
 
     <InputBox title="eMail" bind:value={$form.email} err={$errors.email} />
+    <InputBox
+      title="password"
+      type="password"
+      bind:value={$form.email}
+      err={$errors.email}
+    />
     <InputBox
       title="Company Name"
       bind:value={$form.company}

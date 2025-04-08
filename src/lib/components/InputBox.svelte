@@ -1,7 +1,8 @@
 <script lang="ts">
-  type TExportValueOn = 'keypress' | 'enter';
+  type TExportValueOn = 'keypress' | 'enter' | 'blur';
   import { browser } from '$app/environment';
   import * as utils from '$utils';
+  import { onMount } from 'svelte';
   // import { setContext } from 'svelte';
 
   type PROPS = {
@@ -12,11 +13,13 @@
     margin?: string;
     type?: string;
     value?: string;
+    entryIsRequiredMsg?: string;
     capitalize?: boolean;
     err?: string[] | undefined;
     onButtonNext?: () => void;
     exportValueOn?: TExportValueOn;
-    inputIsReady?: () => void; // call parent when inputIsReady for 'enter', otherwise on every key
+    onInputIsReadyCallback?: () => void; // call parent when onInputIsReadyCallback for 'enter', otherwise on every key
+    clearOnInputIsReady?: boolean; // clear input value on onInputIsReadyCallback
   };
   // make capitalizes as capitalize is already defined in $Props()
   const capitalizes = (title: string): string => {
@@ -30,11 +33,13 @@
     margin = '1rem 0',
     type,
     value = $bindable(),
+    entryIsRequiredMsg = `${title} is required`,
     err = undefined,
     onButtonNext,
-    exportValueOn = 'keypress',
-    inputIsReady = undefined,
+    exportValueOn = 'enter',
+    onInputIsReadyCallback = undefined,
     capitalize = false,
+    clearOnInputIsReady = false,
   }: PROPS = $props();
   // NOTE: enter non breaking unicode space: type 00A0 and press Alt + X
   // here we held between apostrophes three non breaking spaces
@@ -51,9 +56,28 @@
       utils.setCSSValue('--INPUT-COMRUNNER-FONT-SIZE', fontsize as string);
     width = utils.getCSSValue('--INPUT-COMRUNNER-WIDTH') as string;
   }
+  let inputValueIsDirty = false;
+  const onBlurHandler = (event: FocusEvent) => {
+    event.preventDefault();
+    if (!inputValue) {
+      inputValueIsDirty = true;
+      if (entryIsRequiredMsg) {
+        // utils.setCSSValue('--INPUT-BOX-LABEL-TOP-POS', '0');
+        // inputEl.placeholder = entryIsRequiredMsg;
+        // utils.setPlaceholderColor('pink');
+      } else {
+        // utils.setCSSValue('--INPUT-BOX-LABEL-TOP-POS', topPosition);
+      }
+    }
+  };
   const onKeyUpHandler = (event: KeyboardEvent) => {
-    if (exportValueOn === 'enter' && event.key !== 'Enter') return;
-    if (!'keypress|enter'.includes(exportValueOn)) {
+    if (exportValueOn === 'enter' && event.key !== 'Enter') {
+      if (capitalize) {
+        inputValue = utils.capitalize(inputValue);
+      }
+      return;
+    }
+    if (!'keypress|enter|blur'.includes(exportValueOn)) {
       return;
     }
     if (inputValue && inputValue[0]) {
@@ -64,9 +88,11 @@
         value = inputValue;
       }
     }
-    if (inputIsReady) {
-      inputIsReady();
-      inputValue = '';
+    if (onInputIsReadyCallback) {
+      onInputIsReadyCallback();
+      if (clearOnInputIsReady) {
+        inputValue = '';
+      }
     }
   };
 
@@ -84,6 +110,7 @@
   // move it up on focus, but the text does not set focus on input
   // element on click -- so we have to set the focus when the label
   // text is selected
+  let label: HTMLLabelElement;
   let inputEl: HTMLInputElement;
   const setFocus = () => {
     inputEl.focus();
@@ -99,6 +126,9 @@
     inputValue = str;
   };
   // setContext('setInputBoxValue', setInputBoxValue);
+  onMount(() => {
+    label = document.getElementsByTagName('label')[0] as HTMLLabelElement;
+  });
 </script>
 
 <div class="input-wrapper" style="margin:{margin}">
@@ -108,6 +138,7 @@
     required
     bind:value={inputValue}
     onkeyup={onKeyUpHandler}
+    onblur={onBlurHandler}
     disabled={false}
   />
   <label for="" onclick={setFocus} aria-hidden={true}>
@@ -154,6 +185,7 @@
       }
     }
   }
+
   .err {
     color: pink;
     // border: 1px solid #808080;

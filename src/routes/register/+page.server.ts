@@ -4,7 +4,7 @@ import type { Actions } from './$types'
 import { fail, redirect } from '@sveltejs/kit'
 
 import type { PageServerLoad } from './$types'
-import { page } from '$app/state'
+// import { page } from '$app/state'
 
 export const load: PageServerLoad = (async ({ url }) => {
 	//console.log('register load +page.server.ts', url)

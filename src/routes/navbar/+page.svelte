@@ -39,7 +39,7 @@
   let messages = $state<string[]>([]);
 
   let inputBoxEntry = $state('');
-  const inputIsReady = () => {
+  const onInputIsReadyCallback = () => {
     const para = document.createElement('p');
     para.innerHTML = `${inputBoxEntry}`;
     para.style.setProperty('color', 'yellow');
@@ -132,7 +132,7 @@
     bind:value={inputBoxEntry}
     exportValueOn="enter"
     capitalize={true}
-    {inputIsReady}
+    {onInputIsReadyCallback}
   ></InputBox>
   <p style="display:block;width:12rem;border:none;">
     The List with {buttonListIndex} button{buttonListIndex == 1 ? '' : 's'}

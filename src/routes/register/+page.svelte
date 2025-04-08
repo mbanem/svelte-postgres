@@ -5,9 +5,17 @@
   import { enhance } from '$app/forms';
   import * as utils from '$utils';
   import type { SubmitFunction } from '@sveltejs/kit';
+  import InputBox from '$lib/components/InputBox.svelte';
   import type { ActionData } from './$types';
-
-  let { data, form } = $props();
+  type TData = {
+    locals: App.Locals;
+    firstName: string | null;
+    lastName: string | null;
+    email: string | null;
+    password: string | null;
+  };
+  type TProps = { data: TData; form: ActionData };
+  let { data, form }: TProps = $props();
   // let data = $derived(form.data)
 
   let firstNameIsRequired = '';
@@ -24,7 +32,7 @@
     });
     loading = true;
     ignoreFormMessage = true;
-    // cannot use $page.status === 200 as on successful login we redirect to the home page
+    // cannot use page.status === 200 as on successful login we redirect to the home page
     message =
       action.search === '?/register'
         ? 'registering account...'
@@ -33,7 +41,7 @@
   let result: string;
   let message: string;
   $effect(() => {
-    utils.setColor(
+    utils.setPlaceholderColor(
       form?.message
         ? form.message.includes('successfully')
           ? 'lightgreen'
@@ -70,7 +78,7 @@
   onMount(() => {
     utils.shallowCopy(data, snap);
     return () => {
-      utils.setMrPath($page.url.pathname);
+      utils.setMrPath(page.url.pathname);
     };
   });
 </script>
@@ -87,7 +95,7 @@
   {/if}
   <form method="POST" action="?/register" use:enhance={enhanceRegister}>
     <div>
-      <label for="firstName">
+      <!-- <label for="firstName">
         First Name
         <input
           type="text"
@@ -95,39 +103,37 @@
           bind:value={snap.firstName}
           placeholder={firstNameIsRequired || 'Enter first name here'}
         />
-      </label>
+      </label> -->
+      <InputBox
+        title="first name"
+        bind:value={snap.firstName}
+        entryIsRequiredMsg="first name is required"
+        exportValueOn="enter"
+      ></InputBox>
     </div>
     <div>
-      <label for="lastName">
-        Last Name
-        <input
-          type="text"
-          name="lastName"
-          bind:value={snap.lastName}
-          placeholder={lastNameIsRequired || 'Enter last name here'}
-        />
-      </label>
+      <InputBox
+        title="last name"
+        bind:value={snap.lastName}
+        entryIsRequiredMsg="last name is required"
+        exportValueOn="enter"
+      ></InputBox>
     </div>
     <div>
-      <label for="email">
-        Email
-        <input
-          type="text"
-          name="email"
-          bind:value={snap.email}
-          placeholder={emailIsRequired || 'Enter email here'}
-        />
-      </label>
+      <InputBox
+        title="email"
+        bind:value={snap.email}
+        entryIsRequiredMsg="email is required"
+        exportValueOn="enter"
+      ></InputBox>
     </div>
     <div>
-      <label for="password">
-        Password
-        <input
-          type="password"
-          name="password"
-          placeholder={passwordIsRequired || 'Enter password here'}
-        />
-      </label>
+      <InputBox
+        title="first name"
+        type="password"
+        entryIsRequiredMsg="password is required"
+        exportValueOn="enter"
+      ></InputBox>
     </div>
     <button type="submit">Register</button>
   </form>

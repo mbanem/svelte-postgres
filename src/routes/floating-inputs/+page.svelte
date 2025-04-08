@@ -8,7 +8,8 @@
   import * as utils from '$utils';
 
   // cannot define the type of inputEl
-  let inputEl: any;
+  // svelte-ignore non_reactive_update
+  let inputEl: InputBox | HTMLInputElement;
   const Ids = ['firstName', 'lastName', 'birthday', 'color'] as const; // read-only array
   type TId = (typeof Ids)[number]; // literal type "color" | "firstName" | "lastName" | "birthday"
 
@@ -82,15 +83,19 @@
     switch (formState.step) {
       case 0:
         // console.log('step-0');
-        inputEl.setFocus();
+        setTimeout(() => {
+          inputEl.setFocus();
+        }, 1000);
         break;
       case 1:
         // console.log('step-1');
-        inputEl.setFocus();
+        setTimeout(() => {
+          inputEl.setFocus();
+        }, 1000);
         break;
       case 2:
         // console.log('step-2');
-        inputEl.focus();
+        inputEl.setFocus();
         inputEl.value = '2005-03-03';
         // setTimeout(() => {
         //   utils.keyPress('Enter', inputEl);
@@ -128,7 +133,7 @@
   let userDetailsContainer: HTMLDivElement;
   let buttonNext: HTMLButtonElement;
   const onButtonNext = () => {
-    // console.log(formState.step);
+    console.log('onButtonNext', formState.step);
     buttonNext.click();
   };
   onMount(() => {
@@ -180,6 +185,7 @@
             bind:value={formState.answers[id as TId]}
             {onButtonNext}
             width="15rem"
+            capitalize={true}
           ></InputBox>
         </div>
       {:else}

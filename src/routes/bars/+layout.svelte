@@ -13,10 +13,15 @@
     children: Snippet<[]>;
   };
 
+  // svelte-ignore non_reactive_update
   let formModal = false;
+  // svelte-ignore non_reactive_update
   let firstName: string;
+  // svelte-ignore non_reactive_update
   let lastName: string;
+  // svelte-ignore non_reactive_update
   let email: string;
+  // svelte-ignore non_reactive_update0
   let password: string;
 
   let { locals, notifications, children }: ARGS = $props();
@@ -89,7 +94,7 @@
   <title>Bars Layout</title>
 </svelte:head>
 <main>
-  <div class="navbar-wrapper">
+  <div>
     <NavContainer>
       <!-- The css class nav-bar-form, defined in the <NavContainer, a component wrapper for <NavBar,
       should be wrapped by a <label> in order to make the whole form with a button responsive
@@ -207,25 +212,14 @@ other navigation buttons
 </div>
 
 <style lang="scss">
-  :root {
-    --GRID-LEFT-SIDE-WIDTH: 40rem;
-  }
-  main {
-    margin-top: 0.5rem;
-  }
+  // Register button background is black so turn it to rgb(5, 5, 153)
   button {
     background-color: rgb(5, 5, 153) !important;
   }
-  .navbar-wrapper {
-    background-color: var(--BODY-BACKGROUND-COLOR);
-    z-index: 4;
-  }
   .grid-wrapper {
     display: grid;
-    grid-template-columns: var(--GRID-LEFT-SIDE-WIDTH) 1fr;
+    grid-template-columns: 35rem 45rem;
     align-items: flex-start;
-  }
-  .hidden {
-    display: none;
+    margin-left: 3rem;
   }
 </style>

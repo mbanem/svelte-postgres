@@ -68,7 +68,7 @@
       loading = false;
     }, 2000);
     hideButtonsExceptFirst([btnCreate, btnUpdate, btnDelete]);
-    utils.setColor('lightgreen');
+    utils.setPlaceholderColor('lightgreen');
   };
 
   // if form is filled with  data for update, but user chose other action,
@@ -130,11 +130,11 @@
     return async ({ update }) => {
       await update();
       if (action.search === '?/addTodo') {
-        result = $page.status === 200 ? 'todo created' : 'create failed';
+        result = page.status === 200 ? 'todo created' : 'create failed';
       } else if (action.search === '?/updateTodo') {
-        result = $page.status === 200 ? 'todo updated' : 'update failed';
+        result = page.status === 200 ? 'todo updated' : 'update failed';
       } else if (action.search === '?/deleteTodo') {
-        result = $page.status === 200 ? 'todo deleted' : 'delete failed';
+        result = page.status === 200 ? 'todo deleted' : 'delete failed';
       }
       await utils.sleep(1000);
       // invalidateAll();
@@ -255,7 +255,7 @@
     )?.focus();
 
     return () => {
-      utils.setMrPath($page.url.pathname);
+      utils.setMrPath(page.url.pathname);
     };
   });
 </script>

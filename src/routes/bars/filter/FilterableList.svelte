@@ -28,7 +28,11 @@
   <label class="title" onclick={returnFalse} aria-hidden={true}>
     <p>Select color names containing this substring: &nbsp;</p>
     <!-- <input bind:value={search} /> -->
-    <InputBox title="match substring" bind:value={search} width={inputBoxWidth}
+    <InputBox
+      title="match substring"
+      bind:value={search}
+      width={inputBoxWidth}
+      exportValueOn="keypress"
     ></InputBox>
   </label>
 

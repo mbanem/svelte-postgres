@@ -108,9 +108,17 @@
     </details>
   </div>
   <div class="container">
-    <InputBox title="First Name" bind:value={F.ibFirstName} capitalize={true}
+    <InputBox
+      title="First Name"
+      bind:value={F.ibFirstName}
+      capitalize={true}
+      exportValueOn="keypress"
     ></InputBox>
-    <InputBox title="Last Name" bind:value={F.ibLastName} capitalize={true}
+    <InputBox
+      title="Last Name"
+      bind:value={F.ibLastName}
+      capitalize={true}
+      exportValueOn="keypress"
     ></InputBox>
     <InputBox title="Email" bind:value={F.email}></InputBox>
     <InputBox title="Password" type="password" bind:value={F.password}

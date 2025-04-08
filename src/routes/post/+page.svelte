@@ -43,7 +43,7 @@
 
   let categoryIds: number[] = [];
   $effect(() => {
-    utils.setColor(
+    utils.setPlaceholderColor(
       form?.message
         ? form.message.includes('successfully')
           ? 'lightgreen'
@@ -65,7 +65,7 @@
       categoryIsRequired = requiredCategory;
     }, 2000);
     hideButtonsExceptFirst([btnCreate, btnUpdate, btnDelete]);
-    utils.setColor('lightgreen');
+    utils.setPlaceholderColor('lightgreen');
   };
 
   const clearForm = (event?: MouseEvent) => {
@@ -74,7 +74,7 @@
     snap.authorId = data.locals.user.id;
     utils.hideButtonsExceptFirst([btnCreate, btnUpdate, btnDelete]);
     setSelectedOptions([], requiredCategory);
-    utils.setColor('lightgreen');
+    utils.setPlaceholderColor('lightgreen');
   };
 
   const required = {
@@ -102,7 +102,7 @@
     if (action.search !== '?/deletePost' && !snap.categoryIds) {
       categoryIsRequired = requiredCategory;
       message = 'Please select corresponding categories';
-      utils.setColor('pink');
+      utils.setPlaceholderColor('pink');
       return;
     }
 
@@ -151,7 +151,7 @@
       // utils.hideButtonsExceptFirst([btnCreate, btnUpdate, btnDelete])
       loading = false; // stop spinner animation
       clearMessage();
-      utils.setColor('lightgreen');
+      utils.setPlaceholderColor('lightgreen');
     };
   };
 
@@ -238,7 +238,7 @@
     ).checked = published;
     const numArr = utils.csvToNumArr(categoryIds);
     setSelectedOptions(numArr, categoryList(numArr));
-    utils.setColor('lightgreen');
+    utils.setPlaceholderColor('lightgreen');
   };
 
   const deletePost = async (id: string) => {
