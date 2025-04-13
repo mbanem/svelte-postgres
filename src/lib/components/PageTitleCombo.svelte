@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { id } from '$lib/utils';
+  import { labelClass } from 'flowbite-svelte/Radio.svelte';
   import { onMount } from 'svelte';
 
   type ARGS = {
@@ -20,8 +20,9 @@
   if (users.length === 0) {
     users[0] = user as UserPartial;
   }
-
+  // svelte-ignore non_reactive_update
   let msgEl: HTMLSpanElement;
+  // svelte-ignore non_reactive_update
   let selectBox: HTMLSelectElement;
   let timer: NodeJS.Timeout | string | number | undefined; //ReturnValue<typeof setTimeout>;
   const killTimer = () => {
@@ -43,12 +44,12 @@
     scheduleClearMessage();
     return result;
   };
-  let userName = $derived.by(() => {
+  let [userName, role] = $derived.by(() => {
     let aUser = users.filter((u) => u.id === selectedUserId)[0] as UserPartial;
     if (aUser) {
-      return `${aUser?.firstName} ${aUser?.lastName}`;
+      return [`${aUser?.firstName} ${aUser?.lastName}`, aUser.role];
     } else {
-      return `${user.firstName} ${user.lastName}`;
+      return [`${user.firstName} ${user.lastName}`, user.role];
     }
   });
   // $effect(() => {
@@ -77,7 +78,10 @@
       {/each}
     </select>
   {/if}
-  <span class="user-name">{userName}</span>
+  <span class="user-name">{userName} {role}</span>
+  <span class="user_name"
+    >(logged-in {user.firstName} {user.lastName}--{user.role})</span
+  >
   {#key result}
     {#if result !== ''}
       <span bind:this={msgEl} class="message">{showResult()}</span>
@@ -88,21 +92,20 @@
 <style lang="scss">
   h1 {
     display: flex;
+    gap: 1rem;
     align-items: baseline;
     margin-left: 1rem;
     .message,
-    .user-name {
+    .user-name,
+    .user_name {
       display: inline-block;
       font-size: 14px;
       font-weight: 100;
-      color: yellow;
+      color: lightgreen;
       margin-left: 1rem;
     }
-    .user-name {
-      color: white;
+    .user_name {
+      color: skyblue;
     }
-    // select {
-    //   margin-left: 1rem;
-    // }
   }
 </style>

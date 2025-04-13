@@ -33,7 +33,9 @@
     <p class="info">
       Child values are in <span class="lightgreen">lightgreen</span>
     </p>
-    <p class="info">Parent values are in <span class="yellow">yellow</span></p>
+    <p class="info">
+      Parent values are in <span class="lightgreen">yellow</span>
+    </p>
 
     <div class="parent-estate">
       <p>getChildCount() <span class="lightgreen">{getChildCount()}</span></p>
@@ -188,13 +190,12 @@
       $padding: 10px 1rem
     );
   }
-  .lightgreen,
-  .yellow {
-    font-size: 1.3rem;
+  .lightgreen {
     color: lightgreen;
+    font-size: 1.3rem;
   }
-  .yellow {
-    color: yellow;
+  .lightgreen {
+    color: lightgreen;
   }
   .info {
     margin: 0 0 0 4rem;

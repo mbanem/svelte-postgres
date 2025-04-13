@@ -1,5 +1,6 @@
 <script lang="ts">
   import { fade } from 'svelte/transition';
+  import { rangeArray } from '$utils';
   let foo = false;
 </script>
 
@@ -7,14 +8,20 @@
   <title>Greek Alphabet</title>
 </svelte:head>
 <div class="container">
-  <div>
-    <h1>The attr() Function</h1>
+  <div style="margin:0;">
+    <h2 style="margin:0;">The attr() Function</h2>
     <pre>
-    An anchor-button is defined as &lt;a-button&gt;&lt;a href="https://www.w3schools.com" title='THE TITLE'&gt;&lt;/a&gt;&lt;/a-button&gt;
+    An anchor-button is defined as 
+      &lt;a-button&gt;
+
+        &lt;a href="https://www.w3schools.com" title='THE TITLE'&gt;&lt;/a&gt;
+      &lt;/a-button&gt;
+
     where SCSS uses anchor tag &lt;a with :before and :after pseudo classes
-    The :after pseudo class is hidden but functional as &lt;a tag with specified href
-    displayed as a:after content -- content: " (" attr(href) ")";
-    while the :before class is visible and displays a given title as content -- content: " " attr(title) "";
+    The :after pseudo class is hidden but functional as &lt;a tag with specified 
+    href displayed as a:after content -- content: " (" attr(href) ")";
+    while the :before class is visible and displays a given title as content 
+    content: " " attr(title) "";
     </pre>
 
     <a
@@ -23,8 +30,8 @@
       aria-label="w3c school">&nbsp;</a
     >
   </div>
-  <div style="margin-top:4rem;">
-    css ul &lcub; list-style-type: lower-greek; &rcub;
+  <div>
+    <pre>css ul &lcub; list-style-type: lower-greek; &rcub;</pre>
     <div class="wrapper">
       <ul>
         <li>alpha</li>
@@ -39,8 +46,6 @@
         <li>kappa</li>
         <li>lambda</li>
         <li>mi</li>
-      </ul>
-      <ul>
         <li>ni</li>
         <li>ksi</li>
         <li>omicron</li>
@@ -48,11 +53,37 @@
         <li>ro</li>
         <li>sigma</li>
         <li>tau</li>
-        <li>ipsilon</li>
+        <li>upsilon</li>
         <li>fi</li>
         <li>hi</li>
         <li>psi</li>
         <li>omega</li>
+      </ul>
+      <ul>
+        <li>&Alpha;</li>
+        <li>&Beta;</li>
+        <li>&Gamma;</li>
+        <li>&Delta;</li>
+        <li>&Epsilon;</li>
+        <li>&Zeta;</li>
+        <li>&Eta;</li>
+        <li>&Theta;</li>
+        <li>&Iota;</li>
+        <li>&Kappa;</li>
+        <li>&Lambda;</li>
+        <li>&Mu;</li>
+        <li>&Nu;</li>
+        <li>&Xi;</li>
+        <li>&Omicron;</li>
+        <li>&Pi;</li>
+        <li>&Rho;</li>
+        <li>&Sigma;</li>
+        <li>&Tau;</li>
+        <li>&Upsilon;</li>
+        <li>&Phi;</li>
+        <li>&Chi;</li>
+        <li>&Psi;</li>
+        <li>&Omega;</li>
       </ul>
     </div>
   </div>
@@ -71,12 +102,17 @@
 <style lang="scss">
   .container {
     display: grid;
-    grid-template-columns: 1fr 0.5fr 0.5fr;
-    margin: 2rem 0 0 4rem;
+    grid-template-columns: 1fr 1fr;
+    margin: 0 0 0 4rem;
   }
   .wrapper {
-    display: grid;
-    grid-template-columns: 10rem 10rem;
+    display: flex;
+    gap: 2rem;
+    @include border-large;
+    height: 29m;
+    overflow-y: auto;
+    margin: 0 2rem;
+    padding: 0 2rem;
   }
 
   /* nothing to show of the a-button except its :before */
@@ -112,10 +148,15 @@
 
   /*greek lower-green works but not upper-greek */
   ul {
+    /* NOTE: there is no upper=greek CSS rule */
     list-style-type: lower-greek;
     color: lightgreen;
     li {
       font-size: 20px;
     }
+  }
+  pre {
+    padding: 0;
+    margin: 0;
   }
 </style>

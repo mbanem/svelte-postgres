@@ -7,14 +7,18 @@ import type { PageServerLoad } from './$types'
 // import { page } from '$app/state'
 
 export const load: PageServerLoad = (async ({ url }) => {
-	//console.log('register load +page.server.ts', url)
-	const data = {
-		firstName: url.searchParams.get('firstName'),
-		lastName: url.searchParams.get('lastName'),
-		email: url.searchParams.get('email'),
-		password: url.searchParams.get('password')
+	console.log('register load +page.server.ts', url)
+	try {
+		const data = {
+			firstName: url.searchParams.get('firstName'),
+			lastName: url.searchParams.get('lastName'),
+			email: url.searchParams.get('email'),
+			password: url.searchParams.get('password')
+		}
+		return data
+	} catch (err) {
+		console.log('reading URL', err)
 	}
-	return data
 }) satisfies PageServerLoad
 
 export const actions: Actions = {
@@ -28,7 +32,7 @@ export const actions: Actions = {
 			email: string
 			password: string
 		}
-		//console.log('register', firstName, lastName, email, password)
+		console.log('register', firstName, lastName, email, password)
 
 		if (firstName === '' || lastName === '' || email === '') {
 			return fail(400, {

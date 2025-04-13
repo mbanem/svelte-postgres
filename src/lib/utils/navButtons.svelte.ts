@@ -1,8 +1,8 @@
-let role = $state<string>();
+let role = $state<string>()
 export const setRole = (role_: string) => {
-  role = role_;
+  role = role_
   // $1.log('setRole', role)
-};
+}
 
 // console.log('utils/navButtons.svelte.ts getNavButtons', role);
 const navButtonObjects: TNavButtonObject[] = [
@@ -26,7 +26,7 @@ const navButtonObjects: TNavButtonObject[] = [
     href: '/prop-class',
     condition: 'VISITOR',
   },
-  { position: '35', title: 'balloon', href: '/balloon', condition: 'USER' },
+  // { position: '35', title: 'balloon', href: '/balloon', condition: 'USER' },
   { position: '40', title: 'button', condition: 'VISITOR' },
   { position: '40', title: 'superforms', condition: 'VISITOR' },
   { position: '45', title: 'caterpillar', condition: 'ADMIN' },
@@ -42,10 +42,10 @@ const navButtonObjects: TNavButtonObject[] = [
   { position: '50', title: 'login', condition: 'VISITOR' },
   { position: '50', title: 'logout', condition: 'USER' },
   { position: '51', title: 'register', condition: 'VISITOR' },
-];
+]
 
-const lastIx = navButtonObjects.length - 1;
+const lastIx = navButtonObjects.length - 1
 
 export const getNavButtons = () => {
-  return navButtonObjects;
-};
+  return navButtonObjects
+}

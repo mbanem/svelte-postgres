@@ -131,8 +131,8 @@
       x = !x;
       return timeline.reverse();
     }
-    x = !x;
 
+    x = !x;
     timeline = gsap.timeline({
       defaults: { duration: 1 },
     });

@@ -16,7 +16,16 @@
   // 	count -= 1;
   // };
 
-  import { Todos, getGlobalTodos } from '$lib/utils/todos.svelte';
+  import { browser } from '$app/environment';
+  // import System from 'svelte-system-info'
+  import { Todos, getGlobalTodos } from '$utils/todos.svelte';
+  import {
+    quickSort,
+    bubbleSort,
+    insertionSort,
+    selectionSort,
+    pxStringLength,
+  } from '$utils';
   // Outside .svelte components, runes can only be used in .svelte.js and .svelte.ts modules.
   import {
     createCounter,
@@ -58,10 +67,20 @@
     },
   };
 
+  // NOTE: testing sorts
+  // let arr: number[] = [];
+  // for (let i = 0; i < 10; i++) {
+  //   arr.push(Math.floor(Math.random() * 1000000));
+  // }
+  // const sortedArr = quickSort(arr);
+  // const sortedArr = bubbleSort(arr);
+  // const sortedArr = insertionSort(arr);
+  // const sortedArr = selectionSort(arr);
   // const arr = todos.asArray();
   // arr.forEach((member) => console.log(member));
 </script>
 
+<!-- <pre>{pxStringLength('First Name is required')}</pre> -->
 <!-- <pre style="font-size:11px;">data {JSON.stringify(data, null, 2)}</pre> -->
 {#snippet listFamily()}
   <div class="family-container">
@@ -134,6 +153,10 @@
         &lcub;#each Object.entries(family) as [lastName, members]&rcub;
         
       styling &lt;ul&gt; and  &lt;li&gt; elements accordingly
+
+      getWidth('First Name is required') is <span
+        class="yellow"> {pxStringLength('First Name is required')}</span
+      >
     </pre>
   </div>
 
@@ -142,7 +165,10 @@
       <button onclick={counter.increment}>
         clicks: {counter.count}
       </button>
-      <button onclick={counter.decrement}> decrement </button>
+      <button onclick={counter.decrement}>
+        decrement <i class="fa-solid fa-gears" style="color:lightgreen"
+        ></i></button
+      >
     </div>
     <div class="global-counter">
       Global counter <span class="counter-line">{gCounter.count}</span>
@@ -154,6 +180,8 @@
   </div>
   <!-- {@render listFamily()} -->
 </div>
+
+<!-- <div style="margin-bottom:1rem;">Sorted Array {sortedArr.slice(1, 30)}</div> -->
 
 <!-- svelte-ignore css_unused_selector -->
 <style lang="scss">

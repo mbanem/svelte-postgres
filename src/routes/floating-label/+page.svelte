@@ -16,8 +16,8 @@
 
   // InputBox props
   let F = $state({
-    ibFirstName: '',
-    ibLastName: '',
+    FirstName: '',
+    LastName: '',
     email: '',
     password: '',
   });
@@ -67,12 +67,19 @@
       });
     }
   };
+  let is_hidden: boolean = $derived(
+    Object.values(F).reduce((acc, el) => (el.length > 1 ? acc + 1 : acc), 0) ===
+      4
+      ? false
+      : true,
+  );
 </script>
 
 <!-- <pre>{JSON.stringify(F, null, 2)}</pre> -->
 <svelte:head>
   <title>Floating Label</title>
 </svelte:head>
+<p>{F.email.length}</p>
 <div class="grid-wrapper">
   <div class="families">
     <p onclick={toggleExpand} aria-hidden={true} class="expand-button">
@@ -109,20 +116,40 @@
   </div>
   <div class="container">
     <InputBox
-      title="First Name"
-      bind:value={F.ibFirstName}
+      title="firstName"
+      bind:value={F.FirstName}
       capitalize={true}
-      exportValueOn="keypress"
+      exportValueOn="keypress|blur"
+      margin="0"
     ></InputBox>
     <InputBox
-      title="Last Name"
-      bind:value={F.ibLastName}
+      title="lastName"
+      bind:value={F.LastName}
       capitalize={true}
-      exportValueOn="keypress"
+      exportValueOn="keypress|blur"
+      margin="0"
     ></InputBox>
-    <InputBox title="Email" bind:value={F.email}></InputBox>
-    <InputBox title="Password" type="password" bind:value={F.password}
+    <InputBox
+      title="email"
+      bind:value={F.email}
+      exportValueOn="keypress|blur"
+      margin="0"
     ></InputBox>
+    <InputBox
+      title="password"
+      type="password"
+      bind:value={F.password}
+      exportValueOn="keypress|blur"
+      margin="0"
+    ></InputBox>
+    <pre class:hidden={is_hidden}>
+    let User = &lcub;
+      {F.FirstName}
+      {F.LastName}
+      {F.email}
+      {F.password.replace(/./g, '•')}
+    &rcub;
+    </pre>
   </div>
   <div>
     <canvas
@@ -169,7 +196,8 @@
     border: 1px solid gray;
     border-radius: 10px;
     width: max-content;
-    padding: 1rem 3rem;
+    padding: 0 3rem;
+    margin: 0;
   }
   .families {
     background-color: skyblue;

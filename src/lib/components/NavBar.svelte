@@ -258,7 +258,7 @@
     display: flex;
     justify-content: flex-start;
     align-items: baseline;
-    gap: 6px;
+    gap: 2px;
     margin-top: 4px;
     background-color: var(--BODY-BACKGROUND-COLOR);
   }
@@ -268,7 +268,8 @@
     background-color: rgb(5, 5, 153);
     color: lightgreen;
     border-radius: 5px;
-    padding: 1px 0.5rem;
+    padding: 1px 6px;
+    margin: 0;
     border: 1px solid transparent;
     text-align: center;
     min-width: 3rem;
@@ -277,8 +278,9 @@
     cursor: pointer;
     user-select: none;
     outline: none;
-    margin: 0 4px;
+    margin: 0 2px;
     text-transform: capitalize;
+    text-wrap-mode: nowrap;
     &:target,
     &:active {
       background-color: blue;

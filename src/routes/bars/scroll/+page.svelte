@@ -6,16 +6,14 @@
   import { fade } from 'svelte/transition';
 
   //import {bounceInOut} from 'svelte/easing';
-  let horizontal = $state(false);
+  let horizontal = $state(true);
   let horizontalLabel = $derived(
-    horizontal ? 'to vertical  ' : 'to horizontal',
+    horizontal ? 'turn vertical' : 'turn horizontal',
   );
   let list: Array<number> = $state([]);
   let next = 1;
   let list_info = $derived(
-    list.length === 0
-      ? 'Click Add to add item to the list'
-      : 'Click on an item to remove from the list',
+    list.length === 0 ? 'Click Add to add item' : 'Click item to remove it',
   );
   // to make animation we insert new element as leading
   // so the animation should move all existing items in
@@ -277,6 +275,7 @@
         max={max_range}
         onmouseenter={tooltipToggle}
         data-tooltip="Scroll array elements by mousewheel"
+        style="margin-left:7rem;"
       />
       &nbsp; element{delta === 1 ? '' : 's'}
     </p>
@@ -312,26 +311,37 @@
       >scroll to the right</button
     >
     <div class="flip-container">
-      <p class:remove-info={list.length}>{list_info}</p>
-      <label style="cursor:pointer;width:7rem;display:inline-block;">
-        {horizontalLabel}
-        <input type="checkbox" class="checkbox" bind:checked={horizontal} />
-      </label>
-      <button onclick={addItem}>Add</button>
-      {#each list as n (n)}
-        <div animate:flip={options} class:horizontal class="fixed-width">
-          <button
-            style="padding: 0 5px;margin: 0;"
-            onclick={() => removeItem(n)}>{n}</button
-          >
-        </div>
-      {/each}
+      <div
+        class:remove-info={list.length}
+        style="width:max-content;padding:0;margin:0;"
+      >
+        <label
+          style="cursor:pointer;width:10rem;display:inline-block;margin-top:0.5rem;"
+        >
+          <input type="checkbox" class="checkbox" bind:checked={horizontal} />
+          <p>{horizontalLabel}</p>
+        </label>
+        {list_info}
+        <button onclick={addItem}>Add</button>
+      </div>
+      <div>
+        {#each list as n (n)}
+          <div animate:flip={options} class:horizontal class="fixed-width">
+            <button
+              style="padding: 0 5px;margin: 0;"
+              onclick={() => removeItem(n)}>{n}</button
+            >
+          </div>
+        {/each}
+      </div>
     </div>
     <p>
       Animation starts when square come in the view -- when it becomes visible:
     </p>
     <button onclick={animateAll}>animate all</button>
-    <p>Animate square and scroll to make it visible to trigger the animation</p>
+    <p style="margin:10px 0;padding:0;">
+      Animate square and scroll to make it visible to trigger the animation
+    </p>
     <br />
 
     {#each Object.keys(params) as cn}
@@ -353,10 +363,10 @@
   </div>
 
   <div class="main">
-    <pre style="margin-left:- class='scroll-button' rem;">
-				$effect.pre does not work on adding messages to the div element
-				so we can use scrollTo inside the addListedName method instead
-			</pre>
+    <pre>
+  $effect.pre does not work on adding messages to the div element
+  so we can use scrollTo inside the addListedName method instead
+		</pre>
     <p>Enter a name and press Enter -- we capitalize it and add to the list</p>
     <input
       type="text"
@@ -417,11 +427,13 @@
     margin: 0.1rem 1rem;
     border: 1px solid gray;
     border-radius: 1rem;
-    padding: 2rem 1rem;
+    padding: 0 1rem;
+    height: 84.5vh;
   }
   .div-button {
     width: 6rem;
     padding: 6px 1rem;
+    margin: 0;
     border: 1px solid gray;
     border-radius: 5px;
     color: white;
@@ -447,19 +459,20 @@
   }
   .message-container {
     width: 16rem;
-    height: 4rem;
+    height: 4.3rem;
     border: 1px solid gray;
     border-radius: 4px;
     overflow-y: auto;
     padding: 0.5rem;
-    p{
-      margin:0;
-      padding:0;
+    p {
+      margin: 0;
+      padding: 0;
     }
   }
   p {
-    margin: 0;
+    margin: 6px 0;
     padding: 0;
+    color: lightgreen;
   }
   .caption {
     font-size: 16px;
@@ -504,6 +517,9 @@
     opacity: 0;
   }
 
+  .tt-wrapper {
+    margin: 0;
+  }
   // basic class for A,B,C and D squares for the left side of grid for animations
   .e {
     width: 6rem;
@@ -527,17 +543,11 @@
       }
     }
   }
-  p {
-    color: lightgreen;
-    margin: 0 0 0 1rem;
-  }
-  /* grid last column must be fixed e.g. 12rem otherwise
-		it slightly change the width on content animation
-	*/
   .container {
     display: grid;
     grid-template-columns: 1fr 1fr 0.3fr;
     margin: 1rem 0 0 2rem;
+    padding: 0;
     width: 80vw;
   }
   .wrapper {
@@ -549,16 +559,15 @@
     border: 1px solid gray;
     border-radius: 1rem;
     width: 100%;
-    height: 92vh;
+    height: 84.5vh;
   }
 
   .buttons {
     display: block;
     border: 1px solid gray;
     border-radius: 1rem;
-    padding: 2rem 0 1rem 1rem;
-    // width: 90%;
-    height: 85vh;
+    padding: 0 1rem 0 1rem;
+    height: 84.5vh !important;
     button:nth-child(1) {
       display: block;
       margin: 8px 0;
@@ -571,19 +580,18 @@
   /* NOTE this is class for id='wrapper' while there are class='wrapper's as well*/
   #wrapper {
     display: flex;
-    flex-direction: row;
+    // flex-direction: row;
     justify-content: space-around;
     gap: 2rem;
     color: yellow;
     width: 20.1rem;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
   }
   .display-element {
     display: inline-block;
     color: yellow;
     padding: 0;
     margin: 0;
-    // margin: 0 0 1rem 1.4rem;
   }
   .all-digits {
     display: flex;
@@ -595,6 +603,7 @@
   }
   .scroll-button {
     width: 10rem;
+    margin: 0;
   }
   /* to position tooltip label it must have absolute position
 		so the wrapper class must have position relative
@@ -607,29 +616,28 @@
     width: 24px;
   }
   .flip-container {
-    width: max-content;
-    padding: 0 1rem 1rem 1rem;
+    display: flex;
+    flex-direction: column;
+    width: 25rem;
+    padding: 0 1rem 0 1rem;
     border: 1px solid yellow;
     border-radius: 6px;
-    margin-top: 0.5rem;
+    margin: 0;
+    height: 6rem;
+    p {
+      padding: 0;
+      margin: 0;
+    }
   }
   .remove-info,
-  p {
-    // margin: 0;
-    // padding: 0;
-    height: 1rem;
-    color: yellow;
-    font-style: italic;
-    font-weight: 300;
-    margin: 1rem 0 1rem 0;
-  }
-  p {
-    height: 1rem;
-    color: lightgreen;
-    font-style: normal;
-    margin: 1rem 0 1rem 0;
-  }
   .checkbox {
     float: right;
+  }
+  pre {
+    padding: 0;
+    margin: 1rem 0 0 0;
+  }
+  .box .a {
+    margin: 0;
   }
 </style>

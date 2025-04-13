@@ -106,12 +106,12 @@
       $padding: 10px 1rem
     );
   }
-  .lightgreen,
-  .yellow {
+  .lightgreen {
     font-size: 1.3rem;
     color: lightgreen;
   }
   .yellow {
+    font-size: 1.3rem;
     color: yellow;
   }
 </style>

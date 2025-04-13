@@ -1,19 +1,32 @@
 <script lang="ts">
-  import type { Snapshot } from '../$types';
+  import type { PageData, ActionData, Snapshot } from '../$types';
+  import type { SubmitFunction } from '@sveltejs/kit';
   import { enhance } from '$app/forms';
   import { page } from '$app/state';
   import { onMount } from 'svelte';
-  import type { ActionData } from './$types';
   import * as utils from '$utils';
+  import InputBox from '$lib/components/InputBox.svelte';
 
-  export let form: ActionData;
-  $: data = form?.data;
+  // export let form: ActionData;
+  type ARGS = {
+    data: PageData;
+    form: ActionData;
+  };
+  let { data, form }: ARGS = $props();
 
-  let snap = {
+  type TSnapLogin = {
+    firstName: string;
+    lastName: string;
+    email: string;
+    password: string;
+  };
+
+  let snap: TSnapLogin = $state({
     firstName: '',
     lastName: '',
     email: '',
-  };
+    password: '',
+  });
   export const snapshot: Snapshot = {
     capture: () => {
       return snap;
@@ -22,7 +35,40 @@
       snap = value;
     },
   };
+  let loading = false;
+  let ignoreFormMessage = false;
+  let message: string;
 
+  const enhanceLogin: SubmitFunction = ({ action, formData }) => {
+    formData.set('firstName', snap.firstName);
+    formData.set('lastName', snap.lastName);
+    formData.set('email', snap.email);
+    formData.set('password', snap.password);
+
+    console.log('formData', formData);
+    ['firstName', 'lastName', 'email', 'password'].forEach((name) => {
+      if (formData.get(name) === '')
+        `${name}IsRequired=${name[0]?.toUpperCase()}${name.slice(1)} is required`;
+    });
+    loading = true;
+    ignoreFormMessage = true;
+    // cannot use page.status === 200 as on successful login we redirect to the home page
+    message =
+      action.search === '?/register'
+        ? 'registering account...'
+        : 'updating account...';
+  };
+
+  $effect(() => {
+    utils.setPlaceholderColor(
+      form?.message
+        ? form.message.includes('successfully')
+          ? 'lightgreen'
+          : 'pink'
+        : 'lightgreen',
+    );
+    message = form?.message || '';
+  });
   onMount(() => {
     return () => {
       utils.setMrPath(page.url.pathname);
@@ -38,42 +84,42 @@
   {#if form?.data}
     <p class="error">Insufficient or incorrect data supplied</p>
   {/if}
-  <form method="POST" action="?/login" use:enhance>
+  <form method="POST" action="?/login" use:enhance={enhanceLogin}>
     <div>
-      <label for="firstName">
-        First Name
-        <input
-          type="text"
-          id="firstName"
-          name="firstName"
-          bind:value={snap.firstName}
-        />
-      </label>
+      <InputBox
+        type="text"
+        title="firstName"
+        bind:value={snap.firstName}
+        exportValueOn="blur"
+        capitalize={true}
+      />
     </div>
     <div>
-      <label for="lastName">
-        Last Name
-        <input
-          type="text"
-          id="lastName"
-          name="lastName"
-          bind:value={snap.lastName}
-        />
-      </label>
+      <InputBox
+        type="text"
+        title="lastName"
+        bind:value={snap.lastName}
+        exportValueOn="blur"
+        capitalize={true}
+      />
     </div>
     <div>
-      <label for="email">
-        Email
-        <input type="text" id="email" name="email" bind:value={snap.email} />
-      </label>
+      <InputBox
+        type="text"
+        title="email"
+        exportValueOn="blur"
+        bind:value={snap.email}
+      />
     </div>
     <div>
-      <label for="password">
-        Password
-        <input type="password" name="password" />
-      </label>
+      <InputBox
+        type="password"
+        exportValueOn="blur"
+        title="password"
+        bind:value={snap.password}
+      />
     </div>
-    <button type="submit">login</button>
+    <button type="submit" style="margin-top:1rem;">login</button>
   </form>
 </div>
 

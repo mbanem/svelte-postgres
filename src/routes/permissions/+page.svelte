@@ -116,10 +116,14 @@
   };
 
   const clearSelectedPermission = () => {
+    // all span elements holding permissions (view:comments, create:comments...)
+    // are children of element with class '.permission-block'
     let spans = document.querySelector('.permission-block')?.childNodes;
     spans?.forEach((span) => {
+      // reset all spans (as buttons) to navy background
       (span as HTMLSpanElement).style.backgroundColor = 'navy';
     });
+    // click on the first span to set it as selected when user name is changed
     viewSpanButton.click();
     name_box.setInputBoxValue(firstName);
   };
@@ -130,6 +134,10 @@
   const onInputIsReadyCallback = () => {
     // console.log('onInputIsReadyCallback');
     viewSpanButton.click();
+    permission = 'view:comments';
+    setTimeout(() => {
+      input_box.setFocus();
+    }, 0);
   };
   // onMount(() => {
   //   // this will trigger <select box to show Marko Milutinovic
@@ -210,7 +218,7 @@
             class:has-permission={thePermission}
             class:warning={!thePermission}
           >
-            {thePermission}
+            {String(thePermission).toUpperCase()}
           </span>
         </p>
       {:else}
@@ -221,12 +229,12 @@
       <div class="select-user-block">
         <InputBox
           bind:this={name_box}
-          title="Enter First Name & press Enter key"
+          title="First Name"
           height="2rem"
           width="19rem"
           margin="10px 0 5px 0"
           bind:value={firstName}
-          exportValueOn="enter"
+          exportValueOn="enter|blur"
           capitalize={true}
           {onInputIsReadyCallback}
         ></InputBox>
@@ -242,7 +250,7 @@
       <div class="select-user-block">
         <InputBox
           bind:this={input_box}
-          title="Enter permission as action:object to test"
+          title="Enter permission as action:comments to test"
           type="text"
           bind:value={permission}
           width="19rem"
@@ -371,6 +379,7 @@ Permissions (click permission button below to check for that permission)
     display: flex;
     gap: 1rem;
     justify-content: baseline;
+    align-items: baseline;
     font-weight: 400;
     select {
       height: 2rem;

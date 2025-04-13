@@ -1,10 +1,16 @@
 <script lang="ts">
-  type TExportValueOn = 'keypress' | 'enter' | 'blur';
+  type TExportValueOn =
+    | 'keypress'
+    | 'keypress|blur'
+    | 'enter'
+    | 'blur'
+    | 'enter|blur';
   import { browser } from '$app/environment';
   import * as utils from '$utils';
   import { onMount } from 'svelte';
   // import { setContext } from 'svelte';
 
+  // style.setProperty('--color', `${color}`)
   type PROPS = {
     title: string;
     width?: string;
@@ -13,7 +19,7 @@
     margin?: string;
     type?: string;
     value?: string;
-    entryIsRequiredMsg?: string;
+    required?: boolean;
     capitalize?: boolean;
     err?: string[] | undefined;
     onButtonNext?: () => void;
@@ -21,19 +27,16 @@
     onInputIsReadyCallback?: () => void; // call parent when onInputIsReadyCallback for 'enter', otherwise on every key
     clearOnInputIsReady?: boolean; // clear input value on onInputIsReadyCallback
   };
-  // make capitalizes as capitalize is already defined in $Props()
-  const capitalizes = (title: string): string => {
-    return utils.capitalize(title);
-  };
+
   let {
     title,
     width = '16rem',
     height = '2.5rem',
     fontsize = '16px',
-    margin = '1rem 0',
+    margin = '0',
     type,
     value = $bindable(),
-    entryIsRequiredMsg = `${title} is required`,
+    required = false,
     err = undefined,
     onButtonNext,
     exportValueOn = 'enter',
@@ -41,57 +44,114 @@
     capitalize = false,
     clearOnInputIsReady = false,
   }: PROPS = $props();
+
+  // make capitalizes as capitalize is already defined in $Props()
+  const capitalizes = (str: string): string => {
+    try {
+      // if this is not field name but an information message
+      if (str.split(' ').length > 3) return str;
+      // @ts-expect-error
+      str = str.capCamelCase();
+      const arr = str.match(/\s+/g);
+      if (!arr || arr.length > 3) return str;
+    } catch (err) {
+      console.log('capitalizes', err);
+    }
+    return str;
+  };
   // NOTE: enter non breaking unicode space: type 00A0 and press Alt + X
   // here we held between apostrophes three non breaking spaces
   title = '   ' + capitalizes(title);
+  let requiredStr = required ? `${title} is required` : '';
+
+  (function () {
+    // IIFE
+    exportValueOn = exportValueOn.toLowerCase() as TExportValueOn;
+    // make combination be with 'enter|blur' and 'keypress|blur' if inverted
+    const parts = exportValueOn.split('|');
+    if (parts.length > 1 && parts[0] === 'blur') {
+      exportValueOn = `${parts[1]}|${parts[0]}` as TExportValueOn;
+    }
+  })();
   const topPosition = `${-1 * Math.floor(parseInt(fontsize) / 3)}px`;
 
-  let inputValue = $state('');
+  // allow pre-defined values to show up when user specify them
+  let inputValue = $state<string>('');
 
   if (browser) {
-    utils.setCSSValue('--INPUT-BOX-LABEL-TOP-POS', topPosition);
-    if (width) utils.setCSSValue('--INPUT-COMRUNNER-WIDTH', width as string);
-    if (height) utils.setCSSValue('--INPUT-COMRUNNER-HEIGHT', height as string);
-    if (fontsize)
-      utils.setCSSValue('--INPUT-COMRUNNER-FONT-SIZE', fontsize as string);
-    width = utils.getCSSValue('--INPUT-COMRUNNER-WIDTH') as string;
+    try {
+      utils.setCSSValue('--INPUT-BOX-LABEL-TOP-POS', topPosition);
+      if (width) utils.setCSSValue('--INPUT-COMRUNNER-WIDTH', width as string);
+      if (height)
+        utils.setCSSValue('--INPUT-COMRUNNER-HEIGHT', height as string);
+      if (fontsize)
+        utils.setCSSValue('--INPUT-COMRUNNER-FONT-SIZE', fontsize as string);
+      width = utils.getCSSValue('--INPUT-COMRUNNER-WIDTH') as string;
+    } catch (err) {
+      console.log('<InputBox get/setCSSValue', err);
+    }
   }
-  let inputValueIsDirty = false;
+
+  const onFocusHandler = (event: FocusEvent) => {
+    event.preventDefault();
+    labelStyle = 'opacity:1;top:3px;';
+  };
+
   const onBlurHandler = (event: FocusEvent) => {
     event.preventDefault();
-    if (!inputValue) {
-      inputValueIsDirty = true;
-      if (entryIsRequiredMsg) {
-        // utils.setCSSValue('--INPUT-BOX-LABEL-TOP-POS', '0');
-        // inputEl.placeholder = entryIsRequiredMsg;
-        // utils.setPlaceholderColor('pink');
+
+    // no entry yet so no export is ready buy is dirty -- only handle placeholder if entry is required
+    if (inputValue === '') {
+      // input is required so warn the user with pink placeholder required message
+      if (required) {
+        inputEl.placeholder = requiredStr;
+        labelStyle = 'opacity:1; top:3px;';
+        utils.setPlaceholderColor('pink');
       } else {
-        // utils.setCSSValue('--INPUT-BOX-LABEL-TOP-POS', topPosition);
+        // input is not required so lower down field label inside the input box
+        labelStyle = 'opacity:0.5;25px';
+      }
+    }
+    if (exportValueOn.includes('blur')) {
+      value = inputValue;
+      if (onInputIsReadyCallback) {
+        onInputIsReadyCallback();
       }
     }
   };
   const onKeyUpHandler = (event: KeyboardEvent) => {
-    if (exportValueOn === 'enter' && event.key !== 'Enter') {
-      if (capitalize) {
-        inputValue = utils.capitalize(inputValue);
+    event.preventDefault();
+    // if keypress is Enter and exportValueOn does not include Enter we return
+    if (exportValueOn.includes('enter') && event.key !== 'Enter') {
+      if (capitalize && inputValue) {
+        inputValue = capitalizes(inputValue);
       }
       return;
     }
-    if (!'keypress|enter|blur'.includes(exportValueOn)) {
+    // already prevented blur|keypress and blur|enter
+    // blur always follows if any
+    if (!'keypress|blur|enter|blur'.includes(exportValueOn)) {
       return;
     }
-    if (inputValue && inputValue[0]) {
+    if (inputValue && inputValue.length > 0) {
       if (capitalize) {
-        value = utils.capitalize(inputValue);
-        inputValue = value;
-      } else {
+        inputValue = capitalizes(inputValue);
+      }
+
+      // if input should be returned
+      // (blur is handled in a separate onBlurHandler)
+      if (
+        exportValueOn.includes('keypress') ||
+        (exportValueOn.includes('enter') && event.key === 'Enter')
+      ) {
         value = inputValue;
-      }
-    }
-    if (onInputIsReadyCallback) {
-      onInputIsReadyCallback();
-      if (clearOnInputIsReady) {
-        inputValue = '';
+
+        if (onInputIsReadyCallback) {
+          onInputIsReadyCallback();
+          if (clearOnInputIsReady) {
+            inputValue = '';
+          }
+        }
       }
     }
   };
@@ -110,11 +170,13 @@
   // move it up on focus, but the text does not set focus on input
   // element on click -- so we have to set the focus when the label
   // text is selected
+  let labelStyle = $state('opacity:0.5;top:25px;');
   let label: HTMLLabelElement;
   let inputEl: HTMLInputElement;
-  const setFocus = () => {
+  export const setFocus = () => {
     inputEl.focus();
   };
+
   // parent call to set input box value
   export const setInputBoxValue = (str: string, blur: boolean = false) => {
     if (blur) {
@@ -128,20 +190,24 @@
   // setContext('setInputBoxValue', setInputBoxValue);
   onMount(() => {
     label = document.getElementsByTagName('label')[0] as HTMLLabelElement;
+    // if (inputValue && inputEl) {
+    //   setFocus();
+    // }
   });
 </script>
 
-<div class="input-wrapper" style="margin:{margin}">
+<div class="input-wrapper" style="margin:{margin};">
   <input
     bind:this={inputEl}
     type={type ? type : 'text'}
     required
     bind:value={inputValue}
     onkeyup={onKeyUpHandler}
+    onfocus={onFocusHandler}
     onblur={onBlurHandler}
     disabled={false}
   />
-  <label for="" onclick={setFocus} aria-hidden={true}>
+  <label for="" onclick={setFocus} aria-hidden={true} style={`${labelStyle}`}>
     {title}
     <span class="err">
       {err ? ` - ${err}` : ''}
@@ -156,16 +222,22 @@
   .input-wrapper {
     position: relative;
     width: max-content;
+    /* adjust label to look like placeholder */
+    padding-top: 0.8rem;
     label {
       position: absolute;
-      transform: translateY(-50%);
-      top: calc(var(--INPUT-COMRUNNER-HEIGHT) * 0.5);
+      // transform: translateY(-50%);
+      // top: calc(var(--INPUT-COMRUNNER-HEIGHT) * 0.5);
       left: 15px;
+      // top: 26px;
       font-size: var(--INPUT-COMRUNNER-FONT-SIZE);
       color: var(--INPUT-COLOR);
       background-color: var(--INPUT-BACKGROUND-COLOR);
-      opacity: 0.5;
+      // opacity: 0.5;
       transition: 0.5s;
+      // .stay-on-top {
+      //   top: -15px;
+      // }
     }
     input {
       display: inline-block;
@@ -173,6 +245,7 @@
       height: var(--INPUT-COMRUNNER-HEIGHT);
       font-size: var(--INPUT-COMRUNNER-FONT-SIZE);
       padding: 0 10px;
+      margin: 0;
       color: var(--TEXT-COLOR);
       &:focus {
         color: var(--INPUT-FOCUS-COLOR);

@@ -158,7 +158,7 @@
     border-radius: 5px;
     padding: 8px 1rem 8px 1.5rem;
     margin: 0;
-    height: auto;
+    height: 12rem;
     width: 8rem;
     overflow-y: auto;
     li {

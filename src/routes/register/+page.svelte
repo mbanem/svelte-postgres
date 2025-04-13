@@ -18,14 +18,20 @@
   let { data, form }: TProps = $props();
   // let data = $derived(form.data)
 
-  let firstNameIsRequired = '';
-  let lastNameIsRequired = '';
-  let emailIsRequired = '';
-  let passwordIsRequired = '';
+  // let firstNameIsRequired = '';
+  // let lastNameIsRequired = '';
+  // let emailIsRequired = '';
+  // let passwordIsRequired = '';
 
   let loading = false;
   let ignoreFormMessage = false;
+
   const enhanceRegister: SubmitFunction = ({ action, formData }) => {
+    formData.set('firstName', snap.firstName);
+    formData.set('lastName', snap.lastName);
+    formData.set('email', snap.email);
+    formData.set('password', snap.password);
+    console.log('formData', formData);
     ['firstName', 'lastName', 'email', 'password'].forEach((name) => {
       if (formData.get(name) === '')
         `${name}IsRequired=${name[0]?.toUpperCase()}${name.slice(1)} is required`;
@@ -55,20 +61,22 @@
     firstName: string;
     lastName: string;
     email: string;
+    password: string;
   };
-  let snap = $state<RegisterSnap>({
+  let snap: RegisterSnap = {
     firstName: '',
     lastName: '',
     email: '',
-  });
-  export const snapshot: Snapshot = {
-    capture: () => {
-      return snap;
-    },
-    restore: (value) => {
-      snap = value;
-    },
+    password: '',
   };
+  // export const snapshot: Snapshot = {
+  //   capture: () => {
+  //     return snap;
+  //   },
+  //   restore: (value) => {
+  //     snap = value;
+  //   },
+  // };
 
   // const shallowCopy = (source: Object, target: Object) => {
   // 	for (const [k, v] of Object.entries(source)) {
@@ -76,7 +84,7 @@
   // 	}
   // };
   onMount(() => {
-    utils.shallowCopy(data, snap);
+    // utils.shallowCopy(data, snap);
     return () => {
       utils.setMrPath(page.url.pathname);
     };
@@ -88,54 +96,48 @@
 </svelte:head>
 
 <h2>Register Page</h2>
-
+<!-- <p>snap {JSON.stringify(snap, null, 2)}</p> -->
 <div class="container">
   {#if form?.message}
     <p class="error">{form.message}</p>
   {/if}
   <form method="POST" action="?/register" use:enhance={enhanceRegister}>
     <div>
-      <!-- <label for="firstName">
-        First Name
-        <input
-          type="text"
-          name="firstName"
-          bind:value={snap.firstName}
-          placeholder={firstNameIsRequired || 'Enter first name here'}
-        />
-      </label> -->
       <InputBox
-        title="first name"
+        title="firstName"
         bind:value={snap.firstName}
-        entryIsRequiredMsg="first name is required"
-        exportValueOn="enter"
+        required={true}
+        exportValueOn="enter|blur"
+        capitalize={true}
       ></InputBox>
     </div>
     <div>
       <InputBox
-        title="last name"
+        title="lastName"
         bind:value={snap.lastName}
-        entryIsRequiredMsg="last name is required"
-        exportValueOn="enter"
+        required={true}
+        exportValueOn="enter|blur"
+        capitalize={true}
       ></InputBox>
     </div>
     <div>
       <InputBox
         title="email"
         bind:value={snap.email}
-        entryIsRequiredMsg="email is required"
-        exportValueOn="enter"
+        required={true}
+        exportValueOn="enter|blur"
       ></InputBox>
     </div>
     <div>
       <InputBox
-        title="first name"
+        title="password"
         type="password"
-        entryIsRequiredMsg="password is required"
-        exportValueOn="enter"
+        bind:value={snap.password}
+        required={true}
+        exportValueOn="enter|blur"
       ></InputBox>
     </div>
-    <button type="submit">Register</button>
+    <button type="submit" style="margin-top:1rem;">Register</button>
   </form>
 </div>
 

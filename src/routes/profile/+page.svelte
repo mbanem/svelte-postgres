@@ -6,7 +6,7 @@
   import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
   import { page } from '$app/state'; // for page.status code on actions
-  import { setColor, hideButtonsExceptFirst } from '$utils';
+  import { hideButtonsExceptFirst } from '$utils';
   import { Tooltip } from 'flowbite-svelte';
 
   import ButtonSpinner from '$components/ButtonSpinner.svelte';

@@ -45,7 +45,7 @@
 </div>
 
 <!-- <div class="footer"> -->
-<!-- <p>ComRUNNER Software Inc 2024 All rights reserved</p> -->\
+<!-- <p>ComRUNNER Software Inc 2024 All rights reserved</p> -->
 
 <!-- svelte-ignore css_unused_selector -->
 <style lang="scss">

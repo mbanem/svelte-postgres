@@ -28,7 +28,7 @@
       title: 'Parent call child func',
       href: '/parent-call-child',
     },
-    { color: 'LightGreen', title: 'Flex Grid', href: '/flex-grid' },
+    { color: 'LightGreen', title: 'Grid', href: '/grid' },
     { color: 'Yellow', title: 'Flip', href: '/flip' },
   ];
 
@@ -126,11 +126,10 @@
   <InputBox
     bind:this={inputBox}
     title="Enter item for the list and press Enter key"
-    height="2rem;"
     width="20rem"
     margin="10px 0 5px 0"
     bind:value={inputBoxEntry}
-    exportValueOn="enter"
+    exportValueOn="enter|blur"
     capitalize={true}
     {onInputIsReadyCallback}
   ></InputBox>

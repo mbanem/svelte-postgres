@@ -48,6 +48,12 @@
       href: '/bars/scroll',
       condition: 'VISITOR',
     },
+    {
+      position: 3,
+      title: 'boundary',
+      href: '/bars/boundary',
+      condition: 'VISITOR',
+    },
   ];
   let navButtonObjects2: TNavButtonObject[] = [
     // { position: 4, title: 'news', href: '/news', condition: 'VISITOR' },

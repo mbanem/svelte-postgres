@@ -8,7 +8,7 @@
   import type { Snapshot } from './$types';
 
   import { Tooltip } from 'flowbite-svelte';
-  import { setColor, hideButtonsExceptFirst } from '$utils';
+  import { setPlaceholderColor, hideButtonsExceptFirst } from '$utils';
   import TodoList from '$components/TodoList.svelte';
   import PageTitleCombo from '$components/PageTitleCombo.svelte';
   import ButtonSpinner from '$components/ButtonSpinner.svelte';
@@ -43,7 +43,7 @@
   let theForm: HTMLFormElement;
 
   $effect(() => {
-    setColor(
+    setPlaceholderColor(
       form?.message
         ? form.message.includes('successfully') || result === ''
           ? 'lightgreen'

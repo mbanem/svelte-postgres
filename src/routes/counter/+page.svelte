@@ -80,11 +80,25 @@
 <div class="horizontal-block">
   <div class="dimensions">
     <label for="w"> rectangle width </label>
-    <input id="w" class="number" type="number" bind:value={width} />
+    <input id="w" type="number" min="1" max="10000" bind:value={width} />
     <label for="h"> rectangle height </label>
-    <input id="h" class="number" type="number" bind:value={height} />
+    <input
+      id="h"
+      class="number"
+      type="number"
+      min="1"
+      max="10000"
+      bind:value={height}
+    />
     <label for="z"> parallelepiped height </label>
-    <input id="z" class="number" type="number" bind:value={pHeight} />
+    <input
+      id="z"
+      class="number"
+      type="number"
+      min="1"
+      max="10000"
+      bind:value={pHeight}
+    />
   </div>
   <div>
     <pre class="pre-class">
