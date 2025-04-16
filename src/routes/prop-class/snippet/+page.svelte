@@ -49,10 +49,10 @@
       {/snippet}
 
       {#snippet row(data: Data[])}
-        {#each data as fruit}
-          <p class="fruit-item">{fruit.name}</p>
-          <p class="fruit-item">{(fruit as Fruit).quantity}</p>
-          <p class="fruit-item">{(fruit as Fruit).price}</p>
+        {#each data as item}
+          <p class="fruit-item">{item.name}</p>
+          <p class="fruit-item">{(item as Fruit).quantity}</p>
+          <p class="fruit-item">{(item as Fruit).price}</p>
         {/each}
       {/snippet}
     </DynamicTable>

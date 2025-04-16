@@ -1,15 +1,31 @@
 <script lang="ts">
+  import { browser } from '$app/environment';
   import { onMount } from 'svelte';
   import { fly } from 'svelte/transition';
   import Header from './Header.svelte';
   import InputBox from '$lib/components/InputBox.svelte';
   import Tree from './recursive-snippet-tree.svelte';
-  import SnippetTable from './snippet/snippet-table.svelte';
+  import SnippetTable from './snippet/Snippet-Table.svelte';
   import * as utils from '$utils';
+  import { keyPress } from '$utils';
 
-  // cannot define the type of inputEl
+  type TKey =
+    | 'Tab'
+    | 'Enter'
+    | '0'
+    | '1'
+    | '2'
+    | '3'
+    | '4'
+    | '5'
+    | '6'
+    | '7'
+    | '8'
+    | '9'
+    | '0';
+
   // svelte-ignore non_reactive_update
-  let inputEl: InputBox | HTMLInputElement;
+  let inputEl: InputBox | InputBox | HTMLInputElement;
   const Ids = ['firstName', 'lastName', 'birthday', 'color'] as const; // read-only array
   type TId = (typeof Ids)[number]; // literal type "color" | "firstName" | "lastName" | "birthday"
 
@@ -84,47 +100,47 @@
       case 0:
         // console.log('step-0');
         setTimeout(() => {
-          inputEl.setFocus();
+          (inputEl as InputBox).setFocus();
         }, 1000);
         break;
       case 1:
         // console.log('step-1');
         setTimeout(() => {
-          inputEl.setFocus();
+          (inputEl as InputBox).setFocus();
         }, 1000);
         break;
       case 2:
         // console.log('step-2');
-        inputEl.setFocus();
-        inputEl.value = '2005-03-03';
+        (inputEl as InputBox).setFocus();
+        (inputEl as HTMLInputElement).value = '2005-03-03';
         // setTimeout(() => {
-        //   utils.keyPress('Enter', inputEl);
+        //   keyPress('Enter', inputEl);
         // }, 2000);
         setTimeout(() => {
-          utils.keyPress('Tab', inputEl);
-          // utils.keyPress('Enter', inputEl);
+          keyPress('Tab');
+          // keyPress('Enter', inputEl);
         }, 1000);
         break;
       case 3:
         // console.log('step-3');
         // cannot make it
-        inputEl.value = utils.randomColor();
-        inputEl.showPicker();
+        (inputEl as HTMLInputElement).value = utils.randomColor();
+        (inputEl as HTMLInputElement).showPicker();
         setTimeout(() => {
-          utils.keyPress('Tab');
-          utils.keyPress('Tab');
-          utils.keyPress('Enter');
-          inputEl.blur();
+          keyPress('Tab');
+          keyPress('Tab');
+          keyPress('Enter');
+          (inputEl as HTMLInputElement).blur();
         }, 200);
         setTimeout(() => {
-          inputEl.click();
+          (inputEl as HTMLInputElement).click();
         }, 2000);
         break;
       default:
         buttonNext.innerText = 'reset';
         setTimeout(() => {
           if (inputEl) {
-            inputEl.setFocus();
+            (inputEl as InputBox).setFocus();
           }
         }, 4000);
     }
@@ -141,7 +157,7 @@
       '.form-answers-container',
     ) as HTMLDivElement;
     setTimeout(() => {
-      inputEl.setFocus();
+      (inputEl as InputBox).setFocus();
     }, 1000);
   });
   $effect(() => {
@@ -248,7 +264,12 @@
     <Tree></Tree>
   </div>
   <div class="right-column">
-    <SnippetTable></SnippetTable>
+    <SnippetTable>
+      <!-- children must be encapsulated in a tag, it cannot be plain string -->
+      <p style="color:pink;padding:0;margin:1rem 0 0 1rem;">
+        Hello from Snippet Children
+      </p>
+    </SnippetTable>
   </div>
 </main>
 

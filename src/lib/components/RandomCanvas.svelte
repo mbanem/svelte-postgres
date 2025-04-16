@@ -124,7 +124,7 @@
   });
 </script>
 
-<p>This is a RandomCanvas component</p>
+<!-- <p>This is a RandomCanvas component</p> -->
 <div class="controls">
   <label class="color-dialog-box">
     Resize the first box on the right

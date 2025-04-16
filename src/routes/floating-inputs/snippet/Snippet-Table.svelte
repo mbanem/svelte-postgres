@@ -3,7 +3,9 @@
 -->
 
 <script lang="ts">
-  import DynamicTable from './dynamic-table.svelte';
+  import { type Snippet } from 'svelte';
+  let { children }: { children: Snippet } = $props();
+  import DynamicTable from './Dynamic-Table.svelte';
   type FamilyMember = {
     firstName: string;
     lastName: string;
@@ -21,6 +23,25 @@
 </script>
 
 <div class="main">
+  <!-- 
+    parent +page.svelte set <SnippetTable and included a Div
+    element with Hello from Snippet Children text so we here
+    @render children, i.e. that Div element  
+  -->
+  Children {@render children()}
+  <!-- 
+    we include <DynamicTable but she rely on two snippets
+    for rendering header and rows, so we define snippets
+    here that actually render the markup with inline styles
+    The header snipper is parameter-less but row needs
+    a FamilyMember argument to render their full names
+    We render markup with CSS classes as we can send CSS
+    classes to <DynamicTable but do not know how it could
+    implement the classes as she jus @render sent snippets
+
+    We also send prop data, i.e. FamilyMembers so when
+    @render row(familyMember) it gets family member
+  -->
   <DynamicTable data={familyMembers}>
     {#snippet header()}
       <p class="header first">Family Members</p>

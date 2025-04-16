@@ -148,9 +148,13 @@ const colors_hex = [
   '#ffffff', //'White'
   '#f5f5f5', //'WhiteSmoke'
   '#ffff00', //'Yellow'
-  '#9acd32', //'YellowGreen' }
-]
-export function browserName() {
+  '#9acd32', //'YellowGreen'
+];
+
+export function browserName(){
+  console.log('browserName');
+  if (!browser) return
+  // @ts-ignore
   try {
     if (
       (navigator.userAgent.indexOf('Opera') ||
@@ -169,7 +173,62 @@ export function browserName() {
       return 'unknown'
     }
   } catch (e) {
-    return 'unknown'
+    return 'browser unknown'
+  }
+}
+export type TKey =
+  | 'Tab'
+  | 'Enter'
+  | '0'
+  | '1'
+  | '2'
+  | '3'
+  | '4'
+  | '5'
+  | '6'
+  | '7'
+  | '8'
+  | '9'
+  | '0';
+
+export const keyPress = (
+  key: TKey,
+  el?: HTMLInputElement | HTMLButtonElement,
+) => {
+  if (!browser) return
+  // console.log('el', el);
+  let keyEvent: KeyboardEvent
+  if (key === 'Tab' || key === 'Enter') {
+    const num = key === 'Tab' ? 9 : 13
+    keyEvent = new KeyboardEvent('keydown', {
+      key: key,
+      code: key,
+      keyCode: num, // The keyCode for Tab
+      which: num,
+      bubbles: true, // The event bubbles up through the DOM
+      cancelable: true, // The event can be canceled
+    })
+  } else {
+    const num = 48 + parseInt(key)
+    keyEvent = new KeyboardEvent('keydown', {
+      key: key, // The key value
+      keyCode: num, // The keyCode for '5'
+      code: `Digit${key}`, // The physical key code for '5'
+      which: num, // Legacy key code
+      bubbles: true, // Allows the event to bubble up through the DOM
+      cancelable: true, // Allows the event to be canceled
+    })
+  }
+  // Dispatch the event on the currently focused element
+  // console.log('dispatch', keyEvent);
+  if (el !== undefined) {
+    el.dispatchEvent(keyEvent)
+    // console.log('using el', el);
+  } else {
+    // console.log('using active element', document.activeElement);
+    (
+      document.activeElement as HTMLInputElement | HTMLButtonElement
+    ).dispatchEvent(keyEvent)
   }
 }
 export let navBars: TNavBar[] = []
@@ -204,7 +263,7 @@ export const setPlaceholderColor = (color: string) => {
 }
 
 export const hideButtonsExceptFirst = (buttons: HTMLButtonElement[]) => {
-  resetButtons(buttons)
+  resetButtons(buttons);
   if (buttons[0] && buttons[0].classList.contains('hidden')) {
     buttons[0].classList.toggle('hidden')
     buttons[0].hidden = false
@@ -629,61 +688,6 @@ export const array_move = (arr: Array<any>, fromIx: number, toIx: number) => {
 
 export const randomColor = () => {
   return '#' + Math.floor(Math.random() * 16777215).toString(16)
-}
-type TKey =
-  | 'Tab'
-  | 'Enter'
-  | '0'
-  | '1'
-  | '2'
-  | '3'
-  | '4'
-  | '5'
-  | '6'
-  | '7'
-  | '8'
-  | '9'
-  | '0'
-
-export const keyPress = (
-  key: TKey,
-  el?: HTMLInputElement | HTMLButtonElement,
-) => {
-  if (!browser) return
-  // console.log('el', el);
-  let keyEvent: KeyboardEvent
-  if (key === 'Tab' || key === 'Enter') {
-    const num = key === 'Tab' ? 9 : 13
-    keyEvent = new KeyboardEvent('keydown', {
-      key: key,
-      code: key,
-      keyCode: num, // The keyCode for Tab
-      which: num,
-      bubbles: true, // The event bubbles up through the DOM
-      cancelable: true, // The event can be canceled
-    })
-  } else {
-    const num = 48 + parseInt(key)
-    keyEvent = new KeyboardEvent('keydown', {
-      key: key, // The key value
-      keyCode: num, // The keyCode for '5'
-      code: `Digit${key}`, // The physical key code for '5'
-      which: num, // Legacy key code
-      bubbles: true, // Allows the event to bubble up through the DOM
-      cancelable: true, // Allows the event to be canceled
-    })
-  }
-  // Dispatch the event on the currently focused element
-  // console.log('dispatch', keyEvent);
-  if (el !== undefined) {
-    el.dispatchEvent(keyEvent)
-    // console.log('using el', el);
-  } else {
-    // console.log('using active element', document.activeElement);
-    (
-      document.activeElement as HTMLInputElement | HTMLButtonElement
-    ).dispatchEvent(keyEvent)
-  }
 }
 
 // string length in px

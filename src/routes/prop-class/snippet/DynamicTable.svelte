@@ -6,7 +6,6 @@
   // );
   // Snippet is a construct that is imported from svelte
   import type { Snippet } from 'svelte';
-  import * as utils from '$utils';
 
   // console.log(page.url.pathname);
   // snippets could accept parameters so we define their types

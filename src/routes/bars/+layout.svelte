@@ -83,6 +83,12 @@
       href: '/bars/tasks',
       condition: 'VISITOR',
     },
+    {
+      position: 8,
+      title: 'tooltip',
+      href: '/bars/tooltip',
+      condition: 'VISITOR',
+    },
   ];
   const getFormParams = () => {
     let params = '';
