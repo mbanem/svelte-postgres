@@ -199,9 +199,11 @@
             title={id}
             bind:this={inputEl}
             bind:value={formState.answers[id as TId]}
+            exportValueOn="enter|blur"
             {onButtonNext}
             width="15rem"
             capitalize={true}
+            required={true}
           ></InputBox>
         </div>
       {:else}
