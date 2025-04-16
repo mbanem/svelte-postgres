@@ -34,12 +34,14 @@
       exportValueOn="enter|blur"
       capitalize={true}
       bind:value={user.firstName}
+      required={true}
     />
     <InputBox
       title="lastName"
       exportValueOn="enter"
       capitalize={true}
       bind:value={user.lastName}
+      required={true}
     />
     {#if bird}
       <img src={bird} alt="" />
