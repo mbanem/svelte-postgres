@@ -28,7 +28,9 @@
     showTooltip = true;
     handleClick();
   };
-
+  const toggle_Loading = () => {
+    start = !start;
+  };
   // unable to handle other events just on:outroend={handleEnd}
   const handleEnd = () => {
     //.log('Transition ended!')
@@ -88,7 +90,7 @@
       "<div style='color:yellow;padding: 6px 1rem;border: 1px solid gray'>Newly inserted text</div>",
     );
     //newNode.appendChild(textNode)
-    if (host && host.children[0]) {
+    if (host && host.children[0] && newNode) {
       host?.insertBefore(newNode, host.children[0]);
     }
   };
@@ -138,6 +140,7 @@
         {/if}
         toggle loading
       </button>
+      <div onmouseenter={toggle_Loading} aria-hidden={true}>toggle loading</div>
     </div>
     <br style="margin-top:4rem" />
     <div class="tooltip-wrapper">

@@ -242,13 +242,14 @@ export const sixHash = () => {
   const b = (Math.random() * 46656) | 0
   return a.toString(36).slice(-3) + b.toString(36).slice(-3)
 }
-let mrPath = $state<string>('/')
-export const setMrPath = (path: string) => {
-  mrPath = path
-}
+let mrPath = $state<string>('/');
 export const getMrPath = () => {
   return mrPath as string
 }
+export const setMrPath = (path: string) => {
+  mrPath = path
+}
+
 // short id
 export const id = () => {
   return (Math.random() * 10 ** 8).toString(36).replace(/\./g, '')
@@ -703,6 +704,10 @@ export const pxStringLength = (str: string): string => {
   el?.remove()
   return width
 }
+export const pxElementHeight = (el: HTMLElement): string => {
+  if (!browser) return ''
+  return el.getBoundingClientRect().height ?? '24px'
+}
 
 export const rangeArray = (start: number, end: number) => Array.from({ length: (end - start) }, (_, k) => k + start)
 /* how to use
@@ -713,4 +718,39 @@ export const rangeArray = (start: number, end: number) => Array.from({ length: (
     {ix}: {number}
   {/each}
 
+*/
+
+export const fadeScale = (
+  node, { delay = 100, duration = 500, easing = x => x, baseScale = 0 }
+) => {
+  //
+  const opacity = +getComputedStyle(node).opacity
+  const m = getComputedStyle(node).transform.match(/scale\(([0-9.]+)\)/)
+  const scale = m ? m[1] : 1
+  const is = 1 - baseScale
+
+  return {
+    delay,
+    duration,
+    css: t => {
+      const eased = easing(t)
+      return `opacity: ${eased * opacity}; transform: scale(${(eased * scale * is) + baseScale})`
+    }
+  }
+}
+// how to use it. 
+/*
+  {#if visible}
+    <div
+      class="tooltip"
+      transition:fadeScale={{
+        delay: 250,
+        duration: 1000,
+        easing: cubicInOut,
+        baseScale: 0,
+      }}
+    >
+      {title}
+    </div>
+  {/if}
 */

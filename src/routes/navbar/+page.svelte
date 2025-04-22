@@ -5,6 +5,7 @@
   type TButtonProp = { color: string; title: string; href: string };
   const buttonsList = [
     { color: 'Pink', title: 'Home', href: '/' },
+    { color: 'RebeccaPurple', title: 'Tooltip', href: '/att' },
     { color: 'Blue', title: 'Derived', href: '/derived' },
     { title: 'Scroll', href: '/bars/scroll' }, // make one with no color to use default color -- red
     { color: 'Tomato', title: 'Caterpillar', href: '/caterpillar' },
@@ -23,6 +24,13 @@
     { color: 'Yellow', title: 'Detail Summary', href: '/detail-summary' },
     { color: 'Purple', title: 'Floating Inputs', href: '/floating-inputs' },
     { color: 'Pink', title: 'Permissions', href: '/permissions' },
+    { color: 'tomato', title: 'Counter', href: '/counter' },
+    { color: 'green', title: 'Dispatch', href: '/dispatch' },
+    { color: 'white', title: 'Multiselect', href: '/multiselect' },
+    { color: 'lightblue', title: 'News', href: '/news' },
+    { color: 'red', title: 'Opposite Lists', href: '/opposite-lists' },
+    { color: 'white', title: 'Parent', href: '/parent' },
+    { color: 'royalblue', title: 'Users', href: '/users' },
     {
       color: 'Purple',
       title: 'Parent call child func',

@@ -104,7 +104,13 @@
     // "skipDefaultLibCheck": true,
     "skipLibCheck": true
   },
-  "include": ["./src/**/*", "app.d.ts", "./.svelte-kit/ambient.d.ts"],
+  "include": [
+    "./src/**/*",
+    "app.d.ts",
+    "./.svelte-kit/ambient.d.ts",
+    "src/lib/utils/XTooltip.svelte.ts",
+    "tooltip.d.ts"
+  ],
   "exclude": ["node_modules"]
   // Path aliases are handled by https://kit.svelte.dev/docs/configuration#alias
   //

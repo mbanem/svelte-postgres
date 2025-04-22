@@ -3,9 +3,11 @@
   import { Tooltip } from 'flowbite-svelte';
   // component to get CSS class prop from parent
   import Component from './Component.svelte';
+  // import XTooltip from '$lib/utils/tooltip.svelte';
   import { string } from 'zod';
 
   //
+  let buttonEl: HTMLButtonElement;
   const createdAt = new Date('2023-10-01T02:15:00Z');
   const updatedAt = new Date('2024-08-06T04:10:00Z');
   let hth: number = 0;
@@ -20,7 +22,19 @@
 </script>
 
 <br style="margin-top:4rem" />
-
+{#snippet tooltip()}
+  event.preventDefault()
+  <div class="tt-container">
+    <p class="title"></p>
+  </div>
+{/snippet}
+<!-- <XTooltip
+  position="top-left"
+  renderingSnippet={tooltip}
+  cssClass="tooltip-local"
+  hoveringElement={buttonEl}
+  hoveringDelayMs={500}
+></XTooltip> -->
 <!-- 
     Component to get CSS class prop from parent
     we cannot specify prop name as {class} as it is CSS keyword
@@ -37,6 +51,7 @@
     unexpected token compiler error
     so we use class_name instead
 -->
+<button bind:this={buttonEl}>hovering button</button>
 {#snippet participant(class_name: string)}
   <div class={class_name}>
     <p>Filip Isakovic</p>

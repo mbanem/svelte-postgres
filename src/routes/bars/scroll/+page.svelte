@@ -1,7 +1,7 @@
 <script lang="ts">
   import { tick } from 'svelte';
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
-  import { capitalize } from '$utils/helpers.svelte';
+  import { capitalize } from '$lib/utils/helpers.svelte';
   import { flip } from 'svelte/animate';
   import { fade } from 'svelte/transition';
 

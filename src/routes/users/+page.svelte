@@ -20,12 +20,12 @@
     // console.log(JSON.stringify(data, null, 2));
   };
 
-  onMount(() => {
-    return () => {
-      // @ts-expect-error
-      utils.setMrPath.set(page.url.pathname);
-    };
-  });
+  // onMount(() => {
+  //   return () => {
+  //     // @ts-expect-error
+  //     utils.setMrPath.set(page.url.pathname);
+  //   };
+  // });
 </script>
 
 <svelte:head>
@@ -41,6 +41,8 @@
         <a href="/user?id={id}">{firstName} {lastName}</a>
       </li>
     {/each}
+  {:else}
+    <pre>There are no registered users in database yet</pre>
   {/if}
 </ul>
 

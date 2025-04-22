@@ -5,7 +5,7 @@
     // class_wrapper: string;
     class_participant: string;
     class_circle: string;
-    participant: Snippet<[string]>;
+    participant: (class_name: string) => ReturnType<Snippet>;
   };
   let {
     // class_wrapper: CLASS_WRAPPER,

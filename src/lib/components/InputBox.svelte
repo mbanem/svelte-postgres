@@ -218,7 +218,11 @@
 <style lang="scss">
   :root {
     --INPUT-COMRUNNER-WIDTH: 16rem;
+    --INPUT-BOX-LABEL-TOP-POS: -1px;
+    --INPUT-COMRUNNER-HEIGHT: 2.5rem;
+    --INPUT-COMRUNNER-FONT-SIZE: 16px;
   }
+
   .input-wrapper {
     position: relative;
     width: max-content;

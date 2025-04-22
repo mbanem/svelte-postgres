@@ -1,13 +1,13 @@
 // See https://kit.svelte.dev/docs/types#app
 // for information about these interfaces
 declare global {
-  type Role = 'USER' | 'ADMIN' | 'VISITOR';
   type TNavBar = {
     navId: string;
     startIx: number;
     Ix: number;
     activeEl: HTMLInputElement | undefined;
   };
+  type Role = 'USER' | 'ADMIN' | 'VISITOR';
   type TNavButton = {
     position: string | number;
     className: string; // hidden or className as .navCategoryIx
@@ -465,7 +465,7 @@ declare global {
   };
 
   namespace App {
-    // interface Error {}
+        // interface Error {}
     interface Locals {
       user: {
         id: string;
