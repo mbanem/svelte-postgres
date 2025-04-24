@@ -1,42 +1,53 @@
 <script lang="ts">
+  import { browser } from '$app/environment';
   import { cubicInOut } from 'svelte/easing';
   import { type Snippet } from 'svelte';
   import { fadeScale } from './fade-scale';
+
   type PROPS = {
     delay: number;
     duration: number;
     baseScale: number;
     caption: string;
-    class_participant?: string;
-    participant?: (class_name: string) => ReturnType<Snippet>;
     visible: boolean;
+    participant?: (class_name: string) => ReturnType<Snippet>;
+    class_participant?: string;
   };
-  let divId = '';
-  const id = () => {
-    divId = `i${(Math.random() * 10 ** 8).toString(36).replace(/\./g, '')}`;
-    return divId;
-  };
+  // let divId = 'Filip';
+  // const id = () => {
+  //   divId = `i${(Math.random() * 10 ** 8).toString(36).replace(/\./g, '')}`;
+  //   return divId;
+  // };
   let {
     delay,
     duration = 2000,
     baseScale,
     caption,
-    class_participant,
+    visible,
     participant,
-    visible = $bindable(),
+    class_participant,
   } = $props();
-  const toggle = () => {
-    visible = !visible;
-  };
-
-  // console.log(delay,duration,baseScale,caption)
 </script>
 
+<!-- NOTE: transform:translate is defined in the fade-scale and must specify
+    the same left/top values as the one in this snippet handler
+ -->
 {#snippet handler()}
   {#if visible}
     <div
-      id={id()}
-      style={`position:absolute;transform: translate(-1.2rem,-110%);opacity:0.5;padding: 0.5rem;color: white;text-align: center;background: navy;width:max-content;height:auto;padding: 2px 1rem;border: 1px solid gray;border-radius:6px;`}
+      style={`position:absolute;  
+        transform: translate(-2rem,-120%);
+        opacity:0.5;
+        padding: 0.5rem;
+        color: white;
+        text-align: center;
+        background: navy;
+        width:max-content;
+        height:auto;
+        padding: 2px 1rem;
+        border: 4px solid gray;
+        border-radius:6px;
+      `}
       transition:fadeScale={{
         delay,
         duration,
@@ -48,15 +59,8 @@
     </div>
   {/if}
 {/snippet}
-<button onmouseenter={toggle} onmouseleave={toggle}>
-  {@render handler()}
-  toggle visible
-</button>
+
+{@render handler()}
 
 <style>
-  button {
-    position: relative;
-    margin: 6rem 4rem;
-    padding: 0 1rem;
-  }
 </style>
