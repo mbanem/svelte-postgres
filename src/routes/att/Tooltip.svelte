@@ -27,16 +27,19 @@
     participant,
     class_participant,
   } = $props();
+
+  let translateX = '-2rem';
+  let translateY = '-120%';
 </script>
 
 <!-- NOTE: transform:translate is defined in the fade-scale and must specify
     the same left/top values as the one in this snippet handler
- -->
+-->
 {#snippet handler()}
   {#if visible}
     <div
       style={`position:absolute;  
-        transform: translate(-2rem,-120%);
+        transform: translate(${translateX},${translateY});
         opacity:0.5;
         padding: 0.5rem;
         color: white;
@@ -53,6 +56,8 @@
         duration,
         easing: cubicInOut,
         baseScale,
+        translateX,
+        translateY,
       }}
     >
       {@render participant('css-prop-wrapper local')}
