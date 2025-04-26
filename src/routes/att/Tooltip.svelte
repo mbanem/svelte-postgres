@@ -10,8 +10,8 @@
     baseScale: number;
     caption: string;
     visible: boolean;
-    participant?: (class_name: string) => ReturnType<Snippet>;
-    class_participant?: string;
+    tooltipPanel?: (class_name: string) => ReturnType<Snippet>;
+    class_tooltipPanel?: string;
   };
   // let divId = 'Filip';
   // const id = () => {
@@ -24,8 +24,8 @@
     baseScale,
     caption,
     visible,
-    participant,
-    class_participant,
+    tooltipPanel,
+    class_tooltipPanel,
   } = $props();
 
   let translateX = '-2rem';
@@ -60,7 +60,7 @@
         translateY,
       }}
     >
-      {@render participant('css-prop-wrapper local')}
+      {@render tooltipPanel('css-prop-wrapper local')}
     </div>
   {/if}
 {/snippet}
