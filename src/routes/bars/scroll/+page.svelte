@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { browser } from '$app/environment';
   import { tick } from 'svelte';
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
   import { capitalize } from '$lib/utils/helpers.svelte';

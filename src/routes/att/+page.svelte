@@ -6,6 +6,8 @@
     duration: 800,
     baseScale: 0,
     caption: 'Printing the Report',
+    translateX: '-2rem',
+    translateY: '-120%',
   };
   const toggle = () => {
     visible = !visible;
@@ -80,8 +82,9 @@
     </details>
   </div>
 </div>
+<p class="extra">Filip Isakovic</p>
 
-<style>
+<style lang="scss">
   /* class sent as prop to component must be wrapped in :global() */
 
   .tooltip-wrapper {
@@ -125,5 +128,8 @@
       width: max-content;
       padding: 0 0.5rem;
     }
+  }
+  .extra {
+    @include gradient-text();
   }
 </style>

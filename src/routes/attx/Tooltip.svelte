@@ -1,96 +1,109 @@
 <script lang="ts">
+  
   import { browser } from '$app/environment';
   import { cubicInOut } from 'svelte/easing';
-  import { type Snippet, onMount } from 'svelte';
+  import { type Snippet } from 'svelte';
   import { fadeScale } from './fade-scale';
+    import { string } from 'zod';
 
   type PROPS = {
     delay: number;
     duration: number;
     baseScale: number;
     caption: string;
-    visible: boolean;
     children: Snippet<[]>;
     tooltipPanel?: (class_name: string) => ReturnType<Snippet>;
     class_tooltipPanel?: string;
-  };
-
-  let wrapperDivId = 'Filip';
-  let wrapperDiv: HTMLDivElement | null = null;
-  const id = () => {
-    wrapperDivId = `i${(Math.random() * 10 ** 8).toString(36).replace(/\./g, '')}`;
-    return wrapperDivId;
+    translateX: string;
+    translateY: string;
+    preferredPos?:string
   };
   let {
     delay,
-    duration = 2000,
+    duration = 1500,
     baseScale,
     caption,
     children,
     tooltipPanel,
     class_tooltipPanel,
+    translateX,
+    translateY,
+    preferredPos
   } = $props();
 
-  try {
-    console.log(children());
-  } catch (e) {
-    console.log('Error in children', e);
-  }
+  let ttRect: DOMRect;
+  let hoverRect: DOMRect;
+  // translateX/translateY arguments for fade-scale function
+  // based on ttRect and hoverRect taken on mouseenter
+  let translate =['','']
 
   let visible = $state(false);
-  let translateX = '-31px';
-  let translateY = '-122px';
 
-  // For tooltipPanel to be whole visible on the screen we need to
-  // get initial position of the tooltipPanel and its dimensions
-  // and ensure that
-  //        tooltipPanel.height > tooltipPanel.y - window.scrollY
-  //        tooltipPanel.width > tooltipPanel.x - window.scrollX
-  type TInitialPosition = {
-    panelX: number;
-    panelY: number;
-    panelWidth: number;
-    panelHeight: number;
-    availableWidth: number;
-    availableHeight: number;
-  };
-  let initPos: TInitialPosition = {
-    panelX: 0,
-    panelY: 0,
-    panelWidth: 0,
-    panelHeight: 0,
-    availableWidth: 0,
-    availableHeight: 0,
-  };
-  const setInitialPosition = () => {
-    if (!browser) return;
-    // wrapperDiv = document.getElementById(wrapperDivId) as HTMLDivElement;
-    // if (!wrapperDiv) return;
-    const rect = document.getElementById(wrapperDivId)?.getBoundingClientRect();
-    if (rect) {
-      initPos.panelX = Math.floor(rect.x);
-      initPos.panelY = Math.floor(rect.y);
-      initPos.panelWidth = Math.floor(rect.width);
-      initPos.panelHeight = Math.floor(rect.height);
-      initPos.availableWidth = Math.floor(window.innerWidth - rect.x);
-      initPos.availableHeight = Math.floor(window.innerHeight - rect.y);
-      wrapperDiv?.classList.add('hidden');
+
+  type TPos = 'top'|'right'|'bottom'|'left'
+
+  // returns tuple [string, string] for [translateX, translateY]
+  const panelPos = (
+    ttRect: DOMRect,
+    hoverRect: DOMRect,
+    pos: TPos,
+  ): [string, string] => {
+    if (!visible) return { x: '', y: '' };
+    switch (pos) {
+      case 'top':
+        return [`4rem`, `-4rem`]
+      case 'right':
+        return [`${64 + hoverRect.width}px`, `0`]
+      case 'bottom':
+        return [`4rem`, `${ttRect.height}px`]
+      case 'left':
+        return [`${-64 - ttRect.width}px`, `0`]
+      default:
+        return ['', ''];
     }
   };
-
-  const toggle = () => {
-    // visible = !visible;
-    wrapperDiv?.classList.toggle('hidden');
+  const toggle = (event:MouseEvent) => {
+    if(event.type==='mouseleave') return 
+    visible = !visible;
+    setTimeout(() => {
+      // ttRect = document
+      //   .querySelector(`.${class_tooltipPanel}`)
+      //   ?.getBoundingClientRect() as DOMRect;
+      ttRect = document
+        .querySelector('.css-prop-class_tooltipPanel')
+        ?.getBoundingClientRect() as DOMRect;
+      hoverRect = document
+        .querySelector('.tooltip-hover')
+        ?.getBoundingClientRect() as DOMRect;
+      translate.right = panelPos(ttRect, hoverRect, 'right');
+      translate.bottom = panelPos(ttRect, hoverRect, 'bottom');
+      translate.left = panelPos(ttRect, hoverRect, 'left');
+      const scrollX = Math.round(window.scrollX)
+      const scrollY = Math.round(window.scrollY)
+      // scrollX + ttRect.width < hoverRect.left        -- left position for tooltipPanel is OK
+      // scrollY + ttRect.height < hoverRect.top        -- top  position is OK
+      
+      if (
+        hoverRect.top - ttRect.height > 0 &&
+        hoverRect.left - ttRect.width > 0
+      ) {
+        [translateX, translateY] = panelPos(ttRect, hoverRect, 'top');
+      }else if(hoverRect.right + ttRect.width < window.innerWidth){
+        [translateX, translateY] = panelPos(ttRect, hoverRect, 'right');
+      }else if(hoverRect.bottom + ttRect.height < window.innerHeight){
+        [translateX, translateY] = panelPos(ttRect, hoverRect, 'bottom');
+      }else if(hoverRect.left-ttRect.width)
+    }, delay + duration);
+    // now set translateX and translateY based on actual tooltip-hover position
   };
+  // let divId = 'Filip';
+  // const id = () => {
+  //   divId = `i${(Math.random() * 10 ** 8).toString(36).replace(/\./g, '')}`;
+  //   return divId;
+  // };
 
-  onMount(() => {
-    if (browser) {
-      wrapperDiv = document.getElementById(wrapperDivId) as HTMLDivElement;
-      setTimeout(() => {
-        setInitialPosition();
-      }, 0);
-    }
-  });
+
+  console.log(class_tooltipPanel);
 </script>
 
 <!-- NOTE: transform:translate is defined in the fade-scale and must specify
@@ -101,7 +114,7 @@
     <div
       style={`position:absolute;  
         transform: translate(${translateX},${translateY});
-        opacity:0;
+        opacity:0.5;
         padding: 0.5rem;
         color: white;
         text-align: center;
@@ -117,42 +130,38 @@
         duration,
         easing: cubicInOut,
         baseScale,
-        translateX,
-        translateY,
+        translate: { x: translateX, y: translateY },
       }}
     >
-      {@render tooltipPanel('css-prop-wrapper local')}
-      {@render children()}
+      {@render tooltipPanel(class_tooltipPanel)}
     </div>
   {/if}
 {/snippet}
+
+{@render handler()}
 <div
-  id={id()}
-  class="tooltip-wrapper"
+  class="tooltip-hover"
   onmouseenter={toggle}
   onmouseleave={toggle}
   aria-hidden={true}
 >
-  {@render handler()}
   {@render children()}
 </div>
 
-<style lang="scss">
-  .tooltip-wrapper {
-    position: relative;
-    outline: none;
-    border: none;
-    padding: 0;
-    margin: 0;
+<p>{JSON.stringify(translate, null, 2)}</p>
+<div style="margin: 200rem 200rem">margin: 200rem 200rem</div>
+
+<style>
+  .tooltip-hover {
+    margin: 16rem 46rem;
     width: max-content;
-    height: auto;
-    margin: 18rem 50rem !important;
-    z-index: 5;
-  }
-  .hidden {
-    display: none;
-  }
-  .visibility {
-    visibility: hidden;
+    height: 2rem !important;
+    line-height: 2rem;
+    padding: 3px 1rem;
+    border: 1px solid yellow;
+    border-radius: 5px;
+    color: white;
+    background-color: navy;
+    cursor: default;
   }
 </style>

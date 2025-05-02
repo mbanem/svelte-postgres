@@ -1,5 +1,7 @@
 <script lang="ts">
   // https://svelte.dev/repl/ba7f569af4a44553b201a9efd8dc6ec2?version=4.2.14
+
+  import { browser } from '$app/environment';
   import { page } from '$app/state';
   import { onMount } from 'svelte';
   import Child from './Child.svelte';

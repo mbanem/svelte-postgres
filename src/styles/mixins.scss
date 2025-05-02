@@ -11,25 +11,51 @@
   border: none;
   outline: 1px solid gray;
   border-radius: $border-radius;
+
   &:focus {
     color: var(--INPUT-FOCUS-COLOR);
     background-color: #6e6e6e;
   }
+
   &::placeholder {
     color: var(--PLACEHOLDER-COLOR);
     font-weight: normal;
   }
 }
 
-@mixin rectangle(
-  $width: 80px,
+@mixin gradient-text($font: italic bold 50px/50px "Helvetica",
+  $color-from: rgb(67, 124, 205),
+  $color-to: rgb(69, 214, 202)) {
+  font: $font;
+  // font: italic small-caps bold 60px/60px Georgia, "Comic Sans MS", serif;
+  background: linear-gradient(to right, rgba(128, 95, 226, 0.7), red);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+// @mixin gradient-text($font-size: 60px,
+//   $font-family: "Comic Sans MS",
+//   $font-style: italic,
+//   $font-weight: 700,
+//   $color-from: rgb(67, 124, 205),
+//   $color-to: rgb(69, 214, 202)) {
+//   font-size: $font-size;
+//   font-style: $font-style;
+//   font-weight: $font-weight;
+//   font-family: $font-family;
+//   // font: italic small-caps bold 60px/60px Georgia, "Comic Sans MS", serif;
+//   background: linear-gradient(to right, rgb(128, 95, 226), yellow);
+//   -webkit-background-clip: text;
+//   -webkit-text-fill-color: transparent;
+// }
+
+@mixin rectangle($width: 80px,
   $height: 80px,
   $color: yellow,
   $background-color: royalblue,
   $border: 2px solid pink,
   $border-radius: 8px,
-  $font-size: 18px
-) {
+  $font-size: 18px) {
   width: $width;
   height: $height;
   color: $color;
@@ -42,20 +68,18 @@
   overflow: auto;
 }
 
-@mixin container(
-  $head: 'container',
+@mixin container($head: 'container',
   $padding: 1rem 2rem,
   $head-color: #e3e3e3,
   $background-color: #3e3e3e,
-  $head-background-color:#3e3e3e,
+  $head-background-color: #3e3e3e,
   $border: 1px solid gray,
   $border-radius: 10px,
   $box-shadow: none,
   $box-sizing: border-box,
   $width: max-content,
   $top: -10px,
-  $left: 2rem
-) {
+  $left: 2rem) {
   position: relative;
   width: $width;
   padding: $padding;
@@ -64,12 +88,14 @@
   border-radius: $border-radius;
   box-shadow: $box-shadow;
   box-sizing: $box-sizing;
+
   &::before {
     position: absolute;
     content: '\00a0 \00a0' + $head + '\00a0 \00a0';
     top: $top;
     left: $left;
-    color: $head-color !important;;
+    color: $head-color !important;
+    ;
     background-color: $head-background-color;
     // border-top: 1px solid gray;
     // border-top-left-radius: 4px;
@@ -86,32 +112,38 @@
   line-height: 50px;
   text-align: center;
   width: 50px;
+
   &:hover {
     color: yellow;
     border-color: lightgreen;
   }
+
   &:target {
     background-color: blue;
   }
 }
+
 @mixin on-focus {
   display: inline-block;
   font-size: 16px;
   text-decoration: none;
   @content;
 }
+
 @mixin border-small($color: gray, $radius: 5px, $padding: 3px 1rem) {
-  width:max-content;
-  padding:5px 10px;
+  width: max-content;
+  padding: 5px 10px;
   border: 1px solid $color;
   border-radius: $radius;
 }
+
 @mixin border-large($color: gray, $radius: 10px, $padding: 1rem 2rem) {
-  width:max-content;
-  padding:1rem 2rem;
+  width: max-content;
+  padding: 1rem 2rem;
   border: 1px solid $color;
   border-radius: $radius;
 }
+
 @mixin cr-button($color: white, $background-color: navy) {
   @extend inline-block;
   color: $color;
@@ -124,22 +156,27 @@
   text-decoration: none;
   @content;
 }
+
 @mixin border($w: 1, $r: 5) {
   border: $w * 1px solid gray;
   border-radius: $r * 1px;
 }
+
 @mixin border-sm($color: gray, $radius: 5px, $padding: 3px 1rem) {
   border: 1px solid $color;
   border-radius: $radius;
 }
+
 @mixin border-md($color: gray, $radius: 10px, $padding: 6px 1.5rem) {
   border: 1px solid $color;
   border-radius: $radius;
 }
+
 @mixin border-lg($color: gray, $radius: 10px, $padding: 1rem 2rem) {
   border: 1px solid $color;
   border-radius: $radius;
 }
+
 /* while defining a[title] using href */
 @mixin highlight($color: lightgreen, $cursor: pointer) {
   color: $color;

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { browser } from '$app/environment';
   import { onMount } from 'svelte';
   import { stringify } from 'uuid';
   let defaultColor: string = '#e3e3e3';

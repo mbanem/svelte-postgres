@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { browser } from '$app/environment';
   import InputBox from '$lib/components/InputBox.svelte';
   const duck = new URL('./duck.jpeg', import.meta.url).href;
   const goose = new URL('./goose.jpeg', import.meta.url).href;

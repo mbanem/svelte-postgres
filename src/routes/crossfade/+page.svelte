@@ -116,7 +116,7 @@
           out:receive={{ key: 'x' }}
           onoutroend={handleEnd}
         >
-          click me
+          <!-- the div is invisible so there is no text content -->
         </div>
       {:else}
         <div
@@ -217,6 +217,7 @@
       border: 4px solid lightgreen;
     }
   }
+  // cross fade is mostly defined with start-pos and end-pos (top/left settings)
   .a {
     position: absolute;
     top: 2rem;

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { browser } from '$app/environment';
   import { onMount } from 'svelte';
   import { sleep } from '$utils';
   import Bindable, { counter } from '$components/Bindable.svelte';

@@ -93,3 +93,35 @@ export const convertToHexColor = (color: string) => {
     return color
   }
 }
+
+export const styleSheetFromSelector = (selector: string) => {
+  for(let i = 0; i < document.styleSheets.length; i++) {
+    const sheet = document.styleSheets[i]
+    for(let ix in sheet.rules || sheet.cssRules) {
+        if(typeof rules[ix].selectorText == selector) {
+          return sheet
+        }
+    }
+  }
+  return null
+}
+
+export const getAllSelectors = () => { 
+    const ret = [];
+    for(let i = 0; i < document.styleSheets.length; i++) {
+        const rules = document.styleSheets[i].rules || document.styleSheets[i].cssRules;
+        for(let x in rules) {
+            if(typeof rules[x].selectorText == 'string') ret.push(rules[x].selectorText);
+        }
+    }
+    return ret;
+}
+
+
+export const selectorExists = (selector) => { 
+    const selectors = getAllSelectors();
+    for(let i = 0; i < selectors.length; i++) {
+        if(selectors[i] == selector) return true;
+    }
+    return false;
+}

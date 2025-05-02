@@ -12,6 +12,8 @@
     visible: boolean;
     tooltipPanel?: (class_name: string) => ReturnType<Snippet>;
     class_tooltipPanel?: string;
+    translateX?: number;
+    translateY?: number;
   };
   // let divId = 'Filip';
   // const id = () => {
@@ -26,10 +28,9 @@
     visible,
     tooltipPanel,
     class_tooltipPanel,
+    translateX,
+    translateY,
   } = $props();
-
-  let translateX = '-2rem';
-  let translateY = '-120%';
 </script>
 
 <!-- NOTE: transform:translate is defined in the fade-scale and must specify
@@ -60,7 +61,7 @@
         translateY,
       }}
     >
-      {@render tooltipPanel('css-prop-wrapper local')}
+      {@render tooltipPanel('{class_tooltipPanel}')}
     </div>
   {/if}
 {/snippet}
