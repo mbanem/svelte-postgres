@@ -2,7 +2,7 @@
   import { browser } from '$app/environment';
   import { cubicInOut } from 'svelte/easing';
   import { type Snippet } from 'svelte';
-  import { fadeScale } from './fade-scale';
+  import fadeScale from './fade-scale';
 
   type PROPS = {
     delay: number;

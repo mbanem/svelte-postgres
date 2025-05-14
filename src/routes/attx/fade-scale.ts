@@ -1,12 +1,11 @@
-  export function fadeScale(
+  export default function fadeScale(
     node: HTMLElement,
-    { delay = 0, duration = 200, easing = (x) => x, baseScale = 0, translateX='5rem', translateY='-160%'}},
+    { delay = 0, duration = 200, easing = (x) => x, baseScale = 0, translateX='5rem', translateY='-160%'},
   ) {
     const opacity = +getComputedStyle(node).opacity;
     const m = getComputedStyle(node).transform.match(/scale\(([0-9.]+)\)/);
     const s = m ? Number(m[1]) : 1;
     const is = 1 - baseScale;
-    // console.log(translateX, translateY)
     // transform:translate uses matrix's last two entries for translate x and y
     // with scaleX=1 skewX=0 skewY=0  scaleY=1 (1-no scale and 0-no skew) just translate
     // NOTE: transform:translate is defined in the Tooltip.svelte and must specify

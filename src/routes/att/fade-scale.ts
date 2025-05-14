@@ -1,4 +1,4 @@
-  export function fadeScale(
+  export default function fadeScale(
     node: HTMLElement,
     { delay = 0, duration = 200, easing = (x) => x, baseScale = 0, translateX='5rem', translateY='-160%'},
   ) {
