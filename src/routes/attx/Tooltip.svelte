@@ -109,7 +109,7 @@
       if (translateX !== '') {
         break;
       }
-      console.log('unsuccessful', preferred[i]);
+      // console.log('unsuccessful', preferred[i]);
     }
     if (translateX === '') {
       //
