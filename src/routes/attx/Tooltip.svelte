@@ -1,35 +1,41 @@
 <script lang="ts">
   import { browser } from '$app/environment';
   import { type Snippet, onMount } from 'svelte';
+  import { cubicInOut } from 'svelte/easing';
+  import fadeScale from './fade-scale';
   const r = Math.round;
   interface IProps {
     delay?: number;
-    preferredPos?: string;
+    duration?: number;
+    baseScale?: number;
     tooltipPanel: (panelStyle: string) => ReturnType<Snippet>;
     children?: Snippet;
+    translateX?: string;
+    translateY?: string;
+    preferredPos?: string;
   }
   let {
     delay = 800,
-    preferredPos = 'top,left,right,bottom',
+    duration = 2000,
+    baseScale = 0,
     tooltipPanel,
     children,
+    translateX,
+    translateY,
+    preferredPos = 'top,left,right,bottom',
   }: IProps = $props();
   const preferred = preferredPos.replace(/\s+/g, '').split(',') as string[];
+  let visible = $state(false);
 
-  type DeepWriteable<T> = { -readonly [P in keyof T]: DeepWriteable<T[P]> };
-  let tooltipDiv: HTMLDivElement | null = $state(null);
-  let ttRect: DOMRect | null = $state(null);
   let ttpRect: DOMRect | null = $state(null);
   let hoverRect: DOMRect | null = $state(null);
   let initial = $state(true);
-
-  let cssPos = $state('top');
-  let ttPos = $state('');
 
   const OK = $state({
     top: false,
     bottom: false,
     leftRightBottom: false,
+    topBottomRight: false,
     left: false,
     right: false,
   });
@@ -37,132 +43,142 @@
   const setTooltipPos = () => {
     // NOTE: Toolbar height is 32px
     const toolbarHeight = 32;
-    ttPos = '';
+    translateX = '';
     if (!ttpRect || !hoverRect) {
       return console.log('no  rectangles');
     }
 
-    OK.top = hoverRect.top - window.scrollY - toolbarHeight > ttpRect.height;
-    OK.bottom =
-      hoverRect.bottom - window.scrollY + ttpRect.height < window.innerHeight;
+    // right (120,0) bottom (0,47) left (-224,0) top (0,-94)
+    OK.topBottomRight =
+      hoverRect.left - window.scrollX + ttpRect.width < window.innerWidth;
     OK.leftRightBottom =
       hoverRect.top - window.scrollY + ttpRect.height < window.innerHeight;
 
-    OK.left =
-      hoverRect.left - window.scrollX > ttpRect.width && OK.leftRightBottom;
+    OK.top = hoverRect.top - window.scrollY - toolbarHeight > ttpRect.height;
+    OK.bottom =
+      hoverRect.bottom - window.scrollY + ttpRect.height < window.innerHeight;
+    OK.left = hoverRect.left - window.scrollX > ttpRect.width;
     OK.right =
-      hoverRect.right - window.scrollX + ttpRect.width < window.innerWidth &&
-      OK.leftRightBottom;
+      hoverRect.right - window.scrollX + ttpRect.width < window.innerWidth;
+
+    // console.log(
+    //   OK.top,
+    //   OK.right,
+    //   OK.bottom,
+    //   OK.left,
+    //   OK.topBottomRight,
+    //   OK.leftRightBottom,
+    // );
+    // console.log(
+    //   hoverRect,
+    //   ttpRect,
+    //   window.scrollX,
+    //   window.scrollY,
+    //   window.innerWidth,
+    //   window.innerHeight,
+    // );
     for (let i = 0; i < preferred.length; i++) {
       switch (preferred[i] as string) {
         case 'top':
-          if (OK.top) {
-            return `top:${-ttpRect.height}px;left:0;`;
+          if (OK.top && OK.right) {
+            translateX = '0px';
+            translateY = `${-ttpRect.height}px`;
           }
           break;
         case 'left':
-          if (OK.left && OK.bottom) {
-            return `top:0;left:${-ttpRect.width}px;`;
+          if (OK.left && OK.leftRightBottom) {
+            translateX = `${-ttpRect.width}px`;
+            translateY = '0px';
           }
           break;
         case 'right':
-          if (OK.right && OK.bottom) {
-            return `top:0;left:${hoverRect.width}px;`;
+          if (OK.right && OK.leftRightBottom) {
+            translateX = `${hoverRect.width}px`;
+            translateY = '0px';
           }
           break;
         case 'bottom':
-          if (OK.bottom) {
-            return `top:${hoverRect.height}px;left:0;`;
+          if (OK.bottom && OK.topBottomRight) {
+            translateX = '0px';
+            translateY = `${hoverRect.height + 5}px`;
           }
           break;
         default:
-          console.log('default');
           break;
       }
+      if (translateX !== '') {
+        break;
+      }
+      console.log('unsuccessful', preferred[i]);
     }
-  };
-  const toggle = (event: MouseEvent) => {
-    // if (tooltipDiv) {
-    if (event.type === 'mouseenter') {
-      ttPos = setTooltipPos() as string;
+    if (translateX === '') {
+      //
+      translateY = OK.top ? `${-ttpRect.height}px` : `${hoverRect.height}px`;
+      translateX = OK.left
+        ? `${window.innerWidth - (hoverRect.right - window.scrollX) - hoverRect.width}px`
+        : '0px';
+      // console.log('no preferred position available', translateX, translateY);
     }
-    // toggle hidden on mouse enter and then on mouse leave
     setTimeout(() => {
-      tooltipDiv?.classList.toggle('hidden');
-    }, delay);
-    // }
+      visible = !visible;
+    }, 0);
   };
-  let W = $state({ X: 0, Y: 0, W: 0, H: 0 });
-  let H = $state({ hL: 0, hT: 0, hB: 0, hW: 0, hH: 0 });
+
+  const toggle = (event: MouseEvent) => {
+    if (event.type === 'mouseenter') {
+      setTooltipPos();
+    } else {
+      visible = !visible;
+    }
+  };
+  // let W = $state({ X: 0, Y: 0, W: 0, H: 0 });
+  // let H = $state({ hL: 0, hT: 0, hB: 0, hW: 0, hH: 0 });
 
   onMount(() => {
-    // updateTTPRect();
-    // console.log('ttRect',ttRect)
     setTimeout(() => {
       const ttp = document.querySelector('.tooltip-panel') as HTMLDivElement;
       if (ttp) {
         ttpRect = ttp.getBoundingClientRect() as DOMRect;
         ttpRect.width = r(ttpRect.width);
         ttpRect.height = r(ttpRect.height);
-        // console.log('ttpRect', ttpRect);
         initial = false;
       }
       ttp.remove();
-    }, 0);
-    setTimeout(() => {
+
       const hw = document.querySelector('.child-wrapper') as HTMLDivElement;
       if (hw) {
-        hoverRect = hw.children[0]?.getBoundingClientRect() as DOMRect;
+        hoverRect = hw.getBoundingClientRect() as DOMRect;
         hoverRect.width = r(hoverRect.width);
         hoverRect.height = r(hoverRect.height);
-        // console.log('hoverRect',hoverRect)
+      } else {
+        console.log('no hoverRect');
       }
+    }, 0);
+    // if (window) {
+    //   window.addEventListener('scroll', function () {
+    //     W.X = r(window.scrollX);
+    //     W.Y = r(window.scrollY);
+    //     W.W = r(window.innerWidth);
+    //     W.H = r(window.innerHeight);
 
-      // else{
-      // 	console.log('no hoverWrapper')
-      // }
-      const ttw = document.querySelector('.tooltip-wrapper') as HTMLDivElement;
-      if (ttw) {
-        ttRect = ttw.getBoundingClientRect() as DOMRect;
-        if (!ttRect) {
-          console.log('no ttRect');
-        }
-        // else {
-        //   console.log('ttRect', ttRect);
-        // }
-      }
-    }, 500);
-    // } else {
-    //   console.log('no ttWrapper');
+    //     if (hoverRect) {
+    //       H.hL = r(hoverRect.left);
+    //       H.hT = r(hoverRect.top);
+    //       H.hB = r(hoverRect.bottom);
+    //       H.hW = r(hoverRect.width);
+    //       H.hH = r(hoverRect.height);
+    //     }
+    //   });
+
+    window.addEventListener('scrollend', () => {
+      translateX = '0px';
+      translateY = '0px';
+    });
     // }
-    // Optional: Update on window resize
-    // window.addEventListener('resize', updateTTPRect);
-    // return () => {
-    //   window.removeEventListener('resize', updateTTPRect);
-    // };
-    if (window) {
-      window.addEventListener('scroll', function () {
-        W.X = r(window.scrollX);
-        W.Y = r(window.scrollY);
-        W.W = r(window.innerWidth);
-        W.H = r(window.innerHeight);
-
-        if (hoverRect) {
-          H.hL = r(hoverRect.left);
-          H.hT = r(hoverRect.top);
-          H.hB = r(hoverRect.bottom);
-          H.hW = r(hoverRect.width);
-          H.hH = r(hoverRect.height);
-        }
-      });
-
-      window.addEventListener('scrollend', setTooltipPos);
-    }
   });
 </script>
 
-<p>{preferred} ttPos {ttPos}</p>
-{#each ['top', 'left', 'right', 'bottom'] as pos}
+<!-- {#each ['top', 'left', 'right', 'bottom'] as pos}
   <label>
     <input
       type="radio"
@@ -173,32 +189,57 @@
     />
     {pos}
   </label>
-{/each}
-<p>Selected position: {cssPos}</p>
+{/each} -->
+<!-- <p>Selected position: {cssPos}</p> -->
 {#if initial}
   {@render tooltipPanel(
-    `position:absolute;top:0.left:0;background-color:navy; padding: 10px;visibility:hidden;`,
+    `position:absolute;top:4rem;left:3rem;padding: 3px 1rem;visibility:hidden;`,
   )}
-{:else}
-  <div
-    class="tooltip-wrapper"
-    onmouseenter={toggle}
-    onmouseleave={toggle}
-    aria-hidden={true}
-  >
-    {#if tooltipPanel}
-      <div bind:this={tooltipDiv} class="relative hidden">
-        {@render tooltipPanel(
-          `position:absolute;${ttPos}background-color:navy; padding: 10px;`,
-        )}
-      </div>
-    {/if}
-    <div class="child-wrapper">
-      {@render children?.()}
-    </div>
-  </div>
 {/if}
-{#if hoverRect && ttpRect}
+
+{#snippet handler()}
+  {#if visible}
+    <div
+      style={`position:absolute;  
+      transform: translate(${translateX},${translateY});
+      opacity:0.5;
+      padding: 0.5rem;
+      color: white;
+      text-align: center;
+      background: navy;
+      width:max-content;
+      height:auto;
+      padding: 2px 1rem;
+      border: 4px solid gray;
+      border-radius:6px;
+    `}
+      transition:fadeScale={{
+        delay,
+        duration,
+        easing: cubicInOut,
+        baseScale,
+        translateX,
+        translateY,
+      }}
+    >
+      {@render tooltipPanel(
+        'position:absolute;top:0;left:0;color:yellow;z-index:-10;',
+      )}
+    </div>
+  {/if}
+{/snippet}
+
+<div
+  class="child-wrapper"
+  onmouseenter={toggle}
+  onmouseleave={toggle}
+  aria-hidden={true}
+>
+  {@render handler()}
+  {@render children?.()}
+</div>
+
+<!-- {#if hoverRect && ttpRect}
   <p>
     {H.hB}, {W.Y}
     {r(ttpRect.height)}
@@ -222,22 +263,17 @@
   b {r(ttpRect?.bottom ?? 0)}, w {r(ttpRect?.width ?? 0)}, h {r(
     ttpRect?.height ?? 0,
   )}
-</p>
+</p> -->
 
 <style>
-  .tooltip-wrapper {
-    margin: 7rem 8rem;
+  .child-wrapper {
+    position: relative;
+    box-sizing: content-box;
+    padding: none;
+    margin: none;
     width: max-content;
     height: auto;
-  }
-  .hidden {
-    visibility: hidden;
-  }
-  .relative {
-    position: relative;
-  }
-  .child-wrapper {
-    padding: 0;
-    margin: 0;
+    outline: none;
+    z-index: 10;
   }
 </style>

@@ -1,155 +1,158 @@
 import { browser } from '$app/environment'
 
-const colors_hex = [
-  '#f0f8ff', //'AliceBlue'
-  '#faebd7', //'AntiqueWhite'
-  '#00ffff', //'Aqua'
-  '#7fffd4', //'Aquamarine'
-  '#f0ffff', //'Azure'
-  '#f5f5dc', //'Beige'
-  '#ffe4c4', //'Bisque'
-  '#000000', //'Black'
-  '#ffebcd', //'BlanchedAlmond'
-  '#0000ff', //'Blue'
-  '#8a2be2', //'BlueViolet'
-  '#a52a2a', //'Brown'
-  '#deb887', //'BurlyWood'
-  '#5f9ea0', //'CadetBlue'
-  '#7fff00', //'Chartreuse'
-  '#d2691e', //'Chocolate'
-  '#ff7f50', //'Coral'
-  '#6495ed', //'CornflowerBlue'
-  '#fff8dc', //'Cornsilk'
-  '#dc143c', //'Crimson'
-  '#00ffff', //'Cyan'
-  '#00008b', //'DarkBlue'
-  '#008b8b', //'DarkCyan'
-  '#b8860b', //'DarkGoldenRod'
-  '#a9a9a9', //'DarkGray'
-  '#a9a9a9', //'DarkGrey'
-  '#006400', //'DarkGreen'
-  '#bdb76b', //'DarkKhaki'
-  '#8b008b', //'DarkMagenta'
-  '#556b2f', //'DarkOliveGreen'
-  '#ff8c00', //'DarkOrange'
-  '#9932cc', //'DarkOrchid'
+
+const colors_hex: string[] = [
+  '#f0f8ff', //AliceBlue
+  '#faebd7', //AntiqueWhite
+  '#00ffff', //Aqua
+  '#7fffd4', //Aquamarine
+  '#f0ffff', //Azure
+  '#f5f5dc', //Beige
+  '#ffe4c4', //Bisque
+  '#000000', //Black
+  '#ffebcd', //BlanchedAlmond
+  '#0000ff', //Blue
+  '#8a2be2', //BlueViolet
+  '#a52a2a', //Brown
+  '#deb887', //BurlyWood
+  '#5f9ea0', //CadetBlue
+  '#7fff00', //Chartreuse
+  '#d2691e', //Chocolate
+  '#ff7f50', //Coral
+  '#6495ed', //CornflowerBlue
+  '#fff8dc', //Cornsilk
+  '#dc143c', //Crimson
+  '#00ffff', //Cyan
+  '#00008b', //DarkBlue
+  '#008b8b', //DarkCyan
+  '#b8860b', //DarkGoldenRod
+  '#a9a9a9', //DarkGray
+  '#a9a9a9', //DarkGrey
+  '#006400', //DarkGreen
+  '#bdb76b', //DarkKhaki
+  '#8b008b', //DarkMagenta
+  '#556b2f', //DarkOliveGreen
+  '#ff8c00', //DarkOrange
+  '#9932cc', //DarkOrchid
   '#8b0000', //' #ad1414'
-  '#e9967a', //'DarkSalmon'
-  '#8fbc8f', //'DarkSeaGreen'
-  '#483d8b', //'DarkSlateBlue'
-  '#2f4f4f', //'DarkSlateGray'
-  '#2f4f4f', //'DarkSlateGrey'
-  '#00ced1', //'DarkTurquoise'
-  '#9400d3', //'DarkViolet'
-  '#ff1493', //'DeepPink'
-  '#00bfff', //'DeepSkyBlue'
-  '#696969', //'DimGray'
-  '#696969', //'DimGrey'
-  '#1e90ff', //'DodgerBlue'
-  '#b22222', //'FireBrick'
-  '#fffaf0', //'FloralWhite'
-  '#228b22', //'ForestGreen'
-  '#ff00ff', //'Fuchsia'
-  '#dcdcdc', //'Gainsboro'
-  '#f8f8ff', //'GhostWhite'
-  '#ffd700', //'Gold'
-  '#daa520', //'GoldenRod'
-  '#808080', //'Gray'
-  '#808080', //'Grey'
-  '#008000', //'Green'
-  '#adff2f', //'GreenYellow'
-  '#f0fff0', //'HoneyDew'
-  '#ff69b4', //'HotPink'
-  '#cd5c5c', //'IndianRed'
-  '#4b0082', //'Indigo'
-  '#fffff0', //'Ivory'
-  '#f0e68c', //'Khaki'
-  '#e6e6fa', //'Lavender'
-  '#fff0f5', //'LavenderBlush'
-  '#7cfc00', //'LawnGreen'
-  '#fffacd', //'LemonChiffon'
-  '#add8e6', //'LightBlue'
-  '#f08080', //'LightCoral'
-  '#e0ffff', //'LightCyan'
-  '#fafad2', //'LightGoldenRodYellow'
-  '#d3d3d3', //'LightGray'
-  '#d3d3d3', //'LightGrey'
-  '#90ee90', //'LightGreen'
-  '#ffb6c1', //'LightPink'
-  '#ffa07a', //'LightSalmon'
-  '#20b2aa', //'LightSeaGreen'
-  '#87cefa', //'LightSkyBlue'
-  '#778899', //'LightSlateGray'
-  '#778899', //'LightSlateGrey'
-  '#b0c4de', //'LightSteelBlue'
-  '#ffffe0', //'LightYellow'
-  '#00ff00', //'Lime'
-  '#32cd32', //'LimeGreen'
-  '#faf0e6', //'Linen'
-  '#ff00ff', //'Magenta'
-  '#800000', //'Maroon'
-  '#66cdaa', //'MediumAquaMarine'
-  '#0000cd', //'MediumBlue'
-  '#ba55d3', //'MediumOrchid'
-  '#9370db', //'MediumPurple'
-  '#3cb371', //'MediumSeaGreen'
-  '#7b68ee', //'MediumSlateBlue'
-  '#00fa9a', //'MediumSpringGreen'
-  '#48d1cc', //'MediumTurquoise'
-  '#c71585', //'MediumVioletRed'
-  '#191970', //'MidnightBlue'
-  '#f5fffa', //'MintCream'
-  '#ffe4e1', //'MistyRose'
-  '#ffe4b5', //'Moccasin'
-  '#ffdead', //'NavajoWhite'
-  '#000080', //'Navy'
-  '#fdf5e6', //'OldLace'
-  '#808000', //'Olive'
-  '#6b8e23', //'OliveDrab'
-  '#ffa500', //'Orange'
-  '#ff4500', //'OrangeRed'
-  '#da70d6', //'Orchid'
-  '#eee8aa', //'PaleGoldenRod'
-  '#98fb98', //'PaleGreen'
-  '#afeeee', //'PaleTurquoise'
-  '#db7093', //'PaleVioletRed'
-  '#ffefd5', //'PapayaWhip'
-  '#ffdab9', //'PeachPuff'
-  '#cd853f', //'Peru'
-  '#ffc0cb', //'Pink'
-  '#dda0dd', //'Plum'
-  '#b0e0e6', //'PowderBlue'
-  '#800080', //'Purple'
-  '#663399', //'RebeccaPurple'
-  '#ff0000', //'Red'
-  '#bc8f8f', //'RosyBrown'
-  '#4169e1', //'RoyalBlue'
-  '#8b4513', //'SaddleBrown'
-  '#fa8072', //'Salmon'
-  '#f4a460', //'SandyBrown'
-  '#2e8b57', //'SeaGreen'
-  '#fff5ee', //'SeaShell'
-  '#a0522d', //'Sienna'
-  '#c0c0c0', //'Silver'
-  '#87ceeb', //'SkyBlue'
-  '#6a5acd', //'SlateBlue'
-  '#708090', //'SlateGray'
-  '#708090', //'SlateGrey'
-  '#fffafa', //'Snow'
-  '#00ff7f', //'SpringGreen'
-  '#4682b4', //'SteelBlue'
-  '#d2b48c', //'Tan'
-  '#008080', //'Teal'
-  '#d8bfd8', //'Thistle'
-  '#ff6347', //'Tomato'
-  '#40e0d0', //'Turquoise'
-  '#ee82ee', //'Violet'
-  '#f5deb3', //'Wheat'
-  '#ffffff', //'White'
-  '#f5f5f5', //'WhiteSmoke'
-  '#ffff00', //'Yellow'
-  '#9acd32', //'YellowGreen'
+  '#e9967a', //DarkSalmon
+  '#8fbc8f', //DarkSeaGreen
+  '#483d8b', //DarkSlateBlue
+  '#2f4f4f', //DarkSlateGray
+  '#2f4f4f', //DarkSlateGrey
+  '#00ced1', //DarkTurquoise
+  '#9400d3', //DarkViolet
+  '#ff1493', //DeepPink
+  '#00bfff', //DeepSkyBlue
+  '#696969', //DimGray
+  '#696969', //DimGrey
+  '#1e90ff', //DodgerBlue
+  '#b22222', //FireBrick
+  '#fffaf0', //FloralWhite
+  '#228b22', //ForestGreen
+  '#ff00ff', //Fuchsia
+  '#dcdcdc', //Gainsboro
+  '#f8f8ff', //GhostWhite
+  '#ffd700', //Gold
+  '#daa520', //GoldenRod
+  '#808080', //Gray
+  '#808080', //Grey
+  '#008000', //Green
+  '#adff2f', //GreenYellow
+  '#f0fff0', //HoneyDew
+  '#ff69b4', //HotPink
+  '#cd5c5c', //IndianRed
+  '#4b0082', //Indigo
+  '#fffff0', //Ivory
+  '#f0e68c', //Khaki
+  '#e6e6fa', //Lavender
+  '#fff0f5', //LavenderBlush
+  '#7cfc00', //LawnGreen
+  '#fffacd', //LemonChiffon
+  '#add8e6', //LightBlue
+  '#f08080', //LightCoral
+  '#e0ffff', //LightCyan
+  '#fafad2', //LightGoldenRodYellow
+  '#d3d3d3', //LightGray
+  '#d3d3d3', //LightGrey
+  '#90ee90', //LightGreen
+  '#ffb6c1', //LightPink
+  '#ffa07a', //LightSalmon
+  '#20b2aa', //LightSeaGreen
+  '#87cefa', //LightSkyBlue
+  '#778899', //LightSlateGray
+  '#778899', //LightSlateGrey
+  '#b0c4de', //LightSteelBlue
+  '#ffffe0', //LightYellow
+  '#00ff00', //Lime
+  '#32cd32', //LimeGreen
+  '#faf0e6', //Linen
+  '#ff00ff', //Magenta
+  '#800000', //Maroon
+  '#66cdaa', //MediumAquaMarine
+  '#0000cd', //MediumBlue
+  '#ba55d3', //MediumOrchid
+  '#9370db', //MediumPurple
+  '#3cb371', //MediumSeaGreen
+  '#7b68ee', //MediumSlateBlue
+  '#00fa9a', //MediumSpringGreen
+  '#48d1cc', //MediumTurquoise
+  '#c71585', //MediumVioletRed
+  '#191970', //MidnightBlue
+  '#f5fffa', //MintCream
+  '#ffe4e1', //MistyRose
+  '#ffe4b5', //Moccasin
+  '#ffdead', //NavajoWhite
+  '#000080', //Navy
+  '#fdf5e6', //OldLace
+  '#808000', //Olive
+  '#6b8e23', //OliveDrab
+  '#ffa500', //Orange
+  '#ff4500', //OrangeRed
+  '#da70d6', //Orchid
+  '#eee8aa', //PaleGoldenRod
+  '#98fb98', //PaleGreen
+  '#afeeee', //PaleTurquoise
+  '#db7093', //PaleVioletRed
+  '#ffefd5', //PapayaWhip
+  '#ffdab9', //PeachPuff
+  '#cd853f', //Peru
+  '#ffc0cb', //Pink
+  '#dda0dd', //Plum
+  '#b0e0e6', //PowderBlue
+  '#800080', //Purple
+  '#663399', //RebeccaPurple
+  '#ff0000', //Red
+  '#bc8f8f', //RosyBrown
+  '#4169e1', //RoyalBlue
+  '#8b4513', //SaddleBrown
+  '#fa8072', //Salmon
+  '#f4a460', //SandyBrown
+  '#2e8b57', //SeaGreen
+  '#fff5ee', //SeaShell
+  '#a0522d', //Sienna
+  '#c0c0c0', //Silver
+  '#87ceeb', //SkyBlue
+  '#6a5acd', //SlateBlue
+  '#708090', //SlateGray
+  '#708090', //SlateGrey
+  '#fffafa', //Snow
+  '#00ff7f', //SpringGreen
+  '#4682b4', //SteelBlue
+  '#d2b48c', //Tan
+  '#008080', //Teal
+  '#d8bfd8', //Thistle
+  '#ff6347', //Tomato
+  '#40e0d0', //Turquoise
+  '#ee82ee', //Violet
+  '#f5deb3', //Wheat
+  '#ffffff', //White
+  '#f5f5f5', //WhiteSmoke
+  '#ffff00', //Yellow
+  '#9acd32', //YellowGreen
 ];
+
+
 
 export function browserName(){
   console.log('browserName');
@@ -231,17 +234,17 @@ export const keyPress = (
     ).dispatchEvent(keyEvent)
   }
 }
-export let navBars: TNavBar[] = []
-export const navButtons: TNavButton[] = []
-export let navPath = $state<string>('/')
+export let navBars: TNavBar[] = [];
+export const navButtons: TNavButton[] = [];
+export let navPath = $state<string>('/');
 
-export let prevPath = $state('/')
+export let prevPath = $state('/');
 
 export const sixHash = () => {
   const a = (Math.random() * 46656) | 0
   const b = (Math.random() * 46656) | 0
   return a.toString(36).slice(-3) + b.toString(36).slice(-3)
-}
+};
 let mrPath = $state<string>('/');
 export const getMrPath = () => {
   return mrPath as string
@@ -250,12 +253,11 @@ export const setMrPath = (path: string) => {
   mrPath = path
 }
 
-// short id
+
 export const id = () => {
   return (Math.random() * 10 ** 8).toString(36).replace(/\./g, '')
 }
 
-// change placeholder color to red on required messages
 export const setPlaceholderColor = (color: string) => {
   if (browser) {
     document.documentElement.style.setProperty('--PLACEHOLDER-COLOR', color)
@@ -284,8 +286,8 @@ export const resetButtons = (buttons: HTMLButtonElement[]) => {
   } catch { }
 }
 
-let fn: string = ''
-let ln: string = ''
+let fn: string = '';
+let ln: string = '';
 export const isNameChanged = (firstName: string, lastName: string) => {
   const result = fn === firstName && ln === lastName ? false : true
   if (result) {
@@ -312,19 +314,7 @@ export const arrStringToNumArr = (arr: string[]): Number[] => {
 export const csvToNumArr = (s: string): number[] => {
   return s.split(',').map((el) => Number(el))
 }
-// export const getCSSValue = (varName: string):string => {
-//   try {
-//     const root = document.querySelector(':root');
-//     if (root) {
-//       // @ts-expect-error
-//       return root.style.getProperty(varName);
-//     }
-//   } catch (err) {
-//     console.log('getCSSValue', err);
-//   }
-//   console.log('returning default 16rem')
-//   return '16rem'
-// }
+
 export const getCSSValue = (varName: string): string | undefined => {
   if (browser) {
     const declaration = ((document.styleSheets[0]?.cssRules as CSSRuleList)[0] as CSSStyleRule).style
@@ -358,10 +348,6 @@ export const setTextColor = (varName: string, color: string) => {
   }
 }
 
-// define iterable number using object prototype and generator
-// function* to assign it to the Number iterator
-// usage:		[...10].forEach(n=> <expression...>)
-// @ts-expect-error
 Number.prototype[Symbol.iterator] = function* () {
   // @ts-expect-error
   for (let i = 0; i < this; i++) {
@@ -385,8 +371,6 @@ export const capitalize = (str: string) => {
     .replace(/(_\w)/, spaceUpper)
 }
 
-// Capitalize added to JavaScript String as a new method
-// @ts-expect-error
 String.prototype.capitalize = function () {
   return capitalize(this as string)
 }
@@ -403,12 +387,11 @@ export const capitalizeCamelCase = (str: string) => {
     .replace(/([a-z])(?=[A-Z])/g, '$1 ')
 }
 
-// NOTE: cannot use capitalizeCamelCase for prototype name as
-// code will complain that it is a constant (referring to the above function)
-// so we use another name
-
-// @ts-expect-error  -- capCamelCase does not exist on a String type
 String.prototype.capCamelCase = function () {
+  // NOTE: cannot use capitalizeCamelCase for prototype name as
+  // code will complain that it is a constant (referring to the above function)
+  // so we use another name
+  // @ts-expect-error  -- capCamelCase does not exist on a String type
   return capitalize(capitalizeCamelCase(this as string))
 }
 export const isKeyOf = <T extends Object>(
@@ -432,18 +415,18 @@ const _shallowCopy = <S extends Object, T extends S>(
 }
 export const shallowCopy = (source: Object, target: Object): Object => {
   return _shallowCopy(source, target)
+  //  Test Items
+  // let source: T[] = [
+  // 	{ id: '14', name: 'Matia', age: '21' },
+  // 	{ id: '22', name: 'Filip', age: '18', city: 'San Diego' }
+  // ];
 }
-//  Test Items
-// let source: T[] = [
-// 	{ id: '14', name: 'Matia', age: '21' },
-// 	{ id: '22', name: 'Filip', age: '18', city: 'San Diego' }
-// ];
 
 type T = Record<string | number, unknown>
-// NOTE: filter returns array
-// based on the keyName we select property value arr[keyName] and compare to a given key
-// so functions needs keyName, keyValue and the array itself
 export const selectRecordItems = <T extends unknown>(
+  // NOTE: filter returns array
+  // based on the keyName we select property value arr[keyName] and compare to a given key
+  // so functions needs keyName, keyValue and the array itself
   keyName: keyof T,
   key: string,
   arr: T[],
@@ -452,9 +435,6 @@ export const selectRecordItems = <T extends unknown>(
   return item
 }
 
-// example
-// console.log(selectItem<T>('name', 'Filip', source));
-// console.log(selectItem<T>('id', '14', source));
 
 export const copyPairingAttributes = <S, T extends Object>(
   source: S,
@@ -515,7 +495,7 @@ export const oppositeColorNameToHex = (colorName: string) => {
   )
 }
 
-const hex = '0123456789abcdef'
+const hex = '0123456789abcdef';
 export const hexCodeToOpposite = (hex_code: string) => {
   if (hex_code[0] === '#') {
     hex_code = hex_code.slice(1)
@@ -539,8 +519,8 @@ const randomBackColor = (): string => {
   return colors_hex[Math.floor((Math.random() * 1000) % colorCount)] as string
 }
 
-// https://gist.github.com/mjackson/5311256
 const rgbToHsl = (r: number, g: number, b: number) => {
+  // https://gist.github.com/mjackson/5311256
   (r /= 255), (g /= 255), (b /= 255)
 
   var max = Math.max(r, g, b),
@@ -645,6 +625,7 @@ const support = (() => {
   }
   return true
 })()
+
 export const parseToHTML = (str: string) => {
   if (!browser) return
   // If DOMParser is supported
@@ -670,31 +651,12 @@ export const array_move = (arr: Array<any>, fromIx: number, toIx: number) => {
   return arr
 }
 
-// const getUser = async (id: number) => {
-// 	sleep(1000)
-// 	if (id === 2) {
-// 		throw new Error('user not found')
-// 	}
-// 	return { id, name: 'Filip Isakovic' }
-// }
-// export function catchError<T>(promise: Promise<T>): Promise<[undefined, T] | [Error]> {
-// 	return promise
-// 		.then((data) => {
-// 			return [undefined, data] as [undefined, T]
-// 		})
-// 		.catch((error) => {
-// 			return [error] as [Error]
-// 		})
-// }
-
 export const randomColor = () => {
   return '#' + Math.floor(Math.random() * 16777215).toString(16)
 }
 
-// string length in px
-// const pxStringLength = (str: string): string => {
-// @ts-ignore
 export const pxStringLength = (str: string): string => {
+  // string length in px
   if (!browser) return ''
   const div = document.createElement('div')
   div.innerHTML = `<span id='ComRUNNER' style='padding:4px 1rem;margin:6px 1rem;'>${str}</span>`
@@ -723,7 +685,7 @@ export const rangeArray = (start: number, end: number) => Array.from({ length: (
 export const fadeScale = (
   node, { delay = 100, duration = 500, easing = x => x, baseScale = 0 }
 ) => {
-  //
+
   const opacity = +getComputedStyle(node).opacity
   const m = getComputedStyle(node).transform.match(/scale\(([0-9.]+)\)/)
   const scale = m ? m[1] : 1
@@ -738,23 +700,3 @@ export const fadeScale = (
     }
   }
 }
-// how to use it. 
-/*
-  {#if visible}
-    <div
-      class="tooltip"
-      transition:fadeScale={{
-        delay: 250,
-        duration: 1000,
-        easing: cubicInOut,
-        baseScale: 0,
-      }}
-    >
-      {title}
-    </div>
-  {/if}
-*/
-
-/* Grok 3 solution returned on following request
-  In TypeScript for a given string 'trlb' return a string containing all its permutations separated with a "'|'"
-*/

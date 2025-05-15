@@ -7,7 +7,7 @@
     baseScale: 0,
     caption: 'Printing the Report',
     translateX: '-2rem',
-    translateY: '-120%',
+    translateY: '-7.4rem',
   };
   const toggle = () => {
     visible = !visible;
