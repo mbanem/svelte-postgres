@@ -2,13 +2,13 @@
   import SnippetTable from '$routes/floating-inputs/snippet/Snippet-Table.svelte';
   import { type Snippet } from 'svelte';
   type PROPS = {
-    // class_wrapper: string;
+    class_wrapper: string;
     class_participant: string;
     class_circle: string;
     participant: (class_name: string) => ReturnType<Snippet>;
   };
   let {
-    // class_wrapper: CLASS_WRAPPER,
+    class_wrapper: CLASS_WRAPPER,
     class_participant,
     class_circle,
     participant,
@@ -23,11 +23,11 @@
         <div class="local {CLASS_WRAPPER}">
 
 -->
-<!-- <div class="{CLASS_WRAPPER} local">
+<div class="{CLASS_WRAPPER} local">
   <p>Filip Isakovic</p>
   <p>6524 Cascade St.</p>
   <p>San Diego, 92122</p>
-</div> -->
+</div>
 
 <!-- send snippet CSS class name implemented here in Component.svelte-->
 <div>{@render participant('css-prop-wrapper local')}</div>
@@ -35,10 +35,10 @@
 <div class={class_circle}>A CIRCLE</div>
 
 <pre style="color:lightgreen">
-  if a :global(.css-prop-class) contains pseudo class ::before
+  If a :global(.css-prop-class) contains pseudo class ::before
   the prop class delivered to the component does not render component
-  correctly in vsCode but did it OK in Svelte REPL playground
-  see REPL file <span style="color:lightblue;"
+  correctly in vsCode but did it OK in Svelte REPL playground.
+  See the REPL file <span style="color:lightblue;"
     >Send CSS class from parent to child component</span
   >
 </pre>

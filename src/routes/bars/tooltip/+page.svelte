@@ -61,6 +61,7 @@
 {/snippet}
 <div>
   <Component
+    class_wrapper={'css-prop-wrapper'}
     class_participant={'css-prop-participant'}
     class_circle={'css-prop-circle'}
     {participant}
@@ -114,34 +115,34 @@
   /* --------------------------------------- */
   /* class to be sent to component as a prop */
 
-  // :global(.css-prop-wrapper) {
-  //   position: relative;
-  //   width: max-content;
-  //   padding: 1rem 2rem;
-  //   background-color: navy !important;
-  //   color: black;
-  //   font-size: 20px;
-  //   line-height: 6px;
-  //   border: 4px solid red !important;
-  //   border-radius: 8px;
-  //   margin: 3rem 1rem 1rem 3rem;
-  //   padding: 1rem 2rem !important;
-  //   z-index: 2 !important;
-  //   &::before {
-  //     position: absolute !important;
-  //     content: ' User Details ';
-  //     top: -2rem !important;
-  //     left: -1rem !important;
-  //     color: blue !important;
-  //     font-size: 15px !important;
-  //     height: 140% !important;
-  //     width: 140% !important;
-  //     border: 2px solid black !important;
-  //     border-radius: 8px !important;
-  //     z-index: -1 !important;
-  //     background-color: cornsilk !important;
-  //   }
-  // }
+  :global(.css-prop-wrapper) {
+    position: relative;
+    width: max-content;
+    padding: 1rem 2rem;
+    background-color: navy !important;
+    color: black;
+    font-size: 20px;
+    line-height: 6px;
+    border: 4px solid red !important;
+    border-radius: 8px;
+    margin: 3rem 1rem 1rem 3rem;
+    padding: 1rem 2rem !important;
+    z-index: 2 !important;
+    &::before {
+      position: absolute !important;
+      content: ' User Details ';
+      top: -2rem !important;
+      left: -1rem !important;
+      color: blue !important;
+      font-size: 15px !important;
+      height: 140% !important;
+      width: 140% !important;
+      border: 2px solid black !important;
+      border-radius: 8px !important;
+      z-index: -1 !important;
+      background-color: cornsilk !important;
+    }
+  }
   :global(.css-prop-participant) {
     color: navy;
     background-color: skyblue;

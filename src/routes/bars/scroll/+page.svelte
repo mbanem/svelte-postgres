@@ -5,6 +5,7 @@
   import { capitalize } from '$lib/utils/helpers.svelte';
   import { flip } from 'svelte/animate';
   import { fade } from 'svelte/transition';
+  import * as utils from '$utils';
 
   //import {bounceInOut} from 'svelte/easing';
   let horizontal = $state(true);
@@ -40,10 +41,26 @@
   let delay_fade = $derived(delta === max_range ? 200 : 50);
   let dd_animate = $derived(delta === max_range ? 500 : 0);
   const scrollToTheRight = () => {
-    startInt = startInt + delta;
+    if (delta === max_range) {
+      scrollMax(1);
+    } else {
+      startInt = startInt + delta;
+    }
   };
   const scrollToTheLeft = () => {
-    startInt = startInt - delta;
+    if (delta === max_range) {
+      scrollMax(-1);
+    } else {
+      startInt = startInt - delta;
+    }
+  };
+  const scrollMax = async (d: number) => {
+    delta = d;
+    for (let i = 0; i < max_range; i++) {
+      scrollToTheLeft();
+      await utils.sleep(250);
+    }
+    delta = 5;
   };
 
   import gsap from 'gsap';
@@ -398,6 +415,7 @@
 
     <!--  events are now properties of elements -->
     <pre>Events are now properties of elements</pre>
+    <!-- {onclick} is shortcut for onclick={onclick} -->
     <div {onclick} aria-hidden={true} class="div-button">
       clicks: {count}
     </div>
