@@ -24,13 +24,15 @@
 }
 
 @mixin gradient-text($font: italic bold 50px/50px "Helvetica",
-  $color-from: rgb(67, 124, 205),
-  $color-to: rgb(69, 214, 202)) {
+  $color-from: red,
+  $color-to: royalblue) {
   font: $font;
   // font: italic small-caps bold 60px/60px Georgia, "Comic Sans MS", serif;
-  background: linear-gradient(to right, rgba(128, 95, 226, 0.7), red);
+  background: linear-gradient(to right, $color-from, yellow, $color-to);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  width: max-content;
+  height: auto;
 }
 
 // @mixin gradient-text($font-size: 60px,

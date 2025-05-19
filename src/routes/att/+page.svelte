@@ -1,46 +1,41 @@
 <script lang="ts">
   import Tooltip from './Tooltip.svelte';
-  let visible = $state(false);
   const props = {
     delay: 250,
     duration: 800,
     baseScale: 0,
     caption: 'Printing the Report',
-    translateX: '-2rem',
-    translateY: '-7.4rem',
+    preferredPos: 'bottom,left,top,right,',
   };
-  const toggle = () => {
-    visible = !visible;
+  const printReport = () => {
+    console.log('printing the report...');
   };
 </script>
 
-{#snippet tooltipPanel(class_name: string)}
-  <div class={class_name}>
+{#snippet tooltipPanel(cssStyle: string)}
+  <div class="tooltip-panel" style={cssStyle}>
     <p style="color:lightgreen;font-size:22px;margin:0;">
       Filip Isakovic, Junior
     </p>
-    <p style="color:yellow;margin:2px;">6524 Cascade St.</p>
-    <p style="color:yellow;margin:2px;">San Diego, 92122</p>
-    <p style="color:yellow;margin:2px;">California</p>
+    <p>6524 Cascade St.</p>
+    <p>San Diego, 92122</p>
+    <p>California</p>
   </div>
 {/snippet}
 
 <div class="grid-wrapper">
-  <div
-    class="tooltip-wrapper"
-    onmouseenter={toggle}
-    onmouseleave={toggle}
-    aria-hidden={true}
-  >
+  <div class="tooltip-wrapper">
     <Tooltip
       {...props}
-      {visible}
       {tooltipPanel}
       class_tooltipPanel={'css-prop-class_tooltipPanel'}
-    ></Tooltip>
-    Hover to show tooltipPanel
+    >
+      <button class="hovering-button" onclick={printReport}>
+        Filip Isakovic
+      </button>
+    </Tooltip>
+    <p class="text-gradient">Filip Isakovic</p>
   </div>
-
   <div class="right-column">
     <details>
       <summary class="summary-mostly-parent">Tooltip mostly parent code</summary
@@ -82,22 +77,45 @@
     </details>
   </div>
 </div>
-<p class="extra">Filip Isakovic</p>
 
 <style lang="scss">
   /* class sent as prop to component must be wrapped in :global() */
 
-  .tooltip-wrapper {
-    /* position: relative; */
+  .tooltip-panel {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: max-content;
-    height: 1.3rem;
-    padding: 1rem 2rem;
-    margin: 6rem 10rem !important;
-    border: 1px solid gray;
+    padding: 0 1rem 0.5rem 1rem;
+    border: 3px solid yellow;
     border-radius: 5px;
-    color: white;
+    color: yellow;
     background-color: navy;
-    cursor: pointer;
+  }
+  .tooltip-panel p {
+    color: yellow;
+    margin: 2px;
+    padding: 0;
+    text-align: center;
+    height: 1rem;
+    font-size: 14px;
+  }
+  .tooltip-panel p:first-child {
+    color: skyblue;
+    font-family: Times;
+    font-size: 22px;
+    padding: 3px 0 8px 0;
+  }
+  .tooltip-wrapper {
+    width: max-content;
+    // height: 1.3rem;
+    // padding: 1rem 2rem;
+    // margin: 6rem 10rem !important;
+    // border: 1px solid gray;
+    // border-radius: 5px;
+    // color: white;
+    // background-color: navy;
+    // cursor: pointer;
   }
   :global(.css-prop-class_tooltipPanel) {
     position: absolute;
@@ -129,7 +147,10 @@
       padding: 0 0.5rem;
     }
   }
-  .extra {
+  .text-gradient {
     @include gradient-text();
   }
+  // .hovering-button {
+  //   margin: 8rem 0 0 18rem;
+  // }
 </style>

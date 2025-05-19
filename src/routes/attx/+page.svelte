@@ -10,7 +10,7 @@
     baseScale: 0,
     // translateX: '-0.2rem',
     // translateY: '-5.4rem',
-    preferredPos: 'right,bottom,left,top,',
+    preferredPos: 'left,right,bottom,top,',
   };
 </script>
 
