@@ -5,7 +5,7 @@
     duration: 800,
     baseScale: 0,
     caption: 'Printing the Report',
-    preferredPos: 'bottom,left,top,right,',
+    preferredPos: 'top,left,right,bottom,',
   };
   const printReport = () => {
     console.log('printing the report...');
@@ -34,7 +34,7 @@
         Filip Isakovic
       </button>
     </Tooltip>
-    <p class="text-gradient">Filip Isakovic</p>
+    <p class="text-gradient">Matia Isakovic</p>
   </div>
   <div class="right-column">
     <details>
@@ -77,6 +77,9 @@
     </details>
   </div>
 </div>
+
+<!-- TEST if first preferred has no space try succeeding one by one -->
+<!-- <p style="margin:100rem 0 0 130rem">100rem x 100rem</p> -->
 
 <style lang="scss">
   /* class sent as prop to component must be wrapped in :global() */
@@ -150,7 +153,7 @@
   .text-gradient {
     @include gradient-text();
   }
-  // .hovering-button {
-  //   margin: 8rem 0 0 18rem;
-  // }
+  .hovering-button {
+    margin: 8rem 0 0 18rem;
+  }
 </style>

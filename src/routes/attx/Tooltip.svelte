@@ -27,6 +27,7 @@
   const preferred = preferredPos.replace(/\s+/g, '').split(',') as string[];
   let visible = $state(false);
 
+  let snippet: HTMLDivElement | null = null;
   let ttpRect: DOMRect | null = $state(null);
   let hoverRect: DOMRect | null = $state(null);
   let initial = $state(true);
@@ -192,9 +193,11 @@
 {/each} -->
 <!-- <p>Selected position: {cssPos}</p> -->
 {#if initial}
-  {@render tooltipPanel(
-    `position:absolute;top:4rem;left:3rem;padding: 3px 1rem;visibility:hidden;`,
-  )}
+  <div bind:this={snippet} class="ttWrapper">
+    {@render tooltipPanel?.(
+      `position:absolute;top:-9999px;left:-9999px;visibility:visible;`,
+    )}
+  </div>
 {/if}
 
 {#snippet handler()}

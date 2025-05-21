@@ -31,6 +31,7 @@
   }: TProps = $props();
   const preferred = preferredPos.replace(/\s+/g, '').split(',') as string[];
 
+  let snippet: HTMLDivElement | null = null;
   let visible = $state(false);
   let ttpRect: DOMRect | null = $state(null);
   let hoverRect: DOMRect | null = $state(null);
@@ -52,15 +53,6 @@
     if (!ttpRect || !hoverRect) {
       return console.log('no  rectangles');
     }
-    // console.log(
-    //   'hoverRect',
-    //   hoverRect,
-    //   'scroll',
-    //   window.scrollX,
-    //   window.scrollY,
-    //   'ttRect',
-    //   ttpRect,
-    // );
     OK.topBottomRight =
       hoverRect.left - window.scrollX + ttpRect.width < window.innerWidth;
     OK.leftRightBottom =
@@ -73,22 +65,6 @@
     OK.right =
       hoverRect.right - window.scrollX + ttpRect.width < window.innerWidth;
 
-    // console.log(
-    //   OK.top,
-    //   OK.right,
-    //   OK.bottom,
-    //   OK.left,
-    //   OK.topBottomRight,
-    //   OK.leftRightBottom,
-    // );
-    // console.log(
-    //   hoverRect,
-    //   ttpRect,
-    //   window.scrollX,
-    //   window.scrollY,
-    //   window.innerWidth,
-    //   window.innerHeight,
-    // );
     for (let i = 0; i < preferred.length; i++) {
       switch (preferred[i] as string) {
         case 'top':
@@ -119,43 +95,38 @@
           break;
       }
       if (translateX !== '') {
+        visible = true;
         break;
       }
-      // console.log('unsuccessful', preferred[i]);
     }
     if (translateX === '') {
-      //
       translateY = OK.top ? `${-ttpRect.height}px` : `${hoverRect.height}px`;
       translateX = OK.left
         ? `${window.innerWidth - (hoverRect.right - window.scrollX) - hoverRect.width}px`
         : '0px';
-      // console.log('no preferred position available', translateX, translateY);
+      visible = true;
     }
-    setTimeout(() => {
-      visible = !visible;
-    }, 0);
   };
 
   const toggle = (event: MouseEvent) => {
     if (event.type === 'mouseenter') {
       setTooltipPos();
     } else {
-      visible = !visible;
+      visible = false;
     }
   };
-  // let W = $state({ X: 0, Y: 0, W: 0, H: 0 });
-  // let H = $state({ hL: 0, hT: 0, hB: 0, hW: 0, hH: 0 });
 
   onMount(() => {
     setTimeout(() => {
-      const ttp = document.querySelector('.tooltip-panel') as HTMLDivElement;
-      if (ttp) {
-        ttpRect = ttp.getBoundingClientRect() as DOMRect;
-        ttpRect.width = r(ttpRect.width);
-        ttpRect.height = r(ttpRect.height);
-        initial = false;
+      if (snippet) {
+        const child = (snippet as HTMLElement).children[0] as HTMLElement;
+        if (child) {
+          ttpRect = child.getBoundingClientRect() as DOMRect;
+        }
+
+        // Clean up after logging
+        (snippet as HTMLElement).remove();
       }
-      ttp.remove();
 
       const hw = document.querySelector('.child-wrapper') as HTMLDivElement;
       if (hw) {
@@ -171,21 +142,6 @@
         console.log('no hoverRect');
       }
     }, 0);
-    // if (window) {
-    //   window.addEventListener('scroll', function () {
-    //     W.X = r(window.scrollX);
-    //     W.Y = r(window.scrollY);
-    //     W.W = r(window.innerWidth);
-    //     W.H = r(window.innerHeight);
-
-    //     if (hoverRect) {
-    //       H.hL = r(hoverRect.left);
-    //       H.hT = r(hoverRect.top);
-    //       H.hB = r(hoverRect.bottom);
-    //       H.hW = r(hoverRect.width);
-    //       H.hH = r(hoverRect.height);
-    //     }
-    //   });
 
     window.addEventListener('scrollend', () => {
       translateX = '0px';
@@ -199,26 +155,25 @@
     the same left/top values as the one in this snippet handler
 -->
 {#if initial}
-  {@render tooltipPanel?.(
-    `position:absolute;top:4rem;left:3rem;padding: 3px 1rem;visibility:hidden;`,
-  )}
+  <div bind:this={snippet} class="ttWrapper">
+    {@render tooltipPanel?.(
+      `position:absolute;top:-9999px;left:-9999px;visibility:visible;`,
+    )}
+  </div>
 {/if}
 
 {#snippet handler()}
   {#if visible}
     <div
+      id="ttWrapperId"
       style={`position:absolute;  
       transform: translate(${translateX},${translateY});
       opacity:0.5;
-      padding: 0.5rem;
-      color: white;
-      text-align: center;
-      background: navy;
-      width:max-content;
-      height:auto;
-      padding: 2px 1rem;
-      border: 4px solid gray;
-      border-radius:6px;
+      padding: 0;
+      width:0;
+      height:0;
+      padding:0;
+      border:none;
     `}
       transition:fadeScale={{
         delay,
@@ -246,24 +201,21 @@
   {@render children?.()}
 </div>
 
-<!-- {#if caption}
-  <p>Caption string prop: {caption}</p>
-{/if} -->
-
-<!-- {#if children}
-  {@render children?.()}
-{/if} -->
-
 <style>
   .child-wrapper {
-    position: relative;
-    box-sizing: content-box;
-    padding: 0;
     margin: 10rem 0 0 16rem;
     width: max-content;
     height: auto;
     border: none;
     outline: none;
     z-index: 10;
+  }
+  .ttWrapper {
+    width: max-content;
+    height: auto;
+    margin: 0;
+    padding: 0;
+    border: none;
+    outline: none;
   }
 </style>
