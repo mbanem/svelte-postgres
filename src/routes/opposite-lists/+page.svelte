@@ -1,23 +1,30 @@
 <script lang="ts">
+  // NOTE when element move from a source group to another group via crossfade
+  // module the source group is animated into proper layout via the flip module
   import { flip } from 'svelte/animate';
   import { crossfade } from 'svelte/transition';
   import InsetButtons from './inset-buttons.svelte';
 
+  // crossfade moves elements from a send group to the receive group
   const [send, receive] = crossfade({ duration: 1000 });
 
+  // two groups of elements are generated based on color names
+  // and are used as send and receive groups
   let left = ['red', 'orange', 'green', 'purple'];
   let right = ['yellow', 'blue'];
 
   const move = (item: string, from: string[], to: string[]) => {
     to.push(item);
-    return [from.filter((i) => i !== item), to];
+    return [from.filter((el) => el !== item), to];
   };
 
+  // two columns are involved and clicking on an element in right group moves it to the left one
   const moveLeft = (item: string) => {
     // @ts-expect-error
     [right, left] = move(item, right, left);
   };
 
+  // two columns are involved and clicking on an element in left group moves it to the right one
   const moveRight = (item: string) => {
     // @ts-expect-error
     [left, right] = move(item, left, right);
@@ -35,6 +42,9 @@
     <div class="first-grid-row">
       Click a button to move it<br /> to the opposite list.
     </div>
+    <!-- two column buttons are rendered and the only difference are in onclick, style and color
+        where onclick defines where item is moved to the left or right column
+    -->
     <div class="list">
       {#each left as item (item)}
         <button
@@ -43,8 +53,9 @@
           out:send={{ key: item }}
           onclick={() => moveRight(item)}
           style="background-color:{item} !important;font-weight:700"
-          style:color={item === 'yellow' ? 'black' : 'white'}
+          style:color={'yellow|orange'.includes(item) ? 'black' : 'white'}
         >
+          <!-- if yellow or orange use black as more readable instead of white color -->
           {item}
         </button>
       {/each}
@@ -58,8 +69,9 @@
           out:send={{ key: item }}
           onclick={() => moveLeft(item)}
           style="background-color:{item} !important;opacity:0.5;"
-          style:color={item === 'yellow' ? 'black' : 'white'}
+          style:color={'yellow|orange'.includes(item) ? 'black' : 'white'}
         >
+          <!-- if yellow or orange use black as more readable instead of white color -->
           {item}
         </button>
       {/each}
@@ -80,8 +92,6 @@
   }
   .grid-block {
     display: grid;
-    // margin: 0 auto;
-    // margin-left: 4rem;
     width: max-content;
     grid-template-columns: 1fr 1fr;
     margin-left: 3rem;
@@ -91,11 +101,9 @@
     }
   }
   button {
-    // background-color: cornflowerblue;
     border: none;
-    // color: white;
     padding: 10px;
-    margin-bottom: 10px;
+    margin: 0 0 6px 0;
     width: 5rem;
     text-align: center !important;
   }
@@ -105,13 +113,5 @@
     margin-right: 30px;
     vertical-align: top;
     width: 70px;
-  }
-  .left-item,
-  .right-item {
-    border: 1px solid yellow;
-    border-radius: 8px;
-  }
-  .right-item {
-    border-color: skyblue;
   }
 </style>
