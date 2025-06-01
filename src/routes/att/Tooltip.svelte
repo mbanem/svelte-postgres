@@ -29,7 +29,9 @@
     translateY = '0px',
     preferredPos = 'top,left,right,bottom',
   }: TProps = $props();
-  const preferred = preferredPos.replace(/\s+/g, '').split(',') as string[];
+  const preferred = $derived(
+    preferredPos.replace(/\s+/g, '').split(',') as string[],
+  );
 
   let snippet: HTMLDivElement | null = null;
   let visible = $state(false);

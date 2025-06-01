@@ -1,11 +1,12 @@
 <script lang="ts">
   import Tooltip from './Tooltip.svelte';
+  let preferPos = 'top,left,right,bottom,';
   const props = {
     delay: 250,
     duration: 800,
     baseScale: 0,
     caption: 'Printing the Report',
-    preferredPos: 'bottom,right,top,left,',
+    // preferredPos: preferPos,
   };
   const printReport = () => {
     console.log('printing the report...');
@@ -27,13 +28,17 @@
   <div class="tooltip-wrapper">
     <Tooltip
       {...props}
+      preferredPos={preferPos}
       {tooltipPanel}
       class_tooltipPanel={'css-prop-class_tooltipPanel'}
     >
       <button class="hovering-button" onclick={printReport}>
-        Hover ove button for a tooltip
+        Filip Isakovic
       </button>
     </Tooltip>
+    <pre>Hover over button for a tooltip</pre>
+    <p style="margin-left:12rem;">Change Preferred Tooltip Position</p>
+    <input class="input" bind:value={preferPos} />
     <p class="text-gradient">Matia Isakovic</p>
   </div>
   <div class="right-column">
@@ -111,6 +116,10 @@
   }
   .tooltip-wrapper {
     width: max-content;
+    pre,
+    .input {
+      margin-left: 12rem;
+    }
     // height: 1.3rem;
     // padding: 1rem 2rem;
     // margin: 6rem 10rem !important;
@@ -155,5 +164,12 @@
   }
   .hovering-button {
     margin: 8rem 0 0 18rem;
+  }
+  .input {
+    color: navy;
+    padding: 2px 0.5rem;
+    text-align: center;
+    font-size: 17px;
+    color: navy;
   }
 </style>
