@@ -5,7 +5,7 @@
     duration: 800,
     baseScale: 0,
     caption: 'Printing the Report',
-    preferredPos: 'top,left,right,bottom,',
+    preferredPos: 'bottom,right,top,left,',
   };
   const printReport = () => {
     console.log('printing the report...');
@@ -31,7 +31,7 @@
       class_tooltipPanel={'css-prop-class_tooltipPanel'}
     >
       <button class="hovering-button" onclick={printReport}>
-        Filip Isakovic
+        Hover ove button for a tooltip
       </button>
     </Tooltip>
     <p class="text-gradient">Matia Isakovic</p>
