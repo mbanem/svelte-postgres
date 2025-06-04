@@ -1,4 +1,34 @@
 <script lang="ts">
+  // ---------------------- scroller begin ---------------------------------
+  // import { tick } from 'svelte';
+
+  let center = 1; // center number of visible triplet
+  let offset = 0; // -1 for left scroll, +1 for right scroll
+  let container: HTMLDivElement;
+
+  // Current sequence
+  let numbers = [center - 1, center, center + 1];
+
+  const scroll = (direction: 'left' | 'right') => {
+    offset = direction === 'left' ? -1 : 1;
+
+    // Trigger the animation by shifting the container
+    // await tick(); // Wait for DOM update
+    container.style.transition = 'transform 2s ease';
+    container.style.transform = `translateX(${direction === 'left' ? '42%' : '-42%'})`;
+
+    // Wait for the animation to complete
+    setTimeout(() => {
+      // Reset styles
+      container.style.transition = '';
+      container.style.transform = '';
+
+      // Update center and sequence
+      center += offset;
+      offset = 0;
+    }, 980);
+  };
+  // ---------------------- scroller end ---------------------------------
   import Tooltip from './Tooltip.svelte';
   let preferPos = 'top,left,right,bottom,';
   const props = {
@@ -26,6 +56,28 @@
 
 <div class="grid-wrapper">
   <div class="tooltip-wrapper">
+    <div class="scroller">
+      <pre style="margin:0;padding:0;">
+Sequence is initially set to [0, 1, 2] and updated to next and previous 3 digit
+based on the scrolling direction. Digits are wrapped in div elements with no gap.
+In order to always display the middle digit the container 'row' is moved the left
+via CSS margin-left: -100%; 
+      </pre>
+      <div class="container">
+        <div class="viewport">
+          <div class="row" bind:this={container}>
+            {#each [center - 1, center, center + 1] as num}
+              <div class="number-box">{num}</div>
+            {/each}
+          </div>
+        </div>
+
+        <div class="buttons">
+          <button onclick={() => scroll('left')}>Scroll Left</button>
+          <button onclick={() => scroll('right')}>Scroll Right</button>
+        </div>
+      </div>
+    </div>
     <Tooltip
       {...props}
       preferredPos={preferPos}
@@ -171,5 +223,41 @@
     text-align: center;
     font-size: 17px;
     color: navy;
+  }
+  /* ------------  scroller ------------ */
+  .scroller {
+    margin: 0;
+  }
+  .container {
+    margin-left: 3rem;
+    padding: 0;
+  }
+  .viewport {
+    overflow: hidden;
+    width: 100px;
+    /* border: 1px solid gray; */
+    border-radius: 5px;
+    color: navy;
+    background-color: cornsilk;
+    margin-left: 1.6rem;
+    margin-top: 1px;
+  }
+
+  .row {
+    display: flex;
+    width: 300%; /* 3 items */
+    margin-top: 0; /* to suppress interfering with animation*/
+    margin-left: -100%;
+  }
+
+  .number-box {
+    width: 100px;
+    flex-shrink: 0;
+    text-align: center;
+    font-size: 2em;
+  }
+
+  .buttons {
+    margin-top: 1rem;
   }
 </style>

@@ -205,7 +205,7 @@
 
 <style>
   .child-wrapper {
-    margin: 10rem 0 0 16rem;
+    margin: 3rem 0 0 16rem;
     width: max-content;
     height: auto;
     border: none;
