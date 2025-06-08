@@ -50,10 +50,13 @@
 <pre>
 	Sequence is initially set to [center - blockSize, center, center + blockSize] with
   center = 1, and updated to the next and previous 3 blocksize array elements
-	based on the scrolling direction that increment/decrement the center. Digits are 
-  wrapped in div elements with no gap.
-	In order to always display the middle block the container 'row' is moved to the left
-	via CSS margin-left: -100%; 
+	based on the scrolling direction that increment/decrement the center. 
+    For blocksize=3 the row is 1 2 3 4 5 6 7 8 9 where only 4 5 6 are visible.
+  Blocksize numbers are wrapped in div elements with no gap.
+	In order to display only the middle block the container 'row' is confined inside a
+  viewport of the proper width that allows only a blocksize elements to be visible and 
+  is moved to the left via Svelte style="width:{3 *
+    blockWidth}px;margin-left:{-blockWidth}px"
 </pre>
 <div class="container">
   <div class="viewport" style="width:{blockWidth}px;">
