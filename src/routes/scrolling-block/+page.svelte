@@ -159,5 +159,8 @@
 
   .buttons {
     margin-top: 1rem;
+    :disabled {
+      color: gray;
+    }
   }
 </style>
