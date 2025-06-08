@@ -1,4 +1,11 @@
 <script lang="ts">
+  /**
+    Based on the answer from chatGPT asking
+      in Svelte 5 TypeScript a sequence of three successive numbers 1,2,3 contained in Div elements 
+      arranged in a row where only middle element is visible -- is animated with duration of 1 second 
+      with selection of one of two buttons 'scroll to the left' and 'scroll to the right'. When scrolling 
+      the sequence is updated to hold appropriate next 2,3,4 or previous 0,1,2 numbers. 
+   */
   import { onMount } from 'svelte';
   // import { tick } from 'svelte';
 
