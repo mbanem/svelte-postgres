@@ -357,12 +357,12 @@
         bind:value={snap.title}
         placeholder={titleIsRequired || 'enter post title'}
       />
-      <input
-        type="text"
+      <textarea
+        class="post-content"
         name="content"
         bind:value={snap.content}
         placeholder={contentIsRequired || 'enter post content'}
-      />
+      ></textarea>
       <div class="multi-select-container">
         <MultiSelectBox
           categories={data.categories}
@@ -507,5 +507,12 @@
   label {
     display: flex;
     gap: 1.5rem;
+  }
+  .post-content {
+    /* HTML textarea on this page ignores settings for rows and cols
+      so the height and width CSS rules are used instead
+    */
+    height: 150px;
+    width: 30rem;
   }
 </style>

@@ -99,7 +99,7 @@
   <ul>
     {#if postAuthors[0]}
       <p class="author_name">
-        {postAuthors[0].firstName}
+        {postAuthors[0].firstName.slice(0, -1)}
         {postAuthors[0].lastName}
         <span class="count"
           >{postAuthors.length} post{postAuthors.length === 1 ? '' : 's'}</span
