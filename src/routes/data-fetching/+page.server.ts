@@ -3,6 +3,11 @@
  data from the local database and from an external public API
 */
 import type { PageServerLoad } from './$types';
+
+type TCategory = {
+	id:number;
+	name:string;
+}
 type Todo = {
     id: string | null;
     name: string;
@@ -29,12 +34,11 @@ export const load = (async ({fetch}) => {
 
 	// ANOTHER WAY TO DO IT
 	const res = await fetch('/data-fetching/api');
-	const categories = (await res.json()) as Todo[]
+	const categories = (await res.json()) as TCategory[]
 	console.log('categories', categories)
 	const data = {
 			userTodos
 	};
-	// console.log('from page.server.ts', data);
 
 	const randomStrings = getRandomStrings();
 
