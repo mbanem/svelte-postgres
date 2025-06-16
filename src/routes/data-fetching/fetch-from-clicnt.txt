@@ -1,0 +1,47 @@
+Fetching from client can be done calling into +server.ts as it
+exposes normal HTTP end points like GET ot POST request end points
+or it can call external public API or a private backed service like
+a server.ts or some external facing service.
+
+SvelteKit has two trees, rendering tree and the data tree.
+
+Rendering Tree
+    contains all .svelte pages, +page.svelte, +layout.svelte
+    and it renders markup and sends it to the client.
+
+    +layout.svelte wraps all the children down the Rendering Tree
+
+    /-       root folder
+      | +page.svelte          // when navigate to root / +layout.svelte and +page.svelte return markup
+      | +layout.svelte
+      |
+      /- subfolder            // when navigate to /subfolder 404 is returned -- no +page.svelte here
+      |  +layout.svelte      // to the pages down the rendering tree both layout will wrap children (+page.svelte)
+      |
+      / another-subfolder
+        +page.svelte          // when navigate +page.svelte markup is wrapped by two +layout.svelte
+                              // first from the root and then from the /subfolder
+
+
+Data Tree
+  has the same tree structure as the Rendering Tree but instead of .svelte pages
+  it contains server running .ts files having load functions for getting data from server or external
+  APIs and sending the data to companion .svelte pages in the Rendering Tree.
+
+    for +page.svelte the companion files are +page.server.ts that has access to private data,
+    protected variables, server DB and external API
+    and +page.ts but as an Universal loader it has no access to private data or DB though it has access
+    to external public APIs.
+    When +page.ts and +page.server.ts are in the same folder +page.server.ts first sends data to +page.ts
+    and then +page.ts sends data to +page.svelte, though +page.server.ts could send data directly to
+    +page.ts avoiding two step process caused by the +page.ts.
+
+    for +layout.svelte its companion file is +layout.server.ts
+    when .svelte in Rendering Tree is turn into .server.ts from Data Tree
+
+    Results of load functions from Data Tree files are sent to the companion .svelte files of
+    the Rendering Tree, where all such pages are in the same folder of the trees as their
+    folder structure is identical.
+
+    The +layout.server.ts and +layout.ts are propagated down the Data Tree like we has such a file everywhere
+    down the both Rendering and Data Trees.

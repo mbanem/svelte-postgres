@@ -1,0 +1,2 @@
+/* This file can expose normal HTTP end points like GET ot POST requests and is
+also able to fetch data from database or external public API */

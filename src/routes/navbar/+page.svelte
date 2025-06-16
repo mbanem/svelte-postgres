@@ -38,6 +38,10 @@
     },
     { color: 'LightGreen', title: 'Grid', href: '/grid' },
     { color: 'Yellow', title: 'Flip', href: '/flip' },
+    { color: 'Pink', title: 'Data Fetching', href: '/data-fetching' },
+    { color: 'Lightgreen', title: 'New Tooltip', href: '/att' },
+    { color: 'Skyblue', title: 'Scroll Tooltip', href: '/attx' },
+    { color: 'Yellow', title: 'Scrolling Block', href: '/scrolling-block' },
   ];
 
   // using $effect

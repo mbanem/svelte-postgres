@@ -5,7 +5,7 @@
 
   import type { PageData } from './$types';
 
-  let { data } = $props();
+  let { data }: PageData = $props();
 
   onMount(() => {
     return () => {
@@ -24,6 +24,11 @@
     <pre>
 this is an empty page just to show it is protected and accessible only by ADMIN
 		</pre>
+    <pre>
++page.svelte received data from hooks.server.ts as 'locals'
+and from +page.server.ts as 'greeting'
+
+{JSON.stringify(data, null, 2)}</pre>
   </div>
   <div class="container-right">
     <pre
@@ -39,6 +44,7 @@ this is an empty page just to show it is protected and accessible only by ADMIN
   .main {
     margin: 1rem 0 0 4rem;
     display: flex;
+    width: 80vw;
   }
   .container-left {
     @include container('Admin Page Content', $head-color: skyblue);
