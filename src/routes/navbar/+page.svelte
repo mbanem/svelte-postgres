@@ -42,6 +42,7 @@
     { color: 'Lightgreen', title: 'New Tooltip', href: '/att' },
     { color: 'Skyblue', title: 'Scroll Tooltip', href: '/attx' },
     { color: 'Yellow', title: 'Scrolling Block', href: '/scrolling-block' },
+    { color: 'Red', title: 'Streaming Promise', href: '/streaming-promise' },
   ];
 
   // using $effect

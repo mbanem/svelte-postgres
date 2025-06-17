@@ -1,65 +1,89 @@
 <script lang="ts">
-  import type { PageData } from './$types';
-
-  let { data }: { data: PageData } = $props();
+  const { data } = $props();
 </script>
 
-<div class="main">
-  <div>
-    <pre>{JSON.stringify(data, null, 2).replace(/"/g, "'")}</pre>
-    <p class="message">Regular message: {data.regular.message}</p>
-  </div>
-  <div>
-    {#await data.categories}
-      <h2>Waiting for Categories promise to resolve...</h2>
-    {:then data}
-      <div class="nested-grid">
-        <div>
-          <p class="categories">Categories</p>
-          <ul>
-            {#each data.categories as category}
-              <li>id {category.id}: name {category.name}</li>
-            {/each}
-          </ul>
+<div class="two-columns">
+  <div class="left-column">
+    <h2>
+      Regular message: <span style="color:lightgreen;font-size:14px;"
+        >{data.normal.message}</span
+      >
+    </h2>
+    <br />
+    {#await data.streamed}
+      <h2 class="loading">Loading user data...</h2>
+      <br />
+    {:then users}
+      <h2 class="loaded">Users data loaded:</h2>
+      <br />
+      {#each users as user}
+        <div class="user-wrapper">
+          <p>{user.firstName} - {user.lastName}</p>
+          <p>email: {user.email}</p>
+          <p>role: {user.role}</p>
+          <p>created: {user.createdAt.toLocaleString()}</p>
+          <p>updated: {user.updatedAt.toLocaleString()}</p>
         </div>
-        <div>
-          <div class="array">
-            <p>Returned Array</p>
-            {@html JSON.stringify(data.categories, null, 2)
-              .replace(/"(\d+|id|name)"/g, '$1')
-              .replace(/"/g, "'")
-              .replace(/}./g, '},<br/>')
-              .replace(/(\[)/g, '[<br/>')
-              .replace(/(\])/g, '<br/>]')
-              .replace(/\{/g, ' &nbsp; &nbsp; {')}
-          </div>
-        </div>
-      </div>
+      {/each}
+    {:catch error}
+      <h2>Error loading users: {error.message}</h2>
     {/await}
+  </div>
+  <div class="right-column">
+    <pre>
+The +page.server.ts returns a regular message, which is rendered
+with no delay on the client, and a Promise obtained from an async
+fakeFetch function which incur one second delay before returning
+a Promise by querying Prisma ORM for users in local DB, and the
+client used await for the users Promise to resolve while displaying
+a temporary message <i>Loading users data...</i> and replacing the message
+with <i>Users data loaded:</i> and the users data.
+  </pre>
   </div>
 </div>
 
 <style lang="scss">
-  .main {
-    display: grid;
-    grid-template-columns: 1fr 2fr;
-    margin: 4rem 0 0 5rem;
-    width: 60rem;
+  .user-wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 20rem;
+    border: 1px solid gray;
+    border-radius: 4px;
+    padding: 1rem 0;
+    margin-left: 1rem;
+    p {
+      margin: 2px 0 0 2rem;
+      padding: 0;
+      color: skyblue;
+    }
+    p:first-child {
+      color: lightgreen;
+      font-size: 20px;
+      margin-left: 1rem;
+    }
   }
-  .nested-grid {
+  .loading {
+    color: pink;
+  }
+  .loaded {
+    color: lightblue;
+  }
+  .two-columns {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
+    column-gap: 1rem;
+    width: 63rem;
+    margin: 3rem auto;
   }
-  li,
-  .categories {
-    color: lightgreen;
+  .left-column {
+    width: 18rem;
   }
-  .message {
-    color: lightblue;
-    font-size: 20px;
+  .right-column {
+    width: 40rem;
+    height: 70vh;
+    overflow-y: auto;
   }
-  .array {
-    font-size: 14px;
-    color: skyblue;
+  i {
+    color: cornsilk;
   }
 </style>
