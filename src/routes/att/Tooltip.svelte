@@ -176,6 +176,7 @@
       height:0;
       padding:0;
       border:none;
+      outline:none;
     `}
       transition:fadeScale={{
         delay,

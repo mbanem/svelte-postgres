@@ -207,14 +207,11 @@
       transform: translate(${translateX},${translateY});
       opacity:0.5;
       padding: 0.5rem;
-      color: white;
-      text-align: center;
-      background: navy;
-      width:max-content;
-      height:auto;
-      padding: 2px 1rem;
-      border: 4px solid gray;
-      border-radius:6px;
+      width:0;
+      height:0;
+      padding: 0;
+      border: none;
+      outline:none;
     `}
       transition:fadeScale={{
         delay,
@@ -276,7 +273,16 @@
     margin: none;
     width: max-content;
     height: auto;
+    border: none;
     outline: none;
     z-index: 10;
+  }
+  .ttWrapper {
+    width: max-content;
+    height: auto;
+    margin: 0;
+    padding: 0;
+    border: none;
+    outline: none;
   }
 </style>
