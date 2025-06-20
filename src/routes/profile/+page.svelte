@@ -60,7 +60,7 @@
           bio: 'there is no profile for this user',
           createdAt: undefined,
           updatedAt: undefined,
-          userId: (data.users[i] as UserPartial).id,
+          userId: (data.users[i] as UserPartial).id as string,
           user: data.users[i] as UserPartial,
         };
       }
@@ -205,7 +205,7 @@
 </svelte:head>
 
 {#snippet tooltipBio(bio: Bio)}
-  <Tooltip defaultClass="tooltip-profile">
+  <Tooltip class="tooltip-profile">
     <p>
       <span style="color:lightgreen;margin:0 1rem 0 0;"> created at</span>
       <span class="property-value">

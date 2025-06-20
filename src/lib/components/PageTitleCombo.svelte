@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { labelClass } from 'flowbite-svelte/Radio.svelte';
   import { onMount } from 'svelte';
 
   type ARGS = {
