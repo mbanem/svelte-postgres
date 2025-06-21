@@ -43,6 +43,7 @@
     { color: 'Skyblue', title: 'Scroll Tooltip', href: '/attx' },
     { color: 'Yellow', title: 'Scrolling Block', href: '/scrolling-block' },
     { color: 'Red', title: 'Streaming Promise', href: '/streaming-promise' },
+    { color: 'Blue', title: '@attach', href: '/attach' },
   ];
 
   // using $effect
@@ -130,7 +131,7 @@
     )}
   {/snippet}
 </NavButton>
-
+<br />
 <pre>Using $effect based on messages.length to render
 	a list of values entered in this input box
 </pre>
