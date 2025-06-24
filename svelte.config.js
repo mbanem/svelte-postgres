@@ -1,6 +1,6 @@
-import adapter from '@sveltejs/adapter-auto';
-import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
-import path from 'path';
+import adapter from '@sveltejs/adapter-auto'
+import { vitePreprocess } from '@sveltejs/vite-plugin-svelte'
+import path from 'path'
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -9,12 +9,15 @@ const config = {
   preprocess: vitePreprocess(),
   onwarn: (warning, handler) => {
     if (warning.code === 'css-unused-selector') {
-      return;
+      return
     }
-    handler(warning);
+    handler(warning)
   },
   compilerOptions: {
     customElement: true,
+    experimental: {
+      async: true
+    }
   },
   kit: {
     // adapter-auto only supports some environments, see https://kit.svelte.dev/docs/adapter-auto for a list.
@@ -38,6 +41,6 @@ const config = {
       $assets: path.resolve('./src/static/assets'),
     },
   },
-};
+}
 
-export default config;
+export default config
