@@ -102,16 +102,21 @@ via CSS margin-left: -100%;
         Filip Isakovic
       </button>
     </Tooltip>
-    <pre>Hover over button for a tooltip</pre>
+    <pre>Hover over button for a tooltip.
+Scroll to make no space available for
+top or left so tooltip should examine
+next available positions from the input
+box that you can enter the next list
+    </pre>
     <p style="margin-left:12rem;">Change Preferred Tooltip Position</p>
     <input class="input" bind:value={preferPos} />
     <div class="radio-wrapper">
       {#each ['top', 'left', 'right', 'bottom'] as pos}
-        <label>
+        <label for={pos}>
           <input
             type="radio"
             checked={pos === cssPos}
-            name="position"
+            name={pos}
             id={pos}
             value={pos}
             bind:group={cssPos}
@@ -166,6 +171,12 @@ via CSS margin-left: -100%;
 
 <!-- TEST if first preferred has no space try succeeding one by one -->
 <!-- <p style="margin:100rem 0 0 130rem">100rem x 100rem</p> -->
+<div
+  style="position:absolute;top:90rem;left:110rem;width:14rem;margin-bottom:2rem !important;"
+>
+  enabling page scrolling
+</div>
+<div style="position:absolute;top:94rem;left:114rem;">shim</div>
 
 <style lang="scss">
   /* class sent as prop to component must be wrapped in :global() */
@@ -288,5 +299,16 @@ via CSS margin-left: -100%;
 
   .buttons {
     margin-top: 1rem;
+  }
+  .radio-wrapper {
+    position: absolute;
+    top: 31rem;
+    left: 12rem;
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    label {
+      margin-top: 2rem;
+    }
   }
 </style>
