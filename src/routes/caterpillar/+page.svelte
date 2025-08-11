@@ -2,7 +2,7 @@
   import { onMount } from 'svelte';
   import { tick } from 'svelte';
   import { Flip } from 'gsap/dist/Flip';
-  import { setCaterpillarColors } from '$utils';
+  import { setCaterpillarColors } from '$lib/utils';
 
   import { gsap } from 'gsap';
   gsap.registerPlugin(Flip);
@@ -202,17 +202,18 @@
     color: lightgreen;
   }
   /* 145 colors by name*/
-  $colors: AliceBlue, Aqua, Aquamarine, Azure, Beige, Bisque, Black,
-    BlanchedAlmond, Blue, BlueViolet, Brown, BurlyWood, CadetBlue, Chartreuse,
-    Chocolate, Coral, CornflowerBlue, Cornsilk, Crimson, Cyan, DarkBlue,
-    DarkCyan, DarkGoldenRod, DarkGray, DarkGrey, DarkGreen, DarkKhaki,
-    DarkMagenta, DarkOliveGreen, DarkOrange, DarkOrchid, #ad1414, DarkSalmon,
-    DarkSeaGreen, DarkSlateBlue, DarkSlateGray, DarkSlateGrey, DarkTurquoise,
-    DarkViolet, DeepPink, DeepSkyBlue, DimGray, DimGrey, DodgerBlue, FireBrick,
-    ForestGreen, Fuchsia, Gainsboro, GhostWhite, Gold, GoldenRod, Gray, Grey,
-    Green, GreenYellow, HoneyDew, HotPink, IndianRed, Indigo, Ivory, Khaki,
-    Lavender, LavenderBlush, LawnGreen, LemonChiffon, LightBlue, LightCoral,
-    LightCyan, LightGoldenRodYellow, LightGray, LightGrey, LightGreen, LightPink,
+  $colors:
+    AliceBlue, Aqua, Aquamarine, Azure, Beige, Bisque, Black, BlanchedAlmond,
+    Blue, BlueViolet, Brown, BurlyWood, CadetBlue, Chartreuse, Chocolate, Coral,
+    CornflowerBlue, Cornsilk, Crimson, Cyan, DarkBlue, DarkCyan, DarkGoldenRod,
+    DarkGray, DarkGrey, DarkGreen, DarkKhaki, DarkMagenta, DarkOliveGreen,
+    DarkOrange, DarkOrchid, #ad1414, DarkSalmon, DarkSeaGreen, DarkSlateBlue,
+    DarkSlateGray, DarkSlateGrey, DarkTurquoise, DarkViolet, DeepPink,
+    DeepSkyBlue, DimGray, DimGrey, DodgerBlue, FireBrick, ForestGreen, Fuchsia,
+    Gainsboro, GhostWhite, Gold, GoldenRod, Gray, Grey, Green, GreenYellow,
+    HoneyDew, HotPink, IndianRed, Indigo, Ivory, Khaki, Lavender, LavenderBlush,
+    LawnGreen, LemonChiffon, LightBlue, LightCoral, LightCyan,
+    LightGoldenRodYellow, LightGray, LightGrey, LightGreen, LightPink,
     LightSalmon, LightSeaGreen, LightSkyBlue, LightSlateGray, LightSlateGrey,
     LightSteelBlue, LightYellow, Lime, LimeGreen, Linen, Magenta, Maroon,
     MediumAquaMarine, MediumBlue, MediumOrchid, MediumPurple, MediumSeaGreen,

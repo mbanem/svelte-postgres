@@ -6,8 +6,8 @@
   import InputBox from '$lib/components/InputBox.svelte';
   import Tree from './recursive-snippet-tree.svelte';
   import SnippetTable from './snippet/Snippet-Table.svelte';
-  import * as utils from '$utils';
-  import { keyPress } from '$utils';
+  import * as utils from '$lib/utils';
+  import { keyPress } from '$lib/utils';
 
   type TKey =
     | 'Tab'

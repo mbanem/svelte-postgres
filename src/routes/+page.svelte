@@ -25,7 +25,7 @@
     insertionSort,
     selectionSort,
     pxStringLength,
-  } from '$utils';
+  } from '$lib/utils';
   // Outside .svelte components, runes can only be used in .svelte.js and .svelte.ts modules.
   import {
     createCounter,
@@ -115,11 +115,10 @@
 {/snippet}
 <div class="wrapper">
   <div style="margin:0;padding:0;">
-    <pre style="font-size:14px;">
-    the Counter component is defined in /$utils/counter.svelte.ts.
-		Its constructor function createCounter() is exposed and can be called 
-		to deliver an instance of the counter, which is then in a local scope 
-		like here in this /+page.svelte. 
+    <pre style="font-size:13px;">
+    The Counter component is defined in /$utils/counter.svelte.ts.
+		Its constructor function createCounter() is exposed and can be called to deliver an 
+    instance of the counter, which is then in a local scope like in this /+page.svelte. 
 		The counter will be destroyed by navigating out of page and on returning
 		to the page a new local instance could be obtain by calling createCounter()
 
@@ -133,9 +132,40 @@
 		In this app in the next, Counter page (click on Counter in navigation bar) where we use
 		the same counter there, and as it is global -- both pages could change its count
 		and navigating anywhere will preserve the count in this global counter.
-
+        export const createCounter = (val: number = 0) => &lcub;
+          let count = $state(val)
+          return &lcub;
+            get count()            &lcub; return count &rcub;,
+            set count(val: number) &lcub; count = val &rcub;,
+            increment: () => (count += 1),
+            decrement: () => (count -= 1)
+          &rcub;
+        &rcub;
+        // create a counter, SO any page can get this counter this way like a global 
+        const counter = createCounter()
+        export const getGlobalCounter = () => &lcub; return counter &rcub;
+    </pre>
+    <div>
+      <div class="local-counter">
+        <button onclick={counter.increment}>
+          clicks: {counter.count}
+        </button>
+        <button onclick={counter.decrement}>
+          decrement <i class="fa-solid fa-gears" style="color:lightgreen"
+          ></i></button
+        >
+      </div>
+      <div class="global-counter">
+        Global counter <span class="counter-line">{gCounter.count}</span>
+        is equal across the pages<br />
+        <button onclick={() => (gCounter.count += 1)}>+</button>
+        <button onclick={() => (gCounter.count -= 1)}>-</button>
+      </div>
+    </div>
+  </div>
+  <div>
+    <pre style="font-size:13px;">
     A snippet listFamily has direct access to locally defined family TS object
-
       const family = &lcub;
         Isakovic: &lcub;
           parents: &lcub;
@@ -146,36 +176,14 @@
         &rcub;,
         ...
       &rcub;
-
       It renders that family list turning the family TS object into iterable list via
       Object.entries(family) list
-
         &lcub;#each Object.entries(family) as [lastName, members]&rcub;
-        
       styling &lt;ul&gt; and  &lt;li&gt; elements accordingly
-
       getWidth('First Name is required') is <span
         class="yellow"> {pxStringLength('First Name is required')}</span
       >
     </pre>
-  </div>
-
-  <div>
-    <div class="local-counter">
-      <button onclick={counter.increment}>
-        clicks: {counter.count}
-      </button>
-      <button onclick={counter.decrement}>
-        decrement <i class="fa-solid fa-gears" style="color:lightgreen"
-        ></i></button
-      >
-    </div>
-    <div class="global-counter">
-      Global counter <span class="counter-line">{gCounter.count}</span>
-      is equal across the pages<br />
-      <button onclick={() => (gCounter.count += 1)}>+</button>
-      <button onclick={() => (gCounter.count -= 1)}>-</button>
-    </div>
     {@render listFamily()}
   </div>
   <!-- {@render listFamily()} -->
@@ -217,7 +225,7 @@
   }
   .family-container {
     @include container($head: 'Our Family', $head-color: skyblue);
-    margin: 2rem 0 0 3rem;
+    margin: 0 0 0 3rem;
     width: 25rem;
   }
   .global-counter {

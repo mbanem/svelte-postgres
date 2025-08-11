@@ -5,7 +5,7 @@
   import { page } from '$app/state';
   import { onMount } from 'svelte';
   import Child from './Child.svelte';
-  import * as utils from '$utils';
+  import * as utils from '$lib/utils';
   let resizeChild: (msg: string) => void;
   let getRandomNumber: () => number;
 

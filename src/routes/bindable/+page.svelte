@@ -1,7 +1,7 @@
 <script lang="ts">
   import { browser } from '$app/environment';
   import { onMount } from 'svelte';
-  import { sleep } from '$utils';
+  import { sleep } from '$lib/utils';
   import Bindable, { counter } from '$components/Bindable.svelte';
   import SummaryDetails from '$components/SummaryDetails.svelte';
   let count = 12; //$state(22);

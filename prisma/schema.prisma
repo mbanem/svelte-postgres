@@ -128,7 +128,7 @@ model Todo {
 // ALTER SEQUENCE category_id_seq RESTART WITH 12;
 
 
-// CREATE ROLE mili SUPERUSER LOGIN PASSWORD 'kiki';
+// CREATE ROLE mili SUPERUSER LOGIN PASSWORD "kiki";
 // GRANT ALL PRIVILEGES TO mili;
 
 // CREATE DATABASE FORMS OWNER mili;
@@ -148,21 +148,21 @@ model Todo {
 //  pnpx prisma generate
 //  -- insert into category
 
-// insert into category (name) values('JavaScript'),
-//  ('Typescript'),
-//  ('Svelte'),
-//  ('SvelteKit'),
-//  ('CSS'),
-//  ('SCSS'),
-//  ('Prisma ORM'),
-//  ('PostgreSQL'),
-//  ('GSAP'),
-//  ('Vite'),
-//  ('BCrypt'),
-//  ('Articles'),
-//  ('Comments'),
-//  ('Documents'),
-//  ('eMails'),
-//  ('Presentations'),
-//  ('Blogs'),
-//  ('Publications');
+// insert into category (name) values("JavaScript"),
+//  ("Typescript"),
+//  ("Svelte"),
+//  ("SvelteKit"),
+//  ("CSS"),
+//  ("SCSS"),
+//  ("Prisma ORM"),
+//  ("PostgreSQL"),
+//  ("GSAP"),
+//  ("Vite"),
+//  ("BCrypt"),
+//  ("Articles"),
+//  ("Comments"),
+//  ("Documents"),
+//  ("eMails"),
+//  ("Presentations"),
+//  ("Blogs"),
+//  ("Publications");

@@ -8,11 +8,11 @@
   import type { Snapshot } from './$types';
 
   import { Tooltip } from 'flowbite-svelte';
-  import { setPlaceholderColor, hideButtonsExceptFirst } from '$utils';
+  import { setPlaceholderColor, hideButtonsExceptFirst } from '$lib/utils';
   import TodoList from '$components/TodoList.svelte';
   import PageTitleCombo from '$components/PageTitleCombo.svelte';
   import ButtonSpinner from '$components/ButtonSpinner.svelte';
-  import * as utils from '$utils';
+  import * as utils from '$lib/utils';
 
   type ARGS = {
     data: PageData;
@@ -21,7 +21,6 @@
   let { data, form }: ARGS = $props();
 
   let hiddenBtnDelete = $state(true);
-
   // NOTE: When the page updates uTodos = $state<UTodo[]>() is not refreshed but props data.uTodos are refreshed.
   // In order to have uTodos refreshed we need two steps:
   //        let uTodos = $state<UTodo[]>() like a definition, and
@@ -85,19 +84,19 @@
 
   // on update todo action we do not load todos again but we have to change
   // data.uTodos list with the updated todo flag
-  const updateTodos = (formData: FormData) => {
-    // console.log('updateTodos');
-    if (data.uTodos) {
-      data.uTodos = data.uTodos.map((t) => {
-        if (t.todoId === formData.get('id')) {
-          t.title = formData.get('title') as string;
-          t.content = formData.get('content') as string;
-          t.priority = Number(formData.get('priority'));
-        }
-        return t;
-      }) as UTodo[];
-    }
-  };
+  // const updateTodos = (formData: FormData) => {
+  //   // console.log('updateTodos');
+  //   if (data.uTodos) {
+  //     data.uTodos = data.uTodos.map((t) => {
+  //       if (t.todoId === formData.get('id')) {
+  //         t.title = formData.get('title') as string;
+  //         t.content = formData.get('content') as string;
+  //         t.priority = Number(formData.get('priority'));
+  //       }
+  //       return t;
+  //     }) as UTodo[];
+  //   }
+  // };
 
   // get params action for URL and formData to check on required fields
   const enhanceTodo: SubmitFunction = async ({ action, formData }) => {
@@ -136,12 +135,13 @@
       } else if (action.search === '?/deleteTodo') {
         result = page.status === 200 ? 'todo deleted' : 'delete failed';
       }
+      invalidateAll();
       await utils.sleep(1000);
-      // invalidateAll();
+      loading = false; // stop spinner animation
       clearForm(); // also set buttons
+      hideButtonsExceptFirst([btnCreate, btnUpdate, btnDelete]);
       // ignoreFormMessage = true;
       clearMessage();
-      loading = false; // stop spinner animation
     };
   };
   // captionCreate must be #state but hiddenCreateButtonSpinner must not
@@ -191,6 +191,7 @@
     await utils.sleep(2000);
     result = 'todo deleted';
     await utils.sleep(1000);
+    invalidateAll();
     loading = false;
   };
 
@@ -293,7 +294,7 @@
         placeholder={titleIsRequired || 'enter todo title'}
         bind:value={snap.title}
       />
-
+      Priority
       <input
         type="number"
         name="priority"

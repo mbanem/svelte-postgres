@@ -1,7 +1,7 @@
 <script lang="ts">
   import { base } from '$app/paths';
   import { page } from '$app/state'; // for $age.status code on actions
-  import * as utils from '$utils';
+  import * as utils from '$lib/utils';
   import { onMount } from 'svelte';
   import type {
     NewsArticle,

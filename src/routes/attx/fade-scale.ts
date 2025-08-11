@@ -1,9 +1,27 @@
-export default function fadeScale(
+
+
+export interface FadeScaleParams {
+  delay?: number;
+  duration?: number;
+  easing?: EasingFunction;
+  baseScale?: number;
+  translateX?: string;
+  translateY?: string;
+}
+
+export function fadeScale<IProps extends FadeScaleParams>(
   node: HTMLElement,
-  { delay = 100, duration = 800, easing = (x) => x, baseScale = 0, translateX='1rem', translateY='-160%'},
+  {
+    delay = 100,
+    duration = 800,
+    easing = (x: number) => x,
+    baseScale = 0,
+    translateX = '1rem',
+    translateY = '-160%',
+  }: IProps
 ) {
   const opacity = +getComputedStyle(node).opacity;
-  const match = getComputedStyle(node).transform.match(/scale\(([0-9.]+)\)/);
+  const m = getComputedStyle(node).transform.match(/scale\(([0-9.]+)\)/);
   const scale = match ? Number(m[1]) : 1;
   const is = 1 - baseScale;
   // console.log(translateX, translateY)
@@ -14,7 +32,7 @@ export default function fadeScale(
   return {
     delay,
     duration,
-    css: (t) => {
+    css: (t: number) => {
       const eased = easing(t);
       return `opacity: ${eased * opacity}; transform: translate(${translateX},${translateY}) scale(${eased * scale * is + baseScale}) `;
     },

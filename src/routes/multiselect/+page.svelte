@@ -3,7 +3,7 @@
   import { onMount } from 'svelte';
   import type { PageData } from './$types';
   import SelectBox from '$lib/components/MultiSelectBox.svelte';
-  import * as utils from '$utils';
+  import * as utils from '$lib/utils';
 
   export let data: PageData;
 

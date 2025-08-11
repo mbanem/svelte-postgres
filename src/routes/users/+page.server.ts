@@ -7,6 +7,7 @@ export const load: PageServerLoad = (async ({}) => {
 	if (!users) {
 		return fail(400, { message: 'No users in db' });
 	}
+	// console.log(users)
 	return {
 		users
 	};

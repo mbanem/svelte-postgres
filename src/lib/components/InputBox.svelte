@@ -6,7 +6,7 @@
     | 'blur'
     | 'enter|blur';
   import { browser } from '$app/environment';
-  import * as utils from '$utils';
+  import * as utils from '$lib/utils';
   import { onMount } from 'svelte';
   // import { setContext } from 'svelte';
 
@@ -121,21 +121,29 @@
   };
   const onKeyUpHandler = (event: KeyboardEvent) => {
     event.preventDefault();
+    if (event.key === 'Tab') return;
+    if (capitalize) {
+      // NOTE: reactive variable inputbox value does not updates
+      // inputbox value when changed via script, so inputEl.value
+      // as a workaround is updated instead
+      inputEl.value = utils.capitalize(inputValue);
+    }
     // if keypress is Enter and exportValueOn does not include Enter we return
     if (exportValueOn.includes('enter') && event.key !== 'Enter') {
       if (capitalize && inputValue) {
-        inputValue = capitalizes(inputValue);
+        // inputValue = capitalizes(inputValue);
+        inputValue = utils.capitalize(inputValue);
       }
       return;
     }
     // already prevented blur|keypress and blur|enter
-    // blur always follows if any
+    // blur always follows if any case
     if (!'keypress|blur|enter|blur'.includes(exportValueOn)) {
+      inputValue = capitalizes(inputValue);
       return;
     }
     if (inputValue && inputValue.length > 0) {
       if (capitalize) {
-        inputValue = capitalizes(inputValue);
       }
 
       // if input should be returned

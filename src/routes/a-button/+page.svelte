@@ -1,6 +1,6 @@
 <script lang="ts">
   import { fade } from 'svelte/transition';
-  import { rangeArray } from '$utils';
+  import { rangeArray } from '$lib/utils';
   let foo = false;
 </script>
 

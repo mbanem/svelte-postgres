@@ -17,6 +17,7 @@
     { color: 'ForestGreen', title: 'ContactCard', href: '/contact' },
     { color: 'Yellow', title: 'Duck-Goose', href: '/duck-goose' },
     { color: 'Rebeccapurple', title: 'Themes', href: '/themes' },
+    { color: 'lightgreen', title: 'ThemesKP', href: '/themes-kp' },
     { color: 'Red', title: 'Floating Labels', href: '/floating-label' },
     { color: 'LightGreen', title: 'Before-Input', href: '/before-input' },
     { color: 'Pink', title: 'A-Button', href: '/a-button' },
@@ -44,6 +45,7 @@
     { color: 'Yellow', title: 'Scrolling Block', href: '/scrolling-block' },
     { color: 'Red', title: 'Streaming Promise', href: '/streaming-promise' },
     { color: 'Blue', title: '@attach', href: '/attach' },
+    { color: '#fffe71', title: '@Loading Comps', href: '/loading-components' },
   ];
 
   // using $effect
@@ -79,7 +81,8 @@
 
   const addNavButtonToList = () => {
     if (buttonListIndex < buttonsLength) {
-      ulEl.innerHTML += `<p style='margin:0;color:lightgreen;'>${(buttonsList[buttonListIndex++] as TButtonProp).title}</p>`;
+      ulEl.innerHTML += `<a href="${(buttonsList[buttonListIndex] as TButtonProp).href}" style='margin:0;color:lightgreen;width:5rem;'>${(buttonsList[buttonListIndex] as TButtonProp).title}</a>`;
+      buttonListIndex++;
       ulEl.scrollTo(0, ulEl.scrollHeight);
     }
   };

@@ -6,12 +6,12 @@
   import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
   import { page } from '$app/state'; // for page.status code on actions
-  import { hideButtonsExceptFirst } from '$utils';
+  import { hideButtonsExceptFirst } from '$lib/utils';
   import { Tooltip } from 'flowbite-svelte';
 
   import ButtonSpinner from '$components/ButtonSpinner.svelte';
   import PageTitleCombo from '$components/PageTitleCombo.svelte';
-  import * as utils from '$utils';
+  import * as utils from '$lib/utils';
 
   type Bio = {
     id: string | undefined;
@@ -29,6 +29,7 @@
   // props data is refreshed when form is submitted but let part = $store<TPart>(data.part) is not
   // see note at the top part of todo/+page.svelte for details
   let { data, form }: ARGS = $props();
+  console.log('profile/+page.svelte PageData', data);
   let oldUserId = data.locals.user.id;
   let selectedUserId = $state<string>(data.locals.user.id);
   let wrongUser = $derived(selectedUserId !== data.locals.user.id);

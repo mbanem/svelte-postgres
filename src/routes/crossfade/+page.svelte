@@ -4,7 +4,7 @@
   import { crossfade } from 'svelte/transition';
   import CircleSpinner from '$lib/components/CircleSpinner.svelte';
   import { Tooltip } from 'flowbite-svelte';
-  import * as utils from '$utils';
+  import * as utils from '$lib/utils';
   let showTooltip = false;
 
   let user = {

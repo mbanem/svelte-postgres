@@ -1,8 +1,9 @@
 <script lang="ts">
-  import { browser } from '$app/environment';
+  // import { browser } from '$app/environment';
   import { type Snippet, onMount } from 'svelte';
   import { cubicInOut } from 'svelte/easing';
-  import fadeScale from './fade-scale';
+  import { fadeScale } from './fade-scale';
+  import type { EasingFunction } from 'svelte/transition';
   const r = Math.round;
   interface IProps {
     delay?: number;
@@ -12,8 +13,29 @@
     children?: Snippet;
     translateX?: string;
     translateY?: string;
-    preferredPos?: string;
+    // preferredPos?: string;
   }
+  interface FadeScaleParams {
+    delay?: number;
+    duration?: number;
+    baseScale?: number;
+    easing?: EasingFunction;
+    tooltipPanel: (panelStyle: string) => ReturnType<Snippet>;
+    translateX?: string;
+    translateY?: string;
+  }
+  const getPosList = () => {
+    let list = '';
+    let current = cssPos;
+    ['top', 'left', 'right', 'bottom'].forEach((p) => {
+      if (p === current) {
+        list = p + ',' + list;
+      } else {
+        list = list + p + ',';
+      }
+    });
+    return list;
+  };
   let {
     delay = 800,
     duration = 2000,
@@ -22,11 +44,13 @@
     children,
     translateX,
     translateY,
-    preferredPos = 'top,left,right,bottom',
+    // preferredPos = 'top,left,right,bottom',
   }: IProps = $props();
-  const preferred = preferredPos.replace(/\s+/g, '').split(',') as string[];
+  let cssPos = $state<string>('top');
+  let preferred = $derived(
+    getPosList().replace(/\s+/g, '').split(',') as string[],
+  );
   let visible = $state(false);
-
   let snippet: HTMLDivElement | null = null;
   let ttpRect: DOMRect | null = $state(null);
   let hoverRect: DOMRect | null = $state(null);
@@ -179,19 +203,26 @@
   });
 </script>
 
-<!-- {#each ['top', 'left', 'right', 'bottom'] as pos}
-  <label>
-    <input
-      type="radio"
-      name="position"
-      id={pos}
-      value={pos}
-      bind:group={cssPos}
-    />
-    {pos}
-  </label>
-{/each} -->
-<!-- <p>Selected position: {cssPos}</p> -->
+<!-- <div class="preferred-pos">
+  {getPosList()} -- {JSON.stringify(preferred, null, 2)}
+  </div> -->
+<div class="radio-wrapper">
+  <div class="selected-position">Selected position: <span>{cssPos}</span></div>
+  <div class="preferred-pos">{getPosList()}</div>
+  {#each ['top', 'left', 'right', 'bottom'] as pos}
+    <label>
+      <input
+        type="radio"
+        checked={pos === cssPos}
+        name="position"
+        id={pos}
+        value={pos}
+        bind:group={cssPos}
+      />
+      {pos}
+    </label>
+  {/each}
+</div>
 {#if initial}
   <div bind:this={snippet} class="ttWrapper">
     {@render tooltipPanel?.(
@@ -284,5 +315,28 @@
     padding: 0;
     border: none;
     outline: none;
+  }
+  .radio-wrapper {
+    position: absolute;
+    top: 40rem;
+    left: 80rem;
+    display: flex;
+    gap: 1rem;
+    margin-bottom: rem;
+  }
+  .selected-position {
+    display: block;
+    width: max-content;
+    border-bottom: 1px solid gray;
+    margin-bottom: 1rem;
+    span {
+      color: yellow;
+      font-size: 20px;
+    }
+  }
+  .preferred-pos {
+    display: block;
+    color: lightgreen;
+    margin: 1rem 0;
   }
 </style>

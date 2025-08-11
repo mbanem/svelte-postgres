@@ -1,11 +1,11 @@
 <script lang="ts">
   import { browser } from '$app/environment';
   import InputBox from '$lib/components/InputBox.svelte';
-  const duck = new URL('./duck.jpeg', import.meta.url).href;
-  const goose = new URL('./goose.jpeg', import.meta.url).href;
+  // const duck = new URL('./duck.jpeg', import.meta.url).href;
+  // const goose = new URL('./goose.jpeg', import.meta.url).href;
 
-  // import duck from './duck.jpeg';
-  // import goose from './goose.jpeg';
+  import duck from './duck.jpeg';
+  import goose from './goose.jpeg';
   // import { read } from '$app/server';
   type TUser = {
     firstName: string;
@@ -13,8 +13,8 @@
   };
   const not_specified = 'not specified';
   const user: TUser = {
-    firstName: not_specified,
-    lastName: not_specified,
+    firstName: '',
+    lastName: '',
   };
   let bird = duck;
   let btn: HTMLButtonElement;
@@ -39,7 +39,7 @@
     />
     <InputBox
       title="lastName"
-      exportValueOn="enter"
+      exportValueOn="enter|blur"
       capitalize={true}
       bind:value={user.lastName}
       required={true}

@@ -3,7 +3,7 @@
   import { page } from '$app/state';
   import { onMount } from 'svelte';
   import { enhance } from '$app/forms';
-  import * as utils from '$utils';
+  import * as utils from '$lib/utils';
   import type { SubmitFunction } from '@sveltejs/kit';
   import InputBox from '$lib/components/InputBox.svelte';
   import type { ActionData } from './$types';

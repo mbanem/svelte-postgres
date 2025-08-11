@@ -1,7 +1,7 @@
 <script lang="ts">
   import Balloon from '$components/Balloon.svelte';
   import Child from '$components/Child.svelte';
-  import { sleep } from '$utils';
+  import { sleep } from '$lib/utils';
 
   type SizePowerBurst = {
     size: number;

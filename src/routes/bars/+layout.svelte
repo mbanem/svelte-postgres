@@ -5,7 +5,7 @@
   import NavContainer from '$components/NavContainer.svelte';
   import type { TNotification } from '$lib/types/common';
   import { Button, Modal, Label, Input, Checkbox } from 'flowbite-svelte';
-  import * as utils from '$utils';
+  import * as utils from '$lib/utils';
 
   type ARGS = {
     locals: App.Locals;

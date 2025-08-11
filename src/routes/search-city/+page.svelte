@@ -1,6 +1,6 @@
 <script>
   import InputBox from '$lib/components/InputBox.svelte';
-  import * as utils from '$utils';
+  import * as utils from '$lib/utils';
   let search = $state('');
   // when the search is a capital city name
   let urlCC = $derived(`https://restcountries.com/v3.1/capital/${search}`);

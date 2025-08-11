@@ -30,7 +30,21 @@
   };
   // ---------------------- scroller end ---------------------------------
   import Tooltip from './Tooltip.svelte';
-  let preferPos = 'top,left,right,bottom,';
+  let cssPos = $state<string>('top');
+  // let preferPos = 'top,left,right,bottom,';
+  const getPreferredPos = () => {
+    let list = '';
+    let current = cssPos;
+    ['top', 'left', 'right', 'bottom'].forEach((p) => {
+      if (p === current) {
+        list = p + ',' + list;
+      } else {
+        list = list + p + ',';
+      }
+    });
+    return list;
+  };
+  let preferPos = $derived(getPreferredPos());
   const props = {
     delay: 250,
     duration: 800,
@@ -91,6 +105,21 @@ via CSS margin-left: -100%;
     <pre>Hover over button for a tooltip</pre>
     <p style="margin-left:12rem;">Change Preferred Tooltip Position</p>
     <input class="input" bind:value={preferPos} />
+    <div class="radio-wrapper">
+      {#each ['top', 'left', 'right', 'bottom'] as pos}
+        <label>
+          <input
+            type="radio"
+            checked={pos === cssPos}
+            name="position"
+            id={pos}
+            value={pos}
+            bind:group={cssPos}
+          />
+          {pos}
+        </label>
+      {/each}
+    </div>
     <p class="text-gradient">Matia Isakovic</p>
   </div>
   <div class="right-column">

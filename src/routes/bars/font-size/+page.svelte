@@ -1,5 +1,5 @@
 <script lang="ts">
-  import * as utils from '$utils';
+  import * as utils from '$lib/utils';
   let inputFontSize: HTMLInputElement;
   let fontSize = $state<string>('22px');
 

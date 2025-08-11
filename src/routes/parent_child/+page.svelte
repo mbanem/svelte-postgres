@@ -3,7 +3,7 @@
   import { onMount } from 'svelte';
   import { page } from '$app/state'; // get data from main +layout.server.ts if any
   import type { PageData } from './$types';
-  import * as utils from '$utils';
+  import * as utils from '$lib/utils';
   type Person = {
     name: string;
     age: number;

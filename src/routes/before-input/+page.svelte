@@ -1,7 +1,7 @@
 <script lang="ts">
   import { A } from 'flowbite-svelte';
   import { onMount } from 'svelte';
-  import * as utils from '$utils';
+  import * as utils from '$lib/utils';
   import SummaryDetails from '$components/SummaryDetails.svelte';
   let message: HTMLDivElement;
   let inputEl: HTMLInputElement;

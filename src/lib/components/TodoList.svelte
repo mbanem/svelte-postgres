@@ -32,12 +32,23 @@
     prepareUpdate,
   }: PROPS = $props();
 
+  console.log(
+    '$props()',
+    id,
+    role,
+    users,
+    selectedUserId,
+    uTodos,
+    toggleCompleted,
+    deleteTodo,
+    prepareUpdate,
+  );
   const permission = 'owner only permission';
   const getSelectedRole = () => {
     return (uTodos.filter((t) => t.id === selectedUserId)[0] as UTodo)?.role;
   };
   const listTodos = () => {
-    return uTodos.filter((t) => {
+    return uTodos?.filter((t) => {
       return getSelectedRole() === 'ADMIN'
         ? true
         : t.id === selectedUserId
@@ -56,6 +67,8 @@
 
   let left = uTodos.filter((t) => t.completed === false) as UTodo[];
   let right = uTodos.filter((t) => t.completed === true) as UTodo[];
+  console.log('left', left);
+  console.log('right', right);
 
   const move = (item: UTodo, from: UTodo[], to: UTodo[]) => {
     to.push(item);
@@ -187,12 +200,12 @@
 <div class="container">
   {@render todos(
     td,
-    listTodos().filter((t) => t.completed === false) as UTodo[],
+    listTodos()?.filter((t) => t.completed === false) as UTodo[],
     false,
   )}
   {@render todos(
     td,
-    listTodos().filter((t) => t.completed === true) as UTodo[],
+    listTodos()?.filter((t) => t.completed === true) as UTodo[],
     true,
   )}
 </div>

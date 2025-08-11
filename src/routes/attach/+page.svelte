@@ -1,6 +1,6 @@
 <script lang="ts">
   import { gsap } from 'gsap';
-  import * as utils from '$utils';
+  import * as utils from '$lib/utils';
   import { onMount } from 'svelte';
 
   let angle = $state(360);
@@ -60,7 +60,7 @@
   <div>
     <div class="row">
       <div class="top-box" bind:this={theBox}>Top Box</div>
-      <div {@attach rotate} class="second-box">Second &nbsp; Box</div>
+      <!-- <div {@attach rotate} class="second-box">Second &nbsp; Box</div> -->
     </div>
     <div class="box" use:to={{ rotation: 360, duration: 1 }}>on load rotor</div>
     <button onclick={rotateTopBox}>rotate top box</button>
@@ -88,9 +88,9 @@ The 'Second Box' has new &lcub;@attach rotate&rcub; prop with options
     >
       click me using @attach
     </div>
-    <div {@attach noOptions({ rotation: 360, duration: 2 })} class="box">
+    <!-- <div {@attach noOptions({ rotation: 360, duration: 2 })} class="box">
       on load using @attach
-    </div>
+    </div> -->
   </div>
 </div>
 

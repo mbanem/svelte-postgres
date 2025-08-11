@@ -1,7 +1,7 @@
 <script lang="ts">
   import { page } from '$app/state';
   import { onMount } from 'svelte';
-  import * as utils from '$utils';
+  import * as utils from '$lib/utils';
 
   export let callParent: (name: string) => void;
   export const getRandomNumber = () => {

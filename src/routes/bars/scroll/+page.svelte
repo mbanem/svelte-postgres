@@ -2,10 +2,10 @@
   import { browser } from '$app/environment';
   import { tick } from 'svelte';
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
-  import { capitalize } from '$lib/utils/helpers.svelte';
+  import { capitalize } from '$lib/utils';
   import { flip } from 'svelte/animate';
   import { fade } from 'svelte/transition';
-  import * as utils from '$utils';
+  import * as utils from '$lib/utils';
 
   //import {bounceInOut} from 'svelte/easing';
   let horizontal = $state(true);

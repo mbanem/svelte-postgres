@@ -7,7 +7,7 @@
   import { flip } from 'svelte/animate';
   import { onMount } from 'svelte';
   import { page } from '$app/state'; // for $age.status code on actions
-  import * as utils from '$utils';
+  import * as utils from '$lib/utils';
   // dirty function to quickly generate some keys
 
   type ChildObject = {

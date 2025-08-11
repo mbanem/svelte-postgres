@@ -4,7 +4,7 @@
   import { z } from 'zod';
   import type { PageData } from './$types';
   import InputBox from '$components/InputBox.svelte';
-  import * as utils from '$utils';
+  import * as utils from '$lib/utils';
 
   // export let data: PageData;
   let { data } = $props();

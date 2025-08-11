@@ -14,8 +14,8 @@
     setSelectedOptions,
   } from '$components/MultiSelectBox.svelte';
   import PostList from '$components/PostList.svelte';
-  import { hideButtonsExceptFirst } from '$utils';
-  import * as utils from '$utils';
+  import { hideButtonsExceptFirst } from '$lib/utils';
+  import * as utils from '$lib/utils';
 
   type ARGS = {
     data: PageData;

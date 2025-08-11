@@ -234,24 +234,16 @@ export const keyPress = (
     ).dispatchEvent(keyEvent)
   }
 }
+
 export let navBars: TNavBar[] = [];
 export const navButtons: TNavButton[] = [];
-export let navPath = $state<string>('/');
 
-export let prevPath = $state('/');
 
 export const sixHash = () => {
   const a = (Math.random() * 46656) | 0
   const b = (Math.random() * 46656) | 0
   return a.toString(36).slice(-3) + b.toString(36).slice(-3)
 };
-let mrPath = $state<string>('/');
-export const getMrPath = () => {
-  return mrPath as string
-}
-export const setMrPath = (path: string) => {
-  mrPath = path
-}
 
 
 export const id = () => {
@@ -317,8 +309,12 @@ export const csvToNumArr = (s: string): number[] => {
 
 export const getCSSValue = (varName: string): string | undefined => {
   if (browser) {
+    try{
     const declaration = ((document.styleSheets[0]?.cssRules as CSSRuleList)[0] as CSSStyleRule).style
     return declaration.getPropertyValue(varName) as string
+    }catch(err){
+      console.log('getCSSValue', err.message)
+    }
   }
 }
 export const setCSSValue = (varName: string, value: string) => {
@@ -328,6 +324,7 @@ export const setCSSValue = (varName: string, value: string) => {
       if (root) {
         // @ts-expect-error
         root.style.setProperty(varName, value)
+        console.log('cssvalue',root.style.getPropertyValue(varName))
       }
     }
   } catch (err) {

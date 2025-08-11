@@ -1,13 +1,41 @@
 <script lang="ts">
   import { page } from '$app/state';
   import { onMount } from 'svelte';
-  import * as utils from '$utils';
+  import * as utils from '$lib/utils';
 
   import type { PageData } from './$types';
+  type TLocals = {
+    id: string;
+    firstName: string;
+    lastName: string;
+    role: string;
+  };
 
-  export let data: PageData;
+  type TUser = {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    passwordHash: string;
+    userAuthToken: string;
+    role: string;
+    createdAt: Date;
+    updatedAt: Date;
+  };
+  type TProps = {
+    locals: TLocals;
+    users: TUser[];
+    status: string;
+  };
 
-  $: ({ users } = data);
+  let { data }: TProps = $props();
+
+  let locals = $state<TLocals>(data.locals);
+  let users = $state<TUsers>(data.users);
+  console.log('locals', locals);
+  console.log('users', users);
+  // $: ({ users } = data);
+  // let users = $state<TUser[]>(data);
   const postDelete = async (id: string) => {
     // we immediately get a promise
     const response = await fetch(`/api/delete/[user]x[${id}]`, {
@@ -50,5 +78,13 @@
   .post-list {
     display: flex;
     gap: 8px;
+    align-items: center;
+    a {
+      display: inline-block;
+      width: 10rem;
+      height: 1.6rem;
+      line-height: 1.6rem;
+      text-align: left;
+    }
   }
 </style>

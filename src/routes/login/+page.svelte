@@ -4,7 +4,7 @@
   import { enhance } from '$app/forms';
   import { page } from '$app/state';
   import { onMount } from 'svelte';
-  import * as utils from '$utils';
+  import * as utils from '$lib/utils';
   import InputBox from '$lib/components/InputBox.svelte';
 
   // export let form: ActionData;

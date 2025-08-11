@@ -2,7 +2,7 @@
   import { onMount } from 'svelte';
   import RandomCanvas from '$lib/components/RandomCanvas.svelte';
   import { page } from '$app/state'; // for $age.status code on actions
-  import * as utils from '$utils';
+  import * as utils from '$lib/utils';
 
   let numbers = $state([1, 2, 3]);
   let total = $derived.by(() => {

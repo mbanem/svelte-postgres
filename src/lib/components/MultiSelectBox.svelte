@@ -27,7 +27,7 @@
 
 <script lang="ts">
   import { onMount, tick } from 'svelte';
-  import * as utils from '$utils';
+  import * as utils from '$lib/utils';
   import { page } from '$app/state'; // for $age.status code on actions
 
   let pEl: HTMLParagraphElement;

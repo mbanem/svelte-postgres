@@ -3,7 +3,7 @@
   import { page } from '$app/state';
   import { goto } from '$app/navigation';
   // import { selectRecordItems } from '$lib/utils';
-  import { navBars, navButtons } from '$lib/utils/helpers.svelte';
+  import { navBars, navButtons } from '$lib/utils';
 
   // console.log('page', page);
   type ARGS = {

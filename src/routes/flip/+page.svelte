@@ -1,5 +1,4 @@
 <script lang="ts">
-  
   import { browser } from '$app/environment';
   import { page } from '$app/state';
   import { onMount } from 'svelte';
@@ -8,8 +7,8 @@
   import Flip from 'gsap/dist/Flip';
   import { crossfade } from 'svelte/transition';
   import { error } from '@sveltejs/kit';
-  import * as utils from '$utils';
-  import { capitalize, setMrPath } from '$utils';
+  import * as utils from '$lib/utils';
+  import { capitalize, setMrPath } from '$lib/utils';
 
   const colors = ['red', 'orange', 'green', 'purple'];
   gsap.registerPlugin(Flip);

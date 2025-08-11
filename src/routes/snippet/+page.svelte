@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount, tick } from 'svelte';
-  import * as utils from '$utils';
+  import * as utils from '$lib/utils';
   let divEl: HTMLDivElement;
   type TImage = {
     src: string;
@@ -89,6 +89,21 @@
       imgWidth++;
     });
   });
+  let imgPixel = '';
+  let stretchFactor = $state(1.5);
+  const onMouseEnter = (event: MouseEvent) => {
+    if (!event.ctrlKey) return;
+    const img = event.target as HTMLImageElement;
+    imgPixel = img.style.width;
+    img.style.width = `${img.width * stretchFactor}px`;
+    img.style.height = `${img.width}px`;
+  };
+  const onMouseLeave = (event: MouseEvent) => {
+    // if (!event.ctrlKey) return;
+    const img = event.target as HTMLImageElement;
+    img.style.width = imgPixel;
+    img.style.height = imgPixel;
+  };
 </script>
 
 <svelte:head>
@@ -112,7 +127,25 @@
       <button onclick={addImage}>add image</button>
       <button onclick={removeImage}>remove first</button>
       <button onclick={removeImage}>remove last</button>
-      <pre>click on an image to remove it</pre>
+      <div class="range-wrapper">
+        stretch by {stretchFactor}
+        <div class="stretch-range">
+          <input
+            type="range"
+            min="1"
+            max="5"
+            step="0.1"
+            bind:value={stretchFactor}
+            list="values"
+          />
+          <datalist id="values">
+            {#each [...5] as val}
+              <option value={val + 1} label={val + 1}></option>
+            {/each}
+          </datalist>
+        </div>
+      </div>
+      <pre>CtrlKey + hover over image to enlarge, click on it to remove</pre>
     </div>
   </div>
   <!-- snippet is called as a function sending it arguments
@@ -127,7 +160,14 @@
       <a {href}>
         <div>
           <figure>
-            <img alt={caption} {src} {width} {height} />
+            <img
+              alt={caption}
+              {src}
+              {width}
+              {height}
+              onmouseenter={onMouseEnter}
+              onmouseleave={onMouseLeave}
+            />
             <figcaption>{caption}</figcaption>
           </figure>
         </div>
@@ -135,7 +175,14 @@
     {:else}
       <div>
         <figure>
-          <img alt={caption} {src} {width} {height} />
+          <img
+            alt={caption}
+            {src}
+            {width}
+            {height}
+            onmouseenter={onMouseEnter}
+            onmouseleave={onMouseLeave}
+          />
           <figcaption>{caption}</figcaption>
         </figure>
       </div>
@@ -212,6 +259,22 @@
     height: auto;
     background: #eee;
     cursor: pointer;
+  }
+  .range-wrapper {
+    display: inline-flex;
+    align-items: center;
+    margin-left: 1rem;
+    .stretch-range {
+      display: inline-block;
+      margin-left: 1rem;
+      datalist {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        writing-mode: horizontal-tb;
+        width: 130px;
+      }
+    }
   }
   pre {
     display: inline-block;
