@@ -5,7 +5,7 @@
   type TButtonProp = { color: string; title: string; href: string };
   const buttonsList = [
     { color: 'Pink', title: 'Home', href: '/' },
-    { color: 'RebeccaPurple', title: 'Tooltip', href: '/att' },
+    { color: 'RebeccaPurple', title: 'Tooltip', href: '/acr-tooltiptt' },
     { color: 'Blue', title: 'Derived', href: '/derived' },
     { title: 'Scroll', href: '/bars/scroll' }, // make one with no color to use default color -- red
     { color: 'Tomato', title: 'Caterpillar', href: '/caterpillar' },
@@ -40,8 +40,8 @@
     { color: 'LightGreen', title: 'Grid', href: '/grid' },
     { color: 'Yellow', title: 'Flip', href: '/flip' },
     { color: 'Pink', title: 'Data Fetching', href: '/data-fetching' },
-    { color: 'Lightgreen', title: 'New Tooltip', href: '/att' },
-    { color: 'Skyblue', title: 'Scroll Tooltip', href: '/attx' },
+    { color: 'Lightgreen', title: 'New Tooltip', href: '/cr-tooltip' },
+    { color: 'Skyblue', title: 'Scroll Tooltip', href: '/crx-tooltip' },
     { color: 'Yellow', title: 'Scrolling Block', href: '/scrolling-block' },
     { color: 'Red', title: 'Streaming Promise', href: '/streaming-promise' },
     { color: 'Blue', title: '@attach', href: '/attach' },
