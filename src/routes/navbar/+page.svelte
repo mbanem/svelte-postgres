@@ -40,7 +40,7 @@
     { color: 'LightGreen', title: 'Grid', href: '/grid' },
     { color: 'Yellow', title: 'Flip', href: '/flip' },
     { color: 'Pink', title: 'Data Fetching', href: '/data-fetching' },
-    { color: 'Lightgreen', title: 'New Tooltip', href: '/cr-tooltip' },
+    { color: 'Lightgreen', title: 'CR-Tooltip', href: '/cr-tooltip' },
     { color: 'Skyblue', title: 'Scroll Tooltip', href: '/crx-tooltip' },
     { color: 'Yellow', title: 'Scrolling Block', href: '/scrolling-block' },
     { color: 'Red', title: 'Streaming Promise', href: '/streaming-promise' },

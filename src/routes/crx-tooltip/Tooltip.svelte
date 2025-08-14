@@ -2,7 +2,7 @@
   import { browser } from '$app/environment';
   import { cubicInOut } from 'svelte/easing';
   import { type Snippet, onMount } from 'svelte';
-  import { fadeScale } from './fade-scale';
+  import fadeScale from './fade-scale';
   const r = Math.round;
 
   type TProps = {
@@ -29,9 +29,9 @@
     translateY = '0px',
     preferredPos = 'top,left,right,bottom',
   }: TProps = $props();
-  const preferred = $derived(
-    preferredPos.replace(/\s+/g, '').split(',') as string[],
-  );
+  const getPreferred = () => {
+    return preferredPos.replace(/\s+/g, '').split(',') as string[];
+  };
 
   let snippet: HTMLDivElement | null = null;
   let visible = $state(false);
@@ -55,8 +55,10 @@
     if (!ttpRect || !hoverRect) {
       return console.log('no  rectangles');
     }
+    // is there enough space before the right side of the screen
     OK.topBottomRight =
       hoverRect.left - window.scrollX + ttpRect.width < window.innerWidth;
+    // is there enough space before the bottom side of the screen
     OK.leftRightBottom =
       hoverRect.top - window.scrollY + ttpRect.height < window.innerHeight;
 
@@ -66,11 +68,25 @@
     OK.left = hoverRect.left - window.scrollX > ttpRect.width;
     OK.right =
       hoverRect.right - window.scrollX + ttpRect.width < window.innerWidth;
-
-    for (let i = 0; i < preferred.length; i++) {
-      switch (preferred[i] as string) {
+    // console.log(
+    //   'OK.top',
+    //   OK.top,
+    //   'OK.bottom',
+    //   OK.bottom,
+    //   'OK.left',
+    //   OK.left,
+    //   'OK.right',
+    //   OK.right,
+    //   'OK.leftRightBottom',
+    //   OK.leftRightBottom,
+    //   'OK.topBottomRight',
+    //   OK.topBottomRight,
+    // );
+    for (let i = 0; i < getPreferred().length; i++) {
+      const pref = getPreferred();
+      switch (pref[i] as string) {
         case 'top':
-          if (OK.top && OK.right) {
+          if (OK.top && OK.topBottomRight) {
             translateX = '0px';
             translateY = `${-ttpRect.height}px`;
           }

@@ -9,7 +9,7 @@ export interface FadeScaleParams {
   translateY?: string;
 }
 
-export function fadeScale<IProps extends FadeScaleParams>(
+export default function fadeScale<IProps extends FadeScaleParams>(
   node: HTMLElement,
   {
     delay = 100,
@@ -22,7 +22,7 @@ export function fadeScale<IProps extends FadeScaleParams>(
 ) {
   const opacity = +getComputedStyle(node).opacity;
   const m = getComputedStyle(node).transform.match(/scale\(([0-9.]+)\)/);
-  const scale = match ? Number(m[1]) : 1;
+  const scale = m ? Number(m[1]) : 1;
   const is = 1 - baseScale;
   // console.log(translateX, translateY)
   // transform: translate uses matrix's last two entries for translate x and y

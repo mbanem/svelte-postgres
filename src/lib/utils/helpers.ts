@@ -1,5 +1,13 @@
 import { browser } from '$app/environment'
 
+// lib/scrollTo.js
+import { afterNavigate } from '$app/navigation';
+
+export function scrollToPosition(top, left) {
+  afterNavigate(() => {
+    window.scroll({ top, left, behavior: 'smooth' });
+  })
+}
 
 const colors_hex: string[] = [
   '#f0f8ff', //AliceBlue
@@ -697,3 +705,4 @@ export const fadeScale = (
     }
   }
 }
+
