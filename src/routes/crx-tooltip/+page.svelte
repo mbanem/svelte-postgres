@@ -29,9 +29,10 @@
   //   }, 980);
   // };
   // ---------------------- scroller end ---------------------------------
-  import Tooltip from './Tooltip.svelte';
+  import Tooltip from '$components/CRTooltip.svelte';
   import { type Snippet, onMount } from 'svelte';
   import * as utils from '$lib/utils/helpers';
+
   // let preferPos = 'top,left,right,bottom,';
   // const getPreferredPos = () => {
   //   let list = '';

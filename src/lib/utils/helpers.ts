@@ -1,6 +1,6 @@
+export {};
 import { browser } from '$app/environment'
 
-// lib/scrollTo.js
 import { afterNavigate } from '$app/navigation';
 
 export function scrollToPosition(top, left) {
