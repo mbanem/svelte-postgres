@@ -67,8 +67,8 @@
 
   let left = uTodos.filter((t) => t.completed === false) as UTodo[];
   let right = uTodos.filter((t) => t.completed === true) as UTodo[];
-  console.log('left', left);
-  console.log('right', right);
+  // console.log('left', left);
+  // console.log('right', right);
 
   const move = (item: UTodo, from: UTodo[], to: UTodo[]) => {
     to.push(item);
@@ -97,11 +97,11 @@
 <!-- css can be dynamically changed via style:rule={value} and class:class_name={predicate} -->
 {#snippet tooltip(tf: boolean, title: string)}
   {#if !tf}
-    <Tooltip defaultClass="tooltip-todo-false">
+    <Tooltip>
       <p>{permission}</p>
     </Tooltip>
   {:else}
-    <Tooltip defaultClass="tooltip-todo-delete">
+    <Tooltip>
       <p>{title}</p>
     </Tooltip>
   {/if}
@@ -140,21 +140,23 @@
               {todo.title}
               <p class="todo-content">{todo.content}</p>
             </div>
-            <Tooltip defaultClass="tooltip-todo">
-              <p>priority</p>
-              <p>{todo.priority}</p>
-              <p>created on</p>
-              <p class="prop-value">{todo.createdAt.toLocaleString()}</p>
-              <p>updated on</p>
-              <p class="prop-value">{todo.updatedAt?.toLocaleString()}</p>
-              <p>owner: {tuSu}</p>
-              <!-- NOTE: Tooltip accepts style setting but not class -->
-              <p
-                style={`margin-bottom:8px; color:${tuSu ? 'skyblue' : 'pink'}`}
-              >
-                {todo.firstName}
-                {todo.lastName}
-              </p>
+            <Tooltip>
+              <div class="todo-tooltip">
+                <p>priority</p>
+                <p>{todo.priority}</p>
+                <p>created on</p>
+                <p class="prop-value">{todo.createdAt.toLocaleString()}</p>
+                <p>updated on</p>
+                <p class="prop-value">{todo.updatedAt?.toLocaleString()}</p>
+                <p>owner: {tuSu}</p>
+                <!-- NOTE: Tooltip accepts style setting but not class -->
+                <p
+                  style={`margin-bottom:8px; color:${tuSu ? 'skyblue' : 'pink'}`}
+                >
+                  {todo.firstName}
+                  {todo.lastName}
+                </p>
+              </div>
             </Tooltip>
           </div>
           <div class="tooltip-wrapper">
@@ -223,22 +225,38 @@
       display: flex;
       justify-content: space-between;
       align-content: flex-start;
-      gap: 0.5rem;
+      gap: 0.1rem;
       padding: 0 0 0 5px;
       margin: 0;
     }
-    .tooltip-todo {
-      position: absolute;
-      left: 25rem !important;
-      top: -5rem !important;
-      background-color: black !important;
-      opacity: 1 !important;
-    }
+    // .tooltip-todo {
+    //   position: absolute;
+    //   left: 5rem !important;
+    //   top: -5rem !important;
+    //   background-color: black !important;
+    //   opacity: 1 !important;
+    // }
     .todo-content {
       color: yellow;
     }
     &:hover {
       cursor: pointer;
+    }
+  }
+  .todo-tooltip {
+    display: grid;
+    grid-template-columns: 6rem 30rem;
+    justify-content: flex-start;
+    width: 18rem !important;
+    border: 1px solid yellow;
+    border-radius: 6px;
+    padding: 3px 1rem;
+    background-color: var(--TOOLTIP-BACKGROUND-COLOR);
+    color: var(--TOOLTIP-COLOR);
+    font-size: 14px;
+    font-weight: 400;
+    p:nth-child(even) {
+      color: yellow;
     }
   }
   .prop-value {
@@ -257,26 +275,26 @@
       border-radius: 6px;
     }
   }
-  :global(.tooltip-todo) {
-    position: absolute;
-    left: 12rem !important;
-    top: -5rem !important;
-    display: grid;
-    grid-template-columns: 6rem 30rem;
-    justify-content: flex-start;
-    width: 18rem !important;
-    color: skyblue !important;
-    font-size: 14px;
-    font-weight: 400;
-    padding: 3px 1rem;
-    text-align: center;
-    background-color: var(--TOOLTIP-BACKGROUND-COLOR);
-    border: var(--TOOLTIP-BORDER);
-    border-radius: 6px;
-    p:nth-child(even) {
-      color: yellow;
-    }
-  }
+  // :global(.tooltip-todo) {
+  //   position: absolute;
+  //   left: 12rem !important;
+  //   top: -5rem !important;
+  //   display: grid;
+  //   grid-template-columns: 6rem 30rem;
+  //   justify-content: flex-start;
+  //   width: 18rem !important;
+  //   color: skyblue !important;
+  //   font-size: 14px;
+  //   font-weight: 400;
+  //   padding: 3px 1rem;
+  //   text-align: center;
+  //   background-color: var(--TOOLTIP-BACKGROUND-COLOR);
+  //   border: var(--TOOLTIP-BORDER);
+  //   border-radius: 6px;
+  //   p:nth-child(even) {
+  //     color: yellow;
+  //   }
+  // }
 
   .blue {
     color: skyblue;

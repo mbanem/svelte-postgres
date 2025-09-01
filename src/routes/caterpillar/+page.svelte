@@ -225,10 +225,7 @@
     Salmon, SandyBrown, SeaGreen, SeaShell, Sienna, Silver, SkyBlue, SlateBlue,
     SlateGray, SlateGrey, Snow, SpringGreen, SteelBlue, Tan, Teal, Thistle,
     Tomato, Turquoise, Violet, Wheat, Yellow, YellowGreen;
-  .border {
-    border: 6px solid yellow;
-    background-color: pink;
-  }
+
   .in-grid {
     display: grid;
     position: relative;
@@ -273,9 +270,6 @@
     transition-timing-function: ease-in-out;
   }
 
-  .transform-active {
-    top: 3rem;
-  }
   .slider1,
   .slider2 {
     position: relative;
@@ -287,9 +281,6 @@
     border-radius: 8px;
     background-color: rgb(60, 58, 58);
     cursor: pointer;
-  }
-  .border {
-    border: 6px solid yellow;
   }
   .item,
   .itm {
@@ -319,15 +310,6 @@
     }
   }
 
-  button {
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 50%;
-    border: 0;
-    font-size: 24px;
-  }
   $e: 1;
   $f: 5;
   @for $k from $e through $f {

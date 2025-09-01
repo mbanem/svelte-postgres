@@ -11,7 +11,6 @@
   onMount(() => {
     try {
       return () => {
-        // @ts-expect-error
         utils.setMrPath(page.url.pathname);
       };
     } catch (err) {

@@ -146,7 +146,6 @@
     justify-items: center;
     align-items: flex-start;
     padding-right: 1.5rem;
-    .left-side,
     .right-side {
       width: 90%;
       min-height: 70%;
@@ -154,12 +153,6 @@
       padding: 1rem;
       margin: 1rem;
       border: 2px solid gray;
-      .class-list-title {
-        display: inline-block;
-        font-size: 18px;
-        color: yellow;
-        margin-left: 30%;
-      }
     }
     .right-side {
       overflow-y: auto;

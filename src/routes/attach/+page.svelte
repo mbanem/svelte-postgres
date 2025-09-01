@@ -104,7 +104,6 @@ The 'Second Box' has new &lcub;@attach rotate&rcub; prop with options
   }
   .box,
   .top-box,
-  .second-box,
   .attach-box,
   .rox {
     display: flex;
@@ -120,10 +119,6 @@ The 'Second Box' has new &lcub;@attach rotate&rcub; prop with options
   }
   .top-box {
     background-color: var(--BOX-COLOR);
-  }
-  .second-box {
-    color: white;
-    background-color: forestgreen;
   }
   .rox {
     color: white;

@@ -3,7 +3,7 @@ import { browser } from '$app/environment'
 
 import { afterNavigate } from '$app/navigation';
 
-export function scrollToPosition(top, left) {
+export function scrollToPosition(top:number, left:number) {
   afterNavigate(() => {
     window.scroll({ top, left, behavior: 'smooth' });
   })
@@ -328,14 +328,14 @@ export const getCSSValue = (varName: string): string | undefined => {
 export const setCSSValue = (varName: string, value: string) => {
   try {
     if (browser) {
-      const root = document.querySelector(':root')
+      const root = document.querySelector(':root') as Node
       if (root) {
         // @ts-expect-error
         root.style.setProperty(varName, value)
-        console.log('cssvalue',root.style.getPropertyValue(varName))
+        console.log('cssValue',root.style.getPropertyValue(varName))
       }
     }
-  } catch (err) {
+  } catch (err: Error) {
     console.log('setCSSValue', err)
   }
 }
@@ -412,7 +412,6 @@ const _shallowCopy = <S extends Object, T extends S>(
 ): T => {
   for (const k of Object.keys(target)) {
     if (isKeyOf<S>(k as keyof S, target)) {
-      // @ts-expect-error
       target[k] = source[k as keyof T]
     }
   }
@@ -673,13 +672,13 @@ export const pxStringLength = (str: string): string => {
 }
 export const pxElementHeight = (el: HTMLElement): string => {
   if (!browser) return ''
-  return el.getBoundingClientRect().height ?? '24px'
+  return el.getBoundingClientRect().height ?? 24
 }
 
 export const rangeArray = (start: number, end: number) => Array.from({ length: (end - start) }, (_, k) => k + start)
 /* how to use
   import { rangeArray } from '$utils
-  rangeArray(3,10).forEach(x=> console.log(x))}
+  rangeArray(3,10).forEach(x=> console.log(x))
   or
   {#each utils.rangeArray(3,10) as number, ix}
     {ix}: {number}

@@ -455,9 +455,9 @@
     border: 1px solid gray;
     border-radius: 8px;
     z-index: 6;
-    p:nth-child(even) {
-      color: yellow;
-    }
+    // p:nth-child(even) {
+    //   color: yellow;
+    // }
   }
   :global(.tooltip_default-update) {
     position: absolute;
@@ -471,9 +471,9 @@
     padding: 3px 1rem;
     text-align: center;
     z-index: 6;
-    p {
-      padding: 0 1rem !important;
-    }
+    // p {
+    //   padding: 0 1rem !important;
+    // }
   }
   .ok-hover {
     border: none; //1px solid transparent;

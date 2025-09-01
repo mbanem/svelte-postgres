@@ -22,7 +22,7 @@
           <p>email: {user.email}</p>
           <p>role: {user.role}</p>
           <p>created: {user.createdAt.toLocaleString()}</p>
-          <p>updated: {user.updatedAt.toLocaleString()}</p>
+          <p>updated: {user.updatedAt?.toLocaleString()}</p>
         </div>
       {/each}
     {:catch error}

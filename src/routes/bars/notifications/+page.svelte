@@ -30,19 +30,6 @@
 {/if}
 
 <style lang="scss">
-  .button {
-    display: inline-block;
-    padding: 3px 1rem;
-    border: 1px solid gray;
-    border-radius: 5px;
-    background-color: navy;
-    opacity: 0.8;
-    margin-top: 2rem;
-    &:hover {
-      color: white;
-      opacity: 1;
-    }
-  }
   .notes {
     width: max-content;
     border: 1px solid gray;

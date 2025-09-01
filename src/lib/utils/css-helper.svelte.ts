@@ -97,7 +97,7 @@ export const convertToHexColor = (color: string) => {
 export const styleSheetFromSelector = (selector: string) => {
   for(let i = 0; i < document.styleSheets.length; i++) {
     const sheet = document.styleSheets[i]
-    for(let ix in sheet.rules || sheet.cssRules) {
+    for(let ix in sheet?.rules || sheet?.cssRules) {
         if(typeof rules[ix].selectorText == selector) {
           return sheet
         }
@@ -107,21 +107,34 @@ export const styleSheetFromSelector = (selector: string) => {
 }
 
 export const getAllSelectors = () => { 
-    const ret = [];
-    for(let i = 0; i < document.styleSheets.length; i++) {
+    const ret: string[] = [];
+    for (let i = 0; i < document.styleSheets.length; i++) {
         const rules = document.styleSheets[i].rules || document.styleSheets[i].cssRules;
-        for(let x in rules) {
-            if(typeof rules[x].selectorText == 'string') ret.push(rules[x].selectorText);
+        for (let x in rules) {
+            if (!(rules?.[x] instanceof CSSStyleRule)) {
+                continue;
+            }
+            if (typeof rules?.[x].selectorText === 'string') {
+                ret.push(rules?.[x].selectorText);
+            }
         }
     }
     return ret;
-}
+};
 
 
-export const selectorExists = (selector) => { 
-    const selectors = getAllSelectors();
-    for(let i = 0; i < selectors.length; i++) {
-        if(selectors[i] == selector) return true;
-    }
-    return false;
-}
+const selectorExists = (selector: string) => {
+		if (!browser) return
+		try {
+			for (let i = 0; i < document.styleSheets.length; i++) {
+				const rules = document.styleSheets[i]?.cssRules as CSSRuleList
+				for (let ix in rules) {
+					if ((rules[ix] as CSSStyleRule).selectorText === selector) {
+						return true
+					}
+				}
+			}
+			return false
+		} finally {
+		}
+	}

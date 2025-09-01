@@ -44,13 +44,11 @@
   const users: Record<string, TUser> = {
     Matia: {
       id: '46565416',
-      id: '46565416',
       firstName: 'Matia',
       lastName: 'Isakovic',
       role: 'admin',
     },
     Filip: {
-      id: '65487',
       id: '65487',
       firstName: 'Filip',
       lastName: 'Isakovic',
@@ -58,13 +56,11 @@
     },
     Marko: {
       id: '62877812',
-      id: '62877812',
       firstName: 'Marko',
       lastName: 'Milutinovic',
       role: 'visitor',
     },
     Mia: {
-      id: '1684849',
       id: '1684849',
       firstName: 'Mia',
       lastName: 'Milutinovic',
@@ -317,10 +313,10 @@ Permissions (click permission button below to check for that permission)
     padding: 5px;
     margin: 0;
   }
-  input {
-    width: 12rem;
-    background-color: #3e3e3e;
-  }
+  // input {
+  //   width: 12rem;
+  //   background-color: #3e3e3e;
+  // }
   span {
     color: yellow;
   }
@@ -360,9 +356,9 @@ Permissions (click permission button below to check for that permission)
       margin-right: 2px;
     }
   }
-  .blue-background {
-    background-color: blue;
-  }
+  // .blue-background {
+  //   background-color: blue;
+  // }
   .user-permission-line {
     line-height: 2rem;
     span {

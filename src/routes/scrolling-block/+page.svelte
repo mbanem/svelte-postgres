@@ -27,8 +27,11 @@
   let offset = 0; // -1 for left scroll, +1 for right scroll
   let container: HTMLDivElement;
 
+  const _center = () => {
+    return center;
+  };
   // Current sequence
-  let numbers = [center - 1, center, center + 1];
+  let numbers = [_center() - 1, _center(), _center() + 1];
 
   let inProgress = $state(false);
   const scroll = (direction: 'left' | 'right') => {

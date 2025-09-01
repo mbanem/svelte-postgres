@@ -238,9 +238,6 @@
     display: flex;
     flex-direction: column;
     gap: 0.3rem;
-    .top {
-      margin-top: 1rem;
-    }
   }
   .inner {
     display: flex;

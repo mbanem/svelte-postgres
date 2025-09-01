@@ -39,10 +39,13 @@
     s_url === undefined ? '' : new SvelteURL(s_url),
   ) as SvelteURL;
 
+  const _getUrl = () => {
+    return url;
+  };
   if (Object.keys(data[0] as Data).includes('price')) {
-    fruitUrl = url;
+    fruitUrl = _getUrl();
   } else {
-    employeeUrl = url;
+    employeeUrl = _getUrl();
   }
 
   let table = Object.keys(data[0] as Fruit | Employee).includes('price')

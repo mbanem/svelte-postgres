@@ -46,6 +46,7 @@
     { color: 'Red', title: 'Streaming Promise', href: '/streaming-promise' },
     { color: 'Blue', title: '@attach', href: '/attach' },
     { color: '#fffe71', title: '@Loading Comps', href: '/loading-components' },
+    { color: 'Purple', title: 'Zoom Image', href: '/zoom-image' },
   ];
 
   // using $effect
@@ -59,7 +60,7 @@
     const para = document.createElement('p');
     para.innerHTML = `${inputBoxEntry}`;
     para.style.setProperty('color', 'yellow');
-    para.style.setProperty('margin', 0);
+    para.style.setProperty('margin', '0');
     ulEl.appendChild(para);
     ulEl.scrollTo(0, ulEl.scrollHeight);
     inputBox.setInputBoxValue('', true); // true to blur as well
@@ -175,9 +176,9 @@
   .add-button-to-list {
     display: block;
   }
-  .input-box {
-    width: 20rem;
-  }
+  // .input-box {
+  //   width: 20rem;
+  // }
   svg {
     display: inline-flex;
     margin-right: 8px;

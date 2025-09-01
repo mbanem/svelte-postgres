@@ -656,7 +656,4 @@
     padding: 0;
     margin: 1rem 0 0 0;
   }
-  .box .a {
-    margin: 0;
-  }
 </style>

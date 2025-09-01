@@ -16,4 +16,4 @@ export type TPoint = {
 	y:number
 }
 export type THoveringElement = HTMLElement|HTMLButton|HTMLDivElement|HTMLSelectElement|HTMLInputElement|HTMLAnchorElement
-export type TTooltipPosition = 'top-left'|'top-middle'|'bottom-left'|'bottom-middle'|'bottom-right'|Point
+export type TTooltipPosition = 'top-left'|'top-middle'|'bottom-left'|'bottom-middle'|'bottom-right'| TPoint

@@ -145,9 +145,6 @@
     height: auto;
     margin: 18rem 50rem !important;
   }
-  .hidden {
-    display: none;
-  }
   .visibility {
     visibility: hidden;
   }

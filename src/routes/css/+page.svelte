@@ -589,19 +589,6 @@
     width: 12px;
   }
 
-  .combo-input {
-    color: black;
-    background-color: cornsilk;
-    border: 2px solid rgb(0 0 0 / 0.2);
-    border-radius: 4px;
-    display: block;
-    font-size: 1em;
-    height: 2em;
-    padding: 3px 0 0 1rem;
-    text-align: left;
-    width: 100%;
-  }
-
   .open .combo-input {
     border-radius: 4px 4px 0 0;
   }
@@ -633,10 +620,6 @@
     top: 100%;
     width: 100%;
     z-index: 100;
-  }
-
-  .open .combo-menu {
-    display: block;
   }
 
   .combo-option {

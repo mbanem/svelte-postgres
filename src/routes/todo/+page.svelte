@@ -4,10 +4,10 @@
   import { page } from '$app/state'; // for $age.status code on actions
   import type { SubmitFunction } from '@sveltejs/kit';
   import { invalidateAll } from '$app/navigation';
-  import { onMount, tick } from 'svelte';
+  import { onMount, tick, type Snippet } from 'svelte';
   import type { Snapshot } from './$types';
 
-  import { Tooltip } from 'flowbite-svelte';
+  import Tooltip from '$components/CRTooltip.svelte'; //'flowbite-svelte';
   import { setPlaceholderColor, hideButtonsExceptFirst } from '$lib/utils';
   import TodoList from '$components/TodoList.svelte';
   import PageTitleCombo from '$components/PageTitleCombo.svelte';
@@ -19,6 +19,8 @@
     form: ActionData;
   };
   let { data, form }: ARGS = $props();
+
+  const preferPos = 'top,left,right,bottom';
 
   let hiddenBtnDelete = $state(true);
   // NOTE: When the page updates uTodos = $state<UTodo[]>() is not refreshed but props data.uTodos are refreshed.
@@ -329,7 +331,7 @@
       ></ButtonSpinner>
 
       {#if selectedUserId !== authorId}
-        <Tooltip defaultClass="tooltip-update-false">
+        <Tooltip preferredPos={preferPos}>
           <p>owner only permission</p>
         </Tooltip>
       {/if}
@@ -343,7 +345,7 @@
       ></ButtonSpinner>
 
       {#if selectedUserId !== authorId}
-        <Tooltip defaultClass="tooltip-update-button">
+        <Tooltip preferredPos={preferPos}>
           <p>owner only permission</p>
         </Tooltip>
       {/if}

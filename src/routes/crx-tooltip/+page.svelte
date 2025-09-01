@@ -64,7 +64,7 @@
     if (preferPos.includes(pos)) {
       // remove the position from the list
       preferPos = preferPos.replace(pos + ',', '');
-      preferPos = pos + ',' + preferPos;
+      preferPos = (pos + ',' + preferPos) as string;
     } else {
       // add the position to the list
       if (pos === 'clear') {
@@ -199,26 +199,6 @@
     text-align: center;
     z-index: 10;
   }
-  .grid-wrapper {
-    display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 1rem;
-    padding: 0;
-    .summary-mostly-parent {
-      font-size: 1.2rem;
-      color: var(--PRE-COLOR);
-      margin-inline-start: 1rem;
-      /* should be instead of margin-left in above details > p */
-      list-style-position: outside;
-      margin-left: 3rem;
-      cursor: pointer;
-      width: max-content;
-      padding: 0 0.5rem;
-    }
-  }
-  .text-gradient {
-    @include gradient-text();
-  }
   .hovering-button {
     margin: 0; //8rem 0 0 18rem;
     padding: 1rem;
@@ -230,42 +210,7 @@
     font-size: 17px;
     color: navy;
   }
-  /* ------------  scroller ------------ */
-  .scroller {
-    margin: 0;
-  }
-  .container {
-    margin-left: 3rem;
-    padding: 0;
-  }
-  .viewport {
-    overflow: hidden;
-    width: 100px;
-    /* border: 1px solid gray; */
-    border-radius: 5px;
-    color: navy;
-    background-color: cornsilk;
-    margin-left: 1.6rem;
-    margin-top: 1px;
-  }
 
-  .row {
-    display: flex;
-    width: 300%; /* 3 items */
-    margin-top: 0; /* to suppress interfering with animation*/
-    margin-left: -100%;
-  }
-
-  .number-box {
-    width: 100px;
-    flex-shrink: 0;
-    text-align: center;
-    font-size: 2em;
-  }
-
-  .buttons {
-    margin-top: 1rem;
-  }
   .radio-wrapper {
     // position: absolute;
     // top: 31rem;
@@ -274,9 +219,6 @@
     display: flex;
     gap: 1rem;
     margin-bottom: 2rem;
-    label {
-      margin-top: 2rem;
-    }
   }
   .preferable-info {
     margin-left: 12rem;

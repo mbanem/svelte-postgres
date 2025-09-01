@@ -111,11 +111,11 @@ different dynamic tables.
     width: 78rem;
     margin: 0 auto;
   }
-  .top-left {
-    position: absolute;
-    top: 3rem;
-    left: 0;
-  }
+  // .top-left {
+  //   position: absolute;
+  //   top: 3rem;
+  //   left: 0;
+  // }
   .span-two-columns {
     grid-column: 2 / span 2;
     margin: 0 auto;

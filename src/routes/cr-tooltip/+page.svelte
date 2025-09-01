@@ -31,6 +31,12 @@
   // ---------------------- scroller end ---------------------------------
   import Tooltip from '$components/CRTooltip.svelte';
   import { type Snippet, onMount } from 'svelte';
+  import { afterNavigate } from '$app/navigation';
+  function scrollToPosition(top: number, left: number) {
+    afterNavigate(() => {
+      window.scroll({ top, left, behavior: 'smooth' });
+    });
+  }
   // let preferPos = 'top,left,right,bottom,';
   // const getPreferredPos = () => {
   //   let list = '';
@@ -58,14 +64,14 @@
   let preferPos = $state<string>('top,left,right,bottom,');
   const setPosList = (e: MouseEvent) => {
     const target = e.target as HTMLButtonElement;
-    const pos = target.textContent;
+    const pos = target.textContent as string;
     if (preferPos.includes(pos)) {
       // remove the position from the list
       preferPos = preferPos.replace(pos + ',', '');
       preferPos = pos + ',' + preferPos;
     } else {
       // add the position to the list
-      if (pos === 'clear') {
+      if (pos === 'reset') {
         preferPos = 'top,left,right,bottom';
       } else {
         preferPos += pos + ',';
@@ -73,16 +79,17 @@
     }
   };
   onMount(() => {
-    window.scroll({
-      top: 450,
-      left: 1200,
-      behavior: 'smooth',
-    });
+    // window.scroll({
+    //   top: 450,
+    //   left: 1200,
+    //   behavior: 'smooth',
+    // });
+    scrollToPosition(80 * 16, 80 * 16);
   });
 </script>
 
-{#snippet tooltipPanel(cssStyle: string)}
-  <div class="tooltip-panel" style={cssStyle}>
+{#snippet tooltipPanelF()}
+  <div class="tooltip-panel">
     <p style="color:lightgreen;font-size:22px;margin:0;">
       Filip Isakovic, Junior
     </p>
@@ -92,13 +99,17 @@
   </div>
 {/snippet}
 
+{#snippet tooltipPanelM()}
+  <div class="tooltip-panel">
+    <p style="color:lightgreen;font-size:22px;margin:0;">Matia Isakovic</p>
+    <p>6524 Cascade St.</p>
+    <p>San Diego, 92122</p>
+    <p>California</p>
+  </div>
+{/snippet}
+
 <div class="tooltip-wrapper">
-  <Tooltip
-    {...props}
-    preferredPos={preferPos}
-    {tooltipPanel}
-    class_tooltipPanel={'css-prop-class_tooltipPanel'}
-  >
+  <Tooltip {...props} preferredPos={preferPos} tooltipPanel={tooltipPanelF}>
     <button class="hovering-button" onclick={printReport}>
       Filip Isakovic
     </button>
@@ -107,7 +118,7 @@
   <input class="input" bind:value={preferPos} />
   <p class="preferable-info">Clicking a button sets it preferable</p>
   <div class="radio-wrapper">
-    {#each ['top', 'left', 'right', 'bottom', 'clear'] as caption}
+    {#each ['top', 'left', 'right', 'bottom', 'reset'] as caption}
       <button onclick={setPosList}>{caption}</button>
     {/each}
   </div>
@@ -119,8 +130,12 @@
   next available positions from the input
   box that you can enter the next list
   </pre>
+  <Tooltip {...props} preferredPos={preferPos} tooltipPanel={tooltipPanelM}>
+    <button class="hovering-button" onclick={printReport}>
+      Matia Isakovic
+    </button>
+  </Tooltip>
 </div>
-
 <!-- TEST if first preferred has no space try succeeding one by one -->
 <!-- <p style="margin:100rem 0 0 130rem">100rem x 100rem</p> -->
 <div
@@ -174,7 +189,8 @@
   }
   .tooltip-wrapper {
     width: max-content;
-    margin: 45rem 0 0 80rem;
+    margin: 80rem 0 0 80rem !important;
+    // border: 1px solid yellow;
     pre,
     .input {
       margin-left: 12rem;
@@ -201,29 +217,12 @@
     text-align: center;
     z-index: 10;
   }
-  .grid-wrapper {
-    display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 1rem;
-    padding: 0;
-    .summary-mostly-parent {
-      font-size: 1.2rem;
-      color: var(--PRE-COLOR);
-      margin-inline-start: 1rem;
-      /* should be instead of margin-left in above details > p */
-      list-style-position: outside;
-      margin-left: 3rem;
-      cursor: pointer;
-      width: max-content;
-      padding: 0 0.5rem;
-    }
-  }
-  .text-gradient {
-    @include gradient-text();
-  }
   .hovering-button {
     margin: 0; //8rem 0 0 18rem;
-    padding: 1rem;
+    padding: 6px 1rem;
+    color: white;
+    background-color: navy;
+    border-radius: 6px;
   }
   .input {
     color: navy;
@@ -232,42 +231,7 @@
     font-size: 17px;
     color: navy;
   }
-  /* ------------  scroller ------------ */
-  .scroller {
-    margin: 0;
-  }
-  .container {
-    margin-left: 3rem;
-    padding: 0;
-  }
-  .viewport {
-    overflow: hidden;
-    width: 100px;
-    /* border: 1px solid gray; */
-    border-radius: 5px;
-    color: navy;
-    background-color: cornsilk;
-    margin-left: 1.6rem;
-    margin-top: 1px;
-  }
 
-  .row {
-    display: flex;
-    width: 300%; /* 3 items */
-    margin-top: 0; /* to suppress interfering with animation*/
-    margin-left: -100%;
-  }
-
-  .number-box {
-    width: 100px;
-    flex-shrink: 0;
-    text-align: center;
-    font-size: 2em;
-  }
-
-  .buttons {
-    margin-top: 1rem;
-  }
   .radio-wrapper {
     // position: absolute;
     // top: 31rem;
@@ -276,9 +240,6 @@
     display: flex;
     gap: 1rem;
     margin-bottom: 2rem;
-    label {
-      margin-top: 2rem;
-    }
   }
   .preferable-info {
     margin-left: 12rem;

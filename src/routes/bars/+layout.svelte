@@ -21,7 +21,7 @@
   let lastName: string;
   // svelte-ignore non_reactive_update
   let email: string;
-  // svelte-ignore non_reactive_update0
+  // svelte-ignore non_reactive_update
   let password: string;
 
   let { locals, notifications, children }: ARGS = $props();

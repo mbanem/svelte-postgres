@@ -1,6 +1,7 @@
 <script lang="ts">
   import { browser } from '$app/environment';
-  let mouse = $state({ x: 0, y: 0 });
+  const xyInit = { x: 0, y: 0 };
+  let mouse = $state(xyInit);
 
   let { clearingOK }: { clearingOK: boolean } = $props();
 
@@ -51,7 +52,7 @@
   <p>{mouse.x}x{mouse.y}</p>
   <div id="dot" class="dot-class"></div>
   <!-- mouse = null  exception!-->
-  <button onclick={() => (mouse = null)}>
+  <button onclick={() => (mouse = xyInit)}>
     whatever you do, don't click this button
   </button>
 </div>
