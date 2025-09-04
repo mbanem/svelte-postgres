@@ -61,7 +61,7 @@
   const setPosList = (e: MouseEvent) => {
     const target = e.target as HTMLButtonElement;
     const pos = target.textContent;
-    if (preferPos.includes(pos)) {
+    if (preferPos.includes(pos as string)) {
       // remove the position from the list
       preferPos = preferPos.replace(pos + ',', '');
       preferPos = (pos + ',' + preferPos) as string;
@@ -79,8 +79,8 @@
   });
 </script>
 
-{#snippet tooltipPanel(cssStyle: string)}
-  <div class="tooltip-panel" style={cssStyle}>
+{#snippet tooltipPanel()}
+  <div class="tooltip-panel">
     <p style="color:lightgreen;font-size:22px;margin:0;">
       Filip Isakovic, Junior
     </p>
@@ -91,12 +91,7 @@
 {/snippet}
 
 <div class="tooltip-wrapper">
-  <Tooltip
-    {...props}
-    preferredPos={preferPos}
-    {tooltipPanel}
-    class_tooltipPanel={'css-prop-class_tooltipPanel'}
-  >
+  <Tooltip {...props} preferredPos={preferPos} {tooltipPanel}>
     <button class="hovering-button" onclick={printReport}>
       Filip Isakovic
     </button>
@@ -129,20 +124,6 @@
 <div style="position:absolute;top:94rem;left:114rem;">shim</div>
 
 <style lang="scss">
-  @mixin gradient-text(
-    $font: italic bold 50px/50px 'Helvetica',
-    $color-from: red,
-    $color-to: royalblue
-  ) {
-    font: $font;
-    // font: italic small-caps bold 60px/60px Georgia, "Comic Sans MS", serif;
-    background: linear-gradient(to right, $color-from, yellow, $color-to);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    width: max-content;
-    height: auto;
-  }
-
   /* class sent as prop to component must be wrapped in :global() */
 
   .tooltip-panel {
@@ -177,27 +158,6 @@
     .input {
       margin-left: 12rem;
     }
-    // height: 1.3rem;
-    // padding: 1rem 2rem;
-    // margin: 6rem 10rem !important;
-    // border: 1px solid gray;
-    // border-radius: 5px;
-    // color: white;
-    // background-color: navy;
-    // cursor: pointer;
-  }
-  :global(.css-prop-class_tooltipPanel) {
-    position: absolute;
-    top: 0 !important;
-    left: 0;
-    color: navy;
-    background-color: skyblue;
-    width: 14.5rem;
-    padding: 3px 1.4rem;
-    border-radius: 5px;
-    margin: 2rem 0 0 2.3rem;
-    text-align: center;
-    z-index: 10;
   }
   .hovering-button {
     margin: 0; //8rem 0 0 18rem;
@@ -212,9 +172,6 @@
   }
 
   .radio-wrapper {
-    // position: absolute;
-    // top: 31rem;
-    // left: 12rem;
     margin-left: 11rem;
     display: flex;
     gap: 1rem;

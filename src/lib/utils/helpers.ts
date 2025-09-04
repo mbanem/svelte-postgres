@@ -320,7 +320,7 @@ export const getCSSValue = (varName: string): string | undefined => {
     try{
     const declaration = ((document.styleSheets[0]?.cssRules as CSSRuleList)[0] as CSSStyleRule).style
     return declaration.getPropertyValue(varName) as string
-    }catch(err){
+    }catch(err: Error){
       console.log('getCSSValue', err.message)
     }
   }
@@ -335,7 +335,7 @@ export const setCSSValue = (varName: string, value: string) => {
         console.log('cssValue',root.style.getPropertyValue(varName))
       }
     }
-  } catch (err: Error) {
+  } catch (err: any) {
     console.log('setCSSValue', err)
   }
 }
@@ -396,7 +396,6 @@ String.prototype.capCamelCase = function () {
   // NOTE: cannot use capitalizeCamelCase for prototype name as
   // code will complain that it is a constant (referring to the above function)
   // so we use another name
-  // @ts-expect-error  -- capCamelCase does not exist on a String type
   return capitalize(capitalizeCamelCase(this as string))
 }
 export const isKeyOf = <T extends Object>(
@@ -670,7 +669,7 @@ export const pxStringLength = (str: string): string => {
   el?.remove()
   return width
 }
-export const pxElementHeight = (el: HTMLElement): string => {
+export const pxElementHeight = (el: HTMLElement): number => {
   if (!browser) return ''
   return el.getBoundingClientRect().height ?? 24
 }
@@ -687,7 +686,7 @@ export const rangeArray = (start: number, end: number) => Array.from({ length: (
 */
 
 export const fadeScale = (
-  node, { delay = 100, duration = 500, easing = x => x, baseScale = 0 }
+  node:any, { delay = 100, duration = 500, easing = (x:any) => x, baseScale = 0 }
 ) => {
 
   const opacity = +getComputedStyle(node).opacity
@@ -698,7 +697,7 @@ export const fadeScale = (
   return {
     delay,
     duration,
-    css: t => {
+    css: (t:any) => {
       const eased = easing(t)
       return `opacity: ${eased * opacity}; transform: scale(${(eased * scale * is) + baseScale})`
     }

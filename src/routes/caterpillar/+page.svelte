@@ -299,7 +299,6 @@
   /* NOTE: not used but left as interesting part */
   @for $i from 1 through 5 {
     .item-#{$i} {
-      /* background-color: rgba(255 * math.random(), 255 * math.random(), 255 * math.random(), 1); */
       background-color: list.nth($colors, math.ceil(144 * math.random()));
     }
   }

@@ -589,9 +589,9 @@
     width: 12px;
   }
 
-  .open .combo-input {
-    border-radius: 4px 4px 0 0;
-  }
+  // .open .combo-input {
+  //   border-radius: 4px 4px 0 0;
+  // }
 
   .combo-input:focus {
     /*   border-color: #0067b8; */

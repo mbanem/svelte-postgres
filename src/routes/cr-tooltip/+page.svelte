@@ -30,13 +30,8 @@
   // };
   // ---------------------- scroller end ---------------------------------
   import Tooltip from '$components/CRTooltip.svelte';
-  import { type Snippet, onMount } from 'svelte';
-  import { afterNavigate } from '$app/navigation';
-  function scrollToPosition(top: number, left: number) {
-    afterNavigate(() => {
-      window.scroll({ top, left, behavior: 'smooth' });
-    });
-  }
+  import { onMount } from 'svelte';
+  import * as utils from '$lib/utils/helpers';
   // let preferPos = 'top,left,right,bottom,';
   // const getPreferredPos = () => {
   //   let list = '';
@@ -50,6 +45,7 @@
   //   });
   //   return list;
   // };
+
   const props = {
     delay: 250,
     duration: 800,
@@ -78,19 +74,24 @@
       }
     }
   };
+
   onMount(() => {
-    // window.scroll({
-    //   top: 450,
-    //   left: 1200,
-    //   behavior: 'smooth',
-    // });
-    scrollToPosition(80 * 16, 80 * 16);
+    utils.scrollToPosition(80 * 16, 80 * 16);
+    const top = document.getElementById('top');
+    if (top) {
+      console.log(top.getBoundingClientRect());
+    }
   });
 </script>
 
+<p>TOOLBAR_HEIGHT{(globalThis as any).TOOLBAR_HEIGHT}</p>
+<div
+  id="top"
+  style="margin:0;width:10rem;height:10rem;border:1px solid yellow;background-color:aqua;"
+></div>
 {#snippet tooltipPanelF()}
   <div class="tooltip-panel">
-    <p style="color:lightgreen;font-size:22px;margin:0;">
+    <p style="color:lightgreen;font-size:22px;margin:0;padding:0;">
       Filip Isakovic, Junior
     </p>
     <p>6524 Cascade St.</p>
@@ -101,7 +102,9 @@
 
 {#snippet tooltipPanelM()}
   <div class="tooltip-panel">
-    <p style="color:lightgreen;font-size:22px;margin:0;">Matia Isakovic</p>
+    <p style="color:lightgreen;font-size:22px;margin:0;padding:0;">
+      Matia Isakovic, Senior
+    </p>
     <p>6524 Cascade St.</p>
     <p>San Diego, 92122</p>
     <p>California</p>
@@ -109,7 +112,7 @@
 {/snippet}
 
 <div class="tooltip-wrapper">
-  <Tooltip {...props} preferredPos={preferPos} tooltipPanel={tooltipPanelF}>
+  <Tooltip {...props} tooltipPanel={tooltipPanelF} preferredPos={preferPos}>
     <button class="hovering-button" onclick={printReport}>
       Filip Isakovic
     </button>
@@ -132,7 +135,7 @@
   </pre>
   <Tooltip {...props} preferredPos={preferPos} tooltipPanel={tooltipPanelM}>
     <button class="hovering-button" onclick={printReport}>
-      Matia Isakovic
+      Matia Isakovic, Senior
     </button>
   </Tooltip>
 </div>
@@ -146,20 +149,6 @@
 <div style="position:absolute;top:94rem;left:114rem;">shim</div>
 
 <style lang="scss">
-  @mixin gradient-text(
-    $font: italic bold 50px/50px 'Helvetica',
-    $color-from: red,
-    $color-to: royalblue
-  ) {
-    font: $font;
-    // font: italic small-caps bold 60px/60px Georgia, "Comic Sans MS", serif;
-    background: linear-gradient(to right, $color-from, yellow, $color-to);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    width: max-content;
-    height: auto;
-  }
-
   /* class sent as prop to component must be wrapped in :global() */
 
   .tooltip-panel {
@@ -167,8 +156,8 @@
     top: 0;
     left: 0;
     width: max-content;
-    padding: 0 1rem 0.5rem 1rem;
-    border: 3px solid yellow;
+    padding: 0 1rem 0.5rem 1rem !important;
+    border: 1px solid yellow;
     border-radius: 5px;
     color: yellow;
     background-color: navy;
@@ -195,34 +184,10 @@
     .input {
       margin-left: 12rem;
     }
-    // height: 1.3rem;
-    // padding: 1rem 2rem;
-    // margin: 6rem 10rem !important;
-    // border: 1px solid gray;
-    // border-radius: 5px;
-    // color: white;
-    // background-color: navy;
-    // cursor: pointer;
-  }
-  :global(.css-prop-class_tooltipPanel) {
-    position: absolute;
-    top: 0 !important;
-    left: 0;
-    color: navy;
-    background-color: skyblue;
-    width: 14.5rem;
-    padding: 3px 1.4rem;
-    border-radius: 5px;
-    margin: 2rem 0 0 2.3rem;
-    text-align: center;
-    z-index: 10;
   }
   .hovering-button {
     margin: 0; //8rem 0 0 18rem;
     padding: 6px 1rem;
-    color: white;
-    background-color: navy;
-    border-radius: 6px;
   }
   .input {
     color: navy;
@@ -233,9 +198,6 @@
   }
 
   .radio-wrapper {
-    // position: absolute;
-    // top: 31rem;
-    // left: 12rem;
     margin-left: 11rem;
     display: flex;
     gap: 1rem;

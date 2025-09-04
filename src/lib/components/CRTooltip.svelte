@@ -31,12 +31,18 @@ CRTooltip could accept the following props, though all are optional
     preferredPos?: string;          // When, due to scrolling, there is a lack of space around the hovering element CRTooltip
                                     // tries to find an available space following the recommended sequence by the preferredPos
                                     // prop string or, if not specified, by the default one 'top,left,right,bottom'
-    
-    toolbarHeight?: string          // If a page has a toolbar from a layout its height would impact calculation of the proper
-                                    // tooltip position required by preferredPos, so its height should be sent via props
 
   };
+  NOTE: If app uses +layout.svelte to implement a toolbar, it impacts how to check if there is space for tooltip top position
+        the app needs toolbarHeight a number (of pixels) to send to CRTooltip as a prop.
+        To avoid specifying toolbarHeight in props for every page that uses CRTooltip a global constant is declared in app.debugger.ts
+        declare global{
+          const TOOLBAR_HEIGHT: number;
+        }
+        and then initialized in some xx.ts file that runs before the pages (the /$lib/utils/index.ts is used) like the following
+        (globalThis as any).TOOLBAR_HEIGHT=60;
 
+        Then in any page we can use it as (globalThis as any).TOOLBAR_HEIGHT
 -->
 
 <script lang="ts">
@@ -110,7 +116,6 @@ CRTooltip could accept the following props, though all are optional
     tooltipPanel?: TPanel;
     children?: Snippet;
     preferredPos?: string;
-    toolbarHeight?: number;
   };
 
   let {
@@ -122,7 +127,6 @@ CRTooltip could accept the following props, though all are optional
     tooltipPanel,
     children,
     preferredPos = 'top,left,right,bottom',
-    toolbarHeight = 32,
   }: TProps = $props();
 
   console.log('captionCSS', captionCSS);
@@ -198,9 +202,6 @@ CRTooltip could accept the following props, though all are optional
       return;
     }
 
-    // Todo this screen has no toolbar so instead of 32px we set 0px,
-    // Todo otherwise top position will require 32 more pixels for tooltipPanel
-    // const toolbarHeight = 0; // 32;
     translateX = '';
 
     // is there enough space before the right side of the screen
@@ -211,7 +212,14 @@ CRTooltip could accept the following props, though all are optional
       hoverRect.top - window.scrollY + tooltipRect.height < window.innerHeight;
 
     OK.top =
-      hoverRect.top - window.scrollY - toolbarHeight > tooltipRect.height;
+      hoverRect.top - window.scrollY - (globalThis as any).TOOLBAR_HEIGHT >
+      tooltipRect.height;
+    console.log(
+      'OK/top',
+      hoverRect.top - window.scrollY - (globalThis as any).TOOLBAR_HEIGHT,
+      '>',
+      tooltipRect.height,
+    );
     OK.bottom =
       hoverRect.bottom - window.scrollY + tooltipRect.height <
       window.innerHeight;
@@ -219,20 +227,20 @@ CRTooltip could accept the following props, though all are optional
     OK.right =
       hoverRect.right - window.scrollX + tooltipRect.width < window.innerWidth;
 
-    // console.log(
-    //   'OK.top',
-    //   OK.top,
-    //   'OK.bottom',
-    //   OK.bottom,
-    //   'OK.left',
-    //   OK.left,
-    //   'OK.right',
-    //   OK.right,
-    //   'OK.leftRightBottom',
-    //   OK.leftRightBottom,
-    //   'OK.topBottomRight',
-    //   OK.topBottomRight,
-    // );
+    console.log(
+      'OK.top',
+      OK.top,
+      'OK.bottom',
+      OK.bottom,
+      'OK.left',
+      OK.left,
+      'OK.right',
+      OK.right,
+      'OK.leftRightBottom',
+      OK.leftRightBottom,
+      'OK.topBottomRight',
+      OK.topBottomRight,
+    );
 
     for (let i = 0; i < getPreferred().length; i++) {
       const pref = getPreferred();

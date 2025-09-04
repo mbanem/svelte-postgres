@@ -102,5 +102,35 @@
     "backgroundColor": "#ff4500",
     "overviewRulerColor": "#ffab00",
     "isWholeLine": false
-  }
+  },
+  "todo-tree.highlights.defaultHighlight": {
+    "type": "text-and-comment",
+    "foreground": "#ffffff",
+    "background": "#d8967e",
+    "icon": "check",
+    "iconColour": "#2ecc71",
+    "gutterIcon": true
+  },
+  "todo-tree.highlights.customHighlight": {
+    "Todo": {
+      "foreground": "#ffffff",
+      "background": "#d8967e",
+      "icon": "check",
+      "iconColour": "#2ecc71",
+      "type": "text-and-comment"
+    }
+  },
+  "todo-tree.general.tags": ["Todo", "TODO"],
+  "todo-tree.regex.regex": "(//|#|<!--|;|/\\*|^|^\\s*(-|\\d+.))\\s*($TAGS).*",
+  "todo-tree.regex.regexCaseSensitive": false,
+  "todo-tree.filtering.includeGlobs": ["**/*.ts", "**/*.tsx", "**/*.svelte"],
+  "todo-tree.filtering.excludeGlobs": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/.vscode/**",
+    "**/.next/**",
+    "**/*.min.*",
+    "**/*.map"
+  ]
 }

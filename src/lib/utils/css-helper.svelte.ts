@@ -109,7 +109,7 @@ export const styleSheetFromSelector = (selector: string) => {
 export const getAllSelectors = () => { 
     const ret: string[] = [];
     for (let i = 0; i < document.styleSheets.length; i++) {
-        const rules = document.styleSheets[i].rules || document.styleSheets[i].cssRules;
+        const rules = document.styleSheets[i]?.rules || document.styleSheets[i]?.cssRules;
         for (let x in rules) {
             if (!(rules?.[x] instanceof CSSStyleRule)) {
                 continue;

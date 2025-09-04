@@ -40,7 +40,7 @@
       <NavBar {navButtonObjects} role={data?.locals?.user?.role ?? 'VISITOR'}
       ></NavBar>
     </div>
-    <main>{@render children()}</main>
+    <main class="main">{@render children()}</main>
   {/key}
 </div>
 
@@ -54,11 +54,16 @@
   :global(body) {
     color: var(--BODY-COLOR);
     background-color: var(--BODY-BACKGROUND-COLOR);
+    margin: 0;
+    padding: 0;
   }
   .wrapper {
     padding: 0;
+    margin: 0;
+    border: none;
+    outline: none;
     width: 100vw;
-    height: 89vh;
+    height: 100vh;
     /* cannot help scrolling when selecting button Two or Three */
     overflow-anchor: none;
     background-color: var(--BODY-BACKGROUND-COLOR);
@@ -67,6 +72,10 @@
     position: fixed;
     top: 0;
     z-index: 4;
+    margin: 0;
+    padding: 0;
+    border: none;
+    outline: none;
   }
   main {
     margin-top: 3rem !important;
