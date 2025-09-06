@@ -258,6 +258,13 @@ export const id = () => {
   return (Math.random() * 10 ** 8).toString(36).replace(/\./g, '')
 }
 
+// change placeholder color to red on required messages
+export const setColor = (color: string) => {
+  if (browser) {
+    document.documentElement.style.setProperty('--PLACEHOLDER-COLOR', color);
+    setTextColor('--MESSAGE-COLOR', color === 'red' ? 'pink' : color);
+  }
+};
 export const setPlaceholderColor = (color: string) => {
   if (browser) {
     document.documentElement.style.setProperty('--PLACEHOLDER-COLOR', color)

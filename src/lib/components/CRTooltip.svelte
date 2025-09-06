@@ -129,7 +129,6 @@ CRTooltip could accept the following props, though all are optional
     preferredPos = 'top,left,right,bottom',
   }: TProps = $props();
 
-  console.log('captionCSS', captionCSS);
   // Need to define variables as the setTooltipPos function adjusted them
   // to position properly based on preferredPos settings and available
   // space around the hovering elements

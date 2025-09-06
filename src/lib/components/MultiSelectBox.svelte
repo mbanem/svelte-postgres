@@ -82,10 +82,23 @@
     selectedIds.has(id) ? remove() : add();
     selectedCategoryIds = [...selectedIds].join(',');
     // we place CSV string in selectedOptions HTML paragraph element
-    selectedOptions.innerText =
-      selectedNames.size > 0
-        ? [...selectedNames].join(',')
-        : categoryIsRequired;
+    if (selectedNames.size) {
+      // if (selectedOptions.innerText === pleaseSelect) {
+      selectedOptions.innerText = '';
+      // }
+      selectedNames.forEach((name: string) => {
+        const prev = selectedOptions.innerText;
+        selectedOptions.innerText += name + ',';
+        // if overflow-x kicks in replace last comma from previous with <br/>
+        if (selectedOptions.scrollWidth > selectedOptions.clientWidth) {
+          // name = name.replace(/\s+/g, '&nbsp;') + ',';
+          selectedOptions.innerHTML =
+            prev.replace(/,\s*$/, '<br />') +
+            name.replace(/\s+/g, '&nbsp;') +
+            ',';
+        }
+      });
+    }
     scroll();
   };
   const scroll = () => {
@@ -132,7 +145,6 @@
     {/each}
   {/key}
 </ul>
-``
 
 <style lang="scss">
   .selected-cats {
@@ -150,7 +162,8 @@
     height: auto;
   }
   .category-list {
-    margin: 8px 0 0 3rem;
+    margin: 8px 0 0 0;
+    height: 16.8rem;
   }
   ul {
     list-style: none;
@@ -158,7 +171,7 @@
     border-radius: 5px;
     padding: 8px 1rem 8px 1.5rem;
     margin: 0;
-    height: 12rem;
+    height: 12.2rem;
     width: 8rem;
     overflow-y: auto;
     li {

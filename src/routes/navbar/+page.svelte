@@ -107,16 +107,16 @@
 {#snippet snippetName()}
   <p>This is the snippet content</p>
 {/snippet}
-{@render snippetName()}
+{@render snippetName?.()}
 <!-- <NavButton label="home" title="Home" href="/" {snippetName}></NavButton> -->
 {#each buttonsList as btn}
   <p>
     <NavButton colorName={btn.color ?? 'Red'} title={btn.title} href={btn.href}>
       {#snippet media()}
         {#if btn.color}
-          {@render icon(`${btn.color}`)}
+          {@render icon?.(`${btn.color}`)}
         {:else}
-          {@render icon()}
+          {@render icon?.()}
         {/if}
       {/snippet}
     </NavButton>
@@ -125,12 +125,12 @@
 
 <NavButton title="Svelte" href="/button">
   {#snippet media()}
-    {@render profile()}
+    {@render profile?.()}
   {/snippet}
 </NavButton>
 <NavButton title="Vue" href="/counter">
   {#snippet media()}
-    {@render profile(
+    {@render profile?.(
       'https://upload.wikimedia.org/wikipedia/commons/9/95/Vue.js_Logo_2.svg',
     )}
   {/snippet}

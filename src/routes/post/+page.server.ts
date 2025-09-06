@@ -87,6 +87,10 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
 	// for Post-Category many-to-many we need array of category.ids
 	// but for multiselect we need category names as well
 	const categories: { id: number; name: string }[] = await db.category.findMany()
+	// console.log(postAuthors,
+	// 	user,
+	// 	users,
+	// 	categories);
 	return {
 		postAuthors,
 		user,

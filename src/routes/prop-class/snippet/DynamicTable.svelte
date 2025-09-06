@@ -74,9 +74,9 @@
 {/snippet}
 
 {#if Object.keys(data[0] as Data).includes('price')}
-  {@render snippet_url(fruitUrl)}
+  {@render snippet_url?.(fruitUrl)}
 {:else}
-  {@render snippet_url(employeeUrl)}
+  {@render snippet_url?.(employeeUrl)}
 {/if}
 
 <style lang="scss">

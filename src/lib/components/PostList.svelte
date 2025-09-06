@@ -15,11 +15,10 @@
 
 {#snippet tooltip(allowed: boolean, title: string)}
   <!-- NOTE the way to toggle string content based on a predicate -->
-  <Tooltip defaultClass={`tooltip_default-${allowed ? 'delete' : 'false'}`}>
-    <p>
-      {allowed ? title : 'owner only permission'}
-    </p>
-  </Tooltip>
+  <Tooltip
+    caption={allowed ? title : 'owner only permission'}
+    preferredPos="bottom,top,left,right"
+  ></Tooltip>
 {/snippet}
 
 {#snippet item_delete(allowed: boolean, pA: PAuthor)}
@@ -35,7 +34,7 @@
     >
       <span style="color:red;">X</span>
     </button>
-    {@render tooltip(allowed, 'Delete Post')}
+    {@render tooltip?.(allowed, 'Delete Post')}
   </div>
 {/snippet}
 {#snippet item_prepare_update(allowed: boolean, pA: PAuthor)}
@@ -56,7 +55,7 @@
     >
       📝
     </button>
-    {@render tooltip(allowed, 'Prepare for update')}
+    {@render tooltip?.(allowed, 'Prepare for update')}
   </div>
 {/snippet}
 
@@ -77,57 +76,110 @@
   </section>
 {/snippet}
 
-{#snippet info_panel(allowed: boolean, pA: PAuthor)}
-  <div class="tooltip-wrapper">
-    <!-- <p class="content">{pA.content}</p> -->
-    {@render title_with_content(allowed, pA)}
-    <Tooltip defaultClass="tooltip_default">
-      <p>published</p>
-      <p>{pA.published ? 'YES' : 'Not Yet'}</p>
-      <p>created at</p>
-      <p>{pA.createdAt.toLocaleString()}</p>
-      <p>updated at</p>
-      <p>{pA.updatedAt.toLocaleString()}</p>
-      <p>categories</p>
-      <p class="category-names">{pA.categoryNames}</p>
-    </Tooltip>
+{#snippet infoPanel()}
+  <!-- .info-panel{ -->
+  <p>published</p>
+  <p>{pA.published ? 'YES' : 'Not Yet'}</p>
+  <p>created at</p>
+  <p>{pA.createdAt.toLocaleString()}</p>
+  <p>updated at</p>
+  <p>{pA.updatedAt.toLocaleString()}</p>
+  <p>categories</p>
+  <p class="category-names">{pA.categoryNames}</p>
+  <!-- } -->
+{/snippet}
+
+{#snippet category_names()}
+  <div class="category-names">
+    <p>
+      Categories:
+      {#if postAuthors[0]?.categories?.length}
+        {#each postAuthors[0].categories as category, index (category.id)}
+          {category.name}{index < postAuthors[0].categories.length - 1
+            ? ', '
+            : ''}
+        {/each}
+      {:else}
+        None
+      {/if}
+    </p>
   </div>
 {/snippet}
 
+{#snippet info_panel(allowed: boolean, pA: PAuthor)}
+  <div class="tooltip-wrapper">
+    <!-- <p class="content">{pA.content}</p> -->
+    {@render title_with_content?.(allowed, pA)}
+    <Tooltip tooltipPanel={infoPanel} preferredPos="bottom,top,left,right"
+    ></Tooltip>
+  </div>
+{/snippet}
+
+<!-- Todo it was {postAuthors[0].firstName.slice(0, -1)} below-->
 <!-- <pre style="font-size:11px;">postAuthors[0] {JSON.stringify(postAuthors[0], null, 2)}</pre> -->
 <div class="post-container">
   <ul>
     {#if postAuthors[0]}
       <p class="author_name">
-        {postAuthors[0].firstName.slice(0, -1)}
+        {postAuthors[0].firstName.replace(/T$/, '')}
         {postAuthors[0].lastName}
         <span class="count"
           >{postAuthors.length} post{postAuthors.length === 1 ? '' : 's'}</span
         >
       </p>
 
-      {#each postAuthors as pA}
-        {@const isOwner = pA.author}
-        <li class="post-block">
-          <label>
-            {@render info_panel(isOwner, pA)}
-            {@render item_delete(isOwner, pA)}
-            {@render item_prepare_update(isOwner, pA)}
-          </label>
-        </li>
-      {/each}
+      {#if postAuthors}
+        {#each postAuthors as pA}
+          {@const isOwner = pA.author}
+          <li class="post-block">
+            <label>
+              {@render item_delete?.(isOwner, pA)}
+              {@render item_prepare_update?.(isOwner, pA)}
+              {@render info_panel?.(isOwner, pA)}
+            </label>
+          </li>
+        {/each}
+      {/if}
     {/if}
   </ul>
 </div>
 
 <style lang="scss">
+  .post-container {
+    // border: 1px solid gray;
+    // border-radius: 8px;
+    // padding: 0.5rem;
+    // margin: 0.5rem 0;
+    // background-color: var(--BODY-BACKGROUND-COLOR); // #3e3e3e;
+    // box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.4);
+    max-width: 40rem;
+    min-width: 20rem;
+  }
+  .info-panel {
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: 0.5rem 1rem;
+    padding: 0.5rem;
+    font-size: 14px;
+    background-color: var(--BODY-BACKGROUND-COLOR); // #3e3e3e;
+    border: 1px solid gray;
+    border-radius: 8px;
+    max-width: 20rem;
+  }
   .tooltip-wrapper {
     position: relative;
+    display: inline-block;
+
     p {
+      color: yellow;
       padding: 0 0 0 5px;
       margin: 0;
     }
-    &:hover {
+    p:first(child) {
+      color: lightgreen;
+    }
+    p &:hover {
+      color: lightgreen;
       cursor: pointer;
     }
   }
@@ -154,6 +206,7 @@
     }
   }
   .post-block {
+    position: relative;
     list-style: none;
     margin: 0.6rem 0 0 0;
     padding: 0 5px 0 0;

@@ -91,9 +91,7 @@
 ></div>
 {#snippet tooltipPanelF()}
   <div class="tooltip-panel">
-    <p style="color:lightgreen;font-size:22px;margin:0;padding:0;">
-      Filip Isakovic, Junior
-    </p>
+    <p style="color:lightgreen;">Filip Isakovic, Junior</p>
     <p>6524 Cascade St.</p>
     <p>San Diego, 92122</p>
     <p>California</p>
@@ -102,9 +100,7 @@
 
 {#snippet tooltipPanelM()}
   <div class="tooltip-panel">
-    <p style="color:lightgreen;font-size:22px;margin:0;padding:0;">
-      Matia Isakovic, Senior
-    </p>
+    <p style="color:lightgreen;">Matia Isakovic, Senior</p>
     <p>6524 Cascade St.</p>
     <p>San Diego, 92122</p>
     <p>California</p>
@@ -156,7 +152,7 @@
     top: 0;
     left: 0;
     width: max-content;
-    padding: 0 1rem 0.5rem 1rem !important;
+    padding: 3px 1rem 0.5rem 1rem !important;
     border: 1px solid yellow;
     border-radius: 5px;
     color: yellow;
@@ -174,6 +170,7 @@
     color: skyblue;
     font-family: Times;
     font-size: 22px;
+    line-height: 26px;
     padding: 3px 0 8px 0;
   }
   .tooltip-wrapper {

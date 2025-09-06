@@ -5,17 +5,18 @@
   import type { SubmitFunction } from '@sveltejs/kit';
   import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
-  import { page } from '$app/state'; // for $age.status code on actions
+  import { page } from '$app/stores'; // for $age.status code on actions
   import { onMount } from 'svelte';
   import { Tooltip } from 'flowbite-svelte';
+  import CircleSpinner from '$components/CircleSpinner.svelte';
   import ButtonSpinner from '$components/ButtonSpinner.svelte';
   import PageTitleCombo from '$components/PageTitleCombo.svelte';
   import MultiSelectBox, {
     setSelectedOptions,
   } from '$components/MultiSelectBox.svelte';
   import PostList from '$components/PostList.svelte';
-  import { hideButtonsExceptFirst } from '$lib/utils';
-  import * as utils from '$lib/utils';
+  import { hideButtonsExceptFirst } from '$utils';
+  import * as utils from '$utils';
 
   type ARGS = {
     data: PageData;
@@ -24,8 +25,9 @@
   let { data, form }: ARGS = $props();
 
   let { postAuthors } = data;
-  let message = ''; // too exclude successful form messages and include only errors
+  let message = '';
   let loading = $state<boolean>(false);
+  let ignoreFormMessage = $state<boolean>(false);
   const requiredCategory = 'Please select corresponding categories';
   let selectedUserId = $state<string>('');
   let titleIsRequired = '';
@@ -35,46 +37,45 @@
   let btnCreate: HTMLButtonElement;
   let btnDelete: HTMLButtonElement;
   let btnUpdate: HTMLButtonElement;
-
-  let updateSpinner: typeof ButtonSpinner; //TODO work with new spinner button
-  let hidden = $state(true);
-
+  let updateSpinner: typeof ButtonSpinner;
   const authorId = data?.user?.id;
+  let hidden = $state(true);
 
   let categoryIds: number[] = [];
   $effect(() => {
-    utils.setPlaceholderColor(
+    utils.setColor(
       form?.message
         ? form.message.includes('successfully')
           ? 'lightgreen'
           : 'pink'
         : 'lightgreen',
     );
-    if (wrongUser) {
-      setTimeout(() => {
-        clearForm();
-      }, 300);
-    }
   });
 
   // keep message displayed for several seconds
   const clearMessage = () => {
     setTimeout(() => {
-      message = ''; // we cannot clear form?.message as Svelte holds them read-only
+      message = '';
+      ignoreFormMessage = false;
       result = '';
       categoryIsRequired = requiredCategory;
     }, 2000);
     hideButtonsExceptFirst([btnCreate, btnUpdate, btnDelete]);
-    utils.setPlaceholderColor('lightgreen');
+    utils.setColor('lightgreen');
   };
 
   const clearForm = (event?: MouseEvent) => {
     event?.preventDefault();
     utils.shallowCopy(initialSnap, snap);
     snap.authorId = data.locals.user.id;
-    utils.hideButtonsExceptFirst([btnCreate, btnUpdate, btnDelete]);
+    // const els = ['id', 'title', 'content', 'categoryIds'];
+    // els.forEach((k) => {
+    // 	(document.querySelector(`input[name='${k}']`) as HTMLInputElement).value = '';
+    // });
+    // (document.querySelector(`input[name='published']`) as HTMLInputElement).checked = false;
     setSelectedOptions([], requiredCategory);
-    utils.setPlaceholderColor('lightgreen');
+    utils.setColor('lightgreen');
+    utils.hideButtonsExceptFirst([btnCreate, btnUpdate, btnDelete]);
   };
 
   const required = {
@@ -84,29 +85,30 @@
   };
 
   const categoryList = (arr: number[]) => {
-    return arr.map((n) => data?.categories[n - 1]?.name).join(',');
+    // @ts-expect-error
+    return arr.map((n) => data.categories[n - 1].name).join(',');
   };
   let selectedCategoryIds: () => string;
 
   /*
 		After processing the request (for example, logging the user in by setting a cookie),
 		the action can respond with data that will be available through the form property on
-		the corresponding page and through page.form app-wide until the next update.
+		the corresponding page and through $page.form app-wide until the next update.
 	*/
   const enhancePost: SubmitFunction = ({ action, formData, cancel }) => {
     //console.log('enhancePost', action.search, formData.get('id'))
-    result = '';
     if (action.search === '?/clearForm') {
       return cancel();
     }
     if (action.search !== '?/deletePost' && !snap.categoryIds) {
       categoryIsRequired = requiredCategory;
       message = 'Please select corresponding categories';
-      utils.setPlaceholderColor('pink');
+      utils.setColor('pink');
       return;
     }
 
     titleIsRequired = '';
+    ignoreFormMessage = false;
     contentIsRequired = '';
     // console.log('enhancePost1', action.search)
     for (const key of Object.keys(required)) {
@@ -138,20 +140,21 @@
     // console.log('enhancePost2 result', result)
     return async ({ update }) => {
       await update();
-      //console.log('enhancePost after action', action.search, page.status)
+      ignoreFormMessage = true;
+      //console.log('enhancePost after action', action.search, $page.status)
       if (action.search === '?/createPost') {
-        result = page.status === 200 ? 'post created' : 'create failed';
+        result = $page.status === 200 ? 'post created' : 'create failed';
       } else if (action.search === '?/deletePost') {
-        result = page.status === 200 ? 'post deleted' : 'delete failed';
+        result = $page.status === 200 ? 'post deleted' : 'delete failed';
       } else if (action.search === '?/updatePost') {
-        result = page.status === 200 ? 'post updated' : 'update failed';
+        result = $page.status === 200 ? 'post updated' : 'update failed';
       }
       invalidateAll();
       clearForm(); // also set buttons
-      // utils.hideButtonsExceptFirst([btnCreate, btnUpdate, btnDelete])
       loading = false; // stop spinner animation
+      // utils.hideButtonsExceptFirst([btnCreate, btnUpdate, btnDelete])
       clearMessage();
-      utils.setPlaceholderColor('lightgreen');
+      utils.setColor('lightgreen');
     };
   };
 
@@ -186,7 +189,6 @@
           lastName,
           role,
           author,
-          categoryNames,
         } = post;
         arr.push({
           id,
@@ -198,7 +200,6 @@
           firstName: `${firstName}${role === 'ADMIN' ? 'T' : ''}`,
           lastName,
           author,
-          categoryNames,
         });
       }
     });
@@ -223,6 +224,7 @@
     ];
 
     utils.hideButtonsExceptFirst([btnUpdate, btnCreate, btnDelete]);
+    console.log(btnUpdate.classList);
     // NOTE: in TypeScript Playground instead of using nested loops as we use below,
     // the spread operators works, but here does not
     // for (const [k,v] of Object.entries([...els])) { code here }
@@ -238,7 +240,7 @@
     ).checked = published;
     const numArr = utils.csvToNumArr(categoryIds);
     setSelectedOptions(numArr, categoryList(numArr));
-    utils.setPlaceholderColor('lightgreen');
+    utils.setColor('lightgreen');
   };
 
   const deletePost = async (id: string) => {
@@ -251,14 +253,12 @@
     (document.querySelector("input[name='id']") as HTMLInputElement).value = id;
 
     btnDelete.click();
-    await utils.sleep(2000);
+    utils.sleep(2000);
     // }
   };
 
-  // let result = $derived(
-  //   form?.message.includes('successfully') ? '' : form?.message,
-  // );
-  let result = $state<string>('');
+  let formMessage = ignoreFormMessage ? '' : form?.message || '';
+  let result = $state<string>(formMessage);
   let wrongUser = $derived(selectedUserId !== data.locals.user.id);
 
   type TSnap = {
@@ -300,7 +300,7 @@
     // if (data.postAuthors[0]) {
     // 	utils.shallowCopy(data.postAuthors[0], snap);
     // }
-    // snap.authorId = authorId as string;
+    snap.authorId = authorId as string;
     boardBlock.classList.toggle('hidden');
     selectedUserId = data.user.id as string;
     adminSelected = data.locals.user.role === 'ADMIN';
@@ -308,7 +308,7 @@
     snap.authorId = data.locals.user.id;
     setSelectedOptions([], categoryIsRequired);
     return () => {
-      utils.setMrPath(page.url.pathname);
+      utils.setMrPath($page.url.pathname);
     };
   });
 </script>
@@ -320,14 +320,15 @@
 <!-- <pre style="font-size:13px;">data {JSON.stringify(data, null, 2)}</pre> -->
 <PageTitleCombo
   PageName="Post"
-  {result}
+  bind:result
+  bind:ignoreFormMessage
   bind:selectedUserId
   user={data.locals.user}
   users={data.users}
 />
 {#snippet tooltip(title: string)}
   <!-- NOTE the way to toggle string content based on a predicate -->
-  <Tooltip defaultClass={'tooltip_default-update'}>
+  <Tooltip>
     {title}
   </Tooltip>
 {/snippet}
@@ -357,12 +358,12 @@
         bind:value={snap.title}
         placeholder={titleIsRequired || 'enter post title'}
       />
-      <textarea
-        class="post-content"
+      <input
+        type="text"
         name="content"
         bind:value={snap.content}
         placeholder={contentIsRequired || 'enter post content'}
-      ></textarea>
+      />
       <div class="multi-select-container">
         <MultiSelectBox
           categories={data.categories}
@@ -455,9 +456,9 @@
     border: 1px solid gray;
     border-radius: 8px;
     z-index: 6;
-    // p:nth-child(even) {
-    //   color: yellow;
-    // }
+    p:nth-child(even) {
+      color: yellow;
+    }
   }
   :global(.tooltip_default-update) {
     position: absolute;
@@ -471,9 +472,9 @@
     padding: 3px 1rem;
     text-align: center;
     z-index: 6;
-    // p {
-    //   padding: 0 1rem !important;
-    // }
+    p {
+      padding: 0 1rem !important;
+    }
   }
   .ok-hover {
     border: none; //1px solid transparent;
@@ -507,12 +508,5 @@
   label {
     display: flex;
     gap: 1.5rem;
-  }
-  .post-content {
-    /* HTML textarea on this page ignores settings for rows and cols
-      so the height and width CSS rules are used instead
-    */
-    height: 150px;
-    width: 30rem;
   }
 </style>
