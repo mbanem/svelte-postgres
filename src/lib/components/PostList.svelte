@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Tooltip } from 'flowbite-svelte';
+  import Tooltip from '$components/CRTooltip.svelte';
 
   type ARGS = {
     postAuthors: PAuthor[];
@@ -15,10 +15,11 @@
 
 {#snippet tooltip(allowed: boolean, title: string)}
   <!-- NOTE the way to toggle string content based on a predicate -->
-  <Tooltip
-    caption={allowed ? title : 'owner only permission'}
-    preferredPos="bottom,top,left,right"
-  ></Tooltip>
+  <!-- <Tooltip defaultClass={`tooltip_default-${allowed ? 'delete' : 'false'}`}> -->
+  <p>
+    {allowed ? title : 'owner only permission'}
+  </p>
+  <!-- </Tooltip> -->
 {/snippet}
 
 {#snippet item_delete(allowed: boolean, pA: PAuthor)}
@@ -34,7 +35,8 @@
     >
       <span style="color:red;">X</span>
     </button>
-    {@render tooltip?.(allowed, 'Delete Post')}
+    <Tooltip tooltipPanel={tooltip} panelArgs={[allowed, 'Delete Post']}
+    ></Tooltip>
   </div>
 {/snippet}
 {#snippet item_prepare_update(allowed: boolean, pA: PAuthor)}
@@ -109,8 +111,11 @@
 {#snippet info_panel(allowed: boolean, pA: PAuthor)}
   <div class="tooltip-wrapper">
     <!-- <p class="content">{pA.content}</p> -->
-    {@render title_with_content?.(allowed, pA)}
-    <Tooltip tooltipPanel={infoPanel} preferredPos="bottom,top,left,right"
+    <!-- {@render title_with_content?.(allowed, pA)} -->
+    <Tooltip
+      tooltipPanel={title_with_content}
+      panelArgs={[allowed, pA]}
+      preferredPos="bottom,top,left,right"
     ></Tooltip>
   </div>
 {/snippet}

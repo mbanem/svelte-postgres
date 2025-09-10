@@ -32,6 +32,7 @@
   import Tooltip from '$components/CRTooltip.svelte';
   import { onMount } from 'svelte';
   import * as utils from '$lib/utils/helpers';
+  import { colors_hex } from '$lib/utils/helpers';
   // let preferPos = 'top,left,right,bottom,';
   // const getPreferredPos = () => {
   //   let list = '';
@@ -46,18 +47,18 @@
   //   return list;
   // };
 
-  const props = {
+  let preferPos = $state<string>('top,left,right,bottom,');
+  const props = $derived({
     delay: 250,
     duration: 800,
     baseScale: 0,
-    caption: 'Printing the Report',
-    // preferredPos: preferPos,
-  };
+    toolbarHeight: 32,
+    preferredPos: preferPos,
+  });
   const printReport = () => {
     console.log('printing the report...');
   };
 
-  let preferPos = $state<string>('top,left,right,bottom,');
   const setPosList = (e: MouseEvent) => {
     const target = e.target as HTMLButtonElement;
     const pos = target.textContent as string;
@@ -82,6 +83,34 @@
       console.log(top.getBoundingClientRect());
     }
   });
+  // type TZip = string | number;
+  type TPerson = [
+    string,
+    string,
+    string,
+    string,
+    string | number,
+    string,
+    number,
+  ];
+  const filip: TPerson = [
+    'Filip',
+    'Isakovic',
+    '6425 Cascade St.',
+    'San Diego',
+    92122,
+    'California',
+    6.0,
+  ];
+  const matia: TPerson = [
+    'Matia',
+    'Isakovic',
+    '6425 Cascade St.',
+    'San Diego',
+    92122,
+    'California',
+    6.1,
+  ];
 </script>
 
 <p>TOOLBAR_HEIGHT{(globalThis as any).TOOLBAR_HEIGHT}</p>
@@ -89,28 +118,20 @@
   id="top"
   style="margin:0;width:10rem;height:10rem;border:1px solid yellow;background-color:aqua;"
 ></div>
-{#snippet tooltipPanelF()}
+{#snippet userDetails(s: TPerson)}
   <div class="tooltip-panel">
-    <p style="color:lightgreen;">Filip Isakovic, Junior</p>
-    <p>6524 Cascade St.</p>
-    <p>San Diego, 92122</p>
-    <p>California</p>
-  </div>
-{/snippet}
-
-{#snippet tooltipPanelM()}
-  <div class="tooltip-panel">
-    <p style="color:lightgreen;">Matia Isakovic, Senior</p>
-    <p>6524 Cascade St.</p>
-    <p>San Diego, 92122</p>
-    <p>California</p>
+    <p style="color:lightgreen;">{s[0]} {s[1]}</p>
+    <p>{s[2]}</p>
+    <p>{s[3]} {s[4]}</p>
+    <p>{s[5]}</p>
   </div>
 {/snippet}
 
 <div class="tooltip-wrapper">
-  <Tooltip {...props} tooltipPanel={tooltipPanelF} preferredPos={preferPos}>
+  <Tooltip panel={userDetails} panelArgs={filip} {...props}>
     <button class="hovering-button" onclick={printReport}>
-      Filip Isakovic
+      {filip[0]}
+      {filip[1]}
     </button>
   </Tooltip>
   <p style="margin-left:12rem;">Change Preferred Tooltip Position</p>
@@ -129,9 +150,10 @@
   next available positions from the input
   box that you can enter the next list
   </pre>
-  <Tooltip {...props} preferredPos={preferPos} tooltipPanel={tooltipPanelM}>
+  <Tooltip panel={userDetails} panelArgs={matia} {...props}>
     <button class="hovering-button" onclick={printReport}>
-      Matia Isakovic, Senior
+      {matia[0]}
+      {matia[1]}
     </button>
   </Tooltip>
 </div>

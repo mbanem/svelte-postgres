@@ -6,23 +6,34 @@ CRTooltip could accept the following props, though all are optional
     duration?: number;
     baseScale?: number;
 
-    caption?: string;               // caption, a string, and tooltipPanel snippet are mutually exclusive.
+    caption?: string;               // caption, a string, and panel snippet are mutually exclusive.
                                     // The caption string can be styled by CSS style string or a class name
-                                    // sent as captionCSS prop. When both tooltipPanel and caption are specified 
+                                    // sent as captionCSS prop. When both panel and caption are specified 
                                     // inside the props the caption string is ignored
 
-    captionCSS?: string;            // user styling as a CSS class name or a style string applied e.g. captionCSS="caption-class'
-                                    // with :global(.caption-class){...} or with style captionCSS='font-size:14px; color:orange;'
+    captionCSS?: string;            // user styling as a CSS class name or a style string applied e.g. captionCSS='caption-class'
+                                    // with :global(.caption-class){...} or with a style captionCSS='font-size:14px; color:orange;'
+                                    // CRTooltip has a default caption CSS class .caption-default that can be overridden
+                                    // by sending a class name or style string via captionCSS prop.
 
-                                    // When parent page has several hovering elements with tooltip captions the same class name
-                                    // or a style string variable is used in props structure with a name that differ from other
-                                    // props structure if their contents are different, so there could be prop structures
-                                    // for several panels and others for some caption strings: propsPanel, propsCaption1,...
+                                    // When the parent page have several hovering elements that uses the same styling avoid
+                                    // repeating <Tooltip captionCSS="caption-class" ...> for each hovering element
+                                    // but define var props structure that includes several common props along with caption-class
+                                    // and spread it via {...props} inside <Tooltip {...props} ...> for each
+                                    // hovering element that uses the same styling
 
-    tooltipPanel?: TPanel;          // A snippet object defined by parent page and sent as object name to a component via $props().
-                                    // If caption and tooltipPanel snippet name are both specified the caption is ignored
+    panel?: TPanel;          // A snippet object defined by parent page and sent as object name to a component via $props().
+                                    // If caption and panel snippet name are both specified the caption is ignored
                                     // e.g. for {#snippet userDetails(user)} we specify $props()
-                                    // tooltipPanel={userDetails}   -- a function reference, not as a string tooltipPanel="userDetails"
+                                    // panel={userDetails}   -- a function reference, not as a string panel="userDetails"
+    panelArgs?: TPanelArgs;         // When panel accepts arguments the parent page sends to the Tooltip component panelArgs prop
+                                    // as an array of arguments to be forwarded to the panel snippet
+                                    // For instance for userDetails snippet defined as
+                                    //      {#snippet userDetails([fName, lName, isAdmin]: [string, string, boolean])}
+                                    // where args are sent as a tuple (an array of fixed length with item types)
+                                    // the parent page sends panelArgs={['John:', 'Doe', true]} to the Tooltip component
+                                    // and the Tooltip component forwards it to the userDetails snippet when rendering it
+                                    //      {@render runtimePanel?.(panelArgs)} 
 
     children?: Snippet;             // Any HTML markup content between <Tooltip> children... </Tooltip> tags.
                                     // Children is a hovering element triggering tooltip visibility via mouseenter/mouseleave
@@ -31,24 +42,20 @@ CRTooltip could accept the following props, though all are optional
     preferredPos?: string;          // When, due to scrolling, there is a lack of space around the hovering element CRTooltip
                                     // tries to find an available space following the recommended sequence by the preferredPos
                                     // prop string or, if not specified, by the default one 'top,left,right,bottom'
+    
+    toolbarHeight?: number          // If a page has a toolbar in layout its height would impact calculation of the proper
+                                    // tooltip top position required by preferredPos, so its height should be sent via props.
+                                    // Not only toolbar but the other styling including layout and styling of children block
+                                    // defined in layout. So try to find the exact value otherwise tooltip in the top position
+                                    // could be clipped on its top part 
 
   };
-  NOTE: If app uses +layout.svelte to implement a toolbar, it impacts how to check if there is space for tooltip top position
-        the app needs toolbarHeight a number (of pixels) to send to CRTooltip as a prop.
-        To avoid specifying toolbarHeight in props for every page that uses CRTooltip a global constant is declared in app.debugger.ts
-        declare global{
-          const TOOLBAR_HEIGHT: number;
-        }
-        and then initialized in some xx.ts file that runs before the pages (the /$lib/utils/index.ts is used) like the following
-        (globalThis as any).TOOLBAR_HEIGHT=60;
 
-        Then in any page we can use it as (globalThis as any).TOOLBAR_HEIGHT
 -->
 
 <script lang="ts">
-  import { cubicInOut } from 'svelte/easing'; // for animated transition
   import { type Snippet, onMount } from 'svelte';
-
+  import { cubicInOut } from 'svelte/easing'; // for animated transition
   import type { EasingFunction } from 'svelte/transition';
 
   // fade scale animation for displaying/hiding tooltip
@@ -76,7 +83,7 @@ CRTooltip could accept the following props, though all are optional
     const m = getComputedStyle(node).transform.match(/scale\(([0-9.]+)\)/);
     const scale = m ? Number(m[1]) : 1;
     const is = 1 - baseScale;
-    // console.log(translateX, translateY)
+    // console.log(translateX, translateY);
     // transform: translate uses matrix's last two entries for translate x and y
     // with scaleX=1 skewX=0 skewY=0  scaleY=1 (1-no scale and 0-no skew) just translate
     // NOTE: transform: translate is defined in the Tooltip.svelte and must specify
@@ -98,24 +105,26 @@ CRTooltip could accept the following props, though all are optional
   };
 
   const hoveringId = 'hovering-' + sixHash();
-  // as caption and tooltipPanel are mutually exclusive
+  // as caption and panel are mutually exclusive
   // even when both are received via $props()
   // we use the same tooltipPanelId for both
   // const tooltipPanelId = 'tooltip-' + sixHash();
   let tooltipPanelEl = $state<HTMLElement | null>(null);
   const round = Math.round;
 
-  type TPanel = ((className?: string) => ReturnType<Snippet>) | null;
-
+  type TPanelArgs = any[];
+  type TPanel = Snippet<[...any[]]> | null;
   type TProps = {
     delay?: number;
     duration?: number;
     baseScale?: number;
     caption?: string;
     captionCSS?: string;
-    tooltipPanel?: TPanel;
+    panel?: Snippet<[...any[]]> | null;
+    panelArgs?: TPanelArgs; // arguments to forward
     children?: Snippet;
     preferredPos?: string;
+    toolbarHeight?: number;
   };
 
   let {
@@ -124,24 +133,24 @@ CRTooltip could accept the following props, though all are optional
     baseScale = 0,
     caption = '',
     captionCSS = '',
-    tooltipPanel,
+    panel,
+    panelArgs, // arguments to forward
     children,
     preferredPos = 'top,left,right,bottom',
+    toolbarHeight = 0,
   }: TProps = $props();
 
+  // console.log('captionCSS', captionCSS);
   // Need to define variables as the setTooltipPos function adjusted them
   // to position properly based on preferredPos settings and available
   // space around the hovering elements
   let translateX = $state<string>('');
   let translateY = $state<string>('');
-  let panel: TPanel = tooltipPanel
-    ? tooltipPanel
-    : caption
-      ? captionPanel
-      : null;
 
-  if (!panel) {
-    throw new Error('tooltipPanel or caption is mandatory');
+  let runtimePanel: TPanel = panel ? panel : caption ? captionPanel : null;
+
+  if (!runtimePanel) {
+    throw new Error('panel or caption is mandatory');
   }
 
   const getPreferred = () => {
@@ -201,9 +210,23 @@ CRTooltip could accept the following props, though all are optional
       return;
     }
 
+    // console.log(
+    //   'hoverRect   runtime',
+    //   hoveringId,
+    //   hoverRec[hoveringId].hoverRect,
+    // );
+    // console.log(
+    //   'tooltipRect runtime',
+    //   '--id--',
+    //   hoverRec[hoveringId].tooltipRect,
+    // );
+    // Todo
+    // this screen has no toolbar so instead of 32px we set 0px,
+    // otherwise top position will require 32 more pixels for panel
+    // const toolbarHeight = 0; // 32;
     translateX = '';
 
-    // is there enough space before the right side of the screen
+    // is there enough space at the right side of the screen for width and for height
     OK.topBottomRight =
       hoverRect.left - window.scrollX + tooltipRect.width < window.innerWidth;
     // is there enough space before the bottom side of the screen
@@ -211,14 +234,22 @@ CRTooltip could accept the following props, though all are optional
       hoverRect.top - window.scrollY + tooltipRect.height < window.innerHeight;
 
     OK.top =
-      hoverRect.top - window.scrollY - (globalThis as any).TOOLBAR_HEIGHT >
-      tooltipRect.height;
-    console.log(
-      'OK/top',
-      hoverRect.top - window.scrollY - (globalThis as any).TOOLBAR_HEIGHT,
-      '>',
-      tooltipRect.height,
-    );
+      hoverRect.top - window.scrollY - toolbarHeight > tooltipRect.height;
+    // console.log(
+    //   'hoverRect.top',
+    //   hoverRect.top,
+    //   'window.scrollY',
+    //   window.scrollY,
+    //   'toolbarHeight',
+    //   toolbarHeight,
+    //   'tooltipRect.height',
+    //   tooltipRect.height,
+    // );
+    // console.log(
+    //   hoverRect.top - window.scrollY - toolbarHeight,
+    //   '>',
+    //   tooltipRect.height,
+    // );
     OK.bottom =
       hoverRect.bottom - window.scrollY + tooltipRect.height <
       window.innerHeight;
@@ -226,20 +257,20 @@ CRTooltip could accept the following props, though all are optional
     OK.right =
       hoverRect.right - window.scrollX + tooltipRect.width < window.innerWidth;
 
-    console.log(
-      'OK.top',
-      OK.top,
-      'OK.bottom',
-      OK.bottom,
-      'OK.left',
-      OK.left,
-      'OK.right',
-      OK.right,
-      'OK.leftRightBottom',
-      OK.leftRightBottom,
-      'OK.topBottomRight',
-      OK.topBottomRight,
-    );
+    // console.log(
+    //   'OK.top',
+    //   OK.top,
+    //   'OK.bottom',
+    //   OK.bottom,
+    //   'OK.left',
+    //   OK.left,
+    //   'OK.right',
+    //   OK.right,
+    //   'OK.leftRightBottom',
+    //   OK.leftRightBottom,
+    //   'OK.topBottomRight',
+    //   OK.topBottomRight,
+    // );
 
     for (let i = 0; i < getPreferred().length; i++) {
       const pref = getPreferred();
@@ -297,18 +328,17 @@ CRTooltip could accept the following props, though all are optional
 
   onMount(() => {
     setTimeout(() => {
-      // tooltipPanelEl holds tooltipPanel or captionPanel
+      // tooltipPanelEl holds panel or captionPanel
       // depending on the $props() passed to this component
-      // and we take the child as a panel
+      // and we take the child as a runtimePanel
       // const ttPanelWrapper = document.getElementById(
       //   tooltipPanelId,
       // ) as HTMLElement;
 
       // if (ttPanelWrapper) {
       if (tooltipPanelEl) {
-        // ttPanel is tooltipPanel  or captionPanel to be show as a tooltip
+        // ttPanel is panel  or captionPanel to be show as a tooltip
         const ttPanel = tooltipPanelEl.children[0] as HTMLElement;
-
         // hoveringEl is the element that triggers the tooltip
 
         // child wrapper children are hovering elements mouseenter/mouseleave
@@ -321,8 +351,16 @@ CRTooltip could accept the following props, though all are optional
             ttPanel.getBoundingClientRect() as DOMRect,
           );
 
-          // console.log('hoverRect', hoverRec[hoveringId].hoverRect);
-          // console.log('tooltipRect', hoverRec[hoveringId].tooltipRect);
+          // console.log(
+          //   'hoverRect   initial',
+          //   hoveringId,
+          //   hoverRec[hoveringId].hoverRect,
+          // );
+          // console.log(
+          //   'tooltipRect initial',
+          //   '--id--',
+          //   hoverRec[hoveringId].tooltipRect,
+          // );
         }
 
         // Clean up after logging
@@ -338,7 +376,8 @@ CRTooltip could accept the following props, though all are optional
   });
 </script>
 
-<!-- NOTE: transform:translate is defined in the fade-scale and must specify
+<!-- 
+    NOTE: transform:translate is defined in the fade-scale and must specify
     the same left/top values as the one in this tooltipPanelEl handler
 -->
 {#if initial}
@@ -347,7 +386,7 @@ CRTooltip could accept the following props, though all are optional
     style="`position:absolute;top:-9999px !important;left:-9999px !important;visibility:hidden;padding:0;margin:0;border:none;outline:none;width:max-content;"
     class="ttWrapper"
   >
-    {@render panel?.()}
+    {@render runtimePanel?.(panelArgs)}
   </div>
 {/if}
 
@@ -355,19 +394,19 @@ CRTooltip could accept the following props, though all are optional
   {#if captionCSS.includes(':')}
     <div
       bind:this={tooltipPanelEl}
-      style={captionCSS +
-        'position:absolute;top:0;left:0;margin:0;padding:0;outline:none;'}
+      class="caption-default"
+      style={captionCSS ?? ''}
     >
-      <p style="margin:0; padding:0;">{caption}</p>
+      {caption}
     </div>
   {:else}
     <div
       bind:this={tooltipPanelEl}
-      class={captionCSS}
+      class="caption-default {captionCSS}"
       style={style ??
         'padding:6px 0.5rem;margin:0 !important;height: 1rem !important;'}
     >
-      <p style="margin:0; padding:0;">{caption}</p>
+      {caption}
     </div>
   {/if}
 {/snippet}
@@ -396,9 +435,7 @@ CRTooltip could accept the following props, though all are optional
       }}
     >
       <div class="ttWrapper">
-        {@render panel?.(
-          'position:absolute;top:0;left:0;color:yellow;z-index:-10;padding:6px 0.5rem;margin:0;',
-        )}
+        {@render runtimePanel?.(panelArgs)}
       </div>
     </div>
   {/if}
@@ -417,7 +454,8 @@ CRTooltip could accept the following props, though all are optional
 
 <style>
   .child-wrapper {
-    margin: 3rem 0 0 16rem; /* just global position to adjust with other elements*/
+    /* position: relative; */
+    margin: 3rem 0 0 16rem; /* global position */
     padding: 0;
     width: max-content;
     height: auto;
@@ -426,21 +464,22 @@ CRTooltip could accept the following props, though all are optional
     z-index: 10;
   }
   .ttWrapper {
+    /* position: relative; */
     width: max-content;
     /*height: auto;*/
-    margin: 1rem !important;
-    padding: 6px 1rem !important;
+    margin: 0 !important;
+    padding: 0 !important;
     border: none;
     outline: none;
   }
   .caption-default {
-    border: 1px solid yellow;
+    border: 6px solid skyblue;
     border-radius: 5px;
     color: yellow;
     background-color: navy;
     width: max-content;
     padding: 3px 1rem;
-    margin: 0 !important;
+    margin: 0;
     text-align: center;
     font-size: 14px;
     font-family: Arial, Helvetica, sans-serif;
