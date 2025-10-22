@@ -1,15 +1,15 @@
 <script lang="ts">
+  import ButtonSpinner from '$components/ButtonSpinner.svelte';
+  import type { SubmitFunction } from '@sveltejs/kit';
+  import { enhance } from '$app/forms';
   import type { Snapshot } from '../$types';
   import { onMount } from 'svelte';
   import type { PageData, ActionData } from './$types';
-  import type { SubmitFunction } from '@sveltejs/kit';
-  import { enhance } from '$app/forms';
   import { invalidateAll } from '$app/navigation';
   import { page } from '$app/state'; // for page.status code on actions
   import { hideButtonsExceptFirst } from '$lib/utils';
-  import { Tooltip } from 'flowbite-svelte';
+  // import { Tooltip } from 'flowbite-svelte';
 
-  import ButtonSpinner from '$components/ButtonSpinner.svelte';
   import PageTitleCombo from '$components/PageTitleCombo.svelte';
   import * as utils from '$lib/utils';
 
@@ -137,8 +137,6 @@
 
       if (action.search === '?/create') {
         result = page.status === 200 ? 'Profile created' : 'create failed';
-      } else if (action.search === '?/delete') {
-        result = page.status === 200 ? 'Profile deleted' : 'delete failed';
       } else if (action.search === '?/update') {
         result = page.status === 200 ? 'Profile updated' : 'update failed';
       } else if (action.search === '?/delete') {
@@ -206,30 +204,30 @@
 </svelte:head>
 
 {#snippet tooltipBio(bio: Bio)}
-  <Tooltip class="tooltip-profile">
-    <p>
-      <span style="color:lightgreen;margin:0 1rem 0 0;"> created at</span>
-      <span class="property-value">
-        {bio.createdAt?.toLocaleString()}
-      </span>
-    </p>
-    <p>
-      <span style="color:lightgreen;margin:0 1rem 0 0;"> updated at</span>
-      <span class="property-value">
-        {bio.updatedAt?.toLocaleString()}
-      </span>
-    </p>
-  </Tooltip>
+  <!-- <Tooltip class="tooltip-profile"> -->
+  <p>
+    <span style="color:lightgreen;margin:0 1rem 0 0;"> created at</span>
+    <span class="property-value">
+      {bio.createdAt?.toLocaleString()}
+    </span>
+  </p>
+  <p>
+    <span style="color:lightgreen;margin:0 1rem 0 0;"> updated at</span>
+    <span class="property-value">
+      {bio.updatedAt?.toLocaleString()}
+    </span>
+  </p>
+  <!-- </Tooltip> -->
 {/snippet}
 {#snippet deleteIcon()}
-  <Tooltip class="tooltip-profile">
-    <p>delete the profile</p>
-  </Tooltip>
+  <!-- <Tooltip class="tooltip-profile"> -->
+  <p>delete the profile</p>
+  <!-- </Tooltip> -->
 {/snippet}
 {#snippet ownerOnly()}
-  <Tooltip class="tooltip-profile">
-    <p class="pink">Owner only permission</p>
-  </Tooltip>
+  <!-- <Tooltip class="tooltip-profile"> -->
+  <p class="pink">Owner only permission</p>
+  <!-- </Tooltip> -->
 {/snippet}
 
 <PageTitleCombo
@@ -258,9 +256,9 @@
 
         <div class="buttons">
           <ButtonSpinner
+            caption="create"
             bind:button={btnCreate}
             spinOn={loading}
-            caption="create"
             disabled={!bio.userId}
             hidden={false}
           ></ButtonSpinner>

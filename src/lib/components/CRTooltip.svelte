@@ -54,6 +54,7 @@ CRTooltip could accept the following props, though all are optional
 -->
 
 <script lang="ts">
+  //  components/CRTooltip.svelte
   import { type Snippet, onMount } from 'svelte';
   import { cubicInOut } from 'svelte/easing'; // for animated transition
   import type { EasingFunction } from 'svelte/transition';
@@ -80,10 +81,9 @@ CRTooltip could accept the following props, though all are optional
     }: IProps,
   ) => {
     const opacity = +getComputedStyle(node).opacity;
-    const m = getComputedStyle(node).transform.match(/scale\(([0-9.]+)\)/);
+    const m = getComputedStyle(node).transform.match(/scale(([0-9.]+))/);
     const scale = m ? Number(m[1]) : 1;
     const is = 1 - baseScale;
-    // console.log(translateX, translateY);
     // transform: translate uses matrix's last two entries for translate x and y
     // with scaleX=1 skewX=0 skewY=0  scaleY=1 (1-no scale and 0-no skew) just translate
     // NOTE: transform: translate is defined in the Tooltip.svelte and must specify
@@ -140,10 +140,9 @@ CRTooltip could accept the following props, though all are optional
     toolbarHeight = 0,
   }: TProps = $props();
 
-  // console.log('captionCSS', captionCSS);
   // Need to define variables as the setTooltipPos function adjusted them
   // to position properly based on preferredPos settings and available
-  // space around the hovering elements
+  // space around the hovering element
   let translateX = $state<string>('');
   let translateY = $state<string>('');
 
@@ -154,12 +153,10 @@ CRTooltip could accept the following props, though all are optional
   }
 
   const getPreferred = () => {
-    return preferredPos.replace(/\s+/g, '').split(',') as string[];
+    return preferredPos.replace(/s+/g, '').split(',') as string[];
   };
 
   let visible = $state(false);
-  // let ttRect: DOMRect | null = $state(null);
-  // let hoverRect: DOMRect | null = $state(null);
   let initial = $state(true);
 
   // the setTooltipPos examine necessary parameters for applying
@@ -201,76 +198,35 @@ CRTooltip could accept the following props, though all are optional
     // NOTE: If your app has a Toolbar its height should be included in calculation.
     // For svelte-postgres app the toolbar height is 32px
 
-    // console.log('setTooltipPos called', hoveringElement);
     const { hoverRect, tooltipRect } = hoverRec[
       hoveringElement.id
     ] as HoverData;
     if (!hoverRect || !tooltipRect) {
-      // console.log('No rectangles found for the hovering element.');
       return;
     }
 
-    // console.log(
-    //   'hoverRect   runtime',
-    //   hoveringId,
-    //   hoverRec[hoveringId].hoverRect,
-    // );
-    // console.log(
-    //   'tooltipRect runtime',
-    //   '--id--',
-    //   hoverRec[hoveringId].tooltipRect,
-    // );
-    // Todo
-    // this screen has no toolbar so instead of 32px we set 0px,
-    // otherwise top position will require 32 more pixels for panel
-    // const toolbarHeight = 0; // 32;
     translateX = '';
 
     // is there enough space at the right side of the screen for width and for height
     OK.topBottomRight =
       hoverRect.left - window.scrollX + tooltipRect.width < window.innerWidth;
+
     // is there enough space before the bottom side of the screen
     OK.leftRightBottom =
       hoverRect.top - window.scrollY + tooltipRect.height < window.innerHeight;
 
     OK.top =
       hoverRect.top - window.scrollY - toolbarHeight > tooltipRect.height;
-    // console.log(
-    //   'hoverRect.top',
-    //   hoverRect.top,
-    //   'window.scrollY',
-    //   window.scrollY,
-    //   'toolbarHeight',
-    //   toolbarHeight,
-    //   'tooltipRect.height',
-    //   tooltipRect.height,
-    // );
-    // console.log(
-    //   hoverRect.top - window.scrollY - toolbarHeight,
-    //   '>',
-    //   tooltipRect.height,
-    // );
+
     OK.bottom =
       hoverRect.bottom - window.scrollY + tooltipRect.height <
       window.innerHeight;
+
     OK.left = hoverRect.left - window.scrollX > tooltipRect.width;
+
     OK.right =
       hoverRect.right - window.scrollX + tooltipRect.width < window.innerWidth;
 
-    // console.log(
-    //   'OK.top',
-    //   OK.top,
-    //   'OK.bottom',
-    //   OK.bottom,
-    //   'OK.left',
-    //   OK.left,
-    //   'OK.right',
-    //   OK.right,
-    //   'OK.leftRightBottom',
-    //   OK.leftRightBottom,
-    //   'OK.topBottomRight',
-    //   OK.topBottomRight,
-    // );
 
     for (let i = 0; i < getPreferred().length; i++) {
       const pref = getPreferred();
@@ -302,11 +258,13 @@ CRTooltip could accept the following props, though all are optional
         default:
           break;
       }
+      // if available position is found turn the tooltip on and exit teh loop
       if (translateX !== '') {
         visible = true;
         break;
       }
     }
+    // no available position was found so we improvise
     if (translateX === '') {
       translateY = OK.top
         ? `${-tooltipRect.height}px`
@@ -335,12 +293,11 @@ CRTooltip could accept the following props, though all are optional
       //   tooltipPanelId,
       // ) as HTMLElement;
 
-      // if (ttPanelWrapper) {
       if (tooltipPanelEl) {
-        // ttPanel is panel  or captionPanel to be show as a tooltip
+        // ttPanel is a panel or a captionPanel to be show as a tooltip
         const ttPanel = tooltipPanelEl.children[0] as HTMLElement;
-        // hoveringEl is the element that triggers the tooltip
 
+        // hoveringEl is the element that triggers the tooltip
         // child wrapper children are hovering elements mouseenter/mouseleave
         const hoveringEl = document.getElementById(hoveringId) as HTMLElement;
 
@@ -350,17 +307,6 @@ CRTooltip could accept the following props, though all are optional
             hoveringEl.getBoundingClientRect() as DOMRect,
             ttPanel.getBoundingClientRect() as DOMRect,
           );
-
-          // console.log(
-          //   'hoverRect   initial',
-          //   hoveringId,
-          //   hoverRec[hoveringId].hoverRect,
-          // );
-          // console.log(
-          //   'tooltipRect initial',
-          //   '--id--',
-          //   hoverRec[hoveringId].tooltipRect,
-          // );
         }
 
         // Clean up after logging
@@ -372,13 +318,15 @@ CRTooltip could accept the following props, though all are optional
       translateX = '0px';
       translateY = '0px';
     });
-    // }
   });
 </script>
 
 <!-- 
     NOTE: transform:translate is defined in the fade-scale and must specify
     the same left/top values as the one in this tooltipPanelEl handler
+
+    On initial===true we find dimensions of tooltip panel wrapping it via 
+    @render and then destroy wrapper after getting dimensions
 -->
 {#if initial}
   <div
@@ -454,8 +402,8 @@ CRTooltip could accept the following props, though all are optional
 
 <style>
   .child-wrapper {
-    /* position: relative; */
-    margin: 3rem 0 0 16rem; /* global position */
+    display: inline-block;
+    margin: 0;
     padding: 0;
     width: max-content;
     height: auto;
@@ -473,7 +421,7 @@ CRTooltip could accept the following props, though all are optional
     outline: none;
   }
   .caption-default {
-    border: 6px solid skyblue;
+    border: 1px solid skyblue;
     border-radius: 5px;
     color: yellow;
     background-color: navy;
@@ -482,6 +430,7 @@ CRTooltip could accept the following props, though all are optional
     margin: 0;
     text-align: center;
     font-size: 14px;
+    line-height:14px;
     font-family: Arial, Helvetica, sans-serif;
     z-index: 10;
   }

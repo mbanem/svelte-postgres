@@ -1,7 +1,7 @@
 <script lang="ts">
   import { send, receive } from '$utils/transitions';
   import { flip } from 'svelte/animate';
-  import { Tooltip } from 'flowbite-svelte';
+  // import { Tooltip } from 'flowbite-svelte';
 
   type TSnippet = {
     id: string;
@@ -97,13 +97,13 @@
 <!-- css can be dynamically changed via style:rule={value} and class:class_name={predicate} -->
 {#snippet tooltip(tf: boolean, title: string)}
   {#if !tf}
-    <Tooltip>
+    <!-- <Tooltip> -->
       <p>{permission}</p>
-    </Tooltip>
+    <!-- </Tooltip> -->
   {:else}
-    <Tooltip>
+    <!-- <Tooltip> -->
       <p>{title}</p>
-    </Tooltip>
+    <!-- </Tooltip> -->
   {/if}
 {/snippet}
 

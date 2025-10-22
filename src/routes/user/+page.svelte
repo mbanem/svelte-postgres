@@ -1,148 +1,319 @@
 <script lang="ts">
-  import type { PageData } from './$types';
-  import { page } from '$app/state';
+  import type { Snapshot } from '../$types';
   import { onMount } from 'svelte';
+  import type { PageData, ActionData } from './$types';
+  import type { SubmitFunction } from '@sveltejs/kit';
+  import { enhance } from '$app/forms';
+  import { invalidateAll } from '$app/navigation';
+  import { page } from '$app/state'; // for page.status code on actions
+
   import * as utils from '$lib/utils';
-
-  // export let data: PageData;
-  let { data }: { data: PageData } = $props();
-  let user = $derived(data?.user);
-
-  onMount(() => {
-    try {
-      return () => {
-        utils.setMrPath(page.url.pathname);
-      };
-    } catch (err) {
-      console.log('user setMrPath', err);
-    }
+  import CRInput from '$lib/components/CRInput.svelte';
+  import CRSpinner from '$lib/components/CRSpinner.svelte';
+  import CRActivity from '$lib/components/CRActivity.svelte';
+  import CRTooltip from '$lib/components/CRTooltip.svelte';
+  import CRSummaryDetail from '$lib/components/CRSummaryDetail.svelte';
+  import type { User, Role, Profile, Article, Post, Category, Todo }  from '$lib/types/types';
+  type TFormData = {
+    firstName: String | null;
+    lastName: String | null;
+    email: String | null;
+    password: String | null;
+    
+  };
+  let snap = $state<TFormData>({
+    
+    firstName: null,
+    lastName: null,
+    email: null,
+    password: null
   });
-  let t: number = 0;
+
+  type ARGS = {
+    data: PageData;
+    form: ActionData;
+  };
+  let { data, form }: ARGS = $props();
+  let loading = $state<boolean>(false); // toggling the spinner
+  let btnCreate: HTMLButtonElement;
+  let btnUpdate: HTMLButtonElement;
+  let btnDelete: HTMLButtonElement;
+  let iconDelete: HTMLSpanElement;
+  let result = '';
+  const clearMessage = () => {
+    setTimeout(() => {
+      result = '';
+    }, 2000);
+  };
+
+
+  function noType(name: string){
+    return name.match(/([a-zA-z0-9_]+):?.*/)?.[1]
+  }
+
+  // include only selected fields by user via this extension
+  const nullSnap = {
+    firstName: null,
+    lastName: null,
+    email: null,
+    password: nullfirstName: null,
+    lastName: null,
+    email: null,
+    password: null
+  }
+
+  let formDataValid = $derived.by(() => {
+    for (const [key, value] of Object.entries(snap)) {
+      if (key === 'id') continue;
+      if (!value) return false;
+    }
+    return true;
+  });
+
+  const clearForm = (event?: MouseEvent | KeyboardEvent) => {
+    event?.preventDefault();
+    snap = nullSnap;
+    utils.hideButtonsExceptFirst([btnCreate, btnUpdate, btnDelete]);
+  };
+  
+  const enhanceSubmit: SubmitFunction = async ({ action, formData }) => {
+    const required:string[] = [];
+    for (const [key, value] of Object.entries(snap)) {
+      formData.set(key, value as string);
+      if(!value){
+        const req = key +' is required';
+        const el = document.querySelector('[title="' + key +'"]')
+        if (el){
+          (el as HTMLInputElement).placeholder += req;
+          required.push(req)
+        }
+      }
+    }  
+
+    if (required.join('').length){
+      return;
+    }
+    loading = true; // start spinner animation
+
+    result =
+      action.search === '?/create'
+        ? 'creating `${routeName}`...'
+        : action.search === '?/update'
+          ? 'updating `${routeName}`...'
+          : 'deleting `${routeName}`...';
+    if (action.search === '?/delete') {
+      utils.hideButtonsExceptFirst([btnDelete, btnCreate, btnUpdate]);
+    }
+
+    return async ({ update }) => {
+      await update();
+
+      if (action.search === '?/create') {
+        result = page.status === 200 ? '`${routeName}` created' : 'create failed';
+      } else if (action.search === '?/update') {
+        result = page.status === 200 ? '`${routeName}` updated' : 'update failed';
+      } else if (action.search === '?/delete') {
+        result = page.status === 200 ? '`${routeName}` deleted' : 'delete failed';
+        iconDelete.classList.toggle('hidden');
+        utils.hideButtonsExceptFirst([btnCreate, btnUpdate, btnDelete]);
+      }
+      invalidateAll();
+      await utils.sleep(1000);
+      loading = false; // stop spinner animation
+      clearForm();
+      utils.hideButtonsExceptFirst([btnCreate, btnUpdate, btnDelete]);
+      clearMessage();
+  }
+
+  // buttons_() called here
+  }
+  let owner = true;
 </script>
 
-<svelte:head>
-  <title>User</title>
-</svelte:head>
-<div class="grid-wrapper">
-  <div class="container">
-    {#if user}
-      <p class="name">{user.firstName} {user.lastName}</p>
-      <p class="email">email {user.email}</p>
-      <a class="link-button" href="/users">back to user list</a>
-      <div class="user-includes">
-        <p>Profile</p>
-        <p>{user?.profile?.bio ?? 'not provided yet'}</p>
-      </div>
-      <div class="user-includes">
-        <p>Posts</p>
-        {#each user?.posts as { title, content }, index}
-          <p>{index + 1} {title}</p>
-          <p style="padding-left:1rem;">{content}</p>
-        {/each}
-        {#if !user?.posts.length}
-          no posts so far
-        {/if}
-      </div>
-      <div class="user-includes">
-        <p>Articles</p>
-        {#each user?.articles as { title, content }}
-          <p>{title}</p>
-          <p>{content}</p>
-        {/each}
-        {#if !user?.articles.length}
-          not yet published
-        {/if}
-      </div>
-    {/if}
-  </div>
-  <div>
-    <pre style="font-size:10px;"> 
-  locals block contains <i>logged in</i> user 
-  while the user block contains properties of <i>selected</i>
-  user from the users list, so logged in could have
-  different role then the selected user
+{#snippet deleteIcon(owner: boolean)}
+  {#if owner}
+    <CRTooltip caption="delete the item">
+      <span
+        onclick={() => {
+          btnDelete.click();
+        }}
+        aria-hidden={true}
+        class="icon-delete"
+        style:cursor={owner ? 'pointer' : 'not-allowed'}
+      >
+        X
+      </span>
+    </CRTooltip>
+  {:else}
+    <CRTooltip caption="delete the item">
+      <span
+        class="icon-delete pink"
+        style:cursor={owner ? 'pointer' : 'not-allowed'}
+      >
+        X
+      </span>
+    </CRTooltip>
+  {/if}
+{/snippet}
 
+<form action="?/create" method="post" use:enhance={enhanceSubmit}>
+  <div class="form-wrapper">
+    <CRInput
+      title="firstName"
+      exportValueOn="enter|blur"
+      type="text"
+      capitalize={true}
+      bind:value={snap.firstName as string}
+      required={true}
+      width="22.5rem"
+    ></CRInput>
+    <CRInput
+      title="lastName"
+      exportValueOn="enter|blur"
+      type="text"
+      capitalize={true}
+      bind:value={snap.lastName as string}
+      required={true}
+      width="22.5rem"
+    ></CRInput>
+    <CRInput
+      title="email"
+      exportValueOn="enter|blur"
+      type="text"
+      capitalize={false}
+      bind:value={snap.email as string}
+      required={true}
+      width="22.5rem"
+    ></CRInput>
+    <CRInput
+      title="password"
+      exportValueOn="enter|blur"
+      type="password"
+      capitalize={false}
+      bind:value={snap.password as string}
+      required={true}
+      width="22.5rem"
+    ></CRInput>
 
-  {@html JSON.stringify(data, null, 2)
-        .replace(/"locals"/, '"<span style="color:lightgreen">locals</span>"')
-        .replace(/user/g, (match) =>
-          ++t === 2 ? '<span style="color:lightgreen">user</span>' : match,
-        )
-        .replace(
-          /"role": "([^"]+)"/,
-          '"role": "<span style="color:yellow">$1</span>"',
-        )
-        .replace(/USER/, "<span style='color:yellow'>USER</span>")
-        .replace(/ADMIN/g, "<span style='color:yellow'>ADMIN</span>")}
-    </pre>
+    <div class="buttons-row">
+      <div class="buttons">
+        <CRSpinner
+          bind:button={btnCreate}
+          spinOn={loading}
+          caption="create"
+          formaction="?/create"
+          disabled={!formDataValid}
+          hidden={false}
+        ></CRSpinner>
+        <CRSpinner
+          bind:button={btnUpdate}
+          spinOn={loading}
+          caption="update"
+          formaction="?/update"
+          disabled={!formDataValid}
+          hidden={true}
+        ></CRSpinner>
+        <CRSpinner
+          bind:button={btnDelete}
+          spinOn={loading}
+          caption="delete"
+          formaction="?/delete"
+          disabled={!formDataValid}
+          hidden={true}
+        ></CRSpinner>
+        <CRSpinner
+          bind:button={btnCreate}
+          spinOn={loading}
+          caption="create"
+          formaction="?/create"
+          disabled={!formDataValid}
+          hidden={false}
+        ></CRSpinner>
+        <CRSpinner
+          bind:button={btnUpdate}
+          spinOn={loading}
+          caption="update"
+          formaction="?/update"
+          disabled={!formDataValid}
+          hidden={true}
+        ></CRSpinner>
+        <CRSpinner
+          bind:button={btnDelete}
+          spinOn={loading}
+          caption="delete"
+          formaction="?/delete"
+          disabled={!formDataValid}
+          hidden={true}
+        ></CRSpinner>
+        <CRSpinner
+          bind:button={btnCreate}
+          spinOn={loading}
+          caption="create"
+          formaction="?/create"
+          disabled={!formDataValid}
+          hidden={false}
+        ></CRSpinner>
+        <CRSpinner
+          bind:button={btnUpdate}
+          spinOn={loading}
+          caption="update"
+          formaction="?/update"
+          disabled={!formDataValid}
+          hidden={true}
+        ></CRSpinner>
+        <CRSpinner
+          bind:button={btnDelete}
+          spinOn={loading}
+          caption="delete"
+          formaction="?/delete"
+          disabled={!formDataValid}
+          hidden={true}
+        ></CRSpinner>
+        <button onclick={clearForm}>clear form</button>
+      </div>
+    </div>
   </div>
+</form>
+<pre>How to use deleteIcon an HTMLSpanElement
+The delete icon X has to be rendered via render deleteIcon(true/false)
+inside a list elements item meant to be deleted specifying a boolean
+which when true allows deletion  but when false show not-allowed pointer
+and a tooltip 'owner permission'
+</pre>
+
+<div style="border:0;padding:0">
+  This is a list item to be deleted{@render deleteIcon(true)}
 </div>
 
-<!-- <pre style="font-size:11px;"> {JSON.stringify(data, null, 2)}</pre> -->
-
 <style lang="scss">
-  .grid-wrapper {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    width: 80vw;
-    column-gap: 1rem;
-    margin: 3rem auto;
-  }
-  .name {
-    font-size: 25px;
-    color: lightgreen;
-  }
-  .email {
-    display: inline-block;
-    color: rgb(136, 194, 244);
-    font-size: 18px;
-    font-style: italic;
-    cursor: not-allowed;
-  }
-
-  .user-includes {
+  .form-wrapper {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    max-height: 13.8rem;
-    margin-top: 1.5rem 0;
-    width: 40rem;
-    padding: 5px 0 10px 1rem;
-    overflow-y: auto;
-    p {
-      padding: 0;
-      margin: 4px 0 0 0;
-      &:nth-child(1) {
-        margin: 0;
-        color: lightgreen;
+    align-items: center;
+    gap: 1rem;
+    width: max-content;
+    padding: 1rem;
+    margin: 5rem auto;
+    border: 0.3px solid gray;
+    border-radius: 8px;
+    .buttons {
+      display: flex;
+      gap: 0.3rem;
+      justify-content: flex-end;
+      align-items: center;
+      button {
+        display: inline-block;
       }
     }
   }
-  a:any-link {
-    color: var(--LINK-COLOR);
-  }
-  a:hover,
-  a:focus-visible {
-    color: rgb(136, 194, 244);
-  }
-  a:active {
-    color: var(--LINK-ACTIVE);
-  }
-  .link-button {
+  .icon-delete {
     display: inline-block;
-    width: 9rem;
-    height: 1rem;
-    background: rgb(86, 75, 75);
-    padding: 4px 10px;
-    text-align: center;
+    width: max-content;
+    padding: 3px 8px;
     border: 1px solid gray;
-    border-radius: 5px;
-    color: white;
-    font-weight: 400;
-    line-height: 1rem;
-    margin-left: 4rem;
+    border-radius: 4px;
   }
-  i {
-    color: lightgreen;
+  .pink {
+    color: pink;
   }
 </style>

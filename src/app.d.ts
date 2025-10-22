@@ -1,7 +1,7 @@
 // See https://kit.svelte.dev/docs/types#app
 // for information about these interfaces
+export {};
 declare global {
- 
   type TNavBar = {
     navId: string;
     startIx: number;
@@ -237,14 +237,12 @@ declare global {
     // interface PageState {}
     // interface Platform {}
   }
-}
 
-export {};
+
 
 // See https://kit.svelte.dev/docs/types#app
 // for information about these interfaces
 
-declare global {
    const TOOLBAR_HEIGHT: number;
   // type Role = 'USER' | 'ADMIN' | 'VISITOR'
   type TNavBar = {
@@ -481,5 +479,3 @@ declare global {
     // interface Platform {}
   }
 }
-
-export {};

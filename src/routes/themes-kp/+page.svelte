@@ -1,7 +1,7 @@
 <script lang="ts">
   import './style.scss';
   // import type { ChangeEvent } from 'svelte/elements'; // from Grok /X Import ChangeEvent type
-  import { setCSSValue } from '$utils';
+  import { setCSSValue } from '$lib/utils';
   const setBackgroundColor = (
     event: Event & { currentTarget: EventTarget & HTMLSelectElement },
   ) => {

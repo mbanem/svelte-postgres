@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Tooltip } from 'flowbite-svelte';
+  // import { Tooltip } from 'flowbite-svelte';
   import FlakyComponent from './FlakyComponent.svelte';
   let divEl: HTMLDivElement;
   let clearingOK = $state(true);
@@ -23,9 +23,9 @@
 
 {#snippet tooltip(title: string)}
   <!-- cannot control tooltip styling -->
-  <Tooltip>
+  <!-- <Tooltip> -->
     {title}
-  </Tooltip>
+  <!-- </Tooltip> -->
 {/snippet}
 <svelte:boundary>
   <FlakyComponent {clearingOK}>

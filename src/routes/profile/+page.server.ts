@@ -1,12 +1,13 @@
 import { db } from '$lib/server/db';
 import type { PageServerLoad } from './$types';
-import { error, fail, type RequestEvent } from '@sveltejs/kit';
+import { error, fail } from '@sveltejs/kit';
+import type RequestEvent from '@sveltejs/kit';
 import type { Actions } from '@sveltejs/kit';
 import * as utils from '$lib/utils';
 
 export const load: PageServerLoad = (async ({ locals, cookies }) => {
   // locals holds the logged in user details
-  let userAuthToken = cookies.get('session') ?? '';
+  const userAuthToken = cookies.get('session') ?? '';
   // console.log('userAuthToken', userAuthToken);
   if (!userAuthToken) {
     throw error(400, 'User cookie not found');

@@ -4,7 +4,7 @@
   import NavBar from '$components/NavBar.svelte';
   import NavContainer from '$components/NavContainer.svelte';
   import type { TNotification } from '$lib/types/common';
-  import { Button, Modal, Label, Input, Checkbox } from 'flowbite-svelte';
+  // import { Button, Modal, Label, Input, Checkbox } from 'flowbite-svelte';
   import * as utils from '$lib/utils';
 
   type ARGS = {
@@ -152,13 +152,12 @@
       />
     </NavContainer>
   </div>
-  <Modal bind:open={formModal} autoclose={false}>
+  <!-- <Modal bind:open={formModal} autoclose={false}>
     <form
       class="nav-bar-form"
       method="POST"
       action={`/register?${getFormParams()}`}
     >
-      <!-- <form action="#"> -->
       <Input
         bind:value={firstName}
         type="text"
@@ -192,9 +191,8 @@
         required
       />
 
-      <!-- <button type="submit" class="bar-button">Register</button> -->
     </form>
-  </Modal>
+  </Modal> -->
 </main>
 <!-- <pre style="font-size:11px;">data {JSON.stringify(data, null, 2)}</pre> -->
 <div class="grid-wrapper">

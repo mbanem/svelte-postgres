@@ -7,7 +7,7 @@
   import { invalidateAll } from '$app/navigation';
   import { page } from '$app/stores'; // for $age.status code on actions
   import { onMount } from 'svelte';
-  import { Tooltip } from 'flowbite-svelte';
+  // import { Tooltip } from 'flowbite-svelte';
   import CircleSpinner from '$components/CircleSpinner.svelte';
   import ButtonSpinner from '$components/ButtonSpinner.svelte';
   import PageTitleCombo from '$components/PageTitleCombo.svelte';
@@ -15,8 +15,8 @@
     setSelectedOptions,
   } from '$components/MultiSelectBox.svelte';
   import PostList from '$components/PostList.svelte';
-  import { hideButtonsExceptFirst } from '$utils';
-  import * as utils from '$utils';
+  import { hideButtonsExceptFirst } from '$lib/utils';
+  import * as utils from '$lib/utils';
 
   type ARGS = {
     data: PageData;
@@ -328,9 +328,9 @@
 />
 {#snippet tooltip(title: string)}
   <!-- NOTE the way to toggle string content based on a predicate -->
-  <Tooltip>
-    {title}
-  </Tooltip>
+  <!-- <Tooltip> -->
+  {title}
+  <!-- </Tooltip> -->
 {/snippet}
 
 {#snippet toggle_published(title: string)}

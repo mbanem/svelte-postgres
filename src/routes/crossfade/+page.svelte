@@ -3,7 +3,7 @@
   import { onMount } from 'svelte';
   import { crossfade } from 'svelte/transition';
   import CircleSpinner from '$lib/components/CircleSpinner.svelte';
-  import { Tooltip } from 'flowbite-svelte';
+  // import { Tooltip } from 'flowbite-svelte';
   import * as utils from '$lib/utils';
   let showTooltip = false;
 
@@ -145,12 +145,12 @@
     <br style="margin-top:4rem" />
     <div class="tooltip-wrapper">
       <button style="width:100%">Post content is here having a tooltip</button>
-      <Tooltip defaultClass="tooltip_default">
-        <p>created on</p>
-        <p class="prop-value">{createdAt.toLocaleString()}</p>
-        <p>updated on</p>
-        <p class="prop-value">{updatedAt?.toLocaleString()}</p>
-      </Tooltip>
+      <!-- <Tooltip defaultClass="tooltip_default"> -->
+      <p>created on</p>
+      <p class="prop-value">{createdAt.toLocaleString()}</p>
+      <p>updated on</p>
+      <p class="prop-value">{updatedAt?.toLocaleString()}</p>
+      <!-- </Tooltip> -->
     </div>
 
     <p style="margin:5rem 0 0 5rem;">

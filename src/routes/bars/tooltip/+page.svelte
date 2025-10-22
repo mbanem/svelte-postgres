@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { Tooltip } from 'flowbite-svelte';
+  // import { Tooltip } from 'flowbite-svelte';
   // component to get CSS class prop from parent
   import Component from './Component.svelte';
   // import XTooltip from '$lib/utils/tooltip.svelte';

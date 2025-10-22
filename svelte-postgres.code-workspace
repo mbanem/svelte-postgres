@@ -1,0 +1,21 @@
+{
+	"folders": [
+		{
+			"uri": "vscode-remote://wsl+ubuntu/home/mili/TEST/svelte-postgres"
+		}
+	],
+	"remoteAuthority": "wsl+Ubuntu",
+	"settings": {
+		"indentRainbow.includedLanguages": [
+			"html"
+		],
+		"indentRainbow.indicatorStyle": "light",
+		"indentRainbow.lightIndicatorStyleLineWidth": 1,
+		"indentRainbow.colors": [
+			"rgba(255, 255, 64, 0.81)",
+			"rgba(91, 235, 91, 0.3)",
+			"rgba(216, 111, 216, 0.3)",
+			"rgba(105, 218, 218, 0.3)"
+		]
+	}
+}

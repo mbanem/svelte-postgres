@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { Tooltip } from 'flowbite-svelte';
+  // import { Tooltip } from 'flowbite-svelte';
   import { createCounter, getGlobalCounter } from '$lib/utils/counter.svelte';
   import Area from '$components/Area.svelte';
   const counter = createCounter();

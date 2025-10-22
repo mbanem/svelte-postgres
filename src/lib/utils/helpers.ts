@@ -1,4 +1,5 @@
 export {};
+(globalThis as any).TOOLBAR_HEIGHT=60;
 import { browser } from '$app/environment'
 
 import { afterNavigate } from '$app/navigation';
@@ -154,16 +155,6 @@ export const isNameChanged = (firstName: string, lastName: string) => {
   return result
 }
 
-export const sleep = async (ms: number) => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      // ms here is a dummy value but required by
-      // resolve to send out some value
-      resolve(ms)
-    }, ms)
-  })
-}
-
 export const arrStringToNumArr = (arr: string[]): Number[] => {
   return arr.map((el) => Number(el))
 }
@@ -216,6 +207,16 @@ Number.prototype[Symbol.iterator] = function* () {
     yield i
   }
 }
+
+export const sleep = async (ms: number) => {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        // ms here is a dummy but required by
+        // resolve to send out some value
+        resolve(ms)
+      }, ms)
+    })
+  }
 
 export const capitalize = (str: string) => {
   const spaceUpper = (su: string) => {

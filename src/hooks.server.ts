@@ -33,6 +33,8 @@ export const handle: Handle = (async ({ event, resolve }) => {
 	} catch (error) {
 		console.log('event.cookies.getSession', error)
 	}
+
+
 	try {
 		// we can now authenticate user if logged in
 		const user = await db.user.findUnique({
@@ -57,6 +59,6 @@ export const handle: Handle = (async ({ event, resolve }) => {
 	} catch (err) {
 		console.log('hook getUser', err)
 	}
-	// console.log('hooks user',event.locals.user)
+	console.log('hooks locals',event.locals)
 	return await resolve(event)
 }) satisfies Handle
