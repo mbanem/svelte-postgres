@@ -98,11 +98,11 @@
 {#snippet tooltip(tf: boolean, title: string)}
   {#if !tf}
     <!-- <Tooltip> -->
-      <p>{permission}</p>
+    <p>{permission}</p>
     <!-- </Tooltip> -->
   {:else}
     <!-- <Tooltip> -->
-      <p>{title}</p>
+    <p>{title}</p>
     <!-- </Tooltip> -->
   {/if}
 {/snippet}
@@ -120,9 +120,10 @@
         in:send={{ key: todo.todoId }}
         out:receive={{ key: todo.todoId }}
       >
-        <label>
+        <label for="ww">
           <input
             type="checkbox"
+            id="ww"
             in:receive={{ key: todo.todoId }}
             out:send={{ key: todo.todoId }}
             class={tuSu ? 'ok-hover' : 'no-hover'}

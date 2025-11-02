@@ -104,6 +104,7 @@
   <form method="POST" action="?/register" use:enhance={enhanceRegister}>
     <div>
       <InputBox
+        id="x1"
         title="firstName"
         bind:value={snap.firstName}
         required={true}
@@ -113,6 +114,7 @@
     </div>
     <div>
       <InputBox
+        id="x2"
         title="lastName"
         bind:value={snap.lastName}
         required={true}
@@ -122,6 +124,7 @@
     </div>
     <div>
       <InputBox
+        id="x3"
         title="email"
         bind:value={snap.email}
         required={true}
@@ -130,6 +133,7 @@
     </div>
     <div>
       <InputBox
+        id="x4"
         title="password"
         type="password"
         bind:value={snap.password}

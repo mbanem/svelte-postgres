@@ -1,4 +1,4 @@
-export {};
+
 (globalThis as any).TOOLBAR_HEIGHT=60;
 import { browser } from '$app/environment'
 
@@ -163,6 +163,7 @@ export const csvToNumArr = (s: string): number[] => {
   return s.split(',').map((el) => Number(el))
 }
 
+/*
 export const getCSSValue = (varName: string): string | undefined => {
   if (browser) {
     try{
@@ -173,6 +174,18 @@ export const getCSSValue = (varName: string): string | undefined => {
     }
   }
 }
+*/
+export const getCSSValue = (varName: string): string | undefined => {
+  if (!browser) return;
+
+  try {
+    const root = document.documentElement;
+    const value = getComputedStyle(root).getPropertyValue(varName).trim();
+    return value || undefined;
+  } catch (err) {
+    console.log('getCSSValue error:', (err as Error).message);
+  }
+};
 export const setCSSValue = (varName: string, value: string) => {
   try {
     if (browser) {
@@ -220,42 +233,28 @@ export const sleep = async (ms: number) => {
 
 export const capitalize = (str: string) => {
   const spaceUpper = (su: string) => {
+    // getting _string so return ' String' with a leading space
     return ` ${su[1]?.toUpperCase()}`
   }
   str = str[0]?.toUpperCase() + str.slice(1)
-  // /Filip(?=XX) check patterns as a positive lookahead, i.e, whether Filip in followed by XX
-  // Positive lookahead
-  // here TaylorSwift got a space between first and last name
-  // 'TaylorSwift the singer'.replace(/\b(Taylor)(?=Swift)\b/g, '$1 ')
-  // replacing Taylor by cached name $1 followed by a space '$1 '
-  // after regex replace we have: Taylor Swift the singer
   return str
     .replace(/\b[a-z](?=[a-z]{2})/g, (char) => char.toUpperCase())
+    // snake_string_format replace _ with space
     .replace(/(_\w)/, spaceUpper)
 }
 
+// @ts-expect-error
 String.prototype.capitalize = function () {
   return capitalize(this as string)
 }
 
-export const capitalizeCamelCase = (str: string) => {
-  // /Filip(?=XX) check patterns as a positive lookahead, i.e, whether Filip in followed by XX
-  // Positive lookahead
-  // here TaylorSwift got a space between first and last name
-  // 'TaylorSwift the singer'.replace(/\b(Taylor)(?=Swift)\b/g, '$1 ')
-  // replacing Taylor by cached name $1 followed by a space '$1 '
-  // after regex replace we have: Taylor Swift the singer
-  return str
-    .replace(/^\w/, c => c.toUpperCase())
-    .replace(/([a-z])(?=[A-Z])/g, '$1 ')
+export const snakeToCamel = (s:string) => {
+  return s.replace(/_([a-z])/g, (_, c:string) => c.toUpperCase());
+}
+String.prototype.snakeToCamel = function () {
+  return snakeToCamel(this as string)
 }
 
-String.prototype.capCamelCase = function () {
-  // NOTE: cannot use capitalizeCamelCase for prototype name as
-  // code will complain that it is a constant (referring to the above function)
-  // so we use another name
-  return capitalize(capitalizeCamelCase(this as string))
-}
 export const isKeyOf = <T extends Object>(
   key: keyof T,
   obj: T,

@@ -87,6 +87,7 @@
   <form method="POST" action="?/login" use:enhance={enhanceLogin}>
     <div>
       <InputBox
+        id="x1"
         type="text"
         title="firstName"
         bind:value={snap.firstName}
@@ -96,6 +97,7 @@
     </div>
     <div>
       <InputBox
+        id="x2"
         type="text"
         title="lastName"
         bind:value={snap.lastName}
@@ -105,6 +107,7 @@
     </div>
     <div>
       <InputBox
+        id="x3"
         type="text"
         title="email"
         exportValueOn="blur"
@@ -113,6 +116,7 @@
     </div>
     <div>
       <InputBox
+        id="x4"
         type="password"
         exportValueOn="blur"
         title="password"

@@ -333,10 +333,10 @@
         class:remove-info={list.length}
         style="width:max-content;padding:0;margin:0;"
       >
-        <label
+        <label for='z'
           style="cursor:pointer;width:10rem;display:inline-block;margin-top:0.5rem;"
         >
-          <input type="checkbox" class="checkbox" bind:checked={horizontal} />
+          <input id='z' type="checkbox" class="checkbox" bind:checked={horizontal} />
           <p>{horizontalLabel}</p>
         </label>
         {list_info}

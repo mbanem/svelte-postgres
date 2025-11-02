@@ -35,8 +35,7 @@
     >
       <span style="color:red;">X</span>
     </button>
-    <Tooltip tooltipPanel={tooltip} panelArgs={[allowed, 'Delete Post']}
-    ></Tooltip>
+    <Tooltip panel={tooltip} panelArgs={[allowed, 'Delete Post']}></Tooltip>
   </div>
 {/snippet}
 {#snippet item_prepare_update(allowed: boolean, pA: PAuthor)}
@@ -78,7 +77,7 @@
   </section>
 {/snippet}
 
-{#snippet infoPanel()}
+{#snippet infoPanel(pA: PostAuthor)}
   <!-- .info-panel{ -->
   <p>published</p>
   <p>{pA.published ? 'YES' : 'Not Yet'}</p>
@@ -95,9 +94,11 @@
   <div class="category-names">
     <p>
       Categories:
-      {#if postAuthors[0]?.categories?.length}
-        {#each postAuthors[0].categories as category, index (category.id)}
-          {category.name}{index < postAuthors[0].categories.length - 1
+      {#if postAuthors[0]?.categoryNames?.length}
+        {#each postAuthors[0].categoryNames as category, index (postAuthors[0].id)}
+          {postAuthors[0].firstName}
+          {postAuthors[0].lastName}{index <
+          postAuthors[0].categoryNames.length - 1
             ? ', '
             : ''}
         {/each}
@@ -113,7 +114,7 @@
     <!-- <p class="content">{pA.content}</p> -->
     <!-- {@render title_with_content?.(allowed, pA)} -->
     <Tooltip
-      tooltipPanel={title_with_content}
+      panel={title_with_content}
       panelArgs={[allowed, pA]}
       preferredPos="bottom,top,left,right"
     ></Tooltip>

@@ -1,13 +1,14 @@
 <script lang="ts">
-  //  components/CRActivity.svelte
+  // CRActivity
   import { onMount } from 'svelte';
   import * as utils from '$lib/utils';
+  import '/src/app.d';
   type ARGS = {
     PageName: string;
+    result: string;
+    selectedUserId: string;
     user: UserPartial;
     users: UserPartial[] | [];
-    selectedUserId: string;
-    result: string;
   };
   let {
     PageName,
@@ -20,8 +21,16 @@
   if (users?.length === 0) {
     users[0] = user as UserPartial;
   }
+  const selectedUserId_ = () => {
+    return selectedUserId;
+  };
+
+  const getSelectedUserRole = () => {
+    if (!users) return '';
+    return users.filter((user) => user.id === selectedUserId)[0]?.role as Role;
+  };
   // svelte-ignore non_reactive_update
-  let msgEl: HTMLSpanElement;
+  // let msgEl: HTMLSpanElement;
   // svelte-ignore non_reactive_update
   let selectBox: HTMLSelectElement;
   let timer: NodeJS.Timeout | string | number | undefined; //ReturnValue<typeof setTimeout>;
@@ -45,11 +54,11 @@
     return result;
   };
   let [userName, role] = $derived.by(() => {
-    let aUser = users?.filter((u) => u.id === selectedUserId)[0] as UserPartial;
-    if (aUser) {
-      return [`${aUser?.firstName} ${aUser?.lastName}`, aUser.role];
+    let user = users?.filter((u) => u.id === selectedUserId)[0] as UserPartial;
+    if (user) {
+      return [`${user?.firstName} ${user?.lastName}`, user.role];
     } else {
-      return [`${user.firstName} ${user.lastName}`, user.role];
+      return ['not available', 'VISITOR'];
     }
   });
 
@@ -65,7 +74,7 @@
   <span style="color:gray;font-size:24px;"
     >{utils.capitalize(PageName)} Page</span
   >
-  {#if user?.role === 'ADMIN' && users.length > 1}
+  {#if user?.role === 'ADMIN' && users && users.length > 1}
     <select bind:this={selectBox} bind:value={selectedUserId}>
       {#each users as the_user}
         <option value={the_user.id}>
@@ -74,12 +83,17 @@
         </option>
       {/each}
     </select>
-    <span class="user_name">(logged-in {user?.firstName} {user?.lastName})</span
+    <span style="font-size:11px;padding:0;margin:0;"
+      >{getSelectedUserRole()}</span
+    >
+    <span class="user_name"
+      >(logged-in {user?.firstName}
+      {user?.lastName}--<span style="font-size:11px;">{user?.role})</span></span
     >
   {/if}
-  <span class="user-name"
-    >{userName} <span style="font-size:10px;">{role}</span></span
-  >
+  <!-- <span class="user-name"
+    >{userName} <span style="font-size:11px;">{user?.role}</span></span
+  > -->
   {#key result}
     {#if result !== ''}
       <span bind:this={msgEl} class="message">{showResult()}</span>
@@ -107,11 +121,10 @@
     }
   }
   select {
-    padding: 0 1rem;
+    margin-right: -0.7rem !important;
+    padding: 1px 1rem;
     margin: 0;
-    background-color: #3e3e3e;
-    color: #a3a3a3;
-    border-radius: 5px;
-    font-size: 16px;
+    font-size: 14px;
+    line-height: 14px;
   }
 </style>

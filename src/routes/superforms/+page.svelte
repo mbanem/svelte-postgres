@@ -44,7 +44,7 @@
   // });
   const error = (err: string[] | undefined) => {
     if (err && err[0]) {
-      return err.shift(), err;
+      return (err.shift(), err);
     }
   };
 </script>
@@ -58,31 +58,42 @@
   </header>
   <form method="POST" use:enhance>
     <InputBox
+      id="x1"
       title="First Name"
-      bind:value={$form.firstName}
-      err={error($errors.firstName)}
+      bind:value={$form.firstName as string}
+      err={error($errors.firstName as string[])}
       exportValueOn="keypress"
       capitalize={true}
     />
     <InputBox
+      id="x2"
       title="Last Name"
-      bind:value={$form.lastName}
-      err={$errors.lastName}
+      bind:value={$form.lastName as string}
+      err={$errors.lastName as string[]}
       exportValueOn="keypress"
       capitalize={true}
     />
 
-    <InputBox title="eMail" bind:value={$form.email} err={$errors.email} />
     <InputBox
-      title="password"
-      type="password"
-      bind:value={$form.email}
-      err={$errors.email}
+      id="x3"
+      title="eMail"
+      bind:value={$form.email as string}
+      err={$errors.email as string[]}
     />
     <InputBox
+      id="x4"
+      title="password"
+      type="password"
+      bind:value={$form.email as string}
+      err={$errors.email as string[]}
+    />
+    <InputBox
+      id="x5"
       title="Company Name"
-      bind:value={$form.company}
-      err={$errors.company}
+      bind:value={$form.company as string}
+      as
+      string
+      err={$errors.company as string[]}
     />
     <button type="submit">Submit</button>
   </form>

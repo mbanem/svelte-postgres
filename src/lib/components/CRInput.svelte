@@ -1,5 +1,5 @@
 <script lang="ts">
-  //  components/CRInput.svelte
+  //  components/RInput.svelte
   import { browser } from '$app/environment';
   import * as utils from '$lib/utils';
   import { onMount } from 'svelte';
@@ -44,19 +44,23 @@
     clearOnInputIsReady = false,
   }: PROPS = $props();
 
-  // make capitalizes as capitalize is already defined in $Props()
-  const capitalizes = (str: string): string => {
-    try {
-      // if this is not field name but an information message
-      if (str.split(' ').length > 3) return str;
-      // @ts-expect-error
-      str = str.capCamelCase();
-      const arr = str.match(/s+/g);
-      if (!arr || arr.length > 3) return str;
-    } catch (err) {
-      console.log('capitalizes', err);
-    }
-    return str;
+  export const capitalizes = (str: string) => {
+    const spaceUpper = (su: string) => {
+      // getting _string so return ' String' with a leading space
+      return ` ${su[1]?.toUpperCase()}`;
+    };
+    str = str[0]?.toUpperCase() + str.slice(1);
+    return (
+      str
+        .replace(/[a-z](?=[a-z]{2})/g, (char) => char.toUpperCase())
+        // snake_string_format replace _ with space
+        .replace(/(_w)/, spaceUpper)
+    );
+  };
+
+  // @ts-expect-error
+  String.prototype.capitalizes = function () {
+    return capitalizes(this as string);
   };
   // NOTE: enter non breaking unicode space: type 00A0 and press Alt + X
   // here we held between apostrophes three non breaking spaces
@@ -121,7 +125,7 @@
   const onKeyUpHandler = (event: KeyboardEvent) => {
     event.preventDefault();
     if (event.key === 'Tab') return;
-    if (capitalize) {
+    if (capitalize && value) {
       // NOTE: reactive variable inputbox value does not updates
       // inputbox value when changed via script, so inputEl.value
       // as a workaround is updated instead
@@ -137,12 +141,13 @@
     }
     // already prevented blur|keypress and blur|enter
     // blur always follows if any case
-    if (!'keypress|blur|enter|blur'.includes(exportValueOn)) {
+    if (!'keypress|blur|enter|blur'.includes(exportValueOn) && value) {
       value = capitalizes(value);
       return;
     }
     if (value && value.length > 0) {
       if (capitalize) {
+        value = capitalizes(value);
       }
 
       // if input should be returned
@@ -197,6 +202,7 @@
 
 <div class="input-wrapper" style="margin:{margin};">
   <input
+    id="inp"
     bind:this={inputEl}
     type={type ? type : 'text'}
     required
@@ -206,7 +212,12 @@
     onblur={onBlurHandler}
     disabled={false}
   />
-  <label for="" onclick={setFocus} aria-hidden={true} style={`${labelStyle}`}>
+  <label
+    for="inp"
+    onclick={setFocus}
+    aria-hidden={true}
+    style={`${labelStyle}`}
+  >
     {title}
     <span class="err">
       {err ? ` - ${err}` : ''}

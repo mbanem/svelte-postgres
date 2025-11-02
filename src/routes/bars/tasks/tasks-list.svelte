@@ -9,8 +9,9 @@
 <section>
   {#each tasks as task}
     <article class="task" transition:fade>
-      <label>
+      <label for="u">
         <input
+          id="u"
           checked={task.done}
           onchange={() => toggleDone(task)}
           type="checkbox"

@@ -148,7 +148,7 @@
   };
   // captionCreate must be #state but hiddenCreateButtonSpinner must not
   let captionCreate = $state<string>('create');
-  let hiddenCreateButtonSpinner = false; // bound variable to control whether <ButtonSpinner> is hidden or not
+  let hiddenCreateButtonSpinner = $state(false); // bound variable to control whether <ButtonSpinner> is hidden or not
 
   const toggleCompleted = async (todo: UTodo) => {
     captionCreate = 'toggling';

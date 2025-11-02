@@ -28,10 +28,10 @@
     status: string;
   };
 
-  let { data }: TProps = $props();
+  let { locals, users, status }: TProps = $props();
 
-  let locals = $state<TLocals>(data.locals);
-  let users = $state<TUsers>(data.users);
+  // let locals = $state<TLocals>(data.locals);
+  // let users = $state<TUser[]>(data.users);
   console.log('locals', locals);
   console.log('users', users);
   // $: ({ users } = data);

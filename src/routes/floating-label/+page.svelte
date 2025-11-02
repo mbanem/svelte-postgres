@@ -160,13 +160,14 @@
     ></canvas>
 
     <div class="controls">
-      <label>
-        <input type="range" bind:value={size} min="30" max="200" /> size range
-        (30--200) currently
+      <label for="m">
+        <input id="m" type="range" bind:value={size} min="30" max="200" /> size
+        range (30--200) currently
         <span class="size-text">{size}</span>
       </label>
-      <label>
-        <input type="color" bind:value={color} onclick={colorOnClick} /> color
+      <label for="mm">
+        <input id="mm" type="color" bind:value={color} onclick={colorOnClick} />
+        color
       </label>
     </div>
     <label for="c">

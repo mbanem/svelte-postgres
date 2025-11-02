@@ -1,6 +1,6 @@
 
   // CRAppTypes from schema.prisma
-  export type Role = 'USER' | 'ADMIN' | 'VISITOR';
+  
   
   export type User = {
     articles: Article[];

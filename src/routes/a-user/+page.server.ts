@@ -7,21 +7,7 @@ import bcrypt from 'bcrypt'
 import * as utils from '$lib/utils';
 
 export const load: PageServerLoad = (async ({ locals, cookies }) => {
-  // // locals holds the logged in user details
-  // const userAuthToken = cookies.get('session') ?? '';
-  // // console.log('userAuthToken', userAuthToken);
-  // if (!userAuthToken) {
-  //   throw error(400, 'User cookie not found');
-  // }
 
-
-	type TKUser = {
-		id: string;
-		firstName: string;
-		lastName: string;
-		email: string;
-		role: 'VISITOR';
-	};
   const users = (await db.user.findMany({
     select: {
       id: true,
@@ -50,7 +36,7 @@ export const actions: Actions = {
 			lastName: string
 			email: string
 			password: string
-		}
+		};
 		console.log('A-User', firstName, lastName, email, password)
 
 		if (firstName === '' || lastName === '' || email === '') {

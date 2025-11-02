@@ -1,39 +1,43 @@
 <script lang="ts">
-  import type { Snapshot } from '../$types';
-  import { onMount } from 'svelte';
-  import type { PageData, ActionData } from './$types';
-  import type { SubmitFunction } from '@sveltejs/kit';
-  import { enhance } from '$app/forms';
-  import { invalidateAll } from '$app/navigation';
-  import { page } from '$app/state'; // for page.status code on actions
+import type { Snapshot } from '../$types';
+import { onMount } from 'svelte';
+import type { PageData, ActionData } from './$types';
+import type { SubmitFunction } from '@sveltejs/kit';
+import { enhance } from '$app/forms';
+import { invalidateAll } from '$app/navigation';
+import { page } from '$app/state'; // for page.status code on actions
 
-  import * as utils from '$lib/utils';
-  import CRInput from '$lib/components/CRInput.svelte';
-  import CRSpinner from '$lib/components/CRSpinner.svelte';
-  import CRActivity from '$lib/components/CRActivity.svelte';
-  import CRTooltip from '$lib/components/CRTooltip.svelte';
-  import CRSummaryDetail from '$lib/components/CRSummaryDetail.svelte';
-  import type { User, Role, Profile, Article, Post, Category, Todo }  from '$lib/types/types';
+import * as utils from '$lib/utils';
+import CRInput from '$lib/components/CRInput.svelte';
+import CRSpinner from '$lib/components/CRSpinner.svelte';
+import CRActivity from '$lib/components/CRActivity.svelte';
+import CRTooltip from '$lib/components/CRTooltip.svelte';
+import CRSummaryDetail from '$lib/components/CRSummaryDetail.svelte';
+import type { User, Role, Profile, Article, Post, Category, Todo }  from '$lib/types/types';
   type TFormData = {
+      id: String | null;
     firstName: String | null;
     lastName: String | null;
     email: String | null;
     password: String | null;
     
-  };
+};
   let snap = $state<TFormData>({
     
+    id: null,
     firstName: null,
     lastName: null,
     email: null,
     password: null
   });
 
-  type ARGS = {
-    data: PageData;
-    form: ActionData;
+type ARGS = {
+  data: PageData;
+  form: ActionData;
   };
   let { data, form }: ARGS = $props();
+
+  let selectedUserId = $state<string>(data.locals.user.id)
   let loading = $state<boolean>(false); // toggling the spinner
   let btnCreate: HTMLButtonElement;
   let btnUpdate: HTMLButtonElement;
@@ -45,23 +49,33 @@
       result = '';
     }, 2000);
   };
-
-
+      
+  const capitalize = (str:string) => {
+    const spaceUpper = (su:string) => {
+      return ` ${su[1]?.toUpperCase()}`
+    }
+          
+    return str
+    .replace(/(_\w)/, spaceUpper)
+    .replace(/\b[a-z](?=[a-z]{2})/g, (char) => char.toUpperCase())
+  }
+  
   function noType(name: string){
     return name.match(/([a-zA-z0-9_]+):?.*/)?.[1]
   }
 
   // include only selected fields by user via this extension
   const nullSnap = {
+    id: null,
     firstName: null,
     lastName: null,
-    email: null,
-    password: nullfirstName: null,
+    email: nullid: null,
+    firstName: null,
     lastName: null,
     email: null,
     password: null
   }
-
+      
   let formDataValid = $derived.by(() => {
     for (const [key, value] of Object.entries(snap)) {
       if (key === 'id') continue;
@@ -69,13 +83,13 @@
     }
     return true;
   });
-
+      
   const clearForm = (event?: MouseEvent | KeyboardEvent) => {
     event?.preventDefault();
     snap = nullSnap;
     utils.hideButtonsExceptFirst([btnCreate, btnUpdate, btnDelete]);
   };
-  
+    
   const enhanceSubmit: SubmitFunction = async ({ action, formData }) => {
     const required:string[] = [];
     for (const [key, value] of Object.entries(snap)) {
@@ -89,25 +103,25 @@
         }
       }
     }  
-
+          
     if (required.join('').length){
       return;
     }
     loading = true; // start spinner animation
-
+      
     result =
       action.search === '?/create'
-        ? 'creating `${routeName}`...'
-        : action.search === '?/update'
-          ? 'updating `${routeName}`...'
-          : 'deleting `${routeName}`...';
+      ? 'creating `${routeName}`...'
+      : action.search === '?/update'
+      ? 'updating `${routeName}`...'
+      : 'deleting `${routeName}`...';
     if (action.search === '?/delete') {
       utils.hideButtonsExceptFirst([btnDelete, btnCreate, btnUpdate]);
     }
-
+      
     return async ({ update }) => {
       await update();
-
+        
       if (action.search === '?/create') {
         result = page.status === 200 ? '`${routeName}` created' : 'create failed';
       } else if (action.search === '?/update') {
@@ -123,169 +137,241 @@
       clearForm();
       utils.hideButtonsExceptFirst([btnCreate, btnUpdate, btnDelete]);
       clearMessage();
-  }
+    }
 
-  // buttons_() called here
-  }
-  let owner = true;
-</script>
-
-{#snippet deleteIcon(owner: boolean)}
-  {#if owner}
-    <CRTooltip caption="delete the item">
-      <span
-        onclick={() => {
-          btnDelete.click();
-        }}
-        aria-hidden={true}
-        class="icon-delete"
-        style:cursor={owner ? 'pointer' : 'not-allowed'}
+        // buttons_() called here
+    }
+    let owner = true;
+    const toggleColor = (event: MouseEvent, caption?: string) => {
+		console.log('caption', caption)
+		const grandParent = (event.target as HTMLSpanElement)?.parentElement.parentElement;
+		
+    const style = grandParent?.parentElement?.style;
+    if (style){
+      style.color = style.color === 'red' ? 'blue' : 'red';
+    }
+  };
+  </script>
+  <svelte:head>
+    <title>user Page</title>
+  </svelte:head>
+  {#if 'CRInput,CRSpinner,CRActivity,CRTooltip,CRSummaryDetail'.includes('CRActivity')}
+    <CRActivity
+      PageName='user'
+      bind:result
+      bind:selectedUserId
+      user={data.locals.user}
+      users={data.users}
+    ></CRActivity>
+  {/if}
+  <form action="?/create" method="post" use:enhance={enhanceSubmit}>
+    <div class='form-wrapper'>
+      <CRInput title="id"
+        exportValueOn="enter|blur"
+        type='text'
+        capitalize={false}
+        bind:value={snap.id as string}
+        required={true}
+        width='22.5rem'
       >
-        X
+      </CRInput>
+      <CRInput title="firstName"
+        exportValueOn="enter|blur"
+        type='text'
+        capitalize={true}
+        bind:value={snap.firstName as string}
+        required={true}
+        width='22.5rem'
+      >
+      </CRInput>
+      <CRInput title="lastName"
+        exportValueOn="enter|blur"
+        type='text'
+        capitalize={true}
+        bind:value={snap.lastName as string}
+        required={true}
+        width='22.5rem'
+      >
+      </CRInput>
+      <CRInput title="email"
+        exportValueOn="enter|blur"
+        type='text'
+        capitalize={false}
+        bind:value={snap.email as string}
+        required={true}
+        width='22.5rem'
+      >
+      </CRInput>
+      <CRInput title="password"
+        exportValueOn="enter|blur"
+        type='password'
+        capitalize={false}
+        bind:value={snap.password as string}
+        required={true}
+        width='22.5rem'
+      >
+      </CRInput>
+      
+      <div class='buttons-row'>
+        <div class='buttons'>
+          <CRSpinner
+            bind:button={btnCreate}
+            spinOn={loading}
+            caption=create
+            formaction="?/create"
+            disabled={!formDataValid}
+            hidden={false}
+          >
+          </CRSpinner>
+              <CRSpinner
+            bind:button={btnUpdate}
+            spinOn={loading}
+            caption=update
+            formaction="?/update"
+            disabled={!formDataValid}
+            hidden={true}
+          >
+          </CRSpinner>
+              <CRSpinner
+            bind:button={btnDelete}
+            spinOn={loading}
+            caption=delete
+            formaction="?/delete"
+            disabled={!formDataValid}
+            hidden={true}
+          >
+          </CRSpinner>
+              <CRSpinner
+            bind:button={btnCreate}
+            spinOn={loading}
+            caption=create
+            formaction="?/create"
+            disabled={!formDataValid}
+            hidden={false}
+          >
+          </CRSpinner>
+              <CRSpinner
+            bind:button={btnUpdate}
+            spinOn={loading}
+            caption=update
+            formaction="?/update"
+            disabled={!formDataValid}
+            hidden={true}
+          >
+          </CRSpinner>
+              <CRSpinner
+            bind:button={btnDelete}
+            spinOn={loading}
+            caption=delete
+            formaction="?/delete"
+            disabled={!formDataValid}
+            hidden={true}
+          >
+          </CRSpinner>
+              <CRSpinner
+            bind:button={btnCreate}
+            spinOn={loading}
+            caption=create
+            formaction="?/create"
+            disabled={!formDataValid}
+            hidden={false}
+          >
+          </CRSpinner>
+              <CRSpinner
+            bind:button={btnUpdate}
+            spinOn={loading}
+            caption=update
+            formaction="?/update"
+            disabled={!formDataValid}
+            hidden={true}
+          >
+          </CRSpinner>
+              <CRSpinner
+            bind:button={btnDelete}
+            spinOn={loading}
+            caption=delete
+            formaction="?/delete"
+            disabled={!formDataValid}
+            hidden={true}
+          >
+          </CRSpinner>
+          <button onclick={clearForm}>clear form</button>
+        </div>
+      </div>
+    </div>
+  </form>
+<div style="border:0;padding:0; color:green;">
+  This is a list item to be deleted{@render iconHandler(
+    true,
+    'delete item',
+    'fa fa-trash',
+  )}
+</div>
+<div style="border:0;padding:0; color:green;">
+  This is a list item to be deleted by not owner{@render iconHandler(
+    false,
+    'delete item',
+    'fa fa-trash',
+  )}
+</div>
+<div style="border:0;padding:0; color:blue;">
+  This is a list item for toggling color{@render iconHandler(
+    true,
+    'toggle color',
+    'fa-duotone fa-solid fa-paint-roller',
+    (event: MouseEvent) => toggleColor(event, 'toggle color'),
+  )}
+</div>
+
+{#snippet iconHandler(
+  owner: boolean,
+  caption?: string,
+  iconClass: string,
+  clickHandler?: Function | undefined,
+)}
+  {#if owner}
+    <CRTooltip {caption}>
+      <span
+        onclick={clickHandler
+          ? (event: MouseEvent) => clickHandler(event, caption)
+          : (event: MouseEvent) =>
+              event.target &&
+              event.target.parentElement.parentElement.parentElement.remove()}
+        aria-hidden={true}
+        style:cursor={owner ? 'pointer' : 'not-allowed'}
+        style="margin=0 0.5rem;font-size:20px;color:cornsilk;border:1px solid gray;border-radius:4px;padding:2px 6px;"
+      >
+        <i class={iconClass}></i>
       </span>
     </CRTooltip>
   {:else}
-    <CRTooltip caption="delete the item">
+    <CRTooltip caption="no owner permission">
       <span
-        class="icon-delete pink"
         style:cursor={owner ? 'pointer' : 'not-allowed'}
+        style="margin=0 0.5rem;font-size:20px;color:#c3909b;border:1px solid gray;border-radius:4px;padding:2px 6px;"
       >
-        X
+        <i class={iconClass}></i>
       </span>
     </CRTooltip>
   {/if}
 {/snippet}
-
-<form action="?/create" method="post" use:enhance={enhanceSubmit}>
-  <div class="form-wrapper">
-    <CRInput
-      title="firstName"
-      exportValueOn="enter|blur"
-      type="text"
-      capitalize={true}
-      bind:value={snap.firstName as string}
-      required={true}
-      width="22.5rem"
-    ></CRInput>
-    <CRInput
-      title="lastName"
-      exportValueOn="enter|blur"
-      type="text"
-      capitalize={true}
-      bind:value={snap.lastName as string}
-      required={true}
-      width="22.5rem"
-    ></CRInput>
-    <CRInput
-      title="email"
-      exportValueOn="enter|blur"
-      type="text"
-      capitalize={false}
-      bind:value={snap.email as string}
-      required={true}
-      width="22.5rem"
-    ></CRInput>
-    <CRInput
-      title="password"
-      exportValueOn="enter|blur"
-      type="password"
-      capitalize={false}
-      bind:value={snap.password as string}
-      required={true}
-      width="22.5rem"
-    ></CRInput>
-
-    <div class="buttons-row">
-      <div class="buttons">
-        <CRSpinner
-          bind:button={btnCreate}
-          spinOn={loading}
-          caption="create"
-          formaction="?/create"
-          disabled={!formDataValid}
-          hidden={false}
-        ></CRSpinner>
-        <CRSpinner
-          bind:button={btnUpdate}
-          spinOn={loading}
-          caption="update"
-          formaction="?/update"
-          disabled={!formDataValid}
-          hidden={true}
-        ></CRSpinner>
-        <CRSpinner
-          bind:button={btnDelete}
-          spinOn={loading}
-          caption="delete"
-          formaction="?/delete"
-          disabled={!formDataValid}
-          hidden={true}
-        ></CRSpinner>
-        <CRSpinner
-          bind:button={btnCreate}
-          spinOn={loading}
-          caption="create"
-          formaction="?/create"
-          disabled={!formDataValid}
-          hidden={false}
-        ></CRSpinner>
-        <CRSpinner
-          bind:button={btnUpdate}
-          spinOn={loading}
-          caption="update"
-          formaction="?/update"
-          disabled={!formDataValid}
-          hidden={true}
-        ></CRSpinner>
-        <CRSpinner
-          bind:button={btnDelete}
-          spinOn={loading}
-          caption="delete"
-          formaction="?/delete"
-          disabled={!formDataValid}
-          hidden={true}
-        ></CRSpinner>
-        <CRSpinner
-          bind:button={btnCreate}
-          spinOn={loading}
-          caption="create"
-          formaction="?/create"
-          disabled={!formDataValid}
-          hidden={false}
-        ></CRSpinner>
-        <CRSpinner
-          bind:button={btnUpdate}
-          spinOn={loading}
-          caption="update"
-          formaction="?/update"
-          disabled={!formDataValid}
-          hidden={true}
-        ></CRSpinner>
-        <CRSpinner
-          bind:button={btnDelete}
-          spinOn={loading}
-          caption="delete"
-          formaction="?/delete"
-          disabled={!formDataValid}
-          hidden={true}
-        ></CRSpinner>
-        <button onclick={clearForm}>clear form</button>
-      </div>
-    </div>
-  </div>
-</form>
-<pre>How to use deleteIcon an HTMLSpanElement
-The delete icon X has to be rendered via render deleteIcon(true/false)
-inside a list elements item meant to be deleted specifying a boolean
-which when true allows deletion  but when false show not-allowed pointer
-and a tooltip 'owner permission'
+<pre>How to use an Font Awesome iconHandler -- a child of a parent
+It is rendered as @render iconHandler(boolean, caption, faIconClass, clickHandler?)
+The fist argument when true allows action to be carried on, otherwise
+it shows a 'not-allowed pointer' with tooltip 'no owner permission'.
+The caption argument is a tooltip text displayed with delay when icon is hovering.
+The faIconClass is the class name copied from an https://fontawesome.com/ page when
+searching for an icon and extracting className from icon <i class="className"
+  ></i>.
+A clickHandler is an optional function reference to be called when icon is
+clicked. As the icon is deeply buried in CRTooltip and span elements the user's 
+clickHandler, which gets mouse event, should access its grandParent wrapper as
+const parent = (event.target as HTMLSpanElement)?.parentElement.parentElement;
+There are three examples above two to delete the parent with owner and not owner
+and the third to toggle parent's color. 
 </pre>
 
-<div style="border:0;padding:0">
-  This is a list item to be deleted{@render deleteIcon(true)}
-</div>
-
-<style lang="scss">
+<style lang='scss'>
   .form-wrapper {
     display: flex;
     flex-direction: column;
@@ -306,14 +392,18 @@ and a tooltip 'owner permission'
       }
     }
   }
-  .icon-delete {
+  .icon-delete{
     display: inline-block;
     width: max-content;
     padding: 3px 8px;
     border: 1px solid gray;
     border-radius: 4px;
   }
-  .pink {
+  .pink{
     color: pink;
+  }
+  CRTooltip:has(> span) {
+    display: flex;
+    align-items: baseline;
   }
 </style>

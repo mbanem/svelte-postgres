@@ -23,6 +23,7 @@
 <form onsubmit={formSubmitted}>
   <label>
     <InputBox
+      id="s1"
       {...inputBoxProps}
       bind:value={newTaskTitle}
       capitalize={true}

@@ -1,5 +1,5 @@
 <script lang="ts">
-// aa-user/+page.svelte
+// aaa-user/+page.svelte
 import type { Snapshot } from '../$types';
 import { onMount } from 'svelte';
 import type { PageData, ActionData } from './$types';
@@ -16,46 +16,49 @@ import CRActivity from '$lib/components/CRActivity.svelte';
 import CRTooltip from '$lib/components/CRTooltip.svelte';
 import CRSummaryDetail from '$lib/components/CRSummaryDetail.svelte';
 
-type TFormData = {
-  firstName: String | null;
-  lastName: String | null;
-  email: String | null;
-  password: String | null;
-  
-};
-type TKUser = {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  role: 'VISITOR';
-};
-
 type ARGS = {
   data: PageData;
   form: ActionData;
 };
 let { data, form }: ARGS = $props();
 
-let snap = $state<TFormData>(data.locals.user);
-let selectedUserId = $state<string>(data.locals.user.id);
+let nullSnap = {
+  email: null,
+  firstName: null,
+  id: null,
+  lastName: null,
+  password: null,
+  role: null,
+  updatedAt: null
+} as UserPartial;
+let snap = $state<UserPartial>(data.locals.user ?? nullSnap);
+const snap_ = () => {
+  return snap;
+};
+let selectedUserId = $state<string>(
+  (data.locals.user && data.locals.user.id) ?? '',
+);
 const selectedUserId_ = () => {
   return selectedUserId;
 };
 $effect(() => {
-  const suId = selectedUserId_();
-  console.log(suId);
-  const u: TKUser = data.users.filter(
-    (user) => user.id === suId,
-  )[0] as TKUser;
-  console.log(u);
-  snap = {
-    firstName: u.firstName,
-    lastName: u.lastName,
-    email: u.email,
-    password: '',
-  };
-});
+    const suId = selectedUserId_();
+    if (suId) {
+      const u: UserPartial = data.users.filter(
+        (user) => user.id === suId,
+      )[0] as UserPartial;
+      if (u) {
+        snap = {
+          id: u.id,
+          firstName: u.firstName,
+          lastName: u.lastName,
+          email: u.email,
+          password: '',
+          role: u.role,
+        };
+      }
+    }
+  });
 let loading = $state<boolean>(false); // toggling the spinner
 let btnCreate: HTMLButtonElement;
 let btnUpdate: HTMLButtonElement;
@@ -77,22 +80,14 @@ const capitalize = (str:string) => {
   .replace(/(_\w)/, spaceUpper)
   .replace(/\b[a-z](?=[a-z]{2})/g, (char) => char.toUpperCase())
 }
-
-function noType(name: string){
-  return name.match(/([a-zA-z0-9_]+):?.*/)?.[1]
-}
-
-// include only selected fields by user via this extension
-const nullSnap = {
-  
-}
     
 let formDataValid = $derived.by(() => {
-  for (const [key, value] of Object.entries(snap)) {
-    if (key === 'id') continue;
-    if (!value) return false;
-  }
-  return true;
+  if (!snap_()) return false;
+    for (const [key, value] of Object.entries(snap_())) {
+      if (key === 'id') continue;
+      if (!value) return false;
+    }
+    return true;
 });
     
 const clearForm = (event?: MouseEvent | KeyboardEvent) => {
@@ -122,10 +117,10 @@ const enhanceSubmit: SubmitFunction = async ({ action, formData }) => {
     
   result =
     action.search === '?/create'
-    ? "creating aa-user..."
+    ? "creating aaa-user..."
     : action.search === '?/update'
-    ? "updating aa-user..."
-    : "deleting aa-user..."
+    ? "updating aaa-user..."
+    : "deleting aaa-user..."
   if (action.search === '?/delete') {
     utils.hideButtonsExceptFirst([btnDelete, btnCreate, btnUpdate]);
   }
@@ -134,11 +129,11 @@ const enhanceSubmit: SubmitFunction = async ({ action, formData }) => {
     await update();
       
     if (action.search === '?/create') {
-      result = page.status === 200 ? "aa-user created" : 'create failed';
+      result = page.status === 200 ? "aaa-user created" : 'create failed';
     } else if (action.search === '?/update') {
-      result = page.status === 200 ? "aa-user updated" : 'update failed';
+      result = page.status === 200 ? "aaa-user updated" : 'update failed';
     } else if (action.search === '?/delete') {
-      result = page.status === 200 ? "aa-user deleted" : 'delete failed';
+      result = page.status === 200 ? "aaa-user deleted" : 'delete failed';
       // iconDelete.classList.toggle('hidden');
       utils.hideButtonsExceptFirst([btnCreate, btnUpdate, btnDelete]);
     }
@@ -155,33 +150,50 @@ const enhanceSubmit: SubmitFunction = async ({ action, formData }) => {
   let owner = true;
   const toggleColor = (event: MouseEvent, caption?: string) => {
   console.log('caption', caption)
-  const grandParent = (event.target as HTMLSpanElement)?.parentElement?.parentElement;
+  const grand = (event.target as HTMLSpanElement)?.parentElement?.parentElement;
   
-  const style = grandParent?.parentElement?.style;
+  const style = grand?.parentElement?.style;
   if (style){
     style.color = style.color === 'red' ? 'blue' : 'red';
   }
 };
 </script>
 <svelte:head>
-  <title>aa-user Page</title>
+  <title>aaa-user Page</title>
 </svelte:head>
-CRInput,CRSpinner,CRActivity,CRTooltip,CRSummaryDetail.includes('CRActivity') ?
-  <CRActivity
-    PageName='aa-user'
-    bind:result
-    bind:selectedUserId
-    user={data.locals.user}
-    users={data.users}
-  ></CRActivity>
-  :'';
+<CRActivity
+  PageName='aaa-user'
+  bind:result
+  bind:selectedUserId
+  user={data.locals.user}
+  users={data.users}
+></CRActivity>
+
 <form action="?/create" method="post" use:enhance={enhanceSubmit}>
   <div class='form-wrapper'>
-    <CRInput title="firstName"
+    <CRInput title="email"
+        exportValueOn="enter|blur"
+        type='text'
+        capitalize={false}
+        bind:value={snap.email as string}
+        required={true}
+        width='22.5rem'
+      >
+      </CRInput>
+      <CRInput title="firstName"
         exportValueOn="enter|blur"
         type='text'
         capitalize={true}
         bind:value={snap.firstName as string}
+        required={true}
+        width='22.5rem'
+      >
+      </CRInput>
+      <CRInput title="id"
+        exportValueOn="enter|blur"
+        type='text'
+        capitalize={false}
+        bind:value={snap.id as string}
         required={true}
         width='22.5rem'
       >
@@ -195,20 +207,29 @@ CRInput,CRSpinner,CRActivity,CRTooltip,CRSummaryDetail.includes('CRActivity') ?
         width='22.5rem'
       >
       </CRInput>
-      <CRInput title="email"
-        exportValueOn="enter|blur"
-        type='text'
-        capitalize={false}
-        bind:value={snap.email as string}
-        required={true}
-        width='22.5rem'
-      >
-      </CRInput>
       <CRInput title="password"
         exportValueOn="enter|blur"
         type='password'
         capitalize={false}
         bind:value={snap.password as string}
+        required={true}
+        width='22.5rem'
+      >
+      </CRInput>
+      <CRInput title="role"
+        exportValueOn="enter|blur"
+        type='text'
+        capitalize={true}
+        bind:value={snap.role }
+        required={true}
+        width='22.5rem'
+      >
+      </CRInput>
+      <CRInput title="updatedAt"
+        exportValueOn="enter|blur"
+        type='text'
+        capitalize={true}
+        bind:value={snap.updatedAt }
         required={true}
         width='22.5rem'
       >
@@ -222,7 +243,7 @@ CRInput,CRSpinner,CRActivity,CRTooltip,CRSummaryDetail.includes('CRActivity') ?
             caption=create
             formaction="?/create"
             disabled={!formDataValid}
-            hidden={false}
+            hidden={!formDataValid}
           >
           </CRSpinner>
               <CRSpinner
@@ -231,7 +252,7 @@ CRInput,CRSpinner,CRActivity,CRTooltip,CRSummaryDetail.includes('CRActivity') ?
             caption=update
             formaction="?/update"
             disabled={!formDataValid}
-            hidden={true}
+            hidden={!formDataValid}
           >
           </CRSpinner>
               <CRSpinner
@@ -240,7 +261,7 @@ CRInput,CRSpinner,CRActivity,CRTooltip,CRSummaryDetail.includes('CRActivity') ?
             caption=delete
             formaction="?/delete"
             disabled={!formDataValid}
-            hidden={true}
+            hidden={!formDataValid}
           >
           </CRSpinner>
           <button onclick={clearForm}>clear form</button>

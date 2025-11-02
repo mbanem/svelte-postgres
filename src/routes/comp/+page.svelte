@@ -13,7 +13,7 @@
 </script>
 
 <form action="?/create" method="POST" use:enhance={enhanceSubmit}>
-  <input name="firstName" bind:value={firstName as string} />
+  <input id="f1" name="firstName" bind:value={firstName as string} />
   <Comp caption="submit" bind:button={btnCreate} formaction="?/create"></Comp>
   <button type="submit">submit</button>
 </form>

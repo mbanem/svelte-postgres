@@ -1,5 +1,5 @@
 <script lang="ts">
-// a-user/+page.svelte
+// a-profile/+page.svelte
 import type { Snapshot } from '../$types';
 import { onMount } from 'svelte';
 import type { PageData, ActionData } from './$types';
@@ -23,12 +23,8 @@ type ARGS = {
 let { data, form }: ARGS = $props();
 
 let nullSnap = {
-  email: null,
-  firstName: null,
+  bio: null,
   id: null,
-  lastName: null,
-  password: null,
-  role: null,
   updatedAt: null
 } as UserPartial;
 let snap = $state<UserPartial>(data.locals.user ?? nullSnap);
@@ -117,10 +113,10 @@ const enhanceSubmit: SubmitFunction = async ({ action, formData }) => {
     
   result =
     action.search === '?/create'
-    ? "creating a-user..."
+    ? "creating a-profile..."
     : action.search === '?/update'
-    ? "updating a-user..."
-    : "deleting a-user..."
+    ? "updating a-profile..."
+    : "deleting a-profile..."
   if (action.search === '?/delete') {
     utils.hideButtonsExceptFirst([btnDelete, btnCreate, btnUpdate]);
   }
@@ -129,11 +125,11 @@ const enhanceSubmit: SubmitFunction = async ({ action, formData }) => {
     await update();
       
     if (action.search === '?/create') {
-      result = page.status === 200 ? "a-user created" : 'create failed';
+      result = page.status === 200 ? "a-profile created" : 'create failed';
     } else if (action.search === '?/update') {
-      result = page.status === 200 ? "a-user updated" : 'update failed';
+      result = page.status === 200 ? "a-profile updated" : 'update failed';
     } else if (action.search === '?/delete') {
-      result = page.status === 200 ? "a-user deleted" : 'delete failed';
+      result = page.status === 200 ? "a-profile deleted" : 'delete failed';
       // iconDelete.classList.toggle('hidden');
       utils.hideButtonsExceptFirst([btnCreate, btnUpdate, btnDelete]);
     }
@@ -147,22 +143,12 @@ const enhanceSubmit: SubmitFunction = async ({ action, formData }) => {
 
       
   }
-  let owner = true;
-  const toggleColor = (event: MouseEvent, caption?: string) => {
-  console.log('caption', caption)
-  const grand = (event.target as HTMLSpanElement)?.parentElement?.parentElement;
-  
-  const style = grand?.parentElement?.style;
-  if (style){
-    style.color = style.color === 'red' ? 'blue' : 'red';
-  }
-};
 </script>
 <svelte:head>
-  <title>a-user Page</title>
+  <title>a-profile Page</title>
 </svelte:head>
 <CRActivity
-  PageName='a-user'
+  PageName='a-profile'
   bind:result
   bind:selectedUserId
   user={data.locals.user}
@@ -171,20 +157,11 @@ const enhanceSubmit: SubmitFunction = async ({ action, formData }) => {
 
 <form action="?/create" method="post" use:enhance={enhanceSubmit}>
   <div class='form-wrapper'>
-    <CRInput title="email"
-        exportValueOn="enter|blur"
-        type='text'
-        capitalize={false}
-        bind:value={snap.email as string}
-        required={true}
-        width='22.5rem'
-      >
-      </CRInput>
-      <CRInput title="firstName"
+    <CRInput title="bio"
         exportValueOn="enter|blur"
         type='text'
         capitalize={true}
-        bind:value={snap.firstName as string}
+        bind:value={snap.bio as string}
         required={true}
         width='22.5rem'
       >
@@ -194,33 +171,6 @@ const enhanceSubmit: SubmitFunction = async ({ action, formData }) => {
         type='text'
         capitalize={false}
         bind:value={snap.id as string}
-        required={true}
-        width='22.5rem'
-      >
-      </CRInput>
-      <CRInput title="lastName"
-        exportValueOn="enter|blur"
-        type='text'
-        capitalize={true}
-        bind:value={snap.lastName as string}
-        required={true}
-        width='22.5rem'
-      >
-      </CRInput>
-      <CRInput title="password"
-        exportValueOn="enter|blur"
-        type='password'
-        capitalize={false}
-        bind:value={snap.password as string}
-        required={true}
-        width='22.5rem'
-      >
-      </CRInput>
-      <CRInput title="role"
-        exportValueOn="enter|blur"
-        type='text'
-        capitalize={true}
-        bind:value={snap.role }
         required={true}
         width='22.5rem'
       >
@@ -269,76 +219,6 @@ const enhanceSubmit: SubmitFunction = async ({ action, formData }) => {
     </div>
   </div>
 </form>
-<div style="border:0;padding:0; color:green;">
-  This is a list item to be deleted{@render iconHandler(
-    true,
-    'delete item',
-    'fa fa-trash',
-  )}
-</div>
-<div style="border:0;padding:0; color:green;">
-  This is a list item to be deleted by not owner{@render iconHandler(
-    false,
-    'delete item',
-    'fa fa-trash',
-  )}
-</div>
-<div style="border:0;padding:0; color:blue;">
-  This is a list item for toggling color{@render iconHandler(
-    true,
-    'toggle color',
-    'fa-duotone fa-solid fa-paint-roller',
-    (event: MouseEvent) => toggleColor(event, 'toggle color'),
-  )}
-</div>
-
-{#snippet iconHandler(
-  owner: boolean,
-  caption: string,
-  iconClass: string,
-  clickHandler?: Function | undefined,
-)}
-  {#if owner}
-    <CRTooltip {caption}>
-      <span
-        onclick={clickHandler
-          ? (event: MouseEvent) => clickHandler(event, caption)
-          : (event: MouseEvent) =>
-              // @ts-expect-error
-              event.target.parentElement?.parentElement?.parentElement.remove()}
-        aria-hidden={true}
-        style:cursor={owner ? 'pointer' : 'not-allowed'}
-        style="margin=0 0.5rem;font-size:20px;color:cornsilk;border:1px solid gray;border-radius:4px;padding:2px 6px;"
-      >
-        <i class={iconClass}></i>
-      </span>
-    </CRTooltip>
-  {:else}
-    <CRTooltip caption="no owner permission">
-      <span
-        style:cursor={owner ? 'pointer' : 'not-allowed'}
-        style="margin=0 0.5rem;font-size:20px;color:#c3909b;border:1px solid gray;border-radius:4px;padding:2px 6px;"
-      >
-        <i class={iconClass}></i>
-      </span>
-    </CRTooltip>
-  {/if}
-{/snippet}
-<pre>How to use an Font Awesome iconHandler -- a child of a parent
-It is rendered as @render iconHandler(boolean, caption, faIconClass, clickHandler?)
-The fist argument when true allows action to be carried on, otherwise
-it shows a 'not-allowed pointer' with tooltip 'no owner permission'.
-The caption argument is a tooltip text displayed with delay when icon is hovering.
-The faIconClass is the class name copied from an https://fontawesome.com/ page when
-searching for an icon and extracting className from icon <i class="className"
-  ></i>.
-A clickHandler is an optional function reference to be called when icon is
-clicked. As the icon is deeply buried in CRTooltip and span elements the user's 
-clickHandler, which gets mouse event, should access its grandParent wrapper as
-const parent = (event.target as HTMLSpanElement)?.parentElement.parentElement;
-There are three examples above two to delete the parent with owner and not owner
-and the third to toggle parent's color. 
-</pre>
 
 <style lang='scss'>
   .form-wrapper {
@@ -360,19 +240,5 @@ and the third to toggle parent's color.
         display: inline-block;
       }
     }
-  }
-  .icon-delete{
-    display: inline-block;
-    width: max-content;
-    padding: 3px 8px;
-    border: 1px solid gray;
-    border-radius: 4px;
-  }
-  .pink{
-    color: pink;
-  }
-  CRTooltip:has(> span) {
-    display: flex;
-    align-items: baseline;
   }
 </style>

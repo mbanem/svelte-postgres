@@ -103,7 +103,7 @@
             <!-- <ul> -->
             <li class="children">
               {#each members['children'] as child, ix}
-                {child}{#if ix < members['children'].length - 1},{/if}
+                {child}{#if ix < members['children'].length - 1},&nbsp;{/if}
               {/each}
             </li>
             <!-- </ul> -->

@@ -2,69 +2,68 @@
 declare module '$lib/types/types' {
 
       // CRAppTypes from schema.prisma
-      // export type Role = 'USER' | 'ADMIN' | 'VISITOR';
       
       export type User = {
         articles: Article[];
         createdAt: Date | null;
-        email: String;
-        firstName: String;
-        id: String;
-        lastName: String;
-        passwordHash: String;
+        email: string;
+        firstName: string;
+        id: string;
+        lastName: string;
+        passwordHash: string;
         posts: Post[];
         profile: Profile;
         role: Role;
         todos: Todo[];
         updatedAt: Date;
-        userAuthToken: String;
+        userAuthToken: string;
       };
 
       export type Profile = {
-        bio: String;
+        bio: string;
         createdAt: Date | null;
-        id: String;
+        id: string;
         updatedAt: Date;
         user: User;
-        userId: String;
+        userId: string;
       };
 
       export type Article = {
         author: User;
-        authorId: String;
-        content: String;
-        id: String;
-        title: String;
+        authorId: string;
+        content: string;
+        id: string;
+        title: string;
       };
 
       export type Post = {
         author: User;
-        authorId: String;
+        authorId: string;
         categories: Category[];
-        content: String;
+        content: string;
         createdAt: Date | null;
-        id: String;
+        id: string;
         published: Boolean;
-        title: String;
+        title: string;
         updatedAt: Date;
       };
 
       export type Category = {
         id: Number;
-        name: String;
+        name: string;
         posts: Post[];
       };
 
       export type Todo = {
         completed: Boolean;
-        content: String;
+        content: string;
         createdAt: Date | null;
-        id: String;
+        id: string;
         priority: Number;
-        title: String;
+        title: string;
         updatedAt: Date;
         user: User;
-        userId: String;
+        userId: string;
       };
   }
   // import type { User, Profile, Role, Article, Post, Category, Todo } from '$lib/types/types';

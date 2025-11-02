@@ -23,8 +23,8 @@
   };
 
   type Data = Fruit | Employee;
-  let fruitUrl: SvelteURL;
-  let employeeUrl: SvelteURL;
+  let fruitUrl = $state<SvelteURL>();
+  let employeeUrl = $state<SvelteURL>();
   // header snippet gets no parameters so it is of type Snippet
   // while row snippet works on Fruit or Employee and is so
   // defined as Snippet<Fruit|Employee>
@@ -74,9 +74,9 @@
 {/snippet}
 
 {#if Object.keys(data[0] as Data).includes('price')}
-  {@render snippet_url?.(fruitUrl)}
+  {@render snippet_url?.(fruitUrl as SvelteURL)}
 {:else}
-  {@render snippet_url?.(employeeUrl)}
+  {@render snippet_url?.(employeeUrl as SvelteURL)}
 {/if}
 
 <style lang="scss">

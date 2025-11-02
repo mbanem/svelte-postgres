@@ -270,7 +270,7 @@
 	by submitting form with POST method to fake URL
 </pre>
   <form method="POST" action="?/nowhere">
-    <input type="hidden" value="make an error" />
+    <input id="f1" type="hidden" value="make an error" />
     <button type="submit">make error</button>
   </form>
 </section>

@@ -126,15 +126,15 @@
 
 <!-- <p>This is a RandomCanvas component</p> -->
 <div class="controls">
-  <label class="color-dialog-box">
+  <label for="y" class="color-dialog-box">
     Resize the first box on the right
-    <input type="range" min="20" max="300" bind:value={size1} />
+    <input id="y" type="range" min="20" max="300" bind:value={size1} />
   </label>
 
-  <label class="color-dialog-box"
+  <label for="w" class="color-dialog-box"
     >pick color from color dialog box
     <!-- <input type="color" bind:value={color} /> -->
-    <input bind:this={lblColor} type="color" bind:value={color} />
+    <input id="w" bind:this={lblColor} type="color" bind:value={color} />
   </label>
   <div class="column">
     <button class="generate-color-button" onclick={setColor}

@@ -1,9 +1,9 @@
 import adapter from '@sveltejs/adapter-auto'
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte'
-import path from 'path'
+// import path from 'path'
 
 /** @type {import('@sveltejs/kit').Config} */
-const config = {
+export default {
   // Consult https://kit.svelte.dev/docs/integrations#preprocessors
   // for more information about preprocessors
   preprocess: vitePreprocess(),
@@ -25,19 +25,17 @@ const config = {
     //   allowed: ['PUT', 'PATCH', 'DELETE'],
     // },
     alias: {
-      $lib: path.resolve('./src/lib/'),
-      $utils: path.resolve('./src/lib/utils/'),
-      $styles: path.resolve('./src/styles/'),
-      $routes: path.resolve('./src/routes/'),
-      $params: path.resolve('./src/routes/params'),
-      $types: path.resolve('./src/lib/types/'),
-      $actions: path.resolve('./src/lib/actions/'),
-      $components: path.resolve('./src/lib/components/'),
-      $server: path.resolve('./src/lib/server/'),
-      $store: path.resolve('./src/lib/stores'),
-      $assets: path.resolve('./src/static/assets'),
+      $lib: './src/lib/',
+      $utils: './src/lib/utils/',
+      $styles: './src/styles/',
+      $routes: './src/routes/',
+      $params: './src/routes/params',
+      $types: './src/lib/types/',
+      $actions: './src/lib/actions/',
+      $components: './src/lib/components/',
+      $server: './src/lib/server/',
+      $store: './src/lib/stores',
+      $assets: './src/static/assets',
     },
   },
 }
-
-export default config

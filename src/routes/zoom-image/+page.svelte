@@ -59,8 +59,7 @@
         <img
           src={'/' + img}
           alt="thumbnail"
-          +
-          img
+          aria-hidden={true}
           role="presentation"
           width="100"
           height="100"

@@ -1,4 +1,5 @@
-import { redirect, type Handle } from '@sveltejs/kit'
+import { redirect } from '@sveltejs/kit'
+import type {Handle} from '@sveltejs/kit'
 import { db } from '$lib/server/db'
 
 const getUniqueId = (): string => {
@@ -11,15 +12,18 @@ export const handle: Handle = (async ({ event, resolve }) => {
 	let session='empty session'
 	try {
 		// getting cookie from the browser
-		session = event.cookies.get('session') as string
+		session = event.cookies.get('session')
 		// if (!session) {
 		// 	return await resolve(event);
 		// }
+		
 		if (!session) {
 			event.locals.user = {
 				id: '',
 				firstName: '',
 				lastName: '',
+				email:'',
+				password:'',
 				role: 'VISITOR'
 			}
 			// prohibit access to 'ADMIN', 'USER' allowed pages
@@ -45,15 +49,28 @@ export const handle: Handle = (async ({ event, resolve }) => {
 				id: true,
 				firstName: true,
 				lastName: true,
+				email:true,
 				role: true
 			}
 		})
+
 		if (user) {
 			event.locals.user = {
 				id: user.id,
 				firstName: user.firstName,
 				lastName: user.lastName,
+				email: user.email,
+				password:'',
 				role: user.role
+			}
+		}else{
+			event.locals.user = {
+				id: '',
+				firstName: '',
+				lastName: '',
+				email:'',
+				password:'',
+				role: 'VISITOR'
 			}
 		}
 	} catch (err) {
@@ -62,3 +79,5 @@ export const handle: Handle = (async ({ event, resolve }) => {
 	console.log('hooks locals',event.locals)
 	return await resolve(event)
 }) satisfies Handle
+
+export {};

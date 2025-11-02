@@ -12,6 +12,7 @@
 
   // style.setProperty('--color', `${color}`)
   type PROPS = {
+    id?: string;
     title: string;
     width?: string;
     height?: string;
@@ -29,6 +30,7 @@
   };
 
   let {
+    id,
     title,
     width = '16rem',
     height = '2.5rem',
@@ -205,9 +207,9 @@
     onblur={onBlurHandler}
     disabled={false}
   />
-  <label for="" onclick={setFocus} aria-hidden={true} style={`${labelStyle}`}>
+  <label for="x" onclick={setFocus} aria-hidden={true} style={`${labelStyle}`}>
     {title}
-    <span class="err">
+    <span class="err" id="x">
       {err ? ` - ${err}` : ''}
     </span>
   </label>
