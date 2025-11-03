@@ -13,13 +13,24 @@
     "scss.validate": true,
     "node_modules": true,
     "pnpm-lock.yaml": true,
-    ".svelte-kit": true,
+    "**/.svelte-kit": true,
+    "**/dist": true,
+    "**/build": true,
     "src/styles/app.css": true,
     "src/styles/mixins.css": true,
     "src/styles/mixins.css.map": true,
     "src/styles/variables.css": true,
     "src/styles/variables.css.map": true,
-    "src/styles/app.css.map": true
+    "src/styles/app.css.map": true,
+    "svelte.language-server.runtime": true,
+    "svelte.language-server.enable-ts-plugin": true
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/.svelte-kit": true
+  },
+  "typescript.tsserver.experimental.sysHandler": true,
+  "typescript.tsserver.maxTsServerMemory": 8192
   },
   "hide-files.files": [
     "node_modules",

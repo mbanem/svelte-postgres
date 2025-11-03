@@ -1,14 +1,24 @@
 // See https://kit.svelte.dev/docs/types#app
 // for information about these interfaces
 
-declare global {
+import type { TUser, TRole, TOption } from '$lib/types/user';
+import { users } from '$lib/data/users';
 
+declare global {
+  
+  type TRole = TRole;
+  type TUser = TUser;
+  type TOption =  TOption;
+
+  const users: typeof users;
+  
   type TNavBar = {
     navId: string;
     startIx: number;
     Ix: number;
     activeEl: HTMLInputElement | undefined;
   };
+
   // type Role = 'USER' | 'ADMIN' | 'VISITOR';
   type TNavButton = {
     position: string | number;

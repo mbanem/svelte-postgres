@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { number } from 'zod';
-  import { hasPermission } from './permissions';
+  import { onMount } from 'svelte';
+  import { hasPermission, actionResourceList } from './permissions';
   /* 
 		we usually have value/text pairs for options but we can use 
 		objects with more properties, though we still bindle pairs
@@ -8,54 +8,74 @@
 		but then, like here, we can use additional properties to set
 		condition for selected option attribute, e.g. ADMIN
 	*/
-  type TRole = 'VISITOR' | 'USER' | 'ADMIN';
-  type Option = {
+  type TRole = 'VISITOR' | 'USER' | 'ADMIN' | 'MODERATOR';
+  type TOption = {
     id: number;
     year: number;
-    role: TRole[];
+    roles: TRole[];
   };
-
-  let options: Option[] = [
-    { id: 31814560165, year: 2018, role: ['ADMIN'] },
-    { id: 31814560165, year: 2019, role: ['ADMIN'] },
-    { id: 31814560165, year: 2020, role: ['ADMIN'] },
-    { id: 63811846353, year: 2018, role: ['VISITOR', 'ADMIN'] },
-    { id: 63811846353, year: 2019, role: ['VISITOR', 'ADMIN'] },
-    { id: 63811846353, year: 2020, role: ['VISITOR', 'ADMIN'] },
-    { id: 65031853491, year: 2023, role: ['VISITOR', 'USER'] },
-    { id: 65031853491, year: 2024, role: ['VISITOR', 'USER'] },
-    { id: 65031853491, year: 2025, role: ['VISITOR', 'USER'] },
-    { id: 301897108, year: 2022, role: ['VISITOR', 'USER', 'ADMIN'] },
-    { id: 301897108, year: 2023, role: ['VISITOR', 'USER', 'ADMIN'] },
-    { id: 301897108, year: 2024, role: ['VISITOR', 'USER', 'ADMIN'] },
-  ];
-
-  let selected_id = $state(2);
-  const authorId = 12345678;
-  // --------------------------------------------------------------
-  let firstName = $state('Filip');
-  let permission = $state('view:comments');
-
-  type YearRoles = Record<number, string[]>;
   type TUser = {
     id: number;
     firstName: string;
     lastName: string;
     roles: TRole[];
   };
+  const nullUser = {
+    id: -1,
+    firstName: '',
+    lastName: '',
+    roles: [],
+  };
+  type TUsers = Record<string, TUser>;
+  let blockDisabled = $state(true);
+  let messageEl: HTMLSpanElement;
 
-  // type Users = { name: keyof typeof users; user: TUser };
-
+  let currentYear = $state(0);
+  const currentYear_ = (): number => {
+    return currentYear ?? 0;
+  };
+  const getOptionsFirstYear = (userId: number) => {
+    return options.filter((opt) => opt.id === userId)[0]?.year as number;
+  };
   const getRoles = (userId: number): TRole[] => {
-    const roles = [];
+    if (!messageEl) return [];
+    const roles = new Set<string>();
+    let curYear = currentYear_();
+    if (curYear === 0) {
+      // curYear = getOptionsFirstYear(userId);
+      messageEl.innerHTML =
+        "<span id='message' style='color:pink;'>Please select a year</span>";
+    } else {
+      messageEl.innerHTML =
+        "<span id='message'>Permissions are issued per year, please select</span>";
+    }
     for (const opt of options) {
-      if (opt.id === userId) {
-        return opt.role;
+      if (opt.id === userId && opt.year === curYear) {
+        for (const role of opt.roles) roles.add(role);
       }
     }
-    return [];
+    return [...roles] as TRole[];
   };
-  const users: Record<string, TUser> = {
+  let options: TOption[] = [
+    // Matia
+    { id: 31814560165, year: 2019, roles: ['VISITOR'] },
+    { id: 31814560165, year: 2020, roles: ['USER', 'MODERATOR'] },
+    { id: 31814560165, year: 2021, roles: ['ADMIN'] },
+    { id: 63811846353, year: 2018, roles: ['VISITOR'] },
+    // Filip
+    { id: 63811846353, year: 2019, roles: ['VISITOR', 'USER'] },
+    { id: 63811846353, year: 2020, roles: ['VISITOR', 'ADMIN'] },
+    { id: 65031853491, year: 2023, roles: ['VISITOR', 'USER'] },
+    // Marko
+    { id: 65031853491, year: 2024, roles: ['VISITOR'] },
+    { id: 65031853491, year: 2025, roles: ['VISITOR'] },
+    // Mia
+    { id: 301897108, year: 2022, roles: ['VISITOR'] },
+    { id: 301897108, year: 2023, roles: ['VISITOR', 'USER'] },
+    { id: 301897108, year: 2024, roles: ['VISITOR', 'USER', 'ADMIN'] },
+  ];
+
+  const users = {
     Matia: {
       id: 31814560165,
       firstName: 'Matia',
@@ -71,16 +91,70 @@
     Marko: {
       id: 65031853491,
       firstName: 'Marko',
-      lastName: 'MIlutinovic',
+      lastName: 'Milutinovic',
       roles: getRoles(65031853491),
     },
     Mia: {
       id: 301897108,
       firstName: 'Mia',
-      lastName: 'MIlutinovic',
+      lastName: 'Milutinovic',
       roles: getRoles(301897108),
     },
-  } as const;
+  } as const satisfies Record<keyof typeof users, TUser>;
+
+  let selected_id = $state(2);
+  const authorId = 12345678;
+  // --------------------------------------------------------------
+  let firstName = $state('');
+  let firstNameId = () => {
+    let fnId = ['', 0];
+    for (const [key, value] of Object.entries(users as TUser[])) {
+      if (key === firstName) {
+        fnId = [value.firstName, value.id];
+      }
+    }
+    return fnId;
+  };
+  let currentUser = $derived.by(() => {
+    let cUser: TUser = nullUser;
+    Object.entries(users as TUser[]).forEach(([_, user]) => {
+      if (user.firstName === firstNameId()[0]) {
+        cUser = user as TUser;
+      }
+    });
+    const opts = options.filter((option) => option.id === cUser.id);
+    cUser.roles = opts[0]?.roles as TRole[];
+    return cUser;
+  });
+  let permission = $state('view:comments');
+  let optionYears = $state<number[]>([]);
+  let selectYearEl: HTMLSelectElement;
+
+  const currentYearChanged = () => {
+    const permissionBlock = document.querySelector(
+      '.permission-block',
+    ) as HTMLParagraphElement;
+    if (permissionBlock) {
+      permissionBlock.style.setProperty(
+        'opacity',
+        currentYear_() === 0 ? '0.4' : '1',
+        'important',
+      );
+    }
+  };
+  $effect(() => {
+    if (firstNameId()[0] === '') {
+      return;
+    }
+    let years = [];
+    for (const option of options) {
+      if (option.id === firstNameId()[1]) {
+        years.push(option.year);
+      }
+    }
+    optionYears = years;
+  });
+  // type Users = { name: keyof typeof users; user: TUser };
 
   // const yUsers = users.map((user) => {
   //   user.roles = options.map((opt) => {
@@ -88,39 +162,76 @@
   //     }
   //   });
   // });
-  // let selected = $derived(options.find((o) => o.role === 'ADMIN'));
-  let selected = $derived(
-    Object.values(users).filter(
-      (u) => u.firstName.toLowerCase() === firstName.toLowerCase(),
-    )[0],
-  );
+  // let selectedUser = $derived(options.find((o) => o.roles === ['ADMIN']));
+  let selectedUser = $state<TUser | null>(nullUser);
+  $effect(() => {
+    if (!firstName) {
+      selectedUser = nullUser;
+      return;
+    }
+    const fName = (firstNameId()[0] as string)?.toLowerCase();
+    const user = Object.values(users as TUser[]).filter(
+      (u) => u.firstName.toLowerCase() === fName,
+    )[0] as TUser;
+    if (user !== nullUser) {
+      user.roles = getRoles(user.id);
+    }
+    selectedUser = user ?? nullUser;
+  });
 
   let thePermission = $derived(
-    hasPermission(
-      users[firstName as keyof typeof users] as TUser,
-      permission,
-      authorId,
-    ),
+    firstName
+      ? hasPermission(users[firstName] as TUser, permission, authorId)
+      : false,
   );
   const checkPermission = (event: MouseEvent) => {
-    const span = event.target as HTMLSpanElement;
-    const spans = span.parentNode?.childNodes;
-    spans?.forEach((span) => {
-      (span as HTMLSpanElement).style.backgroundColor = 'navy';
+    if (currentYear_() == 0) {
+    }
+    const target = event.target as HTMLSpanElement;
+    const spans = target.parentElement?.children as HTMLCollection;
+    // let k = 0;
+    Object.entries(spans).forEach((span) => {
+      let color = span[1] === target ? 'blue' : 'navy';
+      (span[1] as HTMLSpanElement).style.setProperty(
+        'background-color',
+        color,
+        'important',
+      );
+      // k++;
     });
-    (span as HTMLSpanElement).style.backgroundColor = 'blue';
     permission = (event.target as HTMLSpanElement)?.innerText;
   };
   let viewSpanButton: HTMLSpanElement;
+
   const clearSelectedPermission = () => {
-    let spans = document.querySelector('.permission-block')?.childNodes;
-    spans?.forEach((span) => {
-      (span as HTMLSpanElement).style.backgroundColor = 'navy';
+    let spans = document.querySelector('.permission-block')?.children;
+    // let k = 0;
+    Object.entries(spans)?.forEach((span) => {
+      // let color = k === 0 ? 'blue' : 'navy';
+      (span[1] as HTMLSpanElement).style.setProperty(
+        'background-color',
+        'navy',
+        'important',
+      );
+      blockDisabled = true;
+      // k++;
+      // viewSpanButton.click();
     });
-    viewSpanButton.click();
   };
+  onMount(() => {
+    let spans = document.querySelector('.permission-block')
+      ?.children as HTMLCollection;
+    Object.entries(spans)?.forEach((span) => {
+      (span[1] as HTMLSpanElement).style.backgroundColor = 'navy';
+    });
+    messageEl = document.getElementById('message') as HTMLSpanElement;
+    // viewSpanButton.click(); = document.getElementById(
+    //   'viewSpanElement',
+    // ) as HTMLSpanElement;
+  });
 </script>
 
+<p>optionYears {optionYears} current user {currentUser?.firstName}</p>
 <!-- <p>{firstName}</p> -->
 <div class="wrapper">
   <div>
@@ -131,23 +242,23 @@
 			id: 31814560165,
 			firstName: 'Filip',
 			lastName: 'Isakovic',
-			role: 'admin'
+			roles: ['admin']
 		&rcub;,
 		filip: &lcub;<span>filip</span>: &lcub;
 			id: '63811846353',
 			firstName: 'Filip',
 			lastName: 'Isakovic',
-			role: 'user'
+			roles: ['user']
 		&rcub;,
     <span>Marko</span>: &lcub;
 			id: '65031853491',
 			firstName: 'Marko',
 			lastName: 'Milutinovic',
-			role: 'visitor'
+			roles: ['visitor']
 		&rcub;,
 	&rcub; as const;
-  So to access role of the first user we use:
-    users[item as keyof typeof users].role
+  So to access roles of the first user we use:
+    users[item as keyof typeof users].roles
   where item is either 'filip','matia' or 'Marko' taking care of case-sensitivity
 
   const ROLES = &lcub;
@@ -165,25 +276,20 @@
   </div>
   <div class="container">
     <div>
-      {#if Object.keys(users).includes(firstName)}
-        <p class="user-permission-line">
-          Does <span>{firstName}</span> has permission for
-          <span>{permission}?</span>
-          <span
-            class:has-permission={thePermission}
-            class:warning={!thePermission}
-          >
-            {thePermission}
-          </span>
-        </p>
-      {:else}
+      <!-- {#if Object.keys(users).includes(firstName)} -->
+      <p class="user-permission-line">
+        Does <span>{firstName}</span> has permission for
+        <span>{permission}?</span>
+        <span
+          class:has-permission={thePermission}
+          class:warning={!thePermission}
+        >
+          {thePermission}
+        </span>
+      </p>
+      <!-- {:else}
         <p class="warning">Please select a User</p>
-      {/if}
-      <!-- <input
-        type="text"
-        onkeyup={firstNameOnChange}
-        placeholder="enter firstName"
-      /> -->
+      {/if} -->
       <select bind:value={firstName} onchange={clearSelectedPermission}>
         <option value="">Select a User</option>
         {#each Object.entries(users) as [k, v]}
@@ -195,34 +301,52 @@
         bind:value={permission}
         placeholder="enter permission as action:object"
       />
-
-      <!-- <select bind:value={selected_id}>
-        {#each options as option}
-          <option value={option.id}>{option.value}</option>
+      <br />
+      <select
+        class="select-year"
+        bind:this={selectYearEl}
+        bind:value={currentYear}
+        onchange={currentYearChanged}
+      >
+        <option value={0} selected>Select a Year</option>
+        {#each optionYears as year}
+          <option value={year}>{year}</option>
         {/each}
-      </select> -->
+      </select><span id="message">
+        Permissions are issued per year, please select
+      </span>
     </div>
-    <pre><p
-        onclick={checkPermission}
-        aria-hidden={true}
-        class="permission-block"
-        style={`display:${firstName ? 'block' : 'none'}`}><span
-          bind:this={viewSpanButton}
-          style="background-color:blue">view:comments</span
-        ><span>create:comments</span><span>update:comments</span><span
-          >delete:comments</span
-        ></p>
-    </pre>
-    <div class="json-block">
-      {#if selected}
+    <!-- <pre> -->
+    <p
+      onclick={checkPermission}
+      aria-hidden={true}
+      class="permission-block"
+      svelte:style={{
+        opacity: blockDisabled ? '0.4' : '1',
+        cursor: blockDisabled ? 'not-allowed' : 'pointer',
+      }}
+    >
+      <span bind:this={viewSpanButton}> view:comments </span>
+      <span> create:comments </span>
+      <span> update:comments </span>
+      <span> delete:comments </span>
+    </p>
+    <!-- </pre> -->
+    <div style="margin-top:-2rem;">
+      {#if selectedUser}
         <pre>
+    
 Permissions (click permission button below to check for that permission)
-{JSON.stringify(selected, null, 2)}
+{JSON.stringify(selectedUser, null, 2)}
       </pre>
       {/if}
     </div>
   </div>
 </div>
+{#if hasPermission(currentUser, 'view:comments')}<button>view</button>{/if}
+{#if hasPermission(currentUser, 'create:comments')}<button>create</button>{/if}
+{#if hasPermission(currentUser, 'update:comments')}<button>update</button>{/if}
+{#if hasPermission(currentUser, 'delete:comments')}<button>delete</button>{/if}
 
 <style lang="scss">
   .wrapper {
@@ -268,23 +392,30 @@ Permissions (click permission button below to check for that permission)
     margin-top: -5rem;
   }
   .permission-block {
+    margin: 1rem 0;
     span {
+      display: inline-block !important;
       border: 1px solid gray;
       border-radius: 5px;
-      padding: 2px 0.5rem;
+      padding: 4px 0.5rem;
       cursor: pointer;
       color: white;
       /* big line-height to cover all area for mouse click to be detected
-        as with small values click must be done over the text itself
-        not outside text as padding make area bigger
-      */
-      line-height: 2rem;
-      background-color: navy;
+      as with small values click must be done over the text itself
+      not outside text as padding make area bigger
+    */
+      height: 1.6rem !important;
+      line-height: 1.5rem !important;
+      background-color: navy !important;
       margin-top: -3rem;
+      width: 7rem;
+      test-align: center;
     }
-  }
-  .blue-background {
-    background-color: blue;
+    span:hover {
+      color: yellow;
+      font-weight: 700;
+      cursor: pointer;
+    }
   }
   .user-permission-line {
     line-height: 2rem;
@@ -294,5 +425,9 @@ Permissions (click permission button below to check for that permission)
         font-size: 1.3rem;
       }
     }
+  }
+  .select-year {
+    display: inline-block;
+    margin-right: 2rem;
   }
 </style>

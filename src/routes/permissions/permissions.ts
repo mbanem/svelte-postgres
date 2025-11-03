@@ -1,8 +1,8 @@
 type TUser = {
-  id: string;
+  id: number;
   firstName: string;
   lastName: string;
-  role: string;
+  roles: string[];
 };
 
 // generates a list of roles admin|moderator|user|visitor
@@ -13,17 +13,22 @@ type ERole = keyof typeof ROLES;
 
 // Role holds Array<permission> where permission is a string e.g. 'update:comments'
 type Permission = ERole[number];
-
+export const actionResourceList = [
+  'view:comments',
+  'create:comments',
+  'update:comments',
+  'delete:comments',
+]
 const ROLES = {
-  admin: [
+  ADMIN: [
     'view:comments',
     'create:comments',
     'update:comments',
     'delete:comments',
   ],
-  moderator: ['view:comments', 'create:comments', 'delete:comments'],
-  user: ['view:comments', 'create:comments', 'delete:ownComments'],
-  visitor: ['view:comments'],
+  MODERATOR: ['view:comments', 'create:comments', 'delete:comments'],
+  USER: ['view:comments', 'create:comments', 'delete:ownComments'],
+  VISITOR: ['view:comments'],
 } as const;
 
 // say users.role is admin and permission is "create:comments"
@@ -36,14 +41,18 @@ export const hasPermission = (
   permission: Permission,
   authorId?: string | number,
 ) => {
-  const thePermission = ROLES[user.role as ERole] as readonly Permission[];
-  console.log('hasPermission ', thePermission)
-  // const ownPermission = thePermission.map((c) => {
-  //   return c === ':' ? ':own' : c;
-  // })[0] as string;
-  // return (
-  //   thePermission.includes(permission) ||
-  //   (authorId === user.id && thePermission.includes(ownPermission))
-  // );
+  if (!user || user.id === -1) return false
+  for (let i=0; i < user.roles.length; i++){
+    const thePermission = ROLES[user.roles[i] as ERole] as readonly Permission[];
+    const ownPermission = thePermission.map((c) => {
+      return c === ':' ? ':own' : c;
+    })[0] as string;
+    if (
+      thePermission.includes(permission) ||
+      (authorId === user.id && thePermission.includes(ownPermission))
+    ){
+      return true;
+    }
+  }
   return false
 };
