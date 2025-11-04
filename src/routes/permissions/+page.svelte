@@ -144,8 +144,8 @@
         'important',
       );
     }
-    if (selectTheFirst) {
-      spans[0].click();
+    if (selectTheFirst && spans[0]) {
+      (spans[0] as HTMLSpanElement).click();
     }
   };
   const currentYearChanged = () => {
@@ -224,7 +224,7 @@
       if (selectYearEl && selectYearEl.options) {
         selectYearEl.selectedIndex = 1;
         currentYear = Number(
-          selectYearEl.options[selectYearEl.selectedIndex].value,
+          selectYearEl.options[selectYearEl.selectedIndex]?.value,
         );
       }
     }, 0);
