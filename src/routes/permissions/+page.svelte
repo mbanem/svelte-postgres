@@ -204,7 +204,8 @@
   let viewSpanButton: HTMLSpanElement;
 
   const clearSelectedPermission = () => {
-    let spans = document.querySelector('.permission-block')?.children;
+    let spans = document.querySelector('.permission-block')
+      ?.children as HTMLCollection;
 
     for (let i = 0; i < spans.length; i++) {
       let color = i === 0 ? 'blue' : 'navy';
@@ -215,7 +216,7 @@
       );
       blockDisabled = true;
     }
-    spans[0].click();
+    (spans[0] as HTMLSpanElement).click();
     // viewSpanButton.click();
   };
   onMount(() => {
