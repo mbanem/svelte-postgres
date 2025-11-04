@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { hasPermission, actionResourceList } from './permissions';
+  import { hasPermission, selectRoleResource } from './permissions';
   /* 
 		we usually have value/text pairs for options but we can use 
 		objects with more properties, though we still bindle pairs
@@ -19,6 +19,17 @@
     firstName: string;
     lastName: string;
     roles: TRole[];
+  };
+  const resourcesList = ['comments', 'posts', 'blogs', 'users', 'todos'];
+  let selectResourceEl: HTMLSelectElement;
+  let currentResource = $state<string>('');
+  const selectResourceChanged = () => {
+    currentResource = selectResourceEl.options[selectResourceEl.selectedIndex]
+      ?.value as string;
+    selectRoleResource(currentResource);
+    setTimeout(() => {
+      clearPermissionButtons(true);
+    }, 0);
   };
   const nullUser = {
     id: -1,
@@ -148,7 +159,7 @@
       (spans[0] as HTMLSpanElement).click();
     }
   };
-  const currentYearChanged = () => {
+  const selectYearChanged = () => {
     const permissionBlock = document.querySelector(
       '.permission-block',
     ) as HTMLParagraphElement;
@@ -213,7 +224,7 @@
   };
   let viewSpanButton: HTMLSpanElement;
 
-  const clearSelectedPermission = () => {
+  const selectUserChanged = () => {
     blockDisabled = true;
     let spans = document.querySelector('.permission-block')
       ?.children as HTMLCollection;
@@ -227,11 +238,21 @@
           selectYearEl.options[selectYearEl.selectedIndex]?.value,
         );
       }
+      if (selectResourceEl && selectResourceEl.options) {
+        selectResourceEl.selectedIndex = 1;
+        currentResource = selectResourceEl.options[
+          selectResourceEl.selectedIndex
+        ]?.value as string;
+      }
     }, 0);
 
     // viewSpanButton.click();
   };
   onMount(() => {
+    selectYearEl = document.querySelector('.select-year') as HTMLSelectElement;
+    selectResourceEl = document.querySelector(
+      '.select-resource',
+    ) as HTMLSelectElement;
     viewSpanButton = document.querySelector(
       '.permission-block',
     ) as HTMLSpanElement;
@@ -305,7 +326,11 @@
       <!-- {:else}
         <p class="warning">Please select a User</p>
       {/if} -->
-      <select bind:value={firstName} onchange={clearSelectedPermission}>
+      <select
+        bind:value={firstName}
+        onchange={selectUserChanged}
+        class="select-user"
+      >
         <option value="">Select a User</option>
         {#each Object.entries(users) as [k, v]}
           <option value={k}>{v.firstName} {v.lastName}</option>
@@ -319,9 +344,8 @@
       <br />
       <select
         class="select-year"
-        bind:this={selectYearEl}
         bind:value={currentYear}
-        onchange={currentYearChanged}
+        onchange={selectYearChanged}
       >
         <option value={0} selected>Select a Year</option>
         {#each optionYears as year}
@@ -330,17 +354,29 @@
       </select><span id="message">
         Permissions are issued per year, please select
       </span>
+      <br /><br />
+      <select
+        class="select-resource"
+        bind:this={selectResourceEl}
+        bind:value={currentResource}
+        onchange={selectResourceChanged}
+      >
+        <option value={''} selected>Protected Resources</option>
+        {#each resourcesList as resource}
+          <option value={resource}>{resource.toUpperCase()}</option>
+        {/each}
+      </select><span id="message-resource">
+        Permissions are issued per resource, please select
+      </span>
     </div>
-    <!-- <pre> -->
     <p onclick={checkPermission} aria-hidden={true} class="permission-block">
       <span class:disabled={blockDisabled} bind:this={viewSpanButton}>
-        view:comments
+        view:{currentResource}
       </span>
-      <span class:disabled={blockDisabled}> create:comments </span>
-      <span class:disabled={blockDisabled}> update:comments </span>
-      <span class:disabled={blockDisabled}> delete:comments </span>
+      <span class:disabled={blockDisabled}> create:{currentResource} </span>
+      <span class:disabled={blockDisabled}> update:{currentResource} </span>
+      <span class:disabled={blockDisabled}> delete:{currentResource} </span>
     </p>
-    <!-- </pre> -->
     <div style="margin-top:-2rem;">
       {#if selectedUser}
         <pre>
@@ -367,7 +403,7 @@ Permissions (click permission button below to check for that permission)
       'Handling Permissions -- Web Dev Simplified',
       $head-color: skyblue
     );
-    height: 26rem;
+    height: 32rem;
     margin: 1rem 0 0 3rem;
   }
   select {
@@ -440,10 +476,14 @@ Permissions (click permission button below to check for that permission)
       }
     }
   }
-  .select-year {
+  .select-user,
+  .select-year,
+  .select-resource {
     display: inline-block;
-    margin-right: 2rem;
+    margin-right: 2rem !important;
+    width: 16rem;
   }
+
   .disabled {
     opacity: 0.4;
     cursor: not-allowed;
