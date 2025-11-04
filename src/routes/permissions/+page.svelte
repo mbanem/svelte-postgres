@@ -205,25 +205,27 @@
 
   const clearSelectedPermission = () => {
     let spans = document.querySelector('.permission-block')?.children;
-    // let k = 0;
-    Object.entries(spans)?.forEach((span) => {
-      // let color = k === 0 ? 'blue' : 'navy';
-      (span[1] as HTMLSpanElement).style.setProperty(
+
+    for (let i = 0; i < spans.length; i++) {
+      let color = i === 0 ? 'blue' : 'navy';
+      (spans[i] as HTMLSpanElement).style.setProperty(
         'background-color',
-        'navy',
+        color,
         'important',
       );
       blockDisabled = true;
-      // k++;
-      // viewSpanButton.click();
-    });
+    }
+    spans[0].click();
+    // viewSpanButton.click();
   };
   onMount(() => {
-    let spans = document.querySelector('.permission-block')
-      ?.children as HTMLCollection;
-    Object.entries(spans)?.forEach((span) => {
-      (span[1] as HTMLSpanElement).style.backgroundColor = 'navy';
-    });
+    viewSpanButton = document.querySelector(
+      '.permission-block',
+    ) as HTMLSpanElement;
+    let spans = viewSpanButton?.children as HTMLCollection;
+    for (let i = 0; i < spans.length; i++) {
+      (spans[i] as HTMLSpanElement).style.backgroundColor = 'navy';
+    }
     messageEl = document.getElementById('message') as HTMLSpanElement;
     // viewSpanButton.click(); = document.getElementById(
     //   'viewSpanElement',
@@ -393,21 +395,23 @@ Permissions (click permission button below to check for that permission)
   }
   .permission-block {
     margin: 1rem 0;
+    display: flex;
+    gap: 0;
     span {
-      display: inline-block !important;
+      display: block !important;
       border: 1px solid gray;
       border-radius: 5px;
-      padding: 4px 0.5rem;
+      padding: 2px 0.5rem;
       cursor: pointer;
       color: white;
       /* big line-height to cover all area for mouse click to be detected
       as with small values click must be done over the text itself
       not outside text as padding make area bigger
     */
-      height: 1.6rem !important;
-      line-height: 1.5rem !important;
+      height: 1.5rem !important;
+      line-height: 1.35rem !important;
       background-color: navy !important;
-      margin-top: -3rem;
+      margin-top: 0;
       width: 7rem;
       test-align: center;
     }
