@@ -27,7 +27,7 @@
     roles: [],
   };
   type TUsers = Record<string, TUser>;
-  let blockDisabled = $state(true);
+  let blockDisabled = $state<boolean>(true);
   let messageEl: HTMLSpanElement;
 
   let currentYear = $state(0);
@@ -54,6 +54,7 @@
         for (const role of opt.roles) roles.add(role);
       }
     }
+    blockDisabled = false;
     return [...roles] as TRole[];
   };
   let options: TOption[] = [
@@ -130,11 +131,29 @@
   let optionYears = $state<number[]>([]);
   let selectYearEl: HTMLSelectElement;
 
+  const clearPermissionButtons = (selectTheFirst: boolean = false) => {
+    const target = document.querySelector(
+      '.permission-block',
+    ) as HTMLSpanElement;
+    const spans = target.children as HTMLCollection;
+    for (let i = 0; i < spans.length; i++) {
+      let color = selectTheFirst ? (i === 0 ? 'blue' : 'navy') : 'navy';
+      (spans[i] as HTMLSpanElement).style.setProperty(
+        'background-color',
+        color,
+        'important',
+      );
+    }
+    if (selectTheFirst) {
+      spans[0].click();
+    }
+  };
   const currentYearChanged = () => {
     const permissionBlock = document.querySelector(
       '.permission-block',
     ) as HTMLParagraphElement;
     if (permissionBlock) {
+      clearPermissionButtons(true); // select the first
       permissionBlock.style.setProperty(
         'opacity',
         currentYear_() === 0 ? '0.4' : '1',
@@ -187,36 +206,29 @@
   const checkPermission = (event: MouseEvent) => {
     if (currentYear_() == 0) {
     }
-    const target = event.target as HTMLSpanElement;
-    const spans = target.parentElement?.children as HTMLCollection;
-    // let k = 0;
-    Object.entries(spans).forEach((span) => {
-      let color = span[1] === target ? 'blue' : 'navy';
-      (span[1] as HTMLSpanElement).style.setProperty(
-        'background-color',
-        color,
-        'important',
-      );
-      // k++;
-    });
-    permission = (event.target as HTMLSpanElement)?.innerText;
+    clearPermissionButtons();
+    const el = event.target as HTMLSpanElement;
+    el.style.setProperty('background-color', 'blue', 'important');
+    permission = el?.innerText;
   };
   let viewSpanButton: HTMLSpanElement;
 
   const clearSelectedPermission = () => {
+    blockDisabled = true;
     let spans = document.querySelector('.permission-block')
       ?.children as HTMLCollection;
 
-    for (let i = 0; i < spans.length; i++) {
-      let color = i === 0 ? 'blue' : 'navy';
-      (spans[i] as HTMLSpanElement).style.setProperty(
-        'background-color',
-        color,
-        'important',
-      );
-      blockDisabled = true;
-    }
+    clearPermissionButtons();
     (spans[0] as HTMLSpanElement).click();
+    setTimeout(() => {
+      if (selectYearEl && selectYearEl.options) {
+        selectYearEl.selectedIndex = 1;
+        currentYear = Number(
+          selectYearEl.options[selectYearEl.selectedIndex].value,
+        );
+      }
+    }, 0);
+
     // viewSpanButton.click();
   };
   onMount(() => {
@@ -234,7 +246,7 @@
   });
 </script>
 
-<p>optionYears {optionYears} current user {currentUser?.firstName}</p>
+<p>blockDisabled {blockDisabled}</p>
 <!-- <p>{firstName}</p> -->
 <div class="wrapper">
   <div>
@@ -320,19 +332,13 @@
       </span>
     </div>
     <!-- <pre> -->
-    <p
-      onclick={checkPermission}
-      aria-hidden={true}
-      class="permission-block"
-      svelte:style={{
-        opacity: blockDisabled ? '0.4' : '1',
-        cursor: blockDisabled ? 'not-allowed' : 'pointer',
-      }}
-    >
-      <span bind:this={viewSpanButton}> view:comments </span>
-      <span> create:comments </span>
-      <span> update:comments </span>
-      <span> delete:comments </span>
+    <p onclick={checkPermission} aria-hidden={true} class="permission-block">
+      <span class:disabled={blockDisabled} bind:this={viewSpanButton}>
+        view:comments
+      </span>
+      <span class:disabled={blockDisabled}> create:comments </span>
+      <span class:disabled={blockDisabled}> update:comments </span>
+      <span class:disabled={blockDisabled}> delete:comments </span>
     </p>
     <!-- </pre> -->
     <div style="margin-top:-2rem;">
@@ -397,7 +403,7 @@ Permissions (click permission button below to check for that permission)
   .permission-block {
     margin: 1rem 0;
     display: flex;
-    gap: 0;
+    gap: 0.3rem;
     span {
       display: block !important;
       border: 1px solid gray;
@@ -413,14 +419,17 @@ Permissions (click permission button below to check for that permission)
       line-height: 1.35rem !important;
       background-color: navy !important;
       margin-top: 0;
-      width: 7rem;
-      test-align: center;
+      width: 7.5rem;
+      text-align: center;
     }
-    span:hover {
+    span:hover:not(disabled) {
       color: yellow;
       font-weight: 700;
       cursor: pointer;
     }
+  }
+  .permission-block span {
+    flex: 1; // spans fill the available width
   }
   .user-permission-line {
     line-height: 2rem;
@@ -434,5 +443,9 @@ Permissions (click permission button below to check for that permission)
   .select-year {
     display: inline-block;
     margin-right: 2rem;
+  }
+  .disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
   }
 </style>
