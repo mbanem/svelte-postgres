@@ -23,6 +23,7 @@
   const resourcesList = ['comments', 'posts', 'blogs', 'users', 'todos'];
   let selectResourceEl: HTMLSelectElement;
   let currentResource = $state<string>('');
+  let initialResourceCall = true;
   const selectResourceChanged = () => {
     currentResource = selectResourceEl.options[selectResourceEl.selectedIndex]
       ?.value as string;
@@ -215,6 +216,7 @@
       : false,
   );
   const checkPermission = (event: MouseEvent) => {
+    event.preventDefault();
     if (currentYear_() == 0) {
     }
     clearPermissionButtons();
@@ -229,8 +231,6 @@
     let spans = document.querySelector('.permission-block')
       ?.children as HTMLCollection;
 
-    clearPermissionButtons();
-    (spans[0] as HTMLSpanElement).click();
     setTimeout(() => {
       if (selectYearEl && selectYearEl.options) {
         selectYearEl.selectedIndex = 1;
@@ -238,13 +238,23 @@
           selectYearEl.options[selectYearEl.selectedIndex]?.value,
         );
       }
-      if (selectResourceEl && selectResourceEl.options) {
-        selectResourceEl.selectedIndex = 1;
-        currentResource = selectResourceEl.options[
-          selectResourceEl.selectedIndex
-        ]?.value as string;
-      }
     }, 0);
+    if (!selectResourceEl || !selectResourceEl.options) return;
+    if (initialResourceCall) {
+      initialResourceCall = false;
+      selectRoleResource('comments');
+    }
+    // currentResource = 'comments';
+    setTimeout(() => {
+      selectResourceEl.selectedIndex = 1;
+      currentResource = selectResourceEl.options[selectResourceEl.selectedIndex]
+        ?.value as string;
+    }, 200);
+
+    setTimeout(() => {
+      clearPermissionButtons();
+      (spans[0] as HTMLSpanElement).click();
+    }, 300);
 
     // viewSpanButton.click();
   };

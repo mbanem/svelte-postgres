@@ -25,14 +25,25 @@
 	const getTRolesList = (resource:string) => {
 		return {
 			resource:{
-				ADMIN: [`view:${resource}`,
+				ADMIN: [
+          `view:${resource}`,
 					`create:${resource}`,
 					`update:${resource}`,
 					`delete:${resource}`,
 				],
-				MODERATOR: [`view:${resource}`, `create:${resource}`, `delete:${resource}`],
-				USER: [`view:${resource}`, `create:${resource}`, `delete:own${resource}`],
-				VISITOR: [`view:${resource}`]
+				MODERATOR: [
+          `view:${resource}`, 
+          `create:${resource}`, 
+          `delete:${resource}`
+        ],
+				USER: [
+          `view:${resource}`, 
+          `create:${resource}`, 
+          `delete:own${resource}`
+        ],
+				VISITOR: [
+          `view:${resource}`
+        ]
 			} satisfies TRoles
 		}
 	} 
