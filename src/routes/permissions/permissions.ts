@@ -1,8 +1,7 @@
 
   type TUser = {
     id: number;
-    firstName: string;
-    lastName: string;
+    userName: string;
     roles: string[];
   };
 
@@ -58,7 +57,10 @@
     permission: Permission,
     authorId?: string | number,
   ) => {
-    if (!user || user.id === -1 || !ROLES || ROLES.length === 0) return false;
+    if (!user || user.id === -1 || !ROLES || ROLES.length === 0) {
+      console.log('hasPermission', user, ROLES)
+      return false
+    };
     for (let i = 0; i < user.roles.length; i++) {
       const thePermission = ROLES['resource']
         [user.roles[i]] as readonly Permission[];
@@ -72,6 +74,7 @@
         return true;
       }
     }
+    console.log('exit', user,ROLES)
     return false;
   };
 

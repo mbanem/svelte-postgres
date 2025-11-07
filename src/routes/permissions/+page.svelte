@@ -1,28 +1,90 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { hasPermission, selectRoleResource } from './permissions';
-  /* 
-		we usually have value/text pairs for options but we can use 
-		objects with more properties, though we still bindle pairs
-		of value/text for presenting the options in a select box,
-		but then, like here, we can use additional properties to set
-		condition for selected option attribute, e.g. ADMIN
-	*/
-  type TRole = 'VISITOR' | 'USER' | 'ADMIN' | 'MODERATOR';
-  type TOption = {
-    id: number;
-    year: number;
-    roles: TRole[];
+  import { selectRoleResource, hasPermission } from './permissions';
+
+  type TRole = 'VISITOR' | 'USER' | 'MODERATOR' | 'ADMIN';
+  type TIdRoles = Record<number, TRole[]>;
+  type TIdYearRoles = Record<number, TIdRoles>;
+  type TUserNamesIds = Record<string, number>;
+  type TUserName = keyof typeof userNamesIds;
+
+  const userNamesIds: TUserNamesIds = {
+    'Matia Isakovic': 31814560165,
+    'Filip Isakovic': 63811846353,
+    'Marko Milutinovic': 65031853491,
+    'Mia Milutinovic': 301897108,
   };
-  type TUser = {
-    id: number;
-    firstName: string;
-    lastName: string;
-    roles: TRole[];
+
+  const idYearRoles: TIdYearRoles = {
+    // Matia
+    31814560165: {
+      2019: ['VISITOR'],
+      2020: ['USER', 'MODERATOR'],
+      2021: ['ADMIN'],
+      2018: ['VISITOR'],
+    },
+    // Filip
+    63811846353: {
+      2019: ['VISITOR', 'USER'],
+      2020: ['VISITOR', 'ADMIN'],
+      2023: ['VISITOR', 'USER'],
+    },
+    // Marko
+    65031853491: { 2024: ['VISITOR'], 2025: ['VISITOR'] },
+    // Mia
+    301897108: {
+      2022: ['VISITOR'],
+      2023: ['VISITOR', 'USER'],
+      2024: ['VISITOR', 'USER', 'ADMIN'],
+    },
   };
-  const resourcesList = ['comments', 'posts', 'blogs', 'users', 'todos'];
+
+  // function yearRoles(key: string | number): TIdRoles {
+  //   if (typeof key === 'string') {
+  //     const id = userNamesIds[key as TUserName]; // ✅ safe
+  //     return idYearRoles[id as number] as TIdRoles;
+  //   }
+  //   return idYearRoles[key] as TIdRoles;
+  // }
+  function userIdFromName(key: string) {
+    return userNamesIds[key] ?? -1;
+  }
+  function userYearRoles(key: string | number): TIdRoles {
+    const id: number =
+      typeof key === 'string'
+        ? (userNamesIds[key as TUserName] as number)
+        : key;
+    return idYearRoles[id] as TIdRoles;
+  }
+  function userFirstYearRoles(key: string | number): TIdRoles {
+    return Object.entries(userYearRoles(key))[0] as TIdRoles;
+  }
+  function userRolesOfYear(key: string | number, year: number): TRole[] {
+    return (
+      Object.entries(userYearRoles(key)).filter(
+        (el) => el[0] === String(year),
+      )[0] as TIdRoles
+    )[1] as TRole[];
+  }
+  function getPermissionYears(id: number): number[] {
+    const years: number[] = [];
+    Object.entries(userIdYearsRoles).forEach((option) => {
+      if (Number(option[0]) === id) {
+        Object.entries(option[1]).forEach((yr) => years.push(Number(yr[0])));
+      }
+    });
+    return years;
+  }
+  function setSelectedUser() {
+    setTimeout(() => {
+      const id = userNamesIds[userName as keyof typeof userNamesIds] as number;
+      selectedUser = { id, userName, roles: userRolesOfYear(id, currentYear) };
+      clearPermissionButtons(true);
+    }, 500);
+  }
+  const resourcesList = ['comments', 'blogs', 'posts', 'users', 'addresses'];
   let selectResourceEl: HTMLSelectElement;
-  let currentResource = $state<string>('');
+  let currentResource = 'comments'; //TODO see about this
   let initialResourceCall = true;
   const selectResourceChanged = () => {
     currentResource = selectResourceEl.options[selectResourceEl.selectedIndex]
@@ -31,14 +93,18 @@
     setTimeout(() => {
       clearPermissionButtons(true);
     }, 0);
+    setSelectedUser();
+  };
+  type TUser = {
+    id: number;
+    userName: string;
+    roles: TRole[];
   };
   const nullUser = {
     id: -1,
-    firstName: '',
-    lastName: '',
+    userName: '',
     roles: [],
   };
-  type TUsers = Record<string, TUser>;
   let blockDisabled = $state<boolean>(true);
   let messageEl: HTMLSpanElement;
 
@@ -46,9 +112,10 @@
   const currentYear_ = (): number => {
     return currentYear ?? 0;
   };
-  const getOptionsFirstYear = (userId: number) => {
-    return options.filter((opt) => opt.id === userId)[0]?.year as number;
-  };
+  // TODO
+  // const getOptionsFirstYear = (userId: number) => {
+  //   return userIdYearsRoles.filter((opt) => opt.id === userId)[0]?.year as number;
+  // };
   const getRoles = (userId: number): TRole[] => {
     if (!messageEl) return [];
     const roles = new Set<string>();
@@ -57,88 +124,118 @@
       // curYear = getOptionsFirstYear(userId);
       messageEl.innerHTML =
         "<span id='message' style='color:pink;'>Please select a year</span>";
+      // @ts-expect-error
+      return [...userFirstYearRoles(userId)][1] as TRole[];
     } else {
       messageEl.innerHTML =
         "<span id='message'>Permissions are issued per year, please select</span>";
+      return [...userRolesOfYear(userId, curYear)];
     }
-    for (const opt of options) {
-      if (opt.id === userId && opt.year === curYear) {
-        for (const role of opt.roles) roles.add(role);
-      }
-    }
-    blockDisabled = false;
-    return [...roles] as TRole[];
   };
-  let options: TOption[] = [
+
+  type TOption = Record<number, Record<number, TRole[]>>;
+  const userIdYearsRoles = {
     // Matia
-    { id: 31814560165, year: 2019, roles: ['VISITOR'] },
-    { id: 31814560165, year: 2020, roles: ['USER', 'MODERATOR'] },
-    { id: 31814560165, year: 2021, roles: ['ADMIN'] },
-    { id: 63811846353, year: 2018, roles: ['VISITOR'] },
+    31814560165: {
+      2019: ['VISITOR'],
+      2020: ['USER', 'MODERATOR'],
+      2021: ['ADMIN'],
+      2018: ['VISITOR'],
+    },
     // Filip
-    { id: 63811846353, year: 2019, roles: ['VISITOR', 'USER'] },
-    { id: 63811846353, year: 2020, roles: ['VISITOR', 'ADMIN'] },
-    { id: 65031853491, year: 2023, roles: ['VISITOR', 'USER'] },
+    63811846353: {
+      2019: ['VISITOR', 'USER'],
+      2020: ['VISITOR', 'ADMIN'],
+      2023: ['VISITOR', 'USER'],
+    },
     // Marko
-    { id: 65031853491, year: 2024, roles: ['VISITOR'] },
-    { id: 65031853491, year: 2025, roles: ['VISITOR'] },
+    65031853491: { 2024: ['VISITOR'], 2025: ['VISITOR'] },
     // Mia
-    { id: 301897108, year: 2022, roles: ['VISITOR'] },
-    { id: 301897108, year: 2023, roles: ['VISITOR', 'USER'] },
-    { id: 301897108, year: 2024, roles: ['VISITOR', 'USER', 'ADMIN'] },
-  ];
+    301897108: {
+      2022: ['VISITOR'],
+      2023: ['VISITOR', 'USER'],
+      2024: ['VISITOR', 'USER', 'ADMIN'],
+    },
+  } satisfies TOption;
 
-  const users = {
-    Matia: {
-      id: 31814560165,
-      firstName: 'Matia',
-      lastName: 'Isakovic',
-      roles: getRoles(31814560165),
-    },
-    Filip: {
-      id: 63811846353,
-      firstName: 'Filip',
-      lastName: 'Isakovic',
-      roles: getRoles(63811846353),
-    },
-    Marko: {
-      id: 65031853491,
-      firstName: 'Marko',
-      lastName: 'Milutinovic',
-      roles: getRoles(65031853491),
-    },
-    Mia: {
-      id: 301897108,
-      firstName: 'Mia',
-      lastName: 'Milutinovic',
-      roles: getRoles(301897108),
-    },
-  } as const satisfies Record<keyof typeof users, TUser>;
+  const index = (max: number): number => {
+    return Math.ceil(Math.random() * 100) % max;
+  };
+  const getRandomUserNameId = (): [string, number] => {
+    const unIds = Object.entries(userNamesIds);
+    return unIds[index(unIds.length)] as [string, number];
+  };
+  const viewItem = (event: MouseEvent) => {
+    (
+      (event.target as HTMLParagraphElement).firstChild as HTMLSpanElement
+    )?.classList.toggle('hidden');
+  };
+  const updateItem = (event: MouseEvent | KeyboardEvent) => {
+    const style = (event.target as HTMLElement).style;
+    style.color = style.color === 'blue' ? 'red' : 'blue';
+  };
+  const deleteItem = (event: MouseEvent | KeyboardEvent) => {
+    (event.target as HTMLElement).remove();
+  };
+  const handlers = [viewItem, updateItem, deleteItem];
+  const hover = (event: MouseEvent | KeyboardEvent) => {
+    event.preventDefault();
+    if (event.type === 'mouseleave') return;
 
-  let selected_id = $state(2);
+    const nodeList = document.querySelectorAll('.resource') as NodeList;
+    Object.entries(nodeList).forEach((node) => {
+      console.log(node[1]);
+    });
+
+    const child = (event.target as HTMLParagraphElement)
+      .firstChild as HTMLSpanElement;
+    child.classList;
+  };
+  // --------------------------------------------------------------
+  let randomAuthorName = '';
+  const getHandlersAndRandomAuthorId = () => {
+    const userNameId = getRandomUserNameId();
+    console.log(userNameId);
+    randomAuthorName = `${userNameId[0]}`;
+    return [...handlers, userNameId[1]];
+  };
+
   const authorId = 12345678;
   // --------------------------------------------------------------
-  let firstName = $state('');
-  let firstNameId = () => {
-    let fnId = ['', 0];
-    for (const [key, value] of Object.entries(users as TUser[])) {
-      if (key === firstName) {
-        fnId = [value.firstName, value.id];
-      }
-    }
-    return fnId;
+  let userName = $state('');
+  const userName_ = () => {
+    return userName;
   };
-  let currentUser = $derived.by(() => {
-    let cUser: TUser = nullUser;
-    Object.entries(users as TUser[]).forEach(([_, user]) => {
-      if (user.firstName === firstNameId()[0]) {
-        cUser = user as TUser;
-      }
-    });
-    const opts = options.filter((option) => option.id === cUser.id);
-    cUser.roles = opts[0]?.roles as TRole[];
-    return cUser;
-  });
+  // let idOfUserName = (name: string): number => {
+  //   try {
+  //     return userNamesIds[name as TUserName] as number;
+  //   } catch (err) {
+  //     return -1;
+  //   }
+  // };
+
+  // let currentUser = $derived.by(() => {
+  //   if (!userName_()) {
+  //     return;
+  //   }
+  //   console.log('currentUser entry point');
+  //   const id = userNamesIds[userName_() as TUserName] as number;
+  //   console.log('id', id);
+
+  //   const yearRoles = idYearRoles[id] as TIdRoles;
+  //   console.log('yearRoles', yearRoles);
+
+  //   return {
+  //     id,
+  //     userName: userName_(),
+  //     roles: yearRoles[currentYear_()],
+  //   } as TUser;
+  //   // return {
+  //   //   id: 31814560165,
+  //   //   userName: 'Matia Isakovic',
+  //   //   roles: ['USER', 'MODERATOR'],
+  //   // } as TUser;
+  // });
   let permission = $state('view:comments');
   let optionYears = $state<number[]>([]);
   let selectYearEl: HTMLSelectElement;
@@ -165,54 +262,28 @@
       '.permission-block',
     ) as HTMLParagraphElement;
     if (permissionBlock) {
-      clearPermissionButtons(true); // select the first
+      // clearPermissionButtons(true); // select the first
       permissionBlock.style.setProperty(
         'opacity',
         currentYear_() === 0 ? '0.4' : '1',
         'important',
       );
     }
+    setSelectedUser();
   };
   $effect(() => {
-    if (firstNameId()[0] === '') {
+    if (!userName) return;
+    const id = userIdFromName(userName);
+    if (id === -1) {
       return;
     }
-    let years = [];
-    for (const option of options) {
-      if (option.id === firstNameId()[1]) {
-        years.push(option.year);
-      }
-    }
-    optionYears = years;
+    optionYears = getPermissionYears(id);
   });
-  // type Users = { name: keyof typeof users; user: TUser };
 
-  // const yUsers = users.map((user) => {
-  //   user.roles = options.map((opt) => {
-  //     if (opt.id === user.id) {
-  //     }
-  //   });
-  // });
-  // let selectedUser = $derived(options.find((o) => o.roles === ['ADMIN']));
   let selectedUser = $state<TUser | null>(nullUser);
-  $effect(() => {
-    if (!firstName) {
-      selectedUser = nullUser;
-      return;
-    }
-    const fName = (firstNameId()[0] as string)?.toLowerCase();
-    const user = Object.values(users as TUser[]).filter(
-      (u) => u.firstName.toLowerCase() === fName,
-    )[0] as TUser;
-    if (user !== nullUser) {
-      user.roles = getRoles(user.id);
-    }
-    selectedUser = user ?? nullUser;
-  });
-
   let thePermission = $derived(
-    firstName
-      ? hasPermission(users[firstName] as TUser, permission, authorId)
+    userName
+      ? hasPermission(selectedUser as TUser, permission, authorId)
       : false,
   );
   const checkPermission = (event: MouseEvent) => {
@@ -226,12 +297,12 @@
   };
   let viewSpanButton: HTMLSpanElement;
 
+  // ------------------------------------------------------
   const selectUserChanged = () => {
     blockDisabled = true;
-    let spans = document.querySelector('.permission-block')
-      ?.children as HTMLCollection;
-
+    console.log('selectUserChanged', userName);
     setTimeout(() => {
+      // select box
       if (selectYearEl && selectYearEl.options) {
         selectYearEl.selectedIndex = 1;
         currentYear = Number(
@@ -252,11 +323,19 @@
     }, 200);
 
     setTimeout(() => {
-      clearPermissionButtons();
+      let spans = document.querySelector('.permission-block')
+        ?.children as HTMLCollection;
+      // clearPermissionButtons();
       (spans[0] as HTMLSpanElement).click();
     }, 300);
 
+    setSelectedUser();
     // viewSpanButton.click();
+  };
+  const resourceOnHover = (event: MouseEvent) => {
+    event.preventDefault();
+    const el = event.target;
+    console.log('hovered', el);
   };
   onMount(() => {
     selectYearEl = document.querySelector('.select-year') as HTMLSelectElement;
@@ -270,6 +349,7 @@
     for (let i = 0; i < spans.length; i++) {
       (spans[i] as HTMLSpanElement).style.backgroundColor = 'navy';
     }
+    let vudIn: any[] = [];
     messageEl = document.getElementById('message') as HTMLSpanElement;
     // viewSpanButton.click(); = document.getElementById(
     //   'viewSpanElement',
@@ -277,8 +357,8 @@
   });
 </script>
 
-<p>blockDisabled {blockDisabled}</p>
-<!-- <p>{firstName}</p> -->
+<!-- <p>blockDisabled {blockDisabled}</p> -->
+<p>selectedUser {JSON.stringify(selectedUser)} userName {userName}</p>
 <div class="wrapper">
   <div>
     <pre>
@@ -286,20 +366,17 @@
   const users = &lcub;
 		<span>matia</span>: &lcub;
 			id: 31814560165,
-			firstName: 'Filip',
-			lastName: 'Isakovic',
+			userName: 'Matia Isakovic',
 			roles: ['admin']
 		&rcub;,
 		filip: &lcub;<span>filip</span>: &lcub;
 			id: '63811846353',
-			firstName: 'Filip',
-			lastName: 'Isakovic',
+			userName: 'Filip Isakovic',
 			roles: ['user']
 		&rcub;,
     <span>Marko</span>: &lcub;
 			id: '65031853491',
-			firstName: 'Marko',
-			lastName: 'Milutinovic',
+			userName: 'Marko Milutinovic',
 			roles: ['visitor']
 		&rcub;,
 	&rcub; as const;
@@ -314,7 +391,7 @@
     visitor: ['view:comments']
   &rcub; as const;
   NOTE: type Users = &lcub; name: keyof typeof users; user: TUser &rcub;
-  has big impact on &lt;input type="text" bind:value=&lcub;firstName&rcub; placeholder="enter firstName" /&gt;
+  has big impact on &lt;input type="text" bind:value=&lcub;userName&rcub; placeholder="enter userName" /&gt;
   as <i>keyof typeof users</i> is <span>"filip" | "Marko" | "matia"</span
       > and only those strings are acceptable 
   no matter what string we enter in the input box 
@@ -322,9 +399,9 @@
   </div>
   <div class="container">
     <div>
-      <!-- {#if Object.keys(users).includes(firstName)} -->
+      <!-- {#if Object.keys(users).includes(userName)} -->
       <p class="user-permission-line">
-        Does <span>{firstName}</span> has permission for
+        Does <span>{userName}</span> has permission for
         <span>{permission}?</span>
         <span
           class:has-permission={thePermission}
@@ -337,13 +414,13 @@
         <p class="warning">Please select a User</p>
       {/if} -->
       <select
-        bind:value={firstName}
+        bind:value={userName}
         onchange={selectUserChanged}
         class="select-user"
       >
         <option value="">Select a User</option>
-        {#each Object.entries(users) as [k, v]}
-          <option value={k}>{v.firstName} {v.lastName}</option>
+        {#each Object.entries(userNamesIds) as [k, _]}
+          <option value={k}>{k}</option>
         {/each}
       </select>
       <input
@@ -371,7 +448,7 @@
         bind:value={currentResource}
         onchange={selectResourceChanged}
       >
-        <option value={''} selected>Protected Resources</option>
+        <option value="0" selected>Protected Resources</option>
         {#each resourcesList as resource}
           <option value={resource}>{resource.toUpperCase()}</option>
         {/each}
@@ -396,12 +473,32 @@ Permissions (click permission button below to check for that permission)
       </pre>
       {/if}
     </div>
+    <div class="resources-container" class:hidden={blockDisabled}>
+      {#each [...Array(5).keys()] as num}
+        <div
+          class="resource"
+          data-author-id={getHandlersAndRandomAuthorId()[3]}
+          onmouseenter={hover}
+          onmouseleave={hover}
+          aria-hidden={true}
+        >
+          This is a protected resource
+          <button onclick={viewItem}>view</button>
+          <button onclick={updateItem}>update</button>
+          <button onclick={deleteItem}>delete</button>
+          <p class="hidden">
+            Resource belongs to {randomAuthorName}
+          </p>
+        </div>
+      {/each}
+    </div>
   </div>
 </div>
-{#if hasPermission(currentUser, 'view:comments')}<button>view</button>{/if}
-{#if hasPermission(currentUser, 'create:comments')}<button>create</button>{/if}
-{#if hasPermission(currentUser, 'update:comments')}<button>update</button>{/if}
-{#if hasPermission(currentUser, 'delete:comments')}<button>delete</button>{/if}
+
+<!-- {#if hasPermission(selectedUser, 'view:comments')}<button>view</button>{/if}
+{#if hasPermission(selectedUser, 'create:comments')}<button>create</button>{/if}
+{#if hasPermission(selectedUser, 'update:comments')}<button>update</button>{/if}
+{#if hasPermission(selectedUser, 'delete:comments')}<button>delete</button>{/if} -->
 
 <style lang="scss">
   .wrapper {
@@ -415,6 +512,21 @@ Permissions (click permission button below to check for that permission)
     );
     height: 32rem;
     margin: 1rem 0 0 3rem;
+  }
+  .resources-container {
+    /* cuts the caption
+    @include container(
+      'Resources Protected by Author id',
+      $head-color: skyblue
+    );
+    */
+    height: 10rem;
+    width: max-content;
+    margin: 1em 0 0 1rem !important;
+    padding: 1rem;
+    border: 1px solid gray;
+    border-radius: 8px;
+    overflow-y: auto;
   }
   select {
     width: max-content;
@@ -497,5 +609,27 @@ Permissions (click permission button below to check for that permission)
   .disabled {
     opacity: 0.4;
     cursor: not-allowed;
+  }
+  .hidden {
+    display: none;
+  }
+  .resource {
+    padding: 5px 0;
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    padding: 3px 0.5rem;
+    width: 20rem;
+    &:hover {
+      color: yellow;
+      border-color: gray;
+    }
+    button {
+      width: 2.7rem;
+      padding: 1px;
+      margin-right: 2px;
+      text-align: center;
+      display: none;
+    }
   }
 </style>
