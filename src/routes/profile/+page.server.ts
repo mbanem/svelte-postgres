@@ -63,6 +63,7 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
       },
     });
   }
+  console.log(users, userProfiles);
   return {
     users,
     userProfiles,

@@ -43,7 +43,7 @@ export const actions: Actions = {
 					fullNameEmail: {
 						firstName,
 						lastName,
-						email
+						email,
 					}
 				}
 			})

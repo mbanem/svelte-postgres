@@ -1,6 +1,6 @@
 <script lang="ts">
   import { browser } from '$app/environment';
-  import InputBox from '$lib/components/InputBox.svelte';
+  import InputBox from '$lib/components/CRInput.svelte';
   // const duck = new URL('./duck.jpeg', import.meta.url).href;
   // const goose = new URL('./goose.jpeg', import.meta.url).href;
 
@@ -32,14 +32,14 @@
   <div>
     <InputBox
       title="firstName"
-      exportValueOn="enter|blur"
+      exportValueOn="keypress|blur"
       capitalize={true}
       bind:value={user.firstName}
       required={true}
     />
     <InputBox
       title="lastName"
-      exportValueOn="enter|blur"
+      exportValueOn="keypress|blur"
       capitalize={true}
       bind:value={user.lastName}
       required={true}

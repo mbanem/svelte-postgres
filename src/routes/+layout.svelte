@@ -52,6 +52,7 @@
   // NOTE: suppressing :global(body) destroys NavBar buttons turning
   // them into list of strings instead of button captions
   :global(body) {
+    position: relative;
     color: var(--BODY-COLOR);
     background-color: var(--BODY-BACKGROUND-COLOR);
     margin: 0;
@@ -63,7 +64,7 @@
     border: none;
     outline: none;
     width: 100vw;
-    height: 100vh;
+    height: 95vh;
     /* cannot help scrolling when selecting button Two or Three */
     overflow-anchor: none;
     background-color: var(--BODY-BACKGROUND-COLOR);

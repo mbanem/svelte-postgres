@@ -2,7 +2,7 @@
 import type { LayoutServerLoad } from './$types';
 import { db } from '$lib/server/db';
 
-export const load = (async ({}) => {
+export const load = (async () => {
 	const categories = await db.category.findMany();
 	return {
 		categories,

@@ -1,13 +1,17 @@
 <script lang="ts">
   import { browser } from '$app/environment';
-  const xyInit = { x: 0, y: 0 };
-  let mouse = $state(xyInit);
-
-  let { clearingOK }: { clearingOK: boolean } = $props();
-
+  import { type Snippet } from 'svelte';
   type TRange = { left: number; right: number; top: number; bottom: number };
   type TDot = { x: number; y: number };
+  const dot: TDot = { x: -1, y: 0 };
+  let mouse = $state(dot);
+
+  let { clearingOK, children }: { clearingOK: boolean; children: Snippet } =
+    $props();
+
+  const allDots: HTMLDivElement[] = [];
   const putDot = (e: MouseEvent) => {
+    if (!browser || mouse.x < 0) return;
     if (!clearingOK || !browser || !document) return;
     const inside = (range: TRange, dot: TDot): boolean => {
       return (
@@ -23,12 +27,22 @@
     const point = { x: clientX, y: clientY };
 
     if (inside(btn.getBoundingClientRect(), point)) return;
-    const dot = document.getElementById('dot');
-    const clone = dot?.cloneNode(true) as HTMLDivElement;
-    // clone.style.position = 'absolute';
-    clone.style.left = `${e.clientX}px`;
-    clone.style.top = `${e.clientY}px`;
-    document.body.appendChild(clone);
+    // const dot = document.getElementById('dot');
+    // const clone = dot?.cloneNode(true) as HTMLDivElement;
+    // // clone.style.position = 'absolute';
+    // clone.style.left = `${e.clientX - 5}px`;
+    // clone.style.top = `${e.clientY - 55}px`;
+    // document.body.appendChild(clone);
+    // allDots.push(clone);
+  };
+  const clearAllDots = () => {
+    // await tick() is not enouh as click left a new dot on
+    // the 'clear all dots' button
+    setTimeout(() => {
+      for (const dot of allDots) {
+        dot.remove();
+      }
+    }, 0);
   };
 </script>
 
@@ -40,21 +54,26 @@
 	and to render children
 		<div>{@render children()}</div>
 -->
-<slot></slot>
+<!-- <slot></slot> -->
+{@render children()}
 <svelte:window
-  onmousemove={(e) => {
-    mouse.x = e.clientX;
-    mouse.y = e.clientY;
+  onmousemove={(e: MouseEvent) => {
+    mouse = { x: e.clientX, y: e.clientY };
   }}
   onclick={putDot}
+  onbeforeunload={clearAllDots}
 />
 <div class="main">
-  <p>{mouse.x}x{mouse.y}</p>
+  <p>{mouse.x} x {mouse.y}</p>
   <div id="dot" class="dot-class"></div>
-  <!-- mouse = null  exception!-->
-  <button onclick={() => (mouse = xyInit)}>
+  <!-- mouse = null  exception!
+    <svelte:boundary> could handle exceptions so we put
+    inappropriate tyoe to the mouse state  
+  -->
+  <button onclick={() => (mouse = null)}>
     whatever you do, don't click this button
   </button>
+  <button onclick={clearAllDots}>clear all dots</button>
 </div>
 
 <style>
@@ -66,9 +85,10 @@
     position: absolute;
     top: 0;
     left: 0;
-    width: 5px;
-    height: 5px;
+    width: 10px;
+    height: 10px;
+    border: 2px solid navy;
     border-radius: 50%;
-    background-color: blue;
+    background-color: lightgreen;
   }
 </style>

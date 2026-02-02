@@ -228,7 +228,7 @@ other navigation buttons
   }
   .grid-wrapper {
     display: grid;
-    grid-template-columns: 35rem 45rem;
+    grid-template-columns: 35rem 22rem;
     align-items: flex-start;
     margin-left: 3rem;
   }

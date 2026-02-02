@@ -1,5 +1,5 @@
 <script lang="ts">
-  // import { Tooltip } from 'flowbite-svelte';
+  import CRTooltip from '$components/CRTooltip.svelte';
   import FlakyComponent from './FlakyComponent.svelte';
   let divEl: HTMLDivElement;
   let clearingOK = $state(true);
@@ -16,24 +16,23 @@
   const mouseOver = (event: MouseEvent) => {
     clearingOK = event.type === 'mouseenter' ? false : true;
     event.preventDefault();
-    // console.log('mouseOver', event.type);
     (event.target as HTMLParagraphElement).classList.toggle('hover');
   };
 </script>
 
-{#snippet tooltip(title: string)}
-  <!-- cannot control tooltip styling -->
-  <!-- <Tooltip> -->
-    {title}
-  <!-- </Tooltip> -->
-{/snippet}
 <svelte:boundary>
+  <CRTooltip
+    caption={'click to render random number blocks'}
+    preferredPos="right,bottpm,left,top"
+  >
+    <button id="btn" onclick={flakyClick}> render random numbers </button>
+  </CRTooltip>
+
   <FlakyComponent {clearingOK}>
     <p>Flaky Component Children</p>
     <p style="color:lightgreen;">
       Rendering dots where you click in the Document
     </p>
-    <button id="btn" onclick={flakyClick}>flaky child button</button>
     <div class="div-class">
       <div
         class="flaky-header"
@@ -44,21 +43,39 @@
       >
         flaky child button renders random numbers
       </div>
-      {@render tooltip('click to clear the panel')}
       <div bind:this={divEl}></div>
     </div>
   </FlakyComponent>
+  {#snippet failed(error: unknown, reset: () => void)}
+    <!-- safe extraction -->
+    <p>
+      {error instanceof Error
+        ? error.message
+        : typeof error === 'string'
+          ? error
+          : JSON.stringify(error)}
+    </p>
 
-  {#snippet failed(_, reset)}
     <button onclick={reset}>oops! try again</button>
   {/snippet}
 </svelte:boundary>
 
+<pre class="right-column">
+      The &lt;svelte:boundary&gt; could wrap a component in order to handle
+      exceptions caused by the component and could inform of the
+      exception and then on user's request (e.g. by selecting a button)
+      reestablishes the previous state.
+      Here a component deliberately tries to set the mouse state to null, 
+      which causes the exception on which &lt;svelte:boundary&gt; reacted 
+      with a message and a button 'try again'.
+    </pre>
+
 <style lang="scss">
+  .grid-wrapper {
+    grid-template-columns: 25rem 25rem 25rem;
+  }
   .div-class {
     position: relative;
-    // top: 4rem;
-    // left: 50vw;
     width: 20rem;
     height: 20.5rem;
     padding: 0 2rem;
@@ -68,13 +85,26 @@
     border: 1px solid gray;
     overflow-y: auto;
   }
+  .right-column {
+    position: absolute;
+    top: 2rem;
+    right: 1rem;
+  }
+  .outline {
+    border: 1px solid yellow;
+    width: max-content;
+  }
   .flaky-header {
-    color: black;
+    color: lightgreen;
+    background-color: navy;
     text-align: center;
     margin: 0.5rem 0;
     cursor: pointer;
+    border: 1px solid gray;
+    border-radius: 5px;
+    padding: 6px 1rem;
     &:hover {
-      color: blue;
+      color: yellow;
     }
   }
 </style>

@@ -193,7 +193,7 @@ export const setCSSValue = (varName: string, value: string) => {
       if (root) {
         // @ts-expect-error
         root.style.setProperty(varName, value)
-        console.log('cssValue',root.style.getPropertyValue(varName))
+        // console.log('cssValue',root.style.getPropertyValue(varName))
       }
     }
   } catch (err: any) {
@@ -222,22 +222,22 @@ Number.prototype[Symbol.iterator] = function* () {
 }
 
 export const sleep = async (ms: number) => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        // ms here is a dummy but required by
-        // resolve to send out some value
-        resolve(ms)
-      }, ms)
-    })
-  }
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      // ms here is a dummy but required by
+      // resolve to send out some value
+      resolve(ms)
+    }, ms)
+  })
+}
 
 export const capitalize = (str: string) => {
   const spaceUpper = (su: string) => {
     // getting _string so return ' String' with a leading space
     return ` ${su[1]?.toUpperCase()}`
   }
-  str = str[0]?.toUpperCase() + str.slice(1)
-  return str
+  let s = str[0]?.toUpperCase() + str.slice(1)
+  return s
     .replace(/\b[a-z](?=[a-z]{2})/g, (char) => char.toUpperCase())
     // snake_string_format replace _ with space
     .replace(/(_\w)/, spaceUpper)
@@ -561,3 +561,36 @@ export const fadeScale = (
   }
 }
 
+
+// compare $state(object) with object
+export function sameDeep(v1: any, v2: any): boolean {
+  if (v1 === v2) return true;
+
+  if (v1 instanceof Date && v2 instanceof Date)
+    return v1.getTime() === v2.getTime();
+
+  if (typeof v1 !== 'object' || typeof v2 !== 'object' || v1 == null || v2 == null)
+    return false;
+
+  const keys1 = Object.keys(v1);
+  const keys2 = Object.keys(v2);
+  if (keys1.length !== keys2.length) return false;
+
+  for (const k of keys1) {
+    if (!same(v1[k], v2[k])) return false;
+  }
+
+  return true;
+}
+
+export function same<T extends Record<string, any>>(v1: T, v2: T): boolean {
+  if (v1 === v2) return true;
+
+  const keys = Object.keys(v1);
+  if (keys.length !== Object.keys(v2).length) return false;
+
+  for (const k of keys) {
+    if (v1[k] !== v2[k]) return false;
+  }
+  return true;
+}

@@ -18,7 +18,21 @@
     height?: string;
     fontsize?: string;
     margin?: string;
-    type?: string;
+    type?:
+      | string
+      | number
+      | Date
+      | boolean
+      | password
+      | time
+      | text
+      | tel
+      | range
+      | radio
+      | checkbox
+      | textarea;
+    rows?: string;
+    cols?: string;
     value?: string;
     required?: boolean;
     capitalize?: boolean;
@@ -37,6 +51,8 @@
     fontsize = '16px',
     margin = '0',
     type,
+    rows = '4',
+    cols = '30',
     value = $bindable(),
     required = false,
     err = undefined,
@@ -53,7 +69,7 @@
       // if this is not field name but an information message
       if (str.split(' ').length > 3) return str;
       // @ts-expect-error
-      str = str.capCamelCase();
+      str = str.capitalize();
       const arr = str.match(/\s+/g);
       if (!arr || arr.length > 3) return str;
     } catch (err) {
@@ -99,6 +115,9 @@
     labelStyle = 'opacity:1;top:3px;';
   };
 
+  const onChangeHandler = () => {
+    labelStyle = 'opacity:1; top:3px;';
+  };
   const onBlurHandler = (event: FocusEvent) => {
     event.preventDefault();
 
@@ -146,6 +165,7 @@
     }
     if (inputValue && inputValue.length > 0) {
       if (capitalize) {
+        value = utils.capitalize(inputValue);
       }
 
       // if input should be returned
@@ -172,7 +192,7 @@
   // text is selected
   let labelStyle = $state('opacity:0.5;top:25px;');
   let label: HTMLLabelElement;
-  let inputEl: HTMLInputElement;
+  let inputEl: HTMLInputElement | HTMLTextAreaElement;
   export const setFocus = () => {
     inputEl.focus();
   };
@@ -197,16 +217,34 @@
 </script>
 
 <div class="input-wrapper" style="margin:{margin};">
-  <input
-    bind:this={inputEl}
-    type={type ? type : 'text'}
-    required
-    bind:value={inputValue}
-    onkeyup={onKeyUpHandler}
-    onfocus={onFocusHandler}
-    onblur={onBlurHandler}
-    disabled={false}
-  />
+  {#if type === 'textarea'}
+    <textarea
+      id="inp"
+      bind:this={inputEl}
+      {rows}
+      {cols}
+      required
+      bind:value
+      onkeyup={onKeyUpHandler}
+      onfocus={onFocusHandler}
+      onblur={onBlurHandler}
+      onchange={onChangeHandler}
+      disabled={false}
+    >
+    </textarea>
+  {:else}
+    <input
+      id="inp"
+      bind:this={inputEl}
+      type={type ? type : 'text'}
+      required
+      bind:value
+      onkeyup={onKeyUpHandler}
+      onfocus={onFocusHandler}
+      onblur={onBlurHandler}
+      disabled={false}
+    />
+  {/if}
   <label for="x" onclick={setFocus} aria-hidden={true} style={`${labelStyle}`}>
     {title}
     <span class="err" id="x">

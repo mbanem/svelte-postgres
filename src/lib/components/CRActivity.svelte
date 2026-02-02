@@ -2,7 +2,6 @@
   // CRActivity
   import { onMount } from 'svelte';
   import * as utils from '$lib/utils';
-  import '/src/app.d';
   type ARGS = {
     PageName: string;
     result: string;
@@ -32,6 +31,7 @@
   // svelte-ignore non_reactive_update
   // let msgEl: HTMLSpanElement;
   // svelte-ignore non_reactive_update
+  let msgEl: HTMLSpanElement;
   let selectBox: HTMLSelectElement;
   let timer: NodeJS.Timeout | string | number | undefined; //ReturnValue<typeof setTimeout>;
   const killTimer = () => {

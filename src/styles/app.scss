@@ -75,23 +75,6 @@
   --BOX-SHADOW: 10px 10px 20px 2px gray;
 }
 
-// ---------------------------------------------------
-
-
-// ---------------------------------------------------
-// *,
-// *::before,
-// *::after
-// {
-// 	box-sizing:border-box;
-// }
-
-// *{
-// 	margin:0;
-// 	padding:0;
-// 	line-height:1.5;
-// }
-
 .yellow {
   color: yellow;
 }
@@ -154,7 +137,6 @@
   font-weight: 400;
   border-radius: 5px;
   font-size: 14px;
-  /* works here but not in tooltip-master*/
   color: skyblue;
   background-color: #3e3e3e;
   border: 1px solid gray;
@@ -168,16 +150,10 @@
   display: grid;
   grid-template-columns: max-content max-content !important;
   grid-template-rows: 1.5rem;
-  // grid-auto-rows: max-content !important;
-  // grid-template-columns: 5rem 15rem !important;
-  // row-gap: 6px;
   justify-content: flex-start;
   align-items: baseline;
   row-gap: 0;
   text-wrap: wrap;
-  // width: max-content !important;
-  // padding: 6px 1.5rem !important;
-  // height: auto !important;
   color: skyblue !important;
   font-size: 14px;
   line-height: 14px;
@@ -188,11 +164,6 @@
   border-radius: 8px;
   z-index: 6;
 
-  // p:nth-child(even){
-  //   width:100%;
-  //   overflow-y:auto;
-  //   background-color:royalblue;
-  // }
   p:nth-child(even) {
     color: yellow;
     text-align: left;
@@ -226,26 +197,6 @@
   border-color: pink;
 }
 
-// .tooltip-label {
-//   position: absolute;
-//   top: 0 !important;
-//   right: 1rem !important;
-//   display: inline-block;
-//   width: max-content !important;
-//   padding: 0 1rem;
-//   line-height: 1px;
-//   font-weight: 400;
-//   border-radius: 5px;
-//   font-size: 14px; /* works here but not in tooltip-master*/
-//   color: skyblue;
-//   background-color: #3e3e3e;
-//   border: 1px solid gray;
-//   p {
-//     display: inline-block;
-//     width: max-content;
-//     color: lightblue;
-//   }
-// }
 :global(.master-profile) {
   text-align: center;
   display: inline-block;
@@ -272,7 +223,6 @@
   position: relative;
 }
 
-/* used with capital letter X */
 .icon-update-color {
   color: lightblue;
   border: 3px solid lightblue !important;
@@ -539,11 +489,9 @@ pre {
 
 section ul[style^='margin'] li.list-item {
   @for $i from 1 through 4 {
-    // font-size: var(--font-size);
     $marker-starting-hue: 0deg;
     $hue-variation: 35;
 
-    // @include capitalize(16px);
     // change color for marker and then for li text
     &:nth-child(#{$i}) {
       color: hsl($marker-starting-hue + $i * $hue-variation, 70%, 50%);
@@ -572,9 +520,7 @@ input[type='email'],
 input[type='password'],
 textarea {
   display: inline-block;
-  height: 1.8rem;
   margin-bottom: 10px;
-  width: 30rem;
   font-size: 16px;
   padding: 4px 1rem;
   color: var(--INPUT-COLOR);
@@ -595,7 +541,6 @@ textarea {
 }
 
 input[type='number'] {
-  // width: 3.5rem;
   height: 1.5rem;
   color: var(--INPUT-COLOR);
   background-color: var(--INPUT-BACKGROUND-COLOR);
@@ -611,8 +556,6 @@ input[type='number'] {
 }
 
 textarea {
-  width: 33rem;
-  height: 23rem;
   text-align: left;
   color: var(--INPUT-COLOR);
   margin-top: 1rem;
@@ -717,41 +660,11 @@ a-button {
   }
 }
 
-/* end of defining a-button */
-
 nav a:any-link {
   @extend a;
   @extend a-block;
 }
 
-// .relative {
-// 	position: relative;
-
-// 	.tooltip {
-// 		position: absolute;
-// 		top: -3rem;
-// 		display: inline-block;
-// 		width: max-content;
-// 		font-size: 14px;
-// 		font-weight: 400;
-// 		padding: 3px 1rem;
-// 		border: var(--TOOLTIP-BORDER);
-// 		border-radius: 4var (--TOOLTIP-BORDER-RADIUS);
-// 		background-color: var(--TOOLTIP-BACKGROUND-COLOR);
-// 		text-align: center;
-// 		margin-bottom: 6px;
-// 	}
-// 	.master {
-// 		color: var(--TOOLTIP-COLOR);
-// 		font-size: 14px;
-// 		font-weight: 400;
-// 		p {
-// 			padding: 0;
-// 			margin: 0;
-// 		}
-// 	}
-// }
-// Conversion function
 // prettier-ignore
 @function to-unit($unit, $input) {
   // Test against valid CSS units. should get 0 followed by unit e.g. 0rem, 0px

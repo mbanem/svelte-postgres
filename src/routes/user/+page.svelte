@@ -1,134 +1,161 @@
 <script lang="ts">
-import type { Snapshot } from '../$types';
-import { onMount } from 'svelte';
-import type { PageData, ActionData } from './$types';
-import type { SubmitFunction } from '@sveltejs/kit';
-import { enhance } from '$app/forms';
-import { invalidateAll } from '$app/navigation';
-import { page } from '$app/state'; // for page.status code on actions
+  // user/+page.svelte
+  import type { Snapshot } from '../$types';
+  import { onMount } from 'svelte';
+  import type { PageData, ActionData } from './$types';
+  import type { SubmitFunction } from '@sveltejs/kit';
+  import { enhance } from '$app/forms';
+  import { invalidateAll } from '$app/navigation';
+  import { page } from '$app/state'; // for page.status code on actions
 
-import * as utils from '$lib/utils';
-import CRInput from '$lib/components/CRInput.svelte';
-import CRSpinner from '$lib/components/CRSpinner.svelte';
-import CRActivity from '$lib/components/CRActivity.svelte';
-import CRTooltip from '$lib/components/CRTooltip.svelte';
-import CRSummaryDetail from '$lib/components/CRSummaryDetail.svelte';
-import type { User, Role, Profile, Article, Post, Category, Todo }  from '$lib/types/types';
-  type TFormData = {
-      id: String | null;
-    firstName: String | null;
-    lastName: String | null;
-    email: String | null;
-    password: String | null;
-    
-};
-  let snap = $state<TFormData>({
-    
-    id: null,
-    firstName: null,
-    lastName: null,
-    email: null,
-    password: null
-  });
+  import * as utils from '$lib/utils';
+  import * as Types from '$lib/types/types';
+  import CRInput from '$lib/components/CRInput.svelte';
+  import CRSpinner from '$lib/components/CRSpinner.svelte';
+  import CRActivity from '$lib/components/CRActivity.svelte';
+  import CRTooltip from '$lib/components/CRTooltip.svelte';
+  import CRSummaryDetail from '$lib/components/CRSummaryDetail.svelte';
 
-type ARGS = {
-  data: PageData;
-  form: ActionData;
+  type ARGS = {
+    data: PageData;
+    form: ActionData;
   };
   let { data, form }: ARGS = $props();
 
-  let selectedUserId = $state<string>(data.locals.user.id)
+  type UserPartial = {
+    id: string | null;
+    email: string | null;
+    firstName: string | null;
+    lastName: string | null;
+    password: string | null;
+    role: Types.Role | null;
+    updatedAt: Date | null;
+  };
+  let nullSnap = {
+    email: null,
+    firstName: null,
+    id: null,
+    lastName: null,
+    password: null,
+    role: null,
+    updatedAt: null,
+  } as UserPartial;
+
+  const crId_ = () => {
+    return snap_().id;
+  };
+  let snap = $state<UserPartial>((data.locals.user as UserPartial) ?? nullSnap);
+  const snap_ = () => {
+    return snap;
+  };
+  let selectedUserId = $state(data.locals.user.id);
+  const selectedUserId_ = () => {
+    return selectedUserId;
+  };
+
+  $effect(() => {
+    const selUserId = selectedUserId_();
+    if (selUserId && data.users) {
+      const u = data.users.filter((user) => user.id === selUserId)[0]; // as UserPartial;
+      if (u) {
+        snap = {
+          email: u.email,
+          firstName: u.firstName,
+          id: u.id,
+          lastName: u.lastName,
+          password: '',
+          role: u.role,
+          updatedAt: u.updatedAt,
+        };
+      }
+    }
+    // set buttons state based on id value and formValid status
+  });
   let loading = $state<boolean>(false); // toggling the spinner
   let btnCreate: HTMLButtonElement;
   let btnUpdate: HTMLButtonElement;
   let btnDelete: HTMLButtonElement;
   let iconDelete: HTMLSpanElement;
-  let result = '';
+  let result = $state('');
   const clearMessage = () => {
     setTimeout(() => {
       result = '';
     }, 2000);
   };
-      
-  const capitalize = (str:string) => {
-    const spaceUpper = (su:string) => {
-      return ` ${su[1]?.toUpperCase()}`
-    }
-          
-    return str
-    .replace(/(_\w)/, spaceUpper)
-    .replace(/\b[a-z](?=[a-z]{2})/g, (char) => char.toUpperCase())
-  }
-  
-  function noType(name: string){
-    return name.match(/([a-zA-z0-9_]+):?.*/)?.[1]
-  }
 
-  // include only selected fields by user via this extension
-  const nullSnap = {
-    id: null,
-    firstName: null,
-    lastName: null,
-    email: nullid: null,
-    firstName: null,
-    lastName: null,
-    email: null,
-    password: null
-  }
-      
-  let formDataValid = $derived.by(() => {
-    for (const [key, value] of Object.entries(snap)) {
-      if (key === 'id') continue;
-      if (!value) return false;
+  let formDataValid: boolean[] = $derived.by((): boolean[] => {
+    if (!snap_()) return [false, false];
+    const status = [true, false]; // formDataValid, anyFieldForUpdate
+    for (const [key, value] of Object.entries(snap_())) {
+      if ('id|updatedAt'.includes(key)) continue;
+      if (!value) status[0] = false;
+      if (value) status[1] = true;
     }
-    return true;
+    return status;
   });
-      
+
+  $effect(() => {
+    let idOK = ((crId_() as string).length === 36) as boolean;
+    btnCreate.disabled = idOK || !formDataValid[0];
+    btnUpdate.disabled = !idOK || !formDataValid[1];
+    btnDelete.disabled = !idOK;
+  });
+
+  const capitalize = (str: string) => {
+    const spaceUpper = (su: string) => {
+      return ` ${su[1]?.toUpperCase()}`;
+    };
+
+    return str
+      .replace(/(_\w)/, spaceUpper)
+      .replace(/\b[a-z](?=[a-z]{2})/g, (char) => char.toUpperCase());
+  };
+
   const clearForm = (event?: MouseEvent | KeyboardEvent) => {
     event?.preventDefault();
     snap = nullSnap;
     utils.hideButtonsExceptFirst([btnCreate, btnUpdate, btnDelete]);
   };
-    
+
   const enhanceSubmit: SubmitFunction = async ({ action, formData }) => {
-    const required:string[] = [];
+    const required: string[] = [];
     for (const [key, value] of Object.entries(snap)) {
       formData.set(key, value as string);
-      if(!value){
-        const req = key +' is required';
-        const el = document.querySelector('[title="' + key +'"]')
-        if (el){
+      if (!value) {
+        const req = key + ' is required';
+        const el = document.querySelector('[title="' + key + '"]');
+        if (el) {
           (el as HTMLInputElement).placeholder += req;
-          required.push(req)
+          required.push(req);
         }
       }
-    }  
-          
-    if (required.join('').length){
+    }
+
+    if (required.join('').length) {
       return;
     }
     loading = true; // start spinner animation
-      
+
     result =
       action.search === '?/create'
-      ? 'creating `${routeName}`...'
-      : action.search === '?/update'
-      ? 'updating `${routeName}`...'
-      : 'deleting `${routeName}`...';
+        ? 'creating user...'
+        : action.search === '?/update'
+          ? 'updating user...'
+          : 'deleting user...';
     if (action.search === '?/delete') {
       utils.hideButtonsExceptFirst([btnDelete, btnCreate, btnUpdate]);
     }
-      
+
     return async ({ update }) => {
       await update();
-        
+
       if (action.search === '?/create') {
-        result = page.status === 200 ? '`${routeName}` created' : 'create failed';
+        result = page.status === 200 ? 'user created' : 'create failed';
       } else if (action.search === '?/update') {
-        result = page.status === 200 ? '`${routeName}` updated' : 'update failed';
+        result = page.status === 200 ? 'user updated' : 'update failed';
       } else if (action.search === '?/delete') {
-        result = page.status === 200 ? '`${routeName}` deleted' : 'delete failed';
-        iconDelete.classList.toggle('hidden');
+        result = page.status === 200 ? 'user deleted' : 'delete failed';
+        // iconDelete.classList.toggle('hidden');
         utils.hideButtonsExceptFirst([btnCreate, btnUpdate, btnDelete]);
       }
       invalidateAll();
@@ -137,169 +164,124 @@ type ARGS = {
       clearForm();
       utils.hideButtonsExceptFirst([btnCreate, btnUpdate, btnDelete]);
       clearMessage();
-    }
+    };
+  };
+  let owner = true;
+  const toggleColor = (event: MouseEvent, caption?: string) => {
+    console.log('caption', caption);
+    const grand = (event.target as HTMLSpanElement)?.parentElement
+      ?.parentElement;
 
-        // buttons_() called here
-    }
-    let owner = true;
-    const toggleColor = (event: MouseEvent, caption?: string) => {
-		console.log('caption', caption)
-		const grandParent = (event.target as HTMLSpanElement)?.parentElement.parentElement;
-		
-    const style = grandParent?.parentElement?.style;
-    if (style){
+    const style = grand?.parentElement?.style;
+    if (style) {
       style.color = style.color === 'red' ? 'blue' : 'red';
     }
   };
-  </script>
-  <svelte:head>
-    <title>user Page</title>
-  </svelte:head>
-  {#if 'CRInput,CRSpinner,CRActivity,CRTooltip,CRSummaryDetail'.includes('CRActivity')}
-    <CRActivity
-      PageName='user'
-      bind:result
-      bind:selectedUserId
-      user={data.locals.user}
-      users={data.users}
-    ></CRActivity>
-  {/if}
-  <form action="?/create" method="post" use:enhance={enhanceSubmit}>
-    <div class='form-wrapper'>
-      <CRInput title="id"
-        exportValueOn="enter|blur"
-        type='text'
-        capitalize={false}
-        bind:value={snap.id as string}
-        required={true}
-        width='22.5rem'
-      >
-      </CRInput>
-      <CRInput title="firstName"
-        exportValueOn="enter|blur"
-        type='text'
-        capitalize={true}
-        bind:value={snap.firstName as string}
-        required={true}
-        width='22.5rem'
-      >
-      </CRInput>
-      <CRInput title="lastName"
-        exportValueOn="enter|blur"
-        type='text'
-        capitalize={true}
-        bind:value={snap.lastName as string}
-        required={true}
-        width='22.5rem'
-      >
-      </CRInput>
-      <CRInput title="email"
-        exportValueOn="enter|blur"
-        type='text'
-        capitalize={false}
-        bind:value={snap.email as string}
-        required={true}
-        width='22.5rem'
-      >
-      </CRInput>
-      <CRInput title="password"
-        exportValueOn="enter|blur"
-        type='password'
-        capitalize={false}
-        bind:value={snap.password as string}
-        required={true}
-        width='22.5rem'
-      >
-      </CRInput>
-      
-      <div class='buttons-row'>
-        <div class='buttons'>
-          <CRSpinner
-            bind:button={btnCreate}
-            spinOn={loading}
-            caption=create
-            formaction="?/create"
-            disabled={!formDataValid}
-            hidden={false}
-          >
-          </CRSpinner>
-              <CRSpinner
-            bind:button={btnUpdate}
-            spinOn={loading}
-            caption=update
-            formaction="?/update"
-            disabled={!formDataValid}
-            hidden={true}
-          >
-          </CRSpinner>
-              <CRSpinner
-            bind:button={btnDelete}
-            spinOn={loading}
-            caption=delete
-            formaction="?/delete"
-            disabled={!formDataValid}
-            hidden={true}
-          >
-          </CRSpinner>
-              <CRSpinner
-            bind:button={btnCreate}
-            spinOn={loading}
-            caption=create
-            formaction="?/create"
-            disabled={!formDataValid}
-            hidden={false}
-          >
-          </CRSpinner>
-              <CRSpinner
-            bind:button={btnUpdate}
-            spinOn={loading}
-            caption=update
-            formaction="?/update"
-            disabled={!formDataValid}
-            hidden={true}
-          >
-          </CRSpinner>
-              <CRSpinner
-            bind:button={btnDelete}
-            spinOn={loading}
-            caption=delete
-            formaction="?/delete"
-            disabled={!formDataValid}
-            hidden={true}
-          >
-          </CRSpinner>
-              <CRSpinner
-            bind:button={btnCreate}
-            spinOn={loading}
-            caption=create
-            formaction="?/create"
-            disabled={!formDataValid}
-            hidden={false}
-          >
-          </CRSpinner>
-              <CRSpinner
-            bind:button={btnUpdate}
-            spinOn={loading}
-            caption=update
-            formaction="?/update"
-            disabled={!formDataValid}
-            hidden={true}
-          >
-          </CRSpinner>
-              <CRSpinner
-            bind:button={btnDelete}
-            spinOn={loading}
-            caption=delete
-            formaction="?/delete"
-            disabled={!formDataValid}
-            hidden={true}
-          >
-          </CRSpinner>
-          <button onclick={clearForm}>clear form</button>
-        </div>
+</script>
+
+<svelte:head>
+  <title>user Page</title>
+</svelte:head>
+<CRActivity
+  PageName="user"
+  bind:result
+  bind:selectedUserId
+  user={data.locals.user}
+  users={data.users}
+></CRActivity>
+
+<form action="?/create" method="post" use:enhance={enhanceSubmit}>
+  <div class="form-wrapper">
+    <CRInput
+      title="email"
+      exportValueOn="enter|blur"
+      type="text"
+      capitalize={false}
+      bind:value={snap.email as string}
+      required={true}
+      width="22.5rem"
+    ></CRInput>
+    <CRInput
+      title="firstName"
+      exportValueOn="enter|blur"
+      type="text"
+      capitalize={true}
+      bind:value={snap.firstName as string}
+      required={true}
+      width="22.5rem"
+    ></CRInput>
+    <CRInput
+      title="id"
+      exportValueOn="enter|blur"
+      type="text"
+      capitalize={false}
+      bind:value={snap.id as string}
+      required={true}
+      width="22.5rem"
+    ></CRInput>
+    <CRInput
+      title="lastName"
+      exportValueOn="enter|blur"
+      type="text"
+      capitalize={true}
+      bind:value={snap.lastName as string}
+      required={true}
+      width="22.5rem"
+    ></CRInput>
+    <CRInput
+      title="password"
+      exportValueOn="enter|blur"
+      type="password"
+      capitalize={false}
+      bind:value={snap.password as string}
+      required={true}
+      width="22.5rem"
+    ></CRInput>
+    <CRInput
+      title="role"
+      exportValueOn="enter|blur"
+      type="text"
+      capitalize={true}
+      bind:value={snap.role as Types.Role}
+      required={true}
+      width="22.5rem"
+    ></CRInput>
+    <CRInput
+      title="updatedAt"
+      exportValueOn="enter|blur"
+      type="text"
+      capitalize={true}
+      bind:value={snap.updatedAt as Date}
+      required={true}
+      width="22.5rem"
+    ></CRInput>
+
+    <div class="buttons-row">
+      <div class="buttons">
+        <CRSpinner
+          bind:button={btnCreate}
+          spinOn={loading}
+          caption="create"
+          formaction="?/create"
+        ></CRSpinner>
+        <CRSpinner
+          bind:button={btnUpdate}
+          spinOn={loading}
+          caption="update"
+          formaction="?/update"
+          disabled={!formDataValid}
+        ></CRSpinner>
+        <CRSpinner
+          bind:button={btnDelete}
+          spinOn={loading}
+          caption="delete"
+          formaction="?/delete"
+        ></CRSpinner>
+        <button onclick={clearForm}>clear form</button>
       </div>
     </div>
-  </form>
+  </div>
+</form>
 <div style="border:0;padding:0; color:green;">
   This is a list item to be deleted{@render iconHandler(
     true,
@@ -325,7 +307,7 @@ type ARGS = {
 
 {#snippet iconHandler(
   owner: boolean,
-  caption?: string,
+  caption: string,
   iconClass: string,
   clickHandler?: Function | undefined,
 )}
@@ -335,8 +317,8 @@ type ARGS = {
         onclick={clickHandler
           ? (event: MouseEvent) => clickHandler(event, caption)
           : (event: MouseEvent) =>
-              event.target &&
-              event.target.parentElement.parentElement.parentElement.remove()}
+              // @ts-expect-error
+              event.target.parentElement?.parentElement?.parentElement.remove()}
         aria-hidden={true}
         style:cursor={owner ? 'pointer' : 'not-allowed'}
         style="margin=0 0.5rem;font-size:20px;color:cornsilk;border:1px solid gray;border-radius:4px;padding:2px 6px;"
@@ -371,7 +353,7 @@ There are three examples above two to delete the parent with owner and not owner
 and the third to toggle parent's color. 
 </pre>
 
-<style lang='scss'>
+<style lang="scss">
   .form-wrapper {
     display: flex;
     flex-direction: column;
@@ -392,14 +374,14 @@ and the third to toggle parent's color.
       }
     }
   }
-  .icon-delete{
+  .icon-delete {
     display: inline-block;
     width: max-content;
     padding: 3px 8px;
     border: 1px solid gray;
     border-radius: 4px;
   }
-  .pink{
+  .pink {
     color: pink;
   }
   CRTooltip:has(> span) {

@@ -5,7 +5,7 @@
   import { page } from '$app/state';
   import { onMount } from 'svelte';
   import * as utils from '$lib/utils';
-  import InputBox from '$lib/components/InputBox.svelte';
+  import CRInput from '$lib/components/CRInput.svelte';
 
   // export let form: ActionData;
   type ARGS = {
@@ -86,8 +86,7 @@
   {/if}
   <form method="POST" action="?/login" use:enhance={enhanceLogin}>
     <div>
-      <InputBox
-        id="x1"
+      <CRInput
         type="text"
         title="firstName"
         bind:value={snap.firstName}
@@ -96,8 +95,7 @@
       />
     </div>
     <div>
-      <InputBox
-        id="x2"
+      <CRInput
         type="text"
         title="lastName"
         bind:value={snap.lastName}
@@ -106,8 +104,7 @@
       />
     </div>
     <div>
-      <InputBox
-        id="x3"
+      <CRInput
         type="text"
         title="email"
         exportValueOn="blur"
@@ -115,8 +112,7 @@
       />
     </div>
     <div>
-      <InputBox
-        id="x4"
+      <CRInput
         type="password"
         exportValueOn="blur"
         title="password"

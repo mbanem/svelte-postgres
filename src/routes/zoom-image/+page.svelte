@@ -7,6 +7,7 @@
     'eiffel-tower.jpg',
   ];
 
+  // let boxSize = $state(25);
   let hoverImg: string | null = null;
   let cursorX = 0;
   let cursorY = 0;
@@ -20,8 +21,14 @@
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
-    cursorX = Math.max(boxSize / 2, Math.min(x, rect.width - boxSize / 2));
-    cursorY = Math.max(boxSize / 2, Math.min(y, rect.height - boxSize / 2));
+    cursorX = Math.max(
+      (80 - boxSize) / 2,
+      Math.min(x, rect.width - (80 - boxSize) / 2),
+    );
+    cursorY = Math.max(
+      (80 - boxSize) / 2,
+      Math.min(y, rect.height - (80 - boxSize) / 2),
+    );
 
     hoverImg = img;
   }
@@ -33,10 +40,10 @@
 
   function zoomStyle(): string {
     if (!hoverImg || !imgRect) return '';
-    const scale = 600 / boxSize;
+    const scale = 600 / (80 - boxSize);
 
-    const bgX = -(cursorX - boxSize / 2) * scale;
-    const bgY = -(cursorY - boxSize / 2) * scale;
+    const bgX = -(cursorX - (80 - boxSize) / 2) * scale;
+    const bgY = -(cursorY - (80 - boxSize) / 2) * scale;
 
     return `background-image: url("/${hoverImg}");
       background-size: ${imgRect.width * scale}px ${imgRect.height * scale}px;
@@ -54,7 +61,11 @@
 <div class="grid">
   <div class="left">
     {#each images as img}
-      <div class="thumb-wrapper" on:mouseleave={handleMouseLeave}>
+      <div
+        class="thumb-wrapper"
+        onmouseleave={handleMouseLeave}
+        aria-hidden={true}
+      >
         <!-- eslint-disable-next-line svelte/valid-aria-roles -->
         <img
           src={'/' + img}
@@ -63,14 +74,15 @@
           role="presentation"
           width="100"
           height="100"
-          on:mousemove={(e) =>
+          onmousemove={(e) =>
             handleMouseMove(e, img, e.currentTarget as HTMLImageElement)}
         />
         {#if hoverImg === img}
           <div
             class="zoom-box"
-            style="left:{cursorX - boxSize / 2}px; top:{cursorY -
-              boxSize / 2}px"
+            style="left:{cursorX - (80 - boxSize) / 2}px; top:{cursorY -
+              (80 - boxSize) / 2}px;  width:{80 - boxSize}px;height:{80 -
+              boxSize}px;"
             aria-hidden={true}
           ></div>
         {/if}
@@ -84,6 +96,22 @@
       <div class="zoomed" style={zoomStyle()}></div>
     {/if}
   </div>
+  <label for="r"
+    >Zoom Box Size
+    <input
+      id="r"
+      type="range"
+      min="1"
+      max="70"
+      bind:value={boxSize}
+      list="values"
+    />
+    <datalist id="values">
+      {#each [...8] as val}
+        <option value={val * 10} label={val * 10}></option>
+      {/each}
+    </datalist></label
+  >
 </div>
 
 <style>
@@ -110,8 +138,6 @@
   }
   .zoom-box {
     position: absolute;
-    width: 25px;
-    height: 25px;
     border: 1px solid yellow;
     background: rgba(255, 255, 0, 0.1);
     pointer-events: none;
@@ -129,5 +155,17 @@
     border: 1px solid #ccc;
     background-repeat: no-repeat;
     z-index: 10;
+  }
+  datalist {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    writing-mode: horizontal-tb;
+    width: 250px;
+  }
+
+  input[type='range'] {
+    width: 250px;
+    margin: 0;
   }
 </style>

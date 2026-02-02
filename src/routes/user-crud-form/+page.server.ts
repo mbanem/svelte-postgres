@@ -1,17 +1,17 @@
 
-import { db } from '$server/db';
-import { v4 as uuidv4 } from 'uuid';
-import * as utils from '$utils';
-import { fail, redirect, error } from '@sveltejs/kit';
-import type { Actions, PageData, ActionData, PageServerLoad } from './$types';
+import { db } from '$server/db'
+import { v4 as uuidv4 } from 'uuid'
+import * as utils from '$utils'
+import { fail, redirect, error } from '@sveltejs/kit'
+import type { Actions, PageData, ActionData, PageServerLoad } from './$types'
 import bcrypt from 'bcrypt'
 
 
 export const load: PageServerLoad = (async ({ locals, cookies }) => {
-  let uTodos: UTodo[] = [];
+  let uTodos: UTodo[] = []
 
 
-  let userAuthToken = cookies.get('session') ?? '';
+  let userAuthToken = cookies.get('session') ?? ''
   if (!userAuthToken) {
     locals.user.role = 'VISITOR'
     return
@@ -25,12 +25,13 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
       id: true,
       firstName: true,
       lastName: true,
+      email: true,
       role: true,
     },
-  })) as UserPartial;
+  })) as UserPartial
 
   if (!user) {
-    throw error(400, 'User not found');
+    throw error(400, 'User not found')
   }
   if (locals.user?.role === 'ADMIN') {
     uTodos = (await db.$queryRaw`select
@@ -50,7 +51,7 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
     where t.id is not null or u.role = 'ADMIN'
 		order by 		u.last_name ASC,
 								u.first_name ASC,
-								t.priority DESC;`) as UTodo[];
+								t.priority DESC;`) as UTodo[]
   } else {
     uTodos = (await db.$queryRaw`select
 					u.id,
@@ -69,75 +70,74 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
 			where u.id = ${user.id}
 			order by 		u.last_name ASC,
 									u.first_name ASC,
-									t.priority DESC;`) as UTodo[];
+									t.priority DESC;`) as UTodo[]
   }
   const getUser = (id: string) => {
     for (let i = 0; i < uTodos.length; i++) {
       if (id === uTodos[i]?.id) {
-        return uTodos[i];
+        return uTodos[i]
       }
     }
-  };
+  }
 
-  const users = await db.user.findMany();
-	if (!users) {
-		return fail(400, { message: 'No users in db' });
-	}
-	// console.log(users)
-	return {
-		users
-	};
-}) satisfies PageServerLoad;
+  const users = await db.user.findMany()
+  if (!users) {
+    return fail(400, { message: 'No users in db' })
+  }
+  // console.log(users)
+  return {
+    users
+  }
+}) satisfies PageServerLoad
 
 export const actions: Actions = {
   create: async ({ request }) => {
     console.log('actions create')
-    const data = await request.formData();
+    const data = await request.formData()
     const values = {
       firstName: String(data.get('firstName')),
       lastName: String(data.get('lastName')),
       email: String(data.get('email')),
       passwordHash: await bcrypt.hash(String(data.get('password')), 10),
       userAuthToken: crypto.randomUUID()
-    };
-    
+    }
+
     try {
-      await db.user.create({ data: values });
-      return { success: true };
+      await db.user.create({ data: values })
+      return { success: true }
     } catch (error) {
-      return fail(500, { error: 'Failed to create record' });
+      return fail(500, { error: 'Failed to create record' })
     }
   },
 
   update: async ({ request }) => {
-    const data = await request.formData();
-    const id = String(data.get('id'));
+    const data = await request.formData()
+    const id = String(data.get('id'))
     const values = {
       firstName: String(data.get('firstName')),
       lastName: String(data.get('lastName')),
       email: String(data.get('email')),
       passwordHash: await bcrypt.hash(String(data.get('password')), 10),
       userAuthToken: crypto.randomUUID()
-    };
+    }
 
     try {
-      await db.user.update({ where: { id }, data: values });
-      return { success: true };
+      await db.user.update({ where: { id }, data: values })
+      return { success: true }
     } catch (error) {
-      return fail(500, { error: 'Failed to update record' });
+      return fail(500, { error: 'Failed to update record' })
     }
   },
 
   delete: async ({ request }) => {
-    const data = await request.formData();
-    const id = String(data.get('id'));
+    const data = await request.formData()
+    const id = String(data.get('id'))
 
     try {
-      await db.user.delete({ where: { id } });
-      return { success: true };
+      await db.user.delete({ where: { id } })
+      return { success: true }
     } catch (error) {
-      return fail(500, { error: 'Failed to delete record' });
+      return fail(500, { error: 'Failed to delete record' })
     }
   }
 };
-  

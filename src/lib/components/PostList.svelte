@@ -1,8 +1,15 @@
 <script lang="ts">
-  import Tooltip from '$components/CRTooltip.svelte';
-
+  import CRTooltip from '$components/CRTooltip.svelte';
+  let preferPos = $state<string>('top,left,right,bottom,');
+  const props = $derived({
+    delay: 250,
+    duration: 800,
+    baseScale: 0,
+    toolbarHeight: 32,
+    preferredPos: preferPos,
+  });
   type ARGS = {
-    postAuthors: PAuthor[];
+    postAuthors: PostAuthor[];
     deletePost: (id: string) => void;
     toUpdatePost: (event: MouseEvent | KeyboardEvent, id: string) => void;
     selectedUserId: string;
@@ -12,82 +19,83 @@
 </script>
 
 <!-- <pre>{selectedUserId} {JSON.stringify(postAuthors, null, 2)}</pre> -->
+<!-- <pre>{selectedUserId} {postAuthors[0]?.title}</pre> -->
 
 {#snippet tooltip(allowed: boolean, title: string)}
   <!-- NOTE the way to toggle string content based on a predicate -->
-  <!-- <Tooltip defaultClass={`tooltip_default-${allowed ? 'delete' : 'false'}`}> -->
-  <p>
-    {allowed ? title : 'owner only permission'}
-  </p>
-  <!-- </Tooltip> -->
+  <CRTooltip caption={`${allowed ? 'delete' : 'false'}`}>
+    <p>
+      {allowed ? title : 'owner only permission'}
+    </p>
+  </CRTooltip>
 {/snippet}
 
-{#snippet item_delete(allowed: boolean, pA: PAuthor)}
+{#snippet item_delete(allowed: boolean, pA: PostAuthor)}
   <div class="tooltip-wrapper">
-    <button
-      class={allowed ? 'ok-hover' : 'no-hover'}
-      onclick={(event: MouseEvent | KeyboardEvent) => {
-        event.preventDefault();
-        allowed && deletePost(pA.id);
-      }}
-      aria-label="Delete Post"
-      aria-hidden={true}
-    >
-      <span style="color:red;">X</span>
-    </button>
-    <Tooltip panel={tooltip} panelArgs={[allowed, 'Delete Post']}></Tooltip>
-  </div>
-{/snippet}
-{#snippet item_prepare_update(allowed: boolean, pA: PAuthor)}
-  <!-- NOTE: without event.preventDefault()
-		this block could not be rendered from a snippet
-		as the snippet would turn action into 'toggle completed'\
-		because of the event bubbling 
-	-->
-  <div class="tooltip-wrapper">
-    <button
-      class={allowed ? 'ok-hover' : 'no-hover'}
-      onclick={(event: MouseEvent | KeyboardEvent) => {
-        event.preventDefault();
-        allowed && toUpdatePost(event, pA.id);
-      }}
-      aria-label="Update Post"
-      aria-hidden={true}
-    >
-      📝
-    </button>
-    {@render tooltip?.(allowed, 'Prepare for update')}
+    <CRTooltip caption={allowed ? 'delete post' : 'owner only permission'}>
+      <button
+        class={allowed ? 'ok-hover box' : 'no-hover box'}
+        onclick={(event: MouseEvent | KeyboardEvent) => {
+          event.preventDefault();
+          allowed && deletePost(pA?.id);
+        }}
+        aria-label="Delete Post"
+        aria-hidden={true}
+      >
+        <span style="color:red;">X</span>
+      </button>
+    </CRTooltip>
   </div>
 {/snippet}
 
-{#snippet title_with_content(allowed: boolean, pA: PAuthor)}
+{#snippet item_prepare_update(allowed: boolean, pA: PostAuthor)}
+  <div class="tooltip-wrapper">
+    <CRTooltip
+      caption={`${allowed ? 'Prepare for update' : 'owner permission only'}`}
+    >
+      <button
+        class={allowed ? 'ok-hover box' : 'no-hover box'}
+        onclick={(event: MouseEvent | KeyboardEvent) => {
+          event.preventDefault();
+          allowed && pA && toUpdatePost(event, pA?.id);
+        }}
+        aria-label="Update Post"
+        aria-hidden={true}
+      >
+        📝
+      </button>
+    </CRTooltip>
+  </div>
+{/snippet}
+
+{#snippet title_with_content(allowed: boolean, pA: PostAuthor)}
   <section
     onclick={(event: MouseEvent | KeyboardEvent) => {
       event.preventDefault();
-      allowed && toUpdatePost(event, pA.id);
+      allowed && toUpdatePost(event, pA?.id);
     }}
     aria-hidden={true}
   >
     <p
       class={`${allowed ? 'blue' : 'gray'} ${allowed ? 'ok-hover' : 'no-hover'}`}
     >
-      {pA.title}
+      {pA?.title}
     </p>
-    <p>{pA.content}</p>
+    <p>{pA?.content}</p>
   </section>
 {/snippet}
 
-{#snippet infoPanel(pA: PostAuthor)}
-  <!-- .info-panel{ -->
-  <p>published</p>
-  <p>{pA.published ? 'YES' : 'Not Yet'}</p>
-  <p>created at</p>
-  <p>{pA.createdAt.toLocaleString()}</p>
-  <p>updated at</p>
-  <p>{pA.updatedAt.toLocaleString()}</p>
-  <p>categories</p>
-  <p class="category-names">{pA.categoryNames}</p>
-  <!-- } -->
+{#snippet blockPanel(pA: PostAuthor)}
+  <div class="block-panel">
+    <p>published</p>
+    <p>{pA?.published ? 'YES' : 'Not Yet'}</p>
+    <p>created at</p>
+    <p>{pA?.createdAt.toLocaleString()}</p>
+    <p>updated at</p>
+    <p>{pA?.updatedAt.toLocaleString()}</p>
+    <p>categories</p>
+    <p class="category-names">{pA?.categoryNames}</p>
+  </div>
 {/snippet}
 
 {#snippet category_names()}
@@ -109,16 +117,28 @@
   </div>
 {/snippet}
 
-{#snippet info_panel(allowed: boolean, pA: PAuthor)}
-  <div class="tooltip-wrapper">
-    <!-- <p class="content">{pA.content}</p> -->
-    <!-- {@render title_with_content?.(allowed, pA)} -->
-    <Tooltip
-      panel={title_with_content}
-      panelArgs={[allowed, pA]}
-      preferredPos="bottom,top,left,right"
-    ></Tooltip>
+{#snippet infoPanel(pA: PostAuthor)}
+  <div class="todo-tooltip">
+    <p>First name</p>
+    <p class="prop-value">{pA?.firstName}</p>
+    <p>Last name</p>
+    <p class="prop-value">{pA?.lastName}</p>
+    <p>created on</p>
+    <p class="prop-value">{(pA?.createdAt as Date)?.toLocaleString()}</p>
+    <p>updated on</p>
+    <p class="prop-value">{(pA?.updatedAt as Date)?.toLocaleString()}</p>
   </div>
+{/snippet}
+
+{#snippet post_block(allowed: boolean, pA: PostAuthor)}
+  <!-- <CRTooltip caption="Caption instead of panel"> -->
+  <CRTooltip panel={blockPanel} panelArgs={pA}>
+    <div class="tooltip-wrapper wide">
+      <!-- {pA.title}
+      {pA.content} -->
+      {@render title_with_content(allowed, pA)}
+    </div>
+  </CRTooltip>
 {/snippet}
 
 <!-- Todo it was {postAuthors[0].firstName.slice(0, -1)} below-->
@@ -127,7 +147,7 @@
   <ul>
     {#if postAuthors[0]}
       <p class="author_name">
-        {postAuthors[0].firstName.replace(/T$/, '')}
+        {postAuthors[0].firstName.replace(/^T-/, '')}
         {postAuthors[0].lastName}
         <span class="count"
           >{postAuthors.length} post{postAuthors.length === 1 ? '' : 's'}</span
@@ -136,12 +156,13 @@
 
       {#if postAuthors}
         {#each postAuthors as pA}
-          {@const isOwner = pA.author}
+          {@const isOwner = pA?.author}
           <li class="post-block">
             <label>
-              {@render item_delete?.(isOwner, pA)}
               {@render item_prepare_update?.(isOwner, pA)}
-              {@render info_panel?.(isOwner, pA)}
+              {@render item_delete?.(isOwner, pA)}
+
+              {@render post_block(isOwner, pA)}
             </label>
           </li>
         {/each}
@@ -161,17 +182,26 @@
     max-width: 40rem;
     min-width: 20rem;
   }
-  .info-panel {
+  .block-panel {
     display: grid;
     grid-template-columns: auto auto;
-    gap: 0.5rem 1rem;
-    padding: 0.5rem;
+    grid-auto-rows: 20px;
+    width: auto;
+    height: 6.3rem;
+    column-gap: 1rem;
+    padding: 0 1rem;
     font-size: 14px;
-    background-color: var(--BODY-BACKGROUND-COLOR); // #3e3e3e;
-    border: 1px solid gray;
+    color: yellow;
+    background-color: navy; // #3e3e3e;
+    border: 1px solid yellow;
     border-radius: 8px;
-    max-width: 20rem;
+    // max-width: 20rem;
   }
+  .title-content {
+    border: 1px solid gray;
+    width: max-content;
+  }
+
   .tooltip-wrapper {
     position: relative;
     display: inline-block;
@@ -189,9 +219,27 @@
       cursor: pointer;
     }
   }
+  .narow {
+    width: 2rem !important;
+    height: 2rem !important;
+    border: 1px solid gray;
+    border-radius: 6px !important;
+  }
+  .wide {
+    width: 70rem; /* Or any other desired fixed width */
+    max-height: 3.9rem;
+    overflow-x: hidden;
+    overflow-y: auto !important;
+    text-wrap: auto !important;
+    &:hover {
+      cursor: pointer;
+    }
+  }
   .category-names {
-    width: 10rem;
-    text-wrap: wrap;
+    // padding: 0;
+    // margin: 0;
+    // width: 10rem;
+    // text-wrap: wrap;
     // overflow-x: auto;
   }
   .author_name {
@@ -233,14 +281,20 @@
   }
   label {
     display: flex;
-    align-items: baseline;
+    align-items: flex-start;
     gap: 1rem;
     width: 100%;
     height: 100%;
   }
+  .box {
+    width: 2rem;
+    height: 2rem;
+    border: 1px solid gray; //1px solid transparent;
+    border-radius: 4px;
+  }
   .ok-hover,
   .no-hover {
-    border: none; //1px solid transparent;
+    padding: 1px 3px;
     outline: none;
     font-size: 20px;
     color: lightblue;

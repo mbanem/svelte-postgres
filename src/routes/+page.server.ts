@@ -1,23 +1,14 @@
-import { redirect } from '@sveltejs/kit';
-import type { Actions, PageServerLoad } from './$types';
+import { fail } from '@sveltejs/kit';
+import type { PageServerLoad } from './$types';
+import { db } from '$lib/server/db';
 
-export const load: PageServerLoad = async ({ locals }) => {
-	return {
-		locals
-	};
-};
-
-export const actions: Actions = {
-	// arg is an event, but we destructure it to get cookies and request
-	default: async ({ cookies, request }) => {
-		const data = await request.formData();
-		const sessionId = (data.get('sessionId') as string) ?? '';
-		if (!sessionId) {
-			throw redirect(303, '/');
-		}
-
-		cookies.set('sessionId', sessionId, {
-			path: '/'
-		});
+export const load: PageServerLoad = (async ({}) => {
+	const users = await db.user.findMany();
+	if (!users) {
+		return fail(400, { message: 'No users in db' });
 	}
-} satisfies Actions;
+	// console.log(users)
+	return {
+		users
+	};
+}) satisfies PageServerLoad;

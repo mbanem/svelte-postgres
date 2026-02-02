@@ -1,7 +1,7 @@
 <script lang="ts">
   import { send, receive } from '$utils/transitions';
   import { flip } from 'svelte/animate';
-  // import { Tooltip } from 'flowbite-svelte';
+  import CRTooltip from '$components/CRTooltip.svelte';
 
   type TSnippet = {
     id: string;
@@ -107,6 +107,22 @@
   {/if}
 {/snippet}
 
+{#snippet tooltipContent(todo: UTodo, tuSu: boolean = todo.id === id)}
+  <div class="todo-tooltip">
+    <p>priority</p>
+    <p>{todo?.priority}</p>
+    <p>created on</p>
+    <p class="prop-value">{(todo?.createdAt as Date)?.toLocaleString()}</p>
+    <p>updated on</p>
+    <p class="prop-value">{(todo?.updatedAt as Date)?.toLocaleString()}</p>
+    <p>owner: {tuSu}</p>
+    <!-- NOTE: Tooltip accepts style setting but not class -->
+    <p style={`margin-bottom:8px; color:${tuSu ? 'skyblue' : 'pink'}`}>
+      {todo?.firstName}
+      {todo?.lastName}
+    </p>
+  </div>
+{/snippet}
 {#snippet todos(td: TSnippet, todos: UTodo[], completed: boolean)}
   <div>
     <p class="caption">{completed ? 'Completed' : 'Not Completed'}</p>
@@ -135,58 +151,46 @@
             }}
           />
           <div class="tooltip-wrapper">
-            <div
-              class={`${todo.id === id ? 'blue' : 'gray'} ${tuSu ? 'ok-hover' : 'no-hover'}`}
-            >
-              {todo.title}
-              <p class="todo-content">{todo.content}</p>
-            </div>
-            <Tooltip>
-              <div class="todo-tooltip">
-                <p>priority</p>
-                <p>{todo.priority}</p>
-                <p>created on</p>
-                <p class="prop-value">{todo.createdAt.toLocaleString()}</p>
-                <p>updated on</p>
-                <p class="prop-value">{todo.updatedAt?.toLocaleString()}</p>
-                <p>owner: {tuSu}</p>
-                <!-- NOTE: Tooltip accepts style setting but not class -->
-                <p
-                  style={`margin-bottom:8px; color:${tuSu ? 'skyblue' : 'pink'}`}
-                >
-                  {todo.firstName}
-                  {todo.lastName}
-                </p>
+            <CRTooltip panel={tooltipContent} panelArgs={todo}>
+              <div
+                class={`${todo.id === id ? 'blue' : 'gray'} ${tuSu ? 'ok-hover' : 'no-hover'}`}
+              >
+                {todo.title}
+                <p class="todo-content">{todo.content}</p>
               </div>
-            </Tooltip>
+            </CRTooltip>
           </div>
           <div class="tooltip-wrapper">
-            <button
-              class={tuSu ? 'ok-hover' : 'no-hover'}
-              onclick={() => {
-                tuSu && td.deleteTodo(todo.todoId);
-              }}
-              aria-label="Delete Todo"
-            >
-              {#if tuSu}
-                ❌
-              {:else}
-                🍀
-              {/if}
-            </button>
-            {@render tooltip(tuSu, 'Delete ToDo')}
+            <CRTooltip caption={tuSu ? 'delete ToDo' : 'owner permission only'}>
+              <button
+                class={tuSu ? 'ok-hover' : 'no-hover'}
+                onclick={() => {
+                  tuSu && td.deleteTodo(todo.todoId);
+                }}
+                aria-label="Delete Todo"
+              >
+                {#if tuSu}
+                  ❌
+                {:else}
+                  🍀
+                {/if}
+              </button>
+            </CRTooltip>
           </div>
           <div class="tooltip-wrapper">
-            <button
-              class={tuSu ? 'ok-hover' : 'no-hover'}
-              onclick={() => {
-                tuSu && td.prepareUpdate(todo);
-              }}
-              aria-label="Update Todo"
+            <CRTooltip
+              caption={tuSu ? 'prepare for update' : 'owner permission only'}
             >
-              📝</button
-            >
-            {@render tooltip(tuSu, 'Prepare for update')}
+              <button
+                class={tuSu ? 'ok-hover' : 'no-hover'}
+                onclick={() => {
+                  tuSu && td.prepareUpdate(todo);
+                }}
+                aria-label="Update Todo"
+              >
+                📝</button
+              >
+            </CRTooltip>
           </div>
         </label>
       </li>
@@ -324,11 +328,11 @@
   }
 
   button {
-    width: 2rem;
+    width: 1rem !important;
     background-color: transparent;
     border: 2px solid transparent;
     &:hover {
-      border: 2px solid yellow;
+      border: 2px solid gray;
       cursor: pointer;
     }
   }
@@ -342,6 +346,12 @@
       border-color: gray;
       cursor: not-allowed;
     }
+  }
+  button.ok-hover,
+  button.no-hover {
+    padding: 2px 5px;
+    margin: 0;
+    width: 2rem !important;
   }
   li {
     color: white;

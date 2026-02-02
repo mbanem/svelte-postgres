@@ -5,11 +5,11 @@
   type TButtonProp = { color: string; title: string; href: string };
   const buttonsList = [
     { color: 'Pink', title: 'Home', href: '/' },
-    { color: 'RebeccaPurple', title: 'Tooltip', href: '/acr-tooltiptt' },
+    { color: 'RebeccaPurple', title: 'Tooltip', href: '/cr-tooltip' },
     { color: 'Blue', title: 'Derived', href: '/derived' },
     { title: 'Scroll', href: '/bars/scroll' }, // make one with no color to use default color -- red
     { color: 'Tomato', title: 'Caterpillar', href: '/caterpillar' },
-    { color: 'Green', title: 'Balloon', href: '/balloon' },
+    { color: 'Green', title: 'Baloon', href: '/balloon' },
     { color: 'Purple', title: 'Prop-Class', href: '/prop-class' },
     { color: 'LightGreen', title: 'Bars', href: '/bars' },
     { color: 'Pink', title: 'Bindable', href: '/bindable' },

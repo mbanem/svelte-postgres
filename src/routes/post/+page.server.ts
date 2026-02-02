@@ -20,6 +20,7 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
 			id: true,
 			firstName: true,
 			lastName: true,
+			email: true,
 			role: true
 		}
 	})) as UserPartial
@@ -87,10 +88,13 @@ export const load: PageServerLoad = (async ({ locals, cookies }) => {
 	// for Post-Category many-to-many we need array of category.ids
 	// but for multiselect we need category names as well
 	const categories: { id: number; name: string }[] = await db.category.findMany()
-	// console.log(postAuthors,
+	// console.log(
+	// 	postAuthors,
 	// 	user,
 	// 	users,
-	// 	categories);
+	// 	categories
+	// );
+	console.log(postAuthors)
 	return {
 		postAuthors,
 		user,
@@ -114,6 +118,7 @@ export const actions: Actions = {
 			await request.formData()
 		) as InputData //{
 
+		// console.log(input_data);
 		const { title, content, published, categoryIds, authorId } = input_data
 		// console.log({ title, content, published, categoryIds, authorId })
 		if (title === '' || content === '' || categoryIds === '' || authorId === '') {

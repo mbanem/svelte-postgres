@@ -58,6 +58,7 @@ CRTooltip could accept the following props, though all are optional
   import { type Snippet, onMount } from 'svelte';
   import { cubicInOut } from 'svelte/easing'; // for animated transition
   import type { EasingFunction } from 'svelte/transition';
+  import * as utils from '$lib/utils';
 
   // fade scale animation for displaying/hiding tooltip
   export interface FadeScaleParams {
@@ -98,21 +99,15 @@ CRTooltip could accept the following props, though all are optional
     };
   };
 
-  const sixHash = () => {
-    const a = (Math.random() * 46656) | 0;
-    const b = (Math.random() * 46656) | 0;
-    return a.toString(36).slice(-3) + b.toString(36).slice(-3);
-  };
-
-  const hoveringId = 'hovering-' + sixHash();
+  const hoveringId = 'hovering-' + utils.sixHash();
   // as caption and panel are mutually exclusive
   // even when both are received via $props()
   // we use the same tooltipPanelId for both
-  // const tooltipPanelId = 'tooltip-' + sixHash();
+  // const tooltipPanelId = 'tooltip-' + utils.sixHash();
   let tooltipPanelEl = $state<HTMLElement | null>(null);
   const round = Math.round;
 
-  type TPanelArgs = any[];
+  type TPanelArgs = any[] | object;
   type TPanel = Snippet<[...any[]]> | null;
   type TProps = {
     delay?: number;
@@ -227,7 +222,6 @@ CRTooltip could accept the following props, though all are optional
     OK.right =
       hoverRect.right - window.scrollX + tooltipRect.width < window.innerWidth;
 
-
     for (let i = 0; i < getPreferred().length; i++) {
       const pref = getPreferred();
       switch (pref[i] as string) {
@@ -321,6 +315,7 @@ CRTooltip could accept the following props, though all are optional
   });
 </script>
 
+<!-- <p>{JSON.stringify(panelArgs, null, 2)}</p> -->
 <!-- 
     NOTE: transform:translate is defined in the fade-scale and must specify
     the same left/top values as the one in this tooltipPanelEl handler
@@ -430,7 +425,7 @@ CRTooltip could accept the following props, though all are optional
     margin: 0;
     text-align: center;
     font-size: 14px;
-    line-height:14px;
+    line-height: 14px;
     font-family: Arial, Helvetica, sans-serif;
     z-index: 10;
   }

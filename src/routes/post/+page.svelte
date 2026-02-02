@@ -7,7 +7,7 @@
   import { invalidateAll } from '$app/navigation';
   import { page } from '$app/stores'; // for $age.status code on actions
   import { onMount } from 'svelte';
-  // import { Tooltip } from 'flowbite-svelte';
+  import CRTooltip from '$components/CRTooltip.svelte';
   import CircleSpinner from '$components/CircleSpinner.svelte';
   import ButtonSpinner from '$components/ButtonSpinner.svelte';
   import PageTitleCombo from '$components/PageTitleCombo.svelte';
@@ -17,6 +17,7 @@
   import PostList from '$components/PostList.svelte';
   import { hideButtonsExceptFirst } from '$lib/utils';
   import * as utils from '$lib/utils';
+  import { Role } from '@prisma/client';
 
   type ARGS = {
     data: PageData;
@@ -24,11 +25,11 @@
   };
   let { data, form }: ARGS = $props();
 
-  let { postAuthors } = data;
+  // let { postAuthors } = data;
   let message = '';
   let loading = $state<boolean>(false);
   let ignoreFormMessage = $state<boolean>(false);
-  const requiredCategory = 'Please select corresponding categories';
+  const requiredCategory = '';
   let selectedUserId = $state<string>('');
   let titleIsRequired = '';
   let contentIsRequired = '';
@@ -40,6 +41,15 @@
   let updateSpinner: typeof ButtonSpinner;
   const authorId = data?.user?.id;
   let hidden = $state(true);
+
+  let preferPos = $state<string>('top,left,right,bottom,');
+  const props = $derived({
+    delay: 250,
+    duration: 800,
+    baseScale: 0,
+    toolbarHeight: 32,
+    preferredPos: preferPos,
+  });
 
   let categoryIds: number[] = [];
   $effect(() => {
@@ -85,10 +95,9 @@
   };
 
   const categoryList = (arr: number[]) => {
-    // @ts-expect-error
-    return arr.map((n) => data.categories[n - 1].name).join(',');
+    return arr.map((n) => data.categories[n - 1]?.name).join(',');
   };
-  let selectedCategoryIds: () => string;
+  let selectedCategoryIds = '3,5';
 
   /*
 		After processing the request (for example, logging the user in by setting a cookie),
@@ -96,7 +105,6 @@
 		the corresponding page and through $page.form app-wide until the next update.
 	*/
   const enhancePost: SubmitFunction = ({ action, formData, cancel }) => {
-    //console.log('enhancePost', action.search, formData.get('id'))
     if (action.search === '?/clearForm') {
       return cancel();
     }
@@ -104,13 +112,14 @@
       categoryIsRequired = requiredCategory;
       message = 'Please select corresponding categories';
       utils.setColor('pink');
+      console.log('missimg data', snap);
       return;
     }
 
     titleIsRequired = '';
     ignoreFormMessage = false;
     contentIsRequired = '';
-    // console.log('enhancePost1', action.search)
+    console.log('enhancePost1', action.search);
     for (const key of Object.keys(required)) {
       if (formData.get(key) == '') {
         switch (key) {
@@ -174,37 +183,15 @@
   };
 
   const postsAuthors = () => {
-    const arr: PAuthor[] = [];
-
-    data.postAuthors.forEach((post) => {
-      if (selectedUserId === post.authorId) {
-        const {
-          id,
-          title,
-          content,
-          published,
-          createdAt,
-          updatedAt,
-          firstName,
-          lastName,
-          role,
-          author,
-        } = post;
-        arr.push({
-          id,
-          title,
-          content,
-          published,
-          createdAt,
-          updatedAt,
-          firstName: `${firstName}${role === 'ADMIN' ? 'T' : ''}`,
-          lastName,
-          author,
-        });
+    const arr: PostAuthor[] = [];
+    (data.postAuthors as PostAuthor[]).forEach((post) => {
+      if (selectedUserId === post.authorId && post.role === Role.ADMIN) {
+        post['firstName'] = 'T-' + post['firstName'];
       }
+      arr.push(post);
     });
     return arr;
-  };
+  }; //categoryNames,
 
   // let setSelectedOptions: (arr: number[] | [], nameList: string) => void
 
@@ -316,8 +303,12 @@
 <svelte:head>
   <title>Post</title>
 </svelte:head>
-
-<!-- <pre style="font-size:13px;">data {JSON.stringify(data, null, 2)}</pre> -->
+<!-- <pre>selectedCategoryIds {selectedCategoryIds}</pre> -->
+<!-- <pre style="font-size:13px;">postAuthors {JSON.stringify(
+    data.postAuthors,
+    null,
+    2,
+  )}</pre> -->
 <PageTitleCombo
   PageName="Post"
   bind:result
@@ -328,9 +319,7 @@
 />
 {#snippet tooltip(title: string)}
   <!-- NOTE the way to toggle string content based on a predicate -->
-  <!-- <Tooltip> -->
-  {title}
-  <!-- </Tooltip> -->
+  <CRTooltip caption={title}></CRTooltip>
 {/snippet}
 
 {#snippet toggle_published(title: string)}
@@ -357,23 +346,28 @@
         name="title"
         bind:value={snap.title}
         placeholder={titleIsRequired || 'enter post title'}
+        class="edit-box"
       />
-      <input
+      <textarea
         type="text"
         name="content"
         bind:value={snap.content}
         placeholder={contentIsRequired || 'enter post content'}
-      />
+        cols="55"
+        rows="6"
+        class="exit-box"
+      ></textarea>
       <div class="multi-select-container">
         <MultiSelectBox
           categories={data.categories}
           bind:categoryIsRequired
           bind:selectedCategoryIds={snap.categoryIds}
-        />
+          class_multiselect={'multi-select-component'}
+        ></MultiSelectBox>
       </div>
       <label for="published" class="label-save">
         {@render toggle_published('Toggle the Published Flag')}
-        <span style="user-select:none">published</span>
+        <span class="toggle-published">Toggle the Published Flag</span>
         {#if !wrongUser}
           <ButtonSpinner
             bind:button={btnCreate}
@@ -410,15 +404,15 @@
   </div>
 
   <div>
-    {#key postAuthors}
-      {#key selectedUserId}
-        <PostList
-          postAuthors={postsAuthors()}
-          {toUpdatePost}
-          {deletePost}
-          {selectedUserId}
-        ></PostList>
-      {/key}
+    {#key data.postAuthors}
+      <!-- {#key selectedUserId} -->
+      <PostList
+        postAuthors={postsAuthors()}
+        {toUpdatePost}
+        {deletePost}
+        {selectedUserId}
+      ></PostList>
+      <!-- {/key} -->
     {/key}
   </div>
 </div>
@@ -426,14 +420,6 @@
 <style lang="scss">
   .tooltip-wrapper {
     position: relative;
-    // p {
-    // 	display: flex;
-    // 	justify-content: space-between;
-    // 	align-content: flex-start;
-    // 	gap: 0.5rem;
-    // 	padding: 0 0 0 5px;
-    // 	margin: 0;
-    // }
     &:hover {
       cursor: pointer;
     }
@@ -497,9 +483,30 @@
   }
   .label-save {
     display: flex;
+    flex-shrink: 1;
     align-items: baseline;
+    gap: 4px;
+    margin: 0;
+    padding: 0;
   }
-
+  .toggle-published {
+    user-select: none;
+    margin: 0 8px 0 -1rem;
+    cursor: pointer;
+  }
+  .edit-box {
+    width: 30.3rem;
+  }
+  .multi-select-container {
+    width: 30.3rem;
+  }
+  :global(.multi-select-component) {
+    width: 8rem;
+    height: 14rem;
+    margin-left: 2rem !important;
+    border-color: gray !important;
+    color: rgb(174, 169, 169) !important;
+  }
   // label input {
   // 	display: inline-block;
   // 	width: 1rem;

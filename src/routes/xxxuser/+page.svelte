@@ -1,5 +1,5 @@
 <script lang="ts">
-// aaa-user/+page.svelte
+// user/+page.svelte
 import type { Snapshot } from '../$types';
 import { onMount } from 'svelte';
 import type { PageData, ActionData } from './$types';
@@ -22,31 +22,45 @@ type ARGS = {
 };
 let { data, form }: ARGS = $props();
 
+type UserPartial = {
+  id: string | null
+  firstName: string | null
+  lastName: string | null
+  email: string | null
+  password: string | null
+  role: Types.Role | null
+  updatedAt: Date | null
+}
 let nullSnap = {
-  email: null,
-  firstName: null,
   id: null,
+  firstName: null,
   lastName: null,
+  email: null,
   password: null,
   role: null,
   updatedAt: null
 } as UserPartial;
-let snap = $state<UserPartial>(data.locals.user ?? nullSnap);
+
+const crId_ = () => {
+  return snap.id
+}
+let snap = $state<UserPartial>(data.locals.user as UserPartial ?? nullSnap);
 const snap_ = () => {
   return snap;
 };
-let selectedUserId = $state<string>(
-  (data.locals.user && data.locals.user.id) ?? '',
+let selectedUserId = $state(
+  data.locals.user.id
 );
 const selectedUserId_ = () => {
   return selectedUserId;
 };
+
 $effect(() => {
-    const suId = selectedUserId_();
-    if (suId) {
-      const u: UserPartial = data.users.filter(
-        (user) => user.id === suId,
-      )[0] as UserPartial;
+    const selUserId = selectedUserId_();
+    if (selUserId && data.users) {
+      const u = data.users.filter(
+        (user) => user.id === selUserId,
+      )[0]; // as UserPartial;
       if (u) {
         snap = {
           id: u.id,
@@ -55,6 +69,7 @@ $effect(() => {
           email: u.email,
           password: '',
           role: u.role,
+          updatedAt: u.updatedAt,
         };
       }
     }
@@ -70,7 +85,33 @@ const clearMessage = () => {
     result = '';
   }, 2000);
 };
-    
+
+// returns status[formValid, partiallyValid], on partiallyValid we can do update
+  // for Create new record full formValid with no id must be true
+  let formDataValid = $derived.by(() => {
+    const status = [true, false];
+    if (snap_() === nullSnap) return [false, false];
+    for (const [key, value] of Object.entries(snap_())) {
+      if ('id|updatedAt'.includes(key)) continue;
+      if (value) {
+        status[1] = true;
+      } else {
+        status[0] = false;
+      }
+    }
+    return status;
+  });
+
+  let dBtnCreate = $state(true);
+  let dBtnUpdate = $state(true);
+  let dBtnDelete = $state(true);
+  let idOK = $derived(crId_() !== null && crId_()?.length === 36);
+  $effect(() => {
+    dBtnCreate = idOK || !formDataValid[0];
+    dBtnUpdate = !idOK || !formDataValid[1];
+    dBtnDelete = !idOK;
+  });
+
 const capitalize = (str:string) => {
   const spaceUpper = (su:string) => {
     return ` ${su[1]?.toUpperCase()}`
@@ -80,15 +121,6 @@ const capitalize = (str:string) => {
   .replace(/(_\w)/, spaceUpper)
   .replace(/\b[a-z](?=[a-z]{2})/g, (char) => char.toUpperCase())
 }
-    
-let formDataValid = $derived.by(() => {
-  if (!snap_()) return false;
-    for (const [key, value] of Object.entries(snap_())) {
-      if (key === 'id') continue;
-      if (!value) return false;
-    }
-    return true;
-});
     
 const clearForm = (event?: MouseEvent | KeyboardEvent) => {
   event?.preventDefault();
@@ -117,10 +149,10 @@ const enhanceSubmit: SubmitFunction = async ({ action, formData }) => {
     
   result =
     action.search === '?/create'
-    ? "creating aaa-user..."
+    ? "creating user..."
     : action.search === '?/update'
-    ? "updating aaa-user..."
-    : "deleting aaa-user..."
+    ? "updating user..."
+    : "deleting user..."
   if (action.search === '?/delete') {
     utils.hideButtonsExceptFirst([btnDelete, btnCreate, btnUpdate]);
   }
@@ -129,11 +161,11 @@ const enhanceSubmit: SubmitFunction = async ({ action, formData }) => {
     await update();
       
     if (action.search === '?/create') {
-      result = page.status === 200 ? "aaa-user created" : 'create failed';
+      result = page.status === 200 ? "user created" : 'create failed';
     } else if (action.search === '?/update') {
-      result = page.status === 200 ? "aaa-user updated" : 'update failed';
+      result = page.status === 200 ? "user updated" : 'update failed';
     } else if (action.search === '?/delete') {
-      result = page.status === 200 ? "aaa-user deleted" : 'delete failed';
+      result = page.status === 200 ? "user deleted" : 'delete failed';
       // iconDelete.classList.toggle('hidden');
       utils.hideButtonsExceptFirst([btnCreate, btnUpdate, btnDelete]);
     }
@@ -145,7 +177,7 @@ const enhanceSubmit: SubmitFunction = async ({ action, formData }) => {
     clearMessage();
   }
 
-      
+      // 
   }
   let owner = true;
   const toggleColor = (event: MouseEvent, caption?: string) => {
@@ -159,10 +191,10 @@ const enhanceSubmit: SubmitFunction = async ({ action, formData }) => {
 };
 </script>
 <svelte:head>
-  <title>aaa-user Page</title>
+  <title>User Page</title>
 </svelte:head>
 <CRActivity
-  PageName='aaa-user'
+  PageName='User'
   bind:result
   bind:selectedUserId
   user={data.locals.user}
@@ -171,66 +203,73 @@ const enhanceSubmit: SubmitFunction = async ({ action, formData }) => {
 
 <form action="?/create" method="post" use:enhance={enhanceSubmit}>
   <div class='form-wrapper'>
-    <CRInput title="email"
-        exportValueOn="enter|blur"
-        type='text'
-        capitalize={false}
-        bind:value={snap.email as string}
-        required={true}
-        width='22.5rem'
-      >
-      </CRInput>
-      <CRInput title="firstName"
-        exportValueOn="enter|blur"
-        type='text'
-        capitalize={true}
-        bind:value={snap.firstName as string}
-        required={true}
-        width='22.5rem'
-      >
-      </CRInput>
-      <CRInput title="id"
+    <CRInput 
+        title="id"
         exportValueOn="enter|blur"
         type='text'
         capitalize={false}
         bind:value={snap.id as string}
-        required={true}
+        required={!dBtnCreate}
         width='22.5rem'
       >
       </CRInput>
-      <CRInput title="lastName"
+      <CRInput 
+        title="firstName"
+        exportValueOn="enter|blur"
+        type='text'
+        capitalize={true}
+        bind:value={snap.firstName as string}
+        required={!dBtnUpdate}
+        width='22.5rem'
+      >
+      </CRInput>
+      <CRInput 
+        title="lastName"
         exportValueOn="enter|blur"
         type='text'
         capitalize={true}
         bind:value={snap.lastName as string}
-        required={true}
+        required={!dBtnUpdate}
         width='22.5rem'
       >
       </CRInput>
-      <CRInput title="password"
+      <CRInput 
+        title="email"
+        exportValueOn="enter|blur"
+        type='text'
+        capitalize={false}
+        bind:value={snap.email as string}
+        required={!dBtnUpdate}
+        width='22.5rem'
+      >
+      </CRInput>
+      <CRInput 
+        title="password"
         exportValueOn="enter|blur"
         type='password'
         capitalize={false}
         bind:value={snap.password as string}
-        required={true}
+        required={!dBtnUpdate}
         width='22.5rem'
       >
       </CRInput>
-      <CRInput title="role"
+      <CRInput 
+        title="role"
         exportValueOn="enter|blur"
         type='text'
         capitalize={true}
-        bind:value={snap.role }
-        required={true}
+        bind:value={snap.role as Types.Role}
+        required={!dBtnUpdate}
         width='22.5rem'
       >
       </CRInput>
-      <CRInput title="updatedAt"
+      <CRInput 
+        title="updatedAt"
         exportValueOn="enter|blur"
         type='text'
         capitalize={true}
-        bind:value={snap.updatedAt }
-        required={true}
+        bind:value={snap.updatedAt as Date}
+        required={!dBtnUpdate}
         width='22.5rem'
       >
       </CRInput>
@@ -242,8 +281,7 @@ const enhanceSubmit: SubmitFunction = async ({ action, formData }) => {
             spinOn={loading}
             caption=create
             formaction="?/create"
-            disabled={!formDataValid}
-            hidden={!formDataValid}
+            hidden={dBtnCreate}
           >
           </CRSpinner>
               <CRSpinner
@@ -251,8 +289,7 @@ const enhanceSubmit: SubmitFunction = async ({ action, formData }) => {
             spinOn={loading}
             caption=update
             formaction="?/update"
-            disabled={!formDataValid}
-            hidden={!formDataValid}
+            hidden={dBtnUpdate}
           >
           </CRSpinner>
               <CRSpinner
@@ -260,8 +297,7 @@ const enhanceSubmit: SubmitFunction = async ({ action, formData }) => {
             spinOn={loading}
             caption=delete
             formaction="?/delete"
-            disabled={!formDataValid}
-            hidden={!formDataValid}
+            hidden={dBtnDelete}
           >
           </CRSpinner>
           <button onclick={clearForm}>clear form</button>

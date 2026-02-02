@@ -7,21 +7,26 @@
   import { onMount, tick, type Snippet } from 'svelte';
   import type { Snapshot } from './$types';
 
-  import Tooltip from '$components/CRTooltip.svelte'; //'flowbite-svelte';
+  import { CRTooltip, CRInput } from '$components';
   import { setPlaceholderColor, hideButtonsExceptFirst } from '$lib/utils';
   import TodoList from '$components/TodoList.svelte';
   import PageTitleCombo from '$components/PageTitleCombo.svelte';
   import ButtonSpinner from '$components/ButtonSpinner.svelte';
   import * as utils from '$lib/utils';
+  import { string } from 'zod';
+  // import { spawn } from 'child_process';
 
   type ARGS = {
     data: PageData;
     form: ActionData;
   };
+  // form returns data structure created with fail as fail(code, { data structure key:value pairs} )
+  // in case of accomanying +page.server.ts it is success, data, message
   let { data, form }: ARGS = $props();
 
+  console.log('data.uTodos', data.uTodos);
   const preferPos = 'top,left,right,bottom';
-
+  const uuidRegex = /^[a-z0-9]{8}(-[a-z0-9]{4}){3}-[a-z0-9]{12}$/;
   let hiddenBtnDelete = $state(true);
   // NOTE: When the page updates uTodos = $state<UTodo[]>() is not refreshed but props data.uTodos are refreshed.
   // In order to have uTodos refreshed we need two steps:
@@ -30,13 +35,12 @@
   //        $effect(() => {
   //          uTodos = data.uTodos;
   //        });
-  let selectedUserId = $state<string>(data.locals.user.id);
+  let selectedUserId = $state<string>(data.locals.user.id as string);
   let loading = $state<boolean>(false);
 
   // form?.message cannot be cleared by code but could be ignored when necessary
   // let ignoreFormMessage = false;
-  let titleIsRequired = '';
-  let contentIsRequired = '';
+  let required = $state<Record<string, string>>({});
   let updatePrepared = false;
   let btnCreate: HTMLButtonElement;
   let btnUpdate: HTMLButtonElement;
@@ -102,20 +106,20 @@
 
   // get params action for URL and formData to check on required fields
   const enhanceTodo: SubmitFunction = async ({ action, formData }) => {
-    titleIsRequired = '';
-    contentIsRequired = '';
+    required = {};
     // ignoreFormMessage = false;
 
     if (action.search !== '?/deleteTodo') {
-      if (formData.get('title') === '') {
-        titleIsRequired = 'Title is required field';
+      if (snap.title === '') {
+        required['title'] = 'is required field';
       }
-      if (formData.get('content') === '') {
-        contentIsRequired = 'Content is required field';
+      if (snap.content === '') {
+        required['content'] = 'Content is required field';
       }
-
-      if (titleIsRequired || contentIsRequired) return;
+    } else if (!snap.id || !uuidRegex.test(snap.id)) {
+      required['id'] = 'id is not in correct format';
     }
+    if (required) return;
 
     // turn on spinner before form submit
     loading = true;
@@ -229,7 +233,7 @@
   // to clear the message after several seconds
   // let result = $derived(message || formMessage)
 
-  let authorId = $state<string>(data.locals.user.id);
+  let authorId = $state<string>(data.locals.user.id as string);
 
   export const snapshot: Snapshot<TodoFormData> = {
     capture: () => {
@@ -241,6 +245,8 @@
   };
 
   onMount(() => {
+    const crEl = document.getElementsByTagName('CRInput')[0] as CRInput;
+    console.log('CRInput crEl\n', crEl);
     if (selectedUserId !== data.locals.user.id) {
       return;
     }
@@ -263,6 +269,10 @@
   });
 </script>
 
+<p>form {JSON.stringify(form, null, 2)}</p>
+<p>
+  form {form?.fields?.includes('content') ? 'content: ' + form?.message : ''}
+</p>
 <svelte:head>
   <title>To Do</title>
 </svelte:head>
@@ -290,11 +300,14 @@
         bind:value={snap.id}
       />
       <input type="hidden" name="userId" bind:value={snap.authorId} />
-      <input
+      <CRInput
         type="text"
-        name="title"
-        placeholder={titleIsRequired || 'enter todo title'}
+        title="Title"
+        exportValueOn="keypress|blur"
         bind:value={snap.title}
+        required={true}
+        capitalize={true}
+        width="22.5rem"
       />
       Priority
       <input
@@ -309,7 +322,7 @@
         rows={2}
         cols={60}
         name="content"
-        placeholder={contentIsRequired || 'enter To Do content'}
+        placeholder={required.content ?? 'Enter ToDo content'}
         bind:value={snap.content}
         style="width:98%;height:8rem;overflowY:auto"
       ></textarea>
@@ -331,9 +344,9 @@
       ></ButtonSpinner>
 
       {#if selectedUserId !== authorId}
-        <Tooltip preferredPos={preferPos}>
+        <CRTooltip preferredPos={preferPos}>
           <p>owner only permission</p>
-        </Tooltip>
+        </CRTooltip>
       {/if}
       <ButtonSpinner
         bind:button={btnDelete}
@@ -345,9 +358,9 @@
       ></ButtonSpinner>
 
       {#if selectedUserId !== authorId}
-        <Tooltip preferredPos={preferPos}>
+        <CRTooltip preferredPos={preferPos}>
           <p>owner only permission</p>
-        </Tooltip>
+        </CRTooltip>
       {/if}
       <button onclick={clearForm}>clear</button>
     </div>
@@ -355,8 +368,8 @@
   <div class="two-columns">
     <!-- ---------------------------------------------------------------- -->
     <TodoList
-      id={data.locals.user.id}
-      role={data.locals.user.role}
+      id={data.locals.user.id as string}
+      role={data.locals.user.role as Role}
       users={data.users}
       uTodos={data.uTodos}
       bind:selectedUserId

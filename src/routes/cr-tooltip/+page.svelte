@@ -29,7 +29,7 @@
   //   }, 980);
   // };
   // ---------------------- scroller end ---------------------------------
-  import Tooltip from '$components/CRTooltip.svelte';
+  import CRTooltip from '$components/CRTooltip.svelte';
   import { onMount } from 'svelte';
   import * as utils from '$lib/utils/helpers';
   import { colors_hex } from '$lib/utils/helpers';
@@ -128,13 +128,13 @@
 {/snippet}
 
 <div class="tooltip-wrapper">
-  <Tooltip panel={userDetails} panelArgs={filip} {...props}>
+  <CRTooltip panel={userDetails} panelArgs={filip} {...props}>
     <button class="hovering-button" onclick={printReport}>
       {filip[0]}
       {filip[1]}
     </button>
-  </Tooltip>
-  <p style="margin-left:12rem;">Change Preferred Tooltip Position</p>
+  </CRTooltip>
+  <p style="margin-left:12rem;">Change Preferred CRTooltip Position</p>
   <input class="input" bind:value={preferPos} />
   <p class="preferable-info">Clicking a button sets it preferable</p>
   <div class="radio-wrapper">
@@ -150,12 +150,12 @@
   next available positions from the input
   box that you can enter the next list
   </pre>
-  <Tooltip panel={userDetails} panelArgs={matia} {...props}>
+  <CRTooltip panel={userDetails} panelArgs={matia} {...props}>
     <button class="hovering-button" onclick={printReport}>
       {matia[0]}
       {matia[1]}
     </button>
-  </Tooltip>
+  </CRTooltip>
 </div>
 <!-- TEST if first preferred has no space try succeeding one by one -->
 <!-- <p style="margin:100rem 0 0 130rem">100rem x 100rem</p> -->
@@ -165,6 +165,13 @@
   enabling page scrolling
 </div>
 <div style="position:absolute;top:94rem;left:114rem;">shim</div>
+<CRTooltip caption="click to delete">
+  <div
+    style="text-align:center;cursor:pointer; border:1px solid gray; border-radius:5px;width:2rem;font-size:30px; color:red;margin-left:40rem;"
+  >
+    X
+  </div>
+</CRTooltip>
 
 <style lang="scss">
   /* class sent as prop to component must be wrapped in :global() */

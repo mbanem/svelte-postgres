@@ -1,32 +1,32 @@
-import { db } from '$lib/server/db';
-import type { PageServerLoad } from './$types';
-import { error, fail, redirect } from '@sveltejs/kit';
-import type RequestEvent from '@sveltejs/kit';
-import type { Actions } from '@sveltejs/kit';
+import { db } from '$lib/server/db'
+import type { PageServerLoad } from './$types'
+import { error, fail, redirect } from '@sveltejs/kit'
+import type RequestEvent from '@sveltejs/kit'
+import type { Actions } from '@sveltejs/kit'
 import bcrypt from 'bcrypt'
-import * as utils from '$lib/utils';
+import * as utils from '$lib/utils'
 
 export const load: PageServerLoad = (async ({ locals, cookies }) => {
 
-  const users = (await db.user.findMany({
-    select: {
-      id: true,
-      firstName: true,
-      lastName: true,
+	const users = (await db.user.findMany({
+		select: {
+			id: true,
+			firstName: true,
+			lastName: true,
 			email: true,
-      role: true,
-    },
-  })).map(user => ({
-  ...user,
-  password: 'xx', // extra field added here
-})) as UserPartial[];
+			role: true,
+		},
+	})).map(user => ({
+		...user,
+		password: 'xx', // extra field added here
+	})) as UserPartial[]
 	// await utils.sleep(1000);
 	// console.log('user',users[0],'users',users)
-  return {
-		user:locals.user as UserPartial,
-    users,
-  };
-}) satisfies PageServerLoad;
+	return {
+		user: locals.user as UserPartial,
+		users,
+	}
+}) satisfies PageServerLoad
 
 
 export const actions: Actions = {
@@ -71,7 +71,8 @@ export const actions: Actions = {
 					lastName,
 					email,
 					passwordHash: await bcrypt.hash(password, 10),
-					userAuthToken: crypto.randomUUID()
+					userAuthToken: crypto.randomUUID(),
+					updatedAt: null
 				}
 			})
 		}
@@ -80,10 +81,10 @@ export const actions: Actions = {
 			message: 'a-user created successfully'
 		}
 	},
-		//} satisfies Actions;
+	//} satisfies Actions;
 
-  update: async ({ request }) => {
-    const { firstName, lastName, email, password } = Object.fromEntries(
+	update: async ({ request }) => {
+		const { firstName, lastName, email, password } = Object.fromEntries(
 			// @ts-expect-error
 			await request.formData()
 		) as {
@@ -121,11 +122,11 @@ export const actions: Actions = {
 		} else {
 			console.log('user exists', existingUser)
 			const user = await db.user.update({
-				where:{
-					firstName:existingUser.firstName,
-					lastName:existingUser.lastName,
-					email:existingUser.email,
-					password:existingUser.passwordHash,
+				where: {
+					firstName: existingUser.firstName,
+					lastName: existingUser.lastName,
+					email: existingUser.email,
+					password: existingUser.passwordHash,
 				},
 				data: {
 					firstName,
@@ -139,9 +140,9 @@ export const actions: Actions = {
 			success: true,
 			message: 'a-user updated successfully'
 		}
-  },
-  delete: async ({ request }) => {
-   const { firstName, lastName, email, password } = Object.fromEntries(
+	},
+	delete: async ({ request }) => {
+		const { firstName, lastName, email, password } = Object.fromEntries(
 			// @ts-expect-error
 			await request.formData()
 		) as {
@@ -163,24 +164,24 @@ export const actions: Actions = {
 			})
 		}
 
-    try {
-      await db.profile.delete({
-        where: {
-          firstName,
+		try {
+			await db.profile.delete({
+				where: {
+					firstName,
 					lastName,
 					email
-        },
-      });
-    } catch (err) {
-      return fail(400, {
-        data: { authorId: id },
-        message: 'internal error occurred',
-      });
-    }
-    await utils.sleep(2000);
-    return {
-      success: true,
-      message: 'a-user successfully deleted',
-    };
-  }
-} satisfies Actions;
+				},
+			})
+		} catch (err) {
+			return fail(400, {
+				data: { authorId: id },
+				message: 'internal error occurred',
+			})
+		}
+		await utils.sleep(2000)
+		return {
+			success: true,
+			message: 'a-user successfully deleted',
+		}
+	}
+} satisfies Actions

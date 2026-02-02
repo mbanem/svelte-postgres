@@ -236,6 +236,7 @@
   pre {
     padding: 0;
     margin: 0;
+    line-height: 15px;
   }
   .counter-line {
     display: inline-block;

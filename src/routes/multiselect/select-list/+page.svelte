@@ -1,14 +1,18 @@
 <script lang="ts">
-	import type { PageData } from './$types'
-	import SelectBox from '$lib/components/MultiSelectBox.svelte'
-	export let data: PageData
-	let selectedCategoryIds = ''
+  import type { PageData } from './$types';
+  import SelectBox from '$lib/components/MultiSelectBox.svelte';
+  export let data: PageData;
+  let selectedCategoryIds = '';
 </script>
 
 <svelte:head>
-	<title>SelectList</title>
+  <title>SelectList</title>
 </svelte:head>
 
 <h1 style="color:lightgreen;font-weight:400;">SelectList page</h1>
 
-<SelectBox categories={data.categories} {selectedCategoryIds} categoryIsRequired="" />
+<SelectBox
+  categories={data.categories}
+  {selectedCategoryIds}
+  categoryIsRequired=""
+></SelectBox>

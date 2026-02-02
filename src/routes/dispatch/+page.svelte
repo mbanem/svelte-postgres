@@ -1,37 +1,37 @@
 <script lang="ts">
-	import { goto } from '$app/navigation'
-	import './dispatcher.svelte'
+  import { goto } from '$app/navigation';
+  import './Dispatcher.svelte';
 
-	type TCustomEvent = {
-		type: string
-		detail: { chance: number }
-	}
-	let count = $state(0)
-	let WHERE = $state('')
-	let whereRepeated = 0
+  type TCustomEvent = {
+    type: string;
+    detail: { chance: number };
+  };
+  let count = $state(0);
+  let WHERE = $state('');
+  let whereRepeated = 0;
 
-	const go = (direction: string, e?: TCustomEvent) => {
-		if (e) {
-			let color = e.detail.chance > 0.5 ? 'lightgreen' : 'pink'
-			let chance = e.detail.chance
+  const go = (direction: string, e?: TCustomEvent) => {
+    if (e) {
+      let color = e.detail.chance > 0.5 ? 'lightgreen' : 'pink';
+      let chance = e.detail.chance;
 
-			if (WHERE === direction) {
-				whereRepeated += 1
-				WHERE = `<span style='color:${color};'> ${direction} ${whereRepeated} ${chance}</span>`
-			} else {
-				whereRepeated = 1
-				WHERE = `<span style='color:${color};'> ${direction} ${chance}</span>`
-			}
-		}
-	}
+      if (WHERE === direction) {
+        whereRepeated += 1;
+        WHERE = `<span style='color:${color};'> ${direction} ${whereRepeated} ${chance}</span>`;
+      } else {
+        whereRepeated = 1;
+        WHERE = `<span style='color:${color};'> ${direction} ${chance}</span>`;
+      }
+    }
+  };
 </script>
 
 <svelte:head>
-	<title>Svelte 5 compiled component with CustomEvent type</title>
+  <title>Svelte 5 compiled component with CustomEvent type</title>
 </svelte:head>
 
 <div class="container">
-	<pre>
+  <pre>
 	Component dispatcher.svelte is compiled as a custom element using
 		&lt;svelte:options customElement="comp-dispatcher" /&gt;
 	where the customElement give component a name of "comp-dispatcher"
@@ -45,23 +45,23 @@
 				<p class="where-count">where to go? {@html WHERE}</p>
 				<p class="where-count">count: {count}</p>
 				<comp-dispatcher
-			onincrement={() => (count += 1)}
-			ondecrement={() => (count -= 1)}
-			onforward={(e: TCustomEvent) => go('forward', e)}
-			onbackward={(e: TCustomEvent) => go('backward', e)}></comp-dispatcher>
+      onincrement={() => (count += 1)}
+      ondecrement={() => (count -= 1)}
+      onforward={(e: TCustomEvent) => go('forward', e)}
+      onbackward={(e: TCustomEvent) => go('backward', e)}></comp-dispatcher>
 				
 			</pre>
 </div>
 
 <style lang="scss">
-	.container {
-		margin: 5rem 10vw;
-		width: 30vw;
-	}
-	.where-count {
-		font-size: 14px;
-		color: yellow;
-		margin: 0 0 0 6rem;
-		padding: 0;
-	}
+  .container {
+    margin: 5rem 10vw;
+    width: 30vw;
+  }
+  .where-count {
+    font-size: 14px;
+    color: yellow;
+    margin: 0 0 0 6rem;
+    padding: 0;
+  }
 </style>

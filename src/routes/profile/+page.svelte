@@ -1,5 +1,6 @@
 <script lang="ts">
   import ButtonSpinner from '$components/ButtonSpinner.svelte';
+  import CRTooltip from '$components/ButtonSpinner.svelte';
   import type { SubmitFunction } from '@sveltejs/kit';
   import { enhance } from '$app/forms';
   import type { Snapshot } from '../$types';
@@ -8,7 +9,6 @@
   import { invalidateAll } from '$app/navigation';
   import { page } from '$app/state'; // for page.status code on actions
   import { hideButtonsExceptFirst } from '$lib/utils';
-  // import { Tooltip } from 'flowbite-svelte';
 
   import PageTitleCombo from '$components/PageTitleCombo.svelte';
   import * as utils from '$lib/utils';
@@ -204,30 +204,30 @@
 </svelte:head>
 
 {#snippet tooltipBio(bio: Bio)}
-  <!-- <Tooltip class="tooltip-profile"> -->
-  <p>
-    <span style="color:lightgreen;margin:0 1rem 0 0;"> created at</span>
-    <span class="property-value">
-      {bio.createdAt?.toLocaleString()}
-    </span>
-  </p>
-  <p>
-    <span style="color:lightgreen;margin:0 1rem 0 0;"> updated at</span>
-    <span class="property-value">
-      {bio.updatedAt?.toLocaleString()}
-    </span>
-  </p>
-  <!-- </Tooltip> -->
+  <CRTooltip class="tooltip-profile">
+    <p>
+      <span style="color:lightgreen;margin:0 1rem 0 0;"> created at</span>
+      <span class="property-value">
+        {bio.createdAt?.toLocaleString()}
+      </span>
+    </p>
+    <p>
+      <span style="color:lightgreen;margin:0 1rem 0 0;"> updated at</span>
+      <span class="property-value">
+        {bio.updatedAt?.toLocaleString()}
+      </span>
+    </p>
+  </CRTooltip>
 {/snippet}
 {#snippet deleteIcon()}
-  <!-- <Tooltip class="tooltip-profile"> -->
-  <p>delete the profile</p>
-  <!-- </Tooltip> -->
+  <CRTooltip class="tooltip-profile">
+    <p>delete the profile</p>
+  </CRTooltip>
 {/snippet}
 {#snippet ownerOnly()}
-  <!-- <Tooltip class="tooltip-profile"> -->
-  <p class="pink">Owner only permission</p>
-  <!-- </Tooltip> -->
+  <CRTooltip class="tooltip-profile">
+    <p class="pink">Owner only permission</p>
+  </CRTooltip>
 {/snippet}
 
 <PageTitleCombo

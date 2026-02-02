@@ -1,33 +1,33 @@
-import { db } from '$lib/server/db';
-import type { PageServerLoad } from './$types';
-import { error, fail, redirect } from '@sveltejs/kit';
-import type RequestEvent from '@sveltejs/kit';
-import type { Actions } from '@sveltejs/kit';
+import { db } from '$lib/server/db'
+import type { PageServerLoad } from './$types'
+import { error, fail, redirect } from '@sveltejs/kit'
+import type RequestEvent from '@sveltejs/kit'
+import type { Actions } from '@sveltejs/kit'
 import bcrypt from 'bcrypt'
-import * as utils from '$lib/utils';
+import * as utils from '$lib/utils'
 
 export const load: PageServerLoad = (async ({ locals, cookies }) => {
 
-  const users = (await db.user.findMany({
-    select: {
-      id: true,
-      firstName: true,
-      lastName: true,
+	const users = (await db.user.findMany({
+		select: {
+			id: true,
+			firstName: true,
+			lastName: true,
 			email: true,
-      role: true,
-    },
-  })) as TKUser[];
-	console.log(users);
-	await utils.sleep(4000);
-  return {
-    users,
-  };
-}) satisfies PageServerLoad;
+			role: true,
+		},
+	})) as TKUser[]
+	console.log(users)
+	await utils.sleep(4000)
+	return {
+		users,
+	}
+}) satisfies PageServerLoad
 
 
 export const actions: Actions = {
 	create: async ({ request }) => {
-    console.log('create -- entry point')
+		console.log('create -- entry point')
 		const { firstName, lastName, email, password } = Object.fromEntries(
 			// @ts-expect-error
 			await request.formData()
@@ -36,7 +36,7 @@ export const actions: Actions = {
 			lastName: string
 			email: string
 			password: string
-		};
+		}
 		console.log('A-User', firstName, lastName, email, password)
 
 		if (firstName === '' || lastName === '' || email === '') {
@@ -69,7 +69,8 @@ export const actions: Actions = {
 					lastName,
 					email,
 					passwordHash: await bcrypt.hash(password, 10),
-					userAuthToken: crypto.randomUUID()
+					userAuthToken: crypto.randomUUID(),
+					updatedAt: null
 				}
 			})
 		}
@@ -78,7 +79,7 @@ export const actions: Actions = {
 			message: 'a-user created successfully'
 		}
 	}
-} satisfies Actions;
+} satisfies Actions
 
 //
 //   update: async ({ request }) => {

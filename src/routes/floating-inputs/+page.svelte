@@ -193,20 +193,23 @@
   <article>
     <div>
       <label for={id}></label>
-      {#if type == 'text'}
-        <div class="inputbox-wrapper">
-          <InputBox
-            title={id}
-            bind:this={inputEl}
-            bind:value={formState.answers[id as TId]}
-            exportValueOn="enter|blur"
-            {onButtonNext}
-            width="15rem"
-            capitalize={true}
-            required={true}
-          ></InputBox>
-        </div>
-      {:else}
+      <!-- {#if type == 'text'} -->
+      <div class="inputbox-wrapper">
+        <InputBox
+          title={id}
+          bind:this={inputEl}
+          type="textarea"
+          rows="5"
+          cols="40"
+          bind:value={formState.answers[id as TId]}
+          exportValueOn="enter|blur"
+          {onButtonNext}
+          width="15rem"
+          capitalize={true}
+          required={true}
+        ></InputBox>
+      </div>
+      <!-- {:else}
         <input
           {type}
           {id}
@@ -214,7 +217,7 @@
           bind:this={inputEl}
           bind:value={formState.answers[id as TId]}
         />
-      {/if}
+      {/if} -->
     </div>
   </article>
 {/snippet}

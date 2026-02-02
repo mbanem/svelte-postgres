@@ -24,26 +24,26 @@
 <svelte:options customElement="comp-dispatcher" />
 
 <script lang="ts">
-	let chance: number
-	function dispatch(type: any) {
-		const evt = new CustomEvent(type, {
-			detail: {
-				chance
-			}
-		})
-		$host().dispatchEvent(evt)
-	}
+  let chance: number;
+  function dispatch(type: any) {
+    const evt = new CustomEvent(type, {
+      detail: {
+        chance,
+      },
+    });
+    $host().dispatchEvent(evt);
+  }
 </script>
 
 <button onclick={() => dispatch('decrement')}>decrement</button>
 <button onclick={() => dispatch('increment')}>increment</button>
 
 <button
-	onclick={() => {
-		;(chance = Math.round(Math.random() * 1000) / 1000) > 0.5
-			? dispatch('forward')
-			: dispatch('backward')
-	}}
+  onclick={() => {
+    (chance = Math.round(Math.random() * 1000) / 1000) > 0.5
+      ? dispatch('forward')
+      : dispatch('backward');
+  }}
 >
-	where to go?
+  where to go?
 </button>

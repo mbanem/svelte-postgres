@@ -64,7 +64,8 @@ export const actions: Actions = {
 					lastName,
 					email,
 					passwordHash: await bcrypt.hash(password, 10),
-					userAuthToken: crypto.randomUUID()
+					userAuthToken: crypto.randomUUID(),
+					updatedAt: null
 				}
 			})
 		}

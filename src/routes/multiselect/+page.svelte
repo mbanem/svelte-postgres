@@ -127,7 +127,8 @@ and appends it to the yellow colored list
   .select {
     padding: 0 5px;
     margin: 6px 0;
-    background-color: cornsilk;
+    color: white;
+    background-color: black;
     border-radius: 4px;
   }
   .selected {

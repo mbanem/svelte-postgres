@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Balloon from '$components/Balloon.svelte';
+  import Baloon from '$lib/components/Baloon.svelte';
   import Child from '$components/Child.svelte';
   import { sleep } from '$lib/utils';
 
@@ -45,7 +45,7 @@
 </script>
 
 <svelte:head>
-  <title>Inflatable Balloon</title>
+  <title>Inflatable Baloon</title>
 </svelte:head>
 <div class="wrapper">
   <div class="parent-container">
@@ -61,7 +61,7 @@
   </div>
   <div class="child-container">
     <div style="position:relative;">
-      <Balloon
+      <Baloon
         bind:size={sizePowerBurst.size}
         bind:power={sizePowerBurst.power}
         {inflate}

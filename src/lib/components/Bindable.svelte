@@ -13,6 +13,7 @@
 -->
 
 <script lang="ts" module>
+  import { browser } from '$app/environment';
   // in order to export a function to parent we need a script with context module
   // beside the regular script block
 
@@ -21,6 +22,14 @@
   export const counter = (delta: number) => {
     childCount += delta;
     // console.log('parent call ', delta)
+    if (browser) {
+      const el = document.getElementById('test') as HTMLDivElement;
+      if (el) {
+        el.innerText = 'OK, new text is here';
+      }
+      if (spanX) {
+      }
+    }
   };
 </script>
 
@@ -42,23 +51,29 @@
     // call parent function with incremental value
     clickArg(delta, event);
   };
+  let spanX: HTMLSpanElement | null = null;
 </script>
 
+<button onclick={() => counter(1)}>counter add 1</button>
+<div id="test">change me from module</div>
 <p class="inline">
-  child local counter <span class="expression-highlighted">{childCount}</span>
+  child local counter
+  <span class="expression-highlighted">
+    {childCount}
+  </span>
 </p>
 <p style="margin-left:2rem;color:lightgreen;">
-  CHILD SPACE: child count updated by parent <span
-    style="font-size:24px;color:yellow;"
-  >
-    {childCount}</span
-  >
+  CHILD SPACE: child count updated by parent
+  <span style="font-size:24px;color:yellow;">
+    {childCount}
+  </span>
 </p>
 <div class="wrapper">
   <pre>This is child component.
-Child button clicked changing parent count<span
-      class="expression-highlighted"> {count}</span
-    >
+Child button clicked changing parent count
+<span bind:this={spanX} class="expression-highlighted">
+  {count}
+</span>
 </pre>
   <!-- the pre css rules change button css rules dramatically
 		so as the first line of defense get otu of pre as parent

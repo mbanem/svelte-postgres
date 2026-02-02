@@ -1,5 +1,9 @@
+<script module lang="ts">
+  export const error = (err: string) => {};
+</script>
+
 <script lang="ts">
-  //  components/RInput.svelte
+  //  components/CRInput.svelte
   import { browser } from '$app/environment';
   import * as utils from '$lib/utils';
   import { onMount } from 'svelte';
@@ -16,11 +20,25 @@
     height?: string;
     fontsize?: string;
     margin?: string;
-    type?: string;
-    value?: string;
+    type?:
+      | string
+      | number
+      | Date
+      | boolean
+      | password
+      | time
+      | text
+      | tel
+      | range
+      | radio
+      | checkbox
+      | textarea;
+    rows?: string;
+    cols?: string;
+    value?: string | number;
     required?: boolean;
     capitalize?: boolean;
-    err?: string[] | undefined;
+    err?: string[] | null;
     onButtonNext?: () => void;
     exportValueOn?: TExportValueOn;
     onInputIsReadyCallback?: () => void; // call parent when onInputIsReadyCallback for 'enter', otherwise on every key
@@ -33,38 +51,39 @@
     height = '2.5rem',
     fontsize = '16px',
     margin = '0',
-    type,
+    type = 'text',
+    rows = '6',
+    cols = '30',
     value = $bindable(),
     required = false,
-    err = undefined,
+    err,
     onButtonNext,
     exportValueOn = 'enter',
     onInputIsReadyCallback = undefined,
     capitalize = false,
     clearOnInputIsReady = false,
   }: PROPS = $props();
+  let elId = utils.sixHash();
+  const labelUp = 'opacity:1;top:3px;z-index:10;';
+  const labelDown = 'opacity:0.5;top:25px;z-index:10;';
 
+  // words separated by space or underscore
   export const capitalizes = (str: string) => {
-    const spaceUpper = (su: string) => {
-      // getting _string so return ' String' with a leading space
-      return ` ${su[1]?.toUpperCase()}`;
-    };
-    str = str[0]?.toUpperCase() + str.slice(1);
-    return (
-      str
-        .replace(/[a-z](?=[a-z]{2})/g, (char) => char.toUpperCase())
-        // snake_string_format replace _ with space
-        .replace(/(_w)/, spaceUpper)
+    if (!str) return;
+    str = str.replace(/_/gm, ' ').trim();
+    let s = (str[0] as string)?.toUpperCase() + str.slice(1);
+    return s.replace(/[a-z](?=[a-z]{2})/g, (char: string) =>
+      char.toUpperCase(),
     );
   };
 
-  // @ts-expect-error
   String.prototype.capitalizes = function () {
-    return capitalizes(this as string);
+    return capitalizes(this);
   };
-  // NOTE: enter non breaking unicode space: type 00A0 and press Alt + X
+  // NOTE: enter non breaking unicode space:
+  // Press Ctrl+Shift+U, type 00a0, and then press Enter or Space.
   // here we held between apostrophes three non breaking spaces
-  title = '   ' + capitalizes(title);
+  title = '  ' + capitalizes(title) + '  ';
   let requiredStr = required ? `${title} is required` : '';
 
   (function () {
@@ -77,9 +96,6 @@
     }
   })();
   const topPosition = `${-1 * Math.floor(parseInt(fontsize) / 3)}px`;
-
-  // allow pre-defined values to show up when user specify them
-  // let inputValue = $state<string>('');
 
   if (browser) {
     try {
@@ -97,7 +113,7 @@
 
   const onFocusHandler = (event: FocusEvent) => {
     event.preventDefault();
-    labelStyle = 'opacity:1;top:3px;';
+    labelStyle = labelUp;
   };
 
   const onBlurHandler = (event: FocusEvent) => {
@@ -108,15 +124,17 @@
       // input is required so warn the user with pink placeholder required message
       if (required) {
         inputEl.placeholder = requiredStr;
-        labelStyle = 'opacity:1; top:3px;';
+        labelStyle = labelUp;
         utils.setPlaceholderColor('pink');
       } else {
         // input is not required so lower down field label inside the input box
-        labelStyle = 'opacity:0.5;25px';
+        labelStyle = labelDown;
       }
     }
+    if (capitalize && value) {
+      value = utils.capitalize(value as string) ?? '';
+    }
     if (exportValueOn.includes('blur')) {
-      // value = inputValue;
       if (onInputIsReadyCallback) {
         onInputIsReadyCallback();
       }
@@ -124,40 +142,15 @@
   };
   const onKeyUpHandler = (event: KeyboardEvent) => {
     event.preventDefault();
+    labelStyle = labelUp;
     if (event.key === 'Tab') return;
-    if (capitalize && value) {
-      // NOTE: reactive variable inputbox value does not updates
-      // inputbox value when changed via script, so inputEl.value
-      // as a workaround is updated instead
-      inputEl.value = utils.capitalize(value);
-    }
-    // if keypress is Enter and exportValueOn does not include Enter we return
-    if (exportValueOn.includes('enter') && event.key !== 'Enter') {
-      if (capitalize && value) {
-        // value = capitalizes(value);
-        value = utils.capitalize(value);
-      }
-      return;
-    }
-    // already prevented blur|keypress and blur|enter
-    // blur always follows if any case
-    if (!'keypress|blur|enter|blur'.includes(exportValueOn) && value) {
-      value = capitalizes(value);
-      return;
-    }
-    if (value && value.length > 0) {
-      if (capitalize) {
-        value = capitalizes(value);
-      }
 
-      // if input should be returned
-      // (blur is handled in a separate onBlurHandler)
+    if (value && (value as string).length > 0) {
       if (
         exportValueOn.includes('keypress') ||
         (exportValueOn.includes('enter') && event.key === 'Enter')
       ) {
-        // value = inputValue;
-
+        value = capitalizes(value as string) ?? '';
         if (onInputIsReadyCallback) {
           onInputIsReadyCallback();
           if (clearOnInputIsReady) {
@@ -172,13 +165,21 @@
   // move it up on focus, but the text does not set focus on input
   // element on click -- so we have to set the focus when the label
   // text is selected
-  let labelStyle = $state('opacity:0.5;top:25px;');
+  let labelStyle = $state(labelDown);
   let label: HTMLLabelElement;
-  let inputEl: HTMLInputElement;
-  export const setFocus = () => {
-    inputEl.focus();
+  let inputEl: HTMLInputElement | HTMLTextAreaElement;
+  // in order to compare inputEl with document.activeElement
+  // document.getElementById(inputEl.boxId()) gets wrapped input box
+  // otherwise idEl is a wrapper reference newer equal to doc.activeElement
+  export const boxId = () => {
+    return inputEl.id;
   };
 
+  export const getInputBoxValue = () => {
+    return typeof value === 'number'
+      ? Number(inputEl.value)
+      : String(inputEl.value);
+  };
   // parent call to set input box value
   export const setInputBoxValue = (str: string, blur: boolean = false) => {
     if (blur) {
@@ -189,31 +190,58 @@
     inputEl.focus();
     value = str;
   };
-  // setContext('setInputBoxValue', setInputBoxValue);
+
+  export const setFocus = () => {
+    labelStyle = value && required ? labelUp : labelDown;
+  };
+
+  $effect(() => {
+    if (required) {
+      inputEl.removeAttribute('required');
+      // } else {
+      //   inputEl.setAttribute('required', 'true');
+    }
+    labelStyle = value ? labelUp : labelDown;
+  });
+
   onMount(() => {
     label = document.getElementsByTagName('label')[0] as HTMLLabelElement;
-    setTimeout(() => {
-      if (value && inputEl) {
-        setFocus();
-      }
-    }, 300);
+    // if (required) {
+    //   inputEl.setAttribute('required', 'true');
+    // } else {
+    inputEl.removeAttribute('required');
+    // }
   });
 </script>
 
 <div class="input-wrapper" style="margin:{margin};">
-  <input
-    id="inp"
-    bind:this={inputEl}
-    type={type ? type : 'text'}
-    required
-    bind:value
-    onkeyup={onKeyUpHandler}
-    onfocus={onFocusHandler}
-    onblur={onBlurHandler}
-    disabled={false}
-  />
+  {#if type === 'textarea'}
+    <textarea
+      id={elId}
+      bind:this={inputEl}
+      rows={Number(rows)}
+      cols={Number(cols)}
+      bind:value
+      onkeyup={onKeyUpHandler}
+      onfocus={onFocusHandler}
+      onblur={onBlurHandler}
+      disabled={false}
+    >
+    </textarea>
+  {:else}
+    <input
+      id={elId}
+      bind:this={inputEl}
+      type={type ? type : 'text'}
+      bind:value
+      onkeyup={onKeyUpHandler}
+      onfocus={onFocusHandler}
+      onblur={onBlurHandler}
+      disabled={false}
+    />
+  {/if}
   <label
-    for="inp"
+    for={elId}
     onclick={setFocus}
     aria-hidden={true}
     style={`${labelStyle}`}
@@ -229,8 +257,9 @@
   :root {
     --INPUT-COMRUNNER-WIDTH: 16rem;
     --INPUT-BOX-LABEL-TOP-POS: -1px;
-    --INPUT-COMRUNNER-HEIGHT: 2.5rem;
+    --INPUT-COMRUNNER-HEIGHT: 2rem !important;
     --INPUT-COMRUNNER-FONT-SIZE: 16px;
+    // --BACKGROUND-COLOR: white;
   }
 
   .input-wrapper {
@@ -240,18 +269,16 @@
     padding-top: 0.8rem;
     label {
       position: absolute;
-      // transform: translateY(-50%);
-      // top: calc(var(--INPUT-COMRUNNER-HEIGHT) * 0.5);
       left: 15px;
-      // top: 26px;
       font-size: var(--INPUT-COMRUNNER-FONT-SIZE);
       color: var(--INPUT-COLOR);
-      background-color: var(--INPUT-BACKGROUND-COLOR);
-      // opacity: 0.5;
+      background-color: var(--BACKGROUND-COLOR);
       transition: 0.5s;
-      // .stay-on-top {
-      //   top: -15px;
-      // }
+    }
+    textarea {
+      outline: none;
+      background-color: var(--BACKGROUND-COLOR);
+      border: 1px solid gray;
     }
     input {
       display: inline-block;
@@ -260,7 +287,10 @@
       font-size: var(--INPUT-COMRUNNER-FONT-SIZE);
       padding: 0 10px;
       margin: 0;
+      outline: none;
       color: var(--TEXT-COLOR);
+      border: 1px solid gray;
+      background-color: var(--BACKGROUND-COLOR);
       &:focus {
         color: var(--INPUT-FOCUS-COLOR);
       }
@@ -275,8 +305,7 @@
 
   .err {
     color: pink;
-    // border: 1px solid #808080;
-    // border-radius: 3px;
-    padding: 1px 0.5rem;
+    /* when placeholder moves on top it makes space on the right of 0.2rem*/
+    padding: 1px 0.2rem;
   }
 </style>

@@ -1,5 +1,5 @@
 <script module lang="ts">
-  let categoryIsRequired: string = '';
+  let categoryIsRequired: string = '2,4';
   type Category = { id: number; name: string; selected?: boolean };
 
   let selectedOptions: HTMLParagraphElement;
@@ -13,7 +13,7 @@
     selectedIds = new Set(arr.map((n) => String(n)));
     selectedNames = new Set(selOptions.split(','));
     if (arr.length === 0) {
-      selectedOptions.innerText = categoryIsRequired;
+      // selectedOptions.innerText = categoryIsRequired;
       utils.setTextColor('--MESSAGE-COLOR', 'lightgreen');
     } else {
       selectedOptions.innerText = selOptions.replaceAll(',', ', ');
@@ -38,12 +38,25 @@
     categories: Category[];
     selectedCategoryIds: string; // CSV string
     categoryIsRequired: string;
+    class_multiselect: string;
   };
   let {
     categories: cat,
     selectedCategoryIds = $bindable(),
-    categoryIsRequired: required = $bindable(),
+    categoryIsRequired: required = $bindable('2,4'),
+    class_multiselect,
   }: ARGS = $props();
+
+  let extractedColor = '';
+  let cssTarget: HTMLUListElement | null = null;
+  $effect(() => {
+    if (cssTarget && class_multiselect) {
+      // get the computed style for the element
+      const style = getComputedStyle(cssTarget);
+      extractedColor = style.color;
+      // extractedColor will be "skyblue" or "rgb(...)" depending on browser
+    }
+  });
 
   categoryIsRequired = required;
   categories = cat;
@@ -130,7 +143,7 @@
 <p bind:this={selectedOptions} class="selected-cats" bind:this={pEl}>
   {pleaseSelect}
 </p>
-<ul class="category-list">
+<ul bind:this={cssTarget} class="category-list {class_multiselect}">
   {#key categories}
     {#each categories as category}
       <li>
@@ -138,6 +151,7 @@
           onclick={onClick}
           class:selected={category.selected}
           aria-hidden={true}
+          style="color:{extractedColor} !important;"
         >
           {category.name}
         </p>
